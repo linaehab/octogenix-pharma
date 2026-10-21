@@ -40,3 +40,18 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+# Dependencies and build output in all project folders
+**/node_modules/
+**/dist/
+**/.angular/
+**/out-tsc/
+**/coverage/
+
+# Nested Git repositories and backup
+**/.git/
+**/.git-backup/
+
+# Environment variables and secrets
+**/.env
+**/.env.*
+!**/.env.example
