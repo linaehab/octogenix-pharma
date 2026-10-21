@@ -1,0 +1,65 @@
+<section class="guiding section-wrap reveal" aria-labelledby="guiding-title">
+  <header class="guiding-heading">
+    <p class="eyebrow"><span></span>{{ 'values.kicker' | translate }}</p>
+    <h2 id="guiding-title">{{ 'values.title' | translate }}</h2>
+    <p>{{ 'values.description' | translate }}</p>
+  </header>
+
+  <div class="mission-vision">
+    <article class="principle-card">
+      <div class="principle-image">
+        <img class="image-primary" src="/assets/images/mission-mother-baby.jpg"
+          [alt]="'values.missionImageAlt' | translate" loading="lazy" />
+        <img class="image-hover" src="/assets/images/about-baby.jpg" alt="" aria-hidden="true" loading="lazy" />
+      </div>
+      <div class="principle-copy">
+        <span class="principle-number">01</span>
+        <h3>{{ 'values.missionTitle' | translate }}</h3>
+        <p>{{ 'values.missionDescription' | translate }}</p>
+      </div>
+    </article>
+    <article class="principle-card">
+      <div class="principle-image">
+        <img class="image-primary" src="/assets/images/quality-control-lab.jpg"
+          [alt]="'values.visionImageAlt' | translate" loading="lazy" />
+        <img class="image-hover" src="/assets/images/value-innovation-lab.jpg" alt="" aria-hidden="true" loading="lazy" />
+      </div>
+      <div class="principle-copy">
+        <span class="principle-number">02</span>
+        <h3>{{ 'values.visionTitle' | translate }}</h3>
+        <p>{{ 'values.visionDescription' | translate }}</p>
+      </div>
+    </article>
+  </div>
+
+  <div class="core-values">
+    <h3>{{ 'values.coreTitle' | translate }}</h3>
+    <div class="core-value-grid">
+      @for (value of coreValues; track value.title) {
+        <article class="core-value">
+          <div class="core-image">
+            <img class="image-primary" [src]="value.image" [alt]="value.imageAlt | translate" loading="lazy" />
+            <img class="image-hover" [src]="value.hoverImage" alt="" aria-hidden="true" loading="lazy" />
+          </div>
+          <span class="value-symbol" aria-hidden="true">{{ value.symbol }}</span>
+          <h4>{{ value.title | translate }}</h4>
+          @if (value.description) {
+            <p>{{ value.description | translate }}</p>
+          }
+        </article>
+      }
+    </div>
+  </div>
+
+  <div class="company-values">
+    <h3>{{ 'values.companyTitle' | translate }}</h3>
+    <div class="company-value-list">
+      @for (value of companyValues; track value.title) {
+        <article>
+          <h4>{{ value.title | translate }}</h4>
+          <p>{{ value.description | translate }}</p>
+        </article>
+      }
+    </div>
+  </div>
+</section>

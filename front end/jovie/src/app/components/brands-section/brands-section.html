@@ -1,0 +1,29 @@
+<section class="brands section-wrap reveal" id="brands" aria-labelledby="brands-title">
+  <div class="brands-heading">
+    <p class="eyebrow"><span></span>{{ 'brands.kicker' | translate }}</p>
+    <div>
+      <h2 id="brands-title">{{ 'brands.title' | translate }}</h2>
+      <p>
+        {{ 'brands.summary' | translate }}
+      </p>
+    </div>
+  </div>
+  <div class="brand-feature">
+    <div class="brand-image">
+      <img class="image-primary" src="/assets/images/mission-baby-feeding.jpg"
+        [alt]="'brands.imageAlt' | translate" loading="lazy" />
+      <img class="image-hover" src="/assets/images/about-baby.jpg" alt="" aria-hidden="true" loading="lazy" />
+    </div>
+    <div class="brand-panel">
+      <span class="brand-label">{{ 'brands.label' | translate }}</span>
+      <h3 class="brand-name">{{ 'brands.jovie' | translate }}</h3>
+      <p class="brand-description">
+        {{ 'brands.description' | translate }}
+      </p>
+      <span class="brand-asset-note">{{ 'brands.assetNote' | translate }}</span>
+      <a class="text-link" routerLink="/contact">
+        {{ 'brands.cta' | translate }} <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </div>
+</section>

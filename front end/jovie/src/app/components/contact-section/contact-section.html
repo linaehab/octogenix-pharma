@@ -1,0 +1,108 @@
+<section class="contact section-wrap reveal" aria-labelledby="contact-title">
+  <div class="contact-heading">
+    <p class="eyebrow"><span></span>{{ 'contact.kicker' | translate }}</p>
+    <h2 id="contact-title">{{ 'contact.title' | translate }}</h2>
+    <span class="heading-accent" aria-hidden="true"></span>
+    <p>{{ 'contact.description' | translate }}</p>
+  </div>
+
+  <div class="contact-layout">
+    <aside class="contact-details" [attr.aria-label]="'contact.detailsTitle' | translate">
+      <div class="contact-image">
+        <img class="image-primary" src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800&q=78"
+          [alt]="'contact.imageAlt' | translate" loading="lazy" />
+        <img class="image-hover" src="/assets/images/value-quality-lab.jpg" alt="" aria-hidden="true" loading="lazy" />
+      </div>
+      <h3>{{ 'contact.detailsTitle' | translate }}</h3>
+      <div class="detail-group">
+        <h4>{{ 'contact.phoneLabel' | translate }}</h4>
+        <a dir="ltr" href="tel:+201090075087">+20 109 007 5087</a>
+        <a dir="ltr" href="tel:+201018302408">+20 101 830 2408</a>
+        <a dir="ltr" href="tel:+20572070371">+20 57 207 0371</a>
+      </div>
+      <div class="detail-group">
+        <h4>{{ 'contact.emailLabel' | translate }}</h4>
+        <a dir="ltr" href="mailto:info@octogenixpharma.com">info@octogenixpharma.com</a>
+      </div>
+      <div class="detail-group">
+        <h4>{{ 'contact.addressLabel' | translate }}</h4>
+        <p>{{ 'contact.address' | translate }}</p>
+      </div>
+    </aside>
+
+    <form class="contact-form" [formGroup]="contactForm" (ngSubmit)="submitMessage()" novalidate>
+      <h3>{{ 'contact.formTitle' | translate }}</h3>
+      <p class="form-description">{{ 'contact.formDescription' | translate }}</p>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="first-name">{{ 'contact.firstName' | translate }} <span aria-hidden="true">*</span></label>
+          <input id="first-name" type="text" autocomplete="given-name"
+            [placeholder]="'contact.firstNamePlaceholder' | translate"
+            formControlName="firstName" required [attr.aria-invalid]="firstName.invalid && firstName.touched"
+            [attr.aria-describedby]="firstName.invalid && firstName.touched ? 'first-name-error' : null" />
+          @if (firstName.hasError('required') && firstName.touched) {
+            <span class="field-error" id="first-name-error">{{ 'contact.requiredError' | translate }}</span>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="last-name">{{ 'contact.lastName' | translate }}</label>
+          <input id="last-name" type="text" autocomplete="family-name"
+            [placeholder]="'contact.lastNamePlaceholder' | translate" formControlName="lastName" />
+        </div>
+
+        <div class="form-field">
+          <label for="email">{{ 'contact.emailLabel' | translate }} <span aria-hidden="true">*</span></label>
+          <input id="email" type="email" autocomplete="email" dir="ltr"
+            [placeholder]="'contact.emailPlaceholder' | translate"
+            formControlName="email" required [attr.aria-invalid]="email.invalid && email.touched"
+            [attr.aria-describedby]="email.invalid && email.touched ? 'email-error' : null" />
+          @if (email.hasError('required') && email.touched) {
+            <span class="field-error" id="email-error">{{ 'contact.requiredError' | translate }}</span>
+          } @else if (email.hasError('email') && email.touched) {
+            <span class="field-error" id="email-error">{{ 'contact.emailError' | translate }}</span>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="phone">{{ 'contact.phoneLabel' | translate }}</label>
+          <input id="phone" type="tel" autocomplete="tel" dir="ltr"
+            [placeholder]="'contact.phonePlaceholder' | translate" formControlName="phone" />
+        </div>
+
+        <div class="form-field form-field-wide">
+          <label for="subject">{{ 'contact.subject' | translate }}</label>
+          <select id="subject" formControlName="subject">
+            <option value="">{{ 'contact.subjectPlaceholder' | translate }}</option>
+            <option value="general">{{ 'contact.subjectGeneral' | translate }}</option>
+            <option value="partnership">{{ 'contact.subjectPartnership' | translate }}</option>
+            <option value="distribution">{{ 'contact.subjectDistribution' | translate }}</option>
+            <option value="import-export">{{ 'contact.subjectImportExport' | translate }}</option>
+            <option value="other">{{ 'contact.subjectOther' | translate }}</option>
+          </select>
+        </div>
+
+        <div class="form-field form-field-wide">
+          <label for="message">{{ 'contact.message' | translate }} <span aria-hidden="true">*</span></label>
+          <textarea id="message" rows="5" [placeholder]="'contact.messagePlaceholder' | translate"
+            formControlName="message" required [attr.aria-invalid]="message.invalid && message.touched"
+            [attr.aria-describedby]="message.invalid && message.touched ? 'message-error' : null"></textarea>
+          @if (message.hasError('required') && message.touched) {
+            <span class="field-error" id="message-error">{{ 'contact.requiredError' | translate }}</span>
+          }
+        </div>
+      </div>
+
+      <p class="integration-note">{{ 'contact.integrationNote' | translate }}</p>
+      @if (showIntegrationNotice()) {
+        <p class="integration-feedback" role="status" aria-live="polite">
+          {{ 'contact.integrationFeedback' | translate }}
+        </p>
+      }
+      <button class="button button-submit" type="submit">
+        {{ 'contact.submit' | translate }} <span aria-hidden="true">↗</span>
+      </button>
+    </form>
+  </div>
+</section>

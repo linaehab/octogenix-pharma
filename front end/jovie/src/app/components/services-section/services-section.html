@@ -1,0 +1,27 @@
+<section class="services section-wrap reveal" id="services" aria-labelledby="services-title">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow"><span></span>{{ 'services.kicker' | translate }}</p>
+      <h2 id="services-title">{{ 'services.title' | translate }}</h2>
+    </div>
+    <p class="section-summary">
+      {{ 'services.summary' | translate }}
+    </p>
+  </div>
+  <div class="service-list">
+    @for (service of services; track service.number) {
+      <article class="service-item reveal-step">
+        <div class="service-image">
+          <img class="image-primary" [src]="service.image" [alt]="service.imageAlt | translate" loading="lazy" />
+          <img class="image-hover" [src]="service.hoverImage" alt="" aria-hidden="true" loading="lazy" />
+          <span class="service-number">{{ service.number }}</span>
+        </div>
+        <div class="service-copy">
+          <h3>{{ service.title | translate }}</h3>
+          <p>{{ service.description | translate }}</p>
+          <span class="service-arrow" aria-hidden="true">↗</span>
+        </div>
+      </article>
+    }
+  </div>
+</section>

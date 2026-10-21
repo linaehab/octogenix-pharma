@@ -1,0 +1,25 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+
+import { HeroSection } from './hero-section';
+
+describe('HeroSection', () => {
+  let component: HeroSection;
+  let fixture: ComponentFixture<HeroSection>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [HeroSection],
+      providers: [provideRouter([])],
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(HeroSection);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

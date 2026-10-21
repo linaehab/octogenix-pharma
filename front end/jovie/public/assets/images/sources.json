@@ -1,0 +1,86 @@
+[
+  {
+    "file": "service-warehouse-forklift.jpg",
+    "provider": "Pexels",
+    "photoId": "36398150",
+    "source": "https://images.pexels.com/photos/36398150/pexels-photo-36398150/free-photo-of-industrial-warehouse-with-forklift-and-shelving.jpeg",
+    "license": "https://www.pexels.com/license/"
+  },
+  {
+    "file": "service-import-warehouse.jpg",
+    "provider": "Unsplash",
+    "photoId": "1586528116311-ad8dd3c8310d",
+    "source": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d",
+    "license": "https://unsplash.com/license"
+  },
+  {
+    "file": "service-nutrition-preparation.jpg",
+    "provider": "Pexels",
+    "photoId": "11501481",
+    "source": "https://images.pexels.com/photos/11501481/pexels-photo-11501481.jpeg",
+    "license": "https://www.pexels.com/license/"
+  },
+  {
+    "file": "mission-baby-feeding.jpg",
+    "provider": "Pexels",
+    "photoId": "7282619",
+    "source": "https://images.pexels.com/photos/7282619/pexels-photo-7282619.jpeg",
+    "license": "https://www.pexels.com/license/"
+  },
+  {
+    "file": "value-quality-lab.jpg",
+    "provider": "Pexels",
+    "photoId": "4031417",
+    "source": "https://images.pexels.com/photos/4031417/pexels-photo-4031417.jpeg",
+    "license": "https://www.pexels.com/license/"
+  },
+  {
+    "file": "value-innovation-lab.jpg",
+    "provider": "Pexels",
+    "photoId": "8533094",
+    "source": "https://images.pexels.com/photos/8533094/pexels-photo-8533094.jpeg",
+    "license": "https://www.pexels.com/license/"
+  },
+  {
+    "file": "values-integrity-check.jpg",
+    "provider": "Pexels",
+    "photoId": "15831822",
+    "source": "https://images.pexels.com/photos/15831822/pexels-photo-15831822.jpeg",
+    "license": "https://www.pexels.com/license/"
+  },
+  {
+    "file": "value-distribution.jpg",
+    "provider": "Pexels",
+    "photoId": "4487383",
+    "source": "https://images.pexels.com/photos/4487383/pexels-photo-4487383.jpeg",
+    "license": "https://www.pexels.com/license/"
+  },
+  {
+    "file": "value-sustainable-growth.jpg",
+    "provider": "Pexels",
+    "photoId": "17497507",
+    "source": "https://images.pexels.com/photos/17497507/pexels-photo-17497507.jpeg",
+    "license": "https://www.pexels.com/license/"
+  },
+  {
+    "file": "quality-control-lab.jpg",
+    "provider": "Pexels",
+    "photoId": "3735711",
+    "source": "https://images.pexels.com/photos/3735711/pexels-photo-3735711.jpeg",
+    "license": "https://www.pexels.com/license/"
+  },
+  {
+    "file": "about-baby.jpg",
+    "provider": "Unsplash",
+    "photoId": "1522771930-78848d9293e8",
+    "source": "https://images.unsplash.com/photo-1522771930-78848d9293e8",
+    "license": "https://unsplash.com/license"
+  },
+  {
+    "file": "mission-mother-baby.jpg",
+    "provider": "Unsplash",
+    "photoId": "1492725764893-90b379c2b6e7",
+    "source": "https://images.unsplash.com/photo-1492725764893-90b379c2b6e7",
+    "license": "https://unsplash.com/license"
+  }
+]

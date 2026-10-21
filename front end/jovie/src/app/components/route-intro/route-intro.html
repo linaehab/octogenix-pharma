@@ -1,0 +1,17 @@
+<section class="route-intro"
+  [class.route-intro--about]="variant() === 'about'"
+  [class.route-intro--services]="variant() === 'services'"
+  [class.route-intro--brands]="variant() === 'brands'"
+  [class.route-intro--contact]="variant() === 'contact'"
+  aria-labelledby="route-title">
+  <div class="route-copy">
+    <p class="eyebrow"><span></span>{{ eyebrow() }}</p>
+    <h1 id="route-title">{{ title() }}</h1>
+    <p class="route-description">{{ description() }}</p>
+  </div>
+  <div class="route-visual">
+    <img [src]="image()" [alt]="imageAlt()" fetchpriority="high" decoding="async" />
+    <span class="route-visual-mark" aria-hidden="true">✳</span>
+  </div>
+  <app-home-banner />
+</section>

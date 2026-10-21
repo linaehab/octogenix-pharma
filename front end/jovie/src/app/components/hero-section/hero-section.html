@@ -1,0 +1,29 @@
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-image" role="img" [attr.aria-label]="'hero.imageAlt' | translate"></div>
+  <div class="hero-shade"></div>
+  <div class="hero-copy">
+    <p class="eyebrow light-eyebrow"><span></span>{{ 'hero.kicker' | translate }}</p>
+    <h1 id="hero-title">
+      {{ 'hero.titleFirst' | translate }}<br />{{ 'hero.titleSecond' | translate }}
+      <em>{{ 'hero.titleEmphasis' | translate }}</em>
+    </h1>
+    <p class="hero-intro">
+      {{ 'hero.description' | translate }}
+    </p>
+    <a class="button button-light" routerLink="/about">
+      {{ 'hero.cta' | translate }} <span aria-hidden="true">↗</span>
+    </a>
+    <a class="button button-outline" routerLink="/contact">
+      {{ 'hero.contactCta' | translate }} <span aria-hidden="true">↗</span>
+    </a>
+  </div>
+  <div class="hero-note" aria-hidden="true">
+    <span>{{ 'hero.noteOne' | translate }}</span>
+    <span class="hero-note-line"></span>
+    <span>{{ 'hero.noteTwo' | translate }}</span>
+  </div>
+  <a class="scroll-cue" routerLink="/about" [attr.aria-label]="'hero.scroll' | translate">
+    <span>{{ 'hero.scroll' | translate }}</span><span aria-hidden="true">↓</span>
+  </a>
+  <app-home-banner />
+</section>

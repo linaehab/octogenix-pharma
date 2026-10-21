@@ -1,0 +1,16 @@
+<aside class="home-banner" [attr.aria-label]="'header.announcement' | translate">
+  <div class="ticker-track" aria-hidden="true">
+    @for (copy of tickerCopies; track copy) {
+      <span class="ticker-copy">
+        <span class="banner-spark">✳</span>
+        <span>{{ 'banner.message' | translate }}</span>
+        <span class="ticker-separator">✦</span>
+        <span class="ticker-highlight">{{ 'banner.highlight' | translate }}</span>
+      </span>
+    }
+  </div>
+  <span class="visually-hidden">{{ 'banner.message' | translate }} {{ 'banner.highlight' | translate }}</span>
+  <a class="ticker-link" routerLink="/services" [attr.aria-label]="'banner.link' | translate">
+    <span aria-hidden="true">↗</span>
+  </a>
+</aside>

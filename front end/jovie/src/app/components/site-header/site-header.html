@@ -1,0 +1,42 @@
+<div class="header-frame">
+  <header class="site-header" [class.home-route]="isHomePage()">
+    <a class="wordmark" routerLink="/" [attr.aria-label]="'header.homeLabel' | translate">
+      <span>{{ 'company.name' | translate }}<small>{{ 'header.tagline' | translate }}</small></span>
+    </a>
+
+    <button
+      class="menu-toggle"
+      type="button"
+      [attr.aria-expanded]="isMenuOpen()"
+      aria-controls="primary-navigation"
+      [attr.aria-label]="'header.menu' | translate"
+      (click)="toggleNavigation()"
+    >
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav
+      id="primary-navigation"
+      class="primary-navigation"
+      [class.is-open]="isMenuOpen()"
+      [attr.aria-label]="'header.navigation' | translate"
+    >
+      <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }"
+         ariaCurrentWhenActive="page" (click)="closeNavigation()">{{ 'header.home' | translate }}</a>
+      <a routerLink="/about" routerLinkActive="is-active" ariaCurrentWhenActive="page"
+         (click)="closeNavigation()">{{ 'header.about' | translate }}</a>
+      <a routerLink="/services" routerLinkActive="is-active" ariaCurrentWhenActive="page"
+         (click)="closeNavigation()">{{ 'header.services' | translate }}</a>
+      <a routerLink="/brands" routerLinkActive="is-active" ariaCurrentWhenActive="page"
+         (click)="closeNavigation()">{{ 'header.brands' | translate }}</a>
+      <a class="nav-contact" routerLink="/contact" routerLinkActive="is-active"
+         ariaCurrentWhenActive="page" (click)="closeNavigation()">
+        {{ 'header.contact' | translate }} <span aria-hidden="true">↗</span>
+      </a>
+      <button class="language-toggle" type="button" (click)="toggleLanguage()">
+        {{ 'header.switchLanguage' | translate }}
+      </button>
+    </nav>
+  </header>
+</div>
