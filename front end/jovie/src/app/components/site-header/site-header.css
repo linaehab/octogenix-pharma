@@ -34,6 +34,7 @@
   border-color: rgba(255, 253, 250, 0.82);
 }
 
+.site-header.home-route .services-trigger,
 .site-header.home-route .nav-contact {
   color: #fffdfa;
 }
@@ -52,6 +53,74 @@
 .site-header.home-route .nav-contact.is-active,
 .site-header.home-route .language-toggle:hover {
   color: #fffdfa;
+  background: var(--green);
+}
+
+.services-menu {
+  position: relative;
+}
+
+.services-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 15px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: 0.02em;
+  transition: color 180ms ease, background 180ms ease;
+}
+
+.services-trigger:hover,
+.services-menu.is-open .services-trigger {
+  color: #fffdfa;
+  background: var(--green);
+}
+
+.services-caret {
+  font-size: 11px;
+  transition: transform 200ms ease;
+}
+
+.services-menu.is-open .services-caret {
+  transform: rotate(180deg);
+}
+
+.services-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 0;
+  display: none;
+  min-width: 180px;
+  padding: 10px;
+  border: 1px solid rgba(31, 57, 85, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 253, 250, 0.98);
+  box-shadow: 0 18px 42px rgba(31, 47, 82, 0.12);
+}
+
+.services-menu.is-open .services-dropdown {
+  display: grid;
+  gap: 4px;
+}
+
+.dropdown-item {
+  padding: 11px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  transition: background 180ms ease, color 180ms ease;
+}
+
+.dropdown-item:hover {
+  color: var(--paper);
   background: var(--green);
 }
 
@@ -181,17 +250,46 @@
     color: #fffdfa;
   }
 
-  .primary-navigation > a:not(.nav-contact) {
+  .primary-navigation > a:not(.nav-contact),
+  .services-trigger {
     padding: 14px 0;
     border-bottom: 1px solid var(--line);
     border-radius: 0;
   }
 
   .primary-navigation > a:not(.nav-contact):hover,
-  .primary-navigation > a:not(.nav-contact).is-active {
+  .primary-navigation > a:not(.nav-contact).is-active,
+  .services-trigger:hover,
+  .services-menu.is-open .services-trigger {
     padding-right: 12px;
     padding-left: 12px;
     border-radius: 2px;
+  }
+
+  .services-menu {
+    width: 100%;
+  }
+
+  .services-dropdown {
+    position: static;
+    display: none;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .services-menu.is-open .services-dropdown {
+    display: grid;
+    gap: 0;
+  }
+
+  .dropdown-item {
+    width: 100%;
+    padding: 12px 12px 12px 0;
+    color: var(--ink);
+    text-align: left;
   }
 
   .nav-contact {

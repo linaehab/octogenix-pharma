@@ -4,17 +4,17 @@
     <h2 id="leadership-title">{{ 'leadership.title' | translate }}</h2>
     <p>{{ 'leadership.description' | translate }}</p>
   </header>
-  <div class="leadership-image">
-    <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1500&q=82"
-      [alt]="'leadership.imageAlt' | translate" loading="lazy" />
-    <span>{{ 'leadership.imageCaption' | translate }}</span>
-  </div>
-  <div class="leader-grid">
+  <div class="leadership-list" role="list">
     @for (leader of leaders; track leader.name) {
-      <article class="leader-card">
-        <span class="leader-avatar" aria-hidden="true">{{ leader.initials }}</span>
-        <h3>{{ leader.name | translate }}</h3>
-        <p>{{ leader.role | translate }}</p>
+      <article class="leader-entry" role="listitem">
+        <span class="leader-arrow" aria-hidden="true">→</span>
+        <div class="leader-body">
+          <span class="leader-avatar" aria-hidden="true">{{ leader.initials }}</span>
+          <div>
+            <h3>{{ leader.name | translate }}</h3>
+            <p>{{ leader.role | translate }}</p>
+          </div>
+        </div>
       </article>
     }
   </div>

@@ -7,10 +7,10 @@
 
   <div class="mission-vision">
     <article class="principle-card">
-      <div class="principle-image">
-        <img class="image-primary" src="/assets/images/mission-mother-baby.jpg"
+      <div class="principle-image image-swap">
+        <img class="image-swap__primary" src="/assets/images/mission-mother-baby.jpg"
           [alt]="'values.missionImageAlt' | translate" loading="lazy" />
-        <img class="image-hover" src="/assets/images/about-baby.jpg" alt="" aria-hidden="true" loading="lazy" />
+        <img class="image-swap__alternate" src="/assets/images/about-baby.jpg" alt="" aria-hidden="true" loading="lazy" />
       </div>
       <div class="principle-copy">
         <span class="principle-number">01</span>
@@ -19,10 +19,10 @@
       </div>
     </article>
     <article class="principle-card">
-      <div class="principle-image">
-        <img class="image-primary" src="/assets/images/quality-control-lab.jpg"
+      <div class="principle-image image-swap">
+        <img class="image-swap__primary" src="/assets/images/quality-control-lab.jpg"
           [alt]="'values.visionImageAlt' | translate" loading="lazy" />
-        <img class="image-hover" src="/assets/images/value-innovation-lab.jpg" alt="" aria-hidden="true" loading="lazy" />
+        <img class="image-swap__alternate" src="/assets/images/value-innovation-lab.jpg" alt="" aria-hidden="true" loading="lazy" />
       </div>
       <div class="principle-copy">
         <span class="principle-number">02</span>
@@ -37,11 +37,7 @@
     <div class="core-value-grid">
       @for (value of coreValues; track value.title) {
         <article class="core-value">
-          <div class="core-image">
-            <img class="image-primary" [src]="value.image" [alt]="value.imageAlt | translate" loading="lazy" />
-            <img class="image-hover" [src]="value.hoverImage" alt="" aria-hidden="true" loading="lazy" />
-          </div>
-          <span class="value-symbol" aria-hidden="true">{{ value.symbol }}</span>
+          <div class="core-icon" aria-hidden="true">{{ value.symbol }}</div>
           <h4>{{ value.title | translate }}</h4>
           @if (value.description) {
             <p>{{ value.description | translate }}</p>

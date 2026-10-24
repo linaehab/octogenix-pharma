@@ -26,8 +26,20 @@
          ariaCurrentWhenActive="page" (click)="closeNavigation()">{{ 'header.home' | translate }}</a>
       <a routerLink="/about" routerLinkActive="is-active" ariaCurrentWhenActive="page"
          (click)="closeNavigation()">{{ 'header.about' | translate }}</a>
-      <a routerLink="/services" routerLinkActive="is-active" ariaCurrentWhenActive="page"
-         (click)="closeNavigation()">{{ 'header.services' | translate }}</a>
+      <div class="services-menu" [class.is-open]="isServicesMenuOpen()">
+        <button class="services-trigger" type="button" (click)="toggleServicesMenu()" [attr.aria-expanded]="isServicesMenuOpen()">
+          <span>{{ 'header.services' | translate }}</span>
+          <span class="services-caret" aria-hidden="true">▾</span>
+        </button>
+        <div class="services-dropdown" role="menu" aria-label="{{ 'header.services' | translate }}">
+          <button type="button" class="dropdown-item" role="menuitem" (click)="selectServicesCategory('customers')">
+            {{ 'header.servicesCustomers' | translate }}
+          </button>
+          <button type="button" class="dropdown-item" role="menuitem" (click)="selectServicesCategory('suppliers')">
+            {{ 'header.servicesSuppliers' | translate }}
+          </button>
+        </div>
+      </div>
       <a routerLink="/brands" routerLinkActive="is-active" ariaCurrentWhenActive="page"
          (click)="closeNavigation()">{{ 'header.brands' | translate }}</a>
       <a class="nav-contact" routerLink="/contact" routerLinkActive="is-active"

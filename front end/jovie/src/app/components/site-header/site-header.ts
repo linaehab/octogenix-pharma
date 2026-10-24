@@ -13,6 +13,7 @@ import { LanguageService } from '../../core/i18n/language.service';
 })
 export class SiteHeader {
   protected readonly isMenuOpen = signal(false);
+  protected readonly isServicesMenuOpen = signal(false);
   protected readonly isHomePage = signal(false);
   protected readonly language = inject(LanguageService);
   private readonly router = inject(Router);
@@ -37,7 +38,18 @@ export class SiteHeader {
     this.isMenuOpen.update((isOpen) => !isOpen);
   }
 
+  protected toggleServicesMenu(): void {
+    this.isServicesMenuOpen.update((isOpen) => !isOpen);
+  }
+
   protected closeNavigation(): void {
     this.isMenuOpen.set(false);
+    this.isServicesMenuOpen.set(false);
+  }
+
+  protected selectServicesCategory(category: 'customers' | 'suppliers'): void {
+    this.isServicesMenuOpen.set(false);
+    this.router.navigate(['/services'], { queryParams: { category } });
+    this.closeNavigation();
   }
 }

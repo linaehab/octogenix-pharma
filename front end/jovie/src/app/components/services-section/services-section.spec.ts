@@ -21,11 +21,20 @@ describe('ServicesSection', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should show only the confirmed service categories', () => {
+  it('should show the customer service group by default', () => {
     const content = (fixture.nativeElement as HTMLElement).textContent ?? '';
-    expect(content).toContain('Pharmaceutical Distribution');
-    expect(content).toContain('Pharmaceutical Import & Export');
-    expect(content).toContain('Supplements');
-    expect(content).not.toMatch(/3PL|Scientific Office|New Products Program/i);
+    expect(content).toContain('Contracting and Documentation');
+    expect(content).toContain('Order Reception');
+    expect(content).toContain('Customer Service');
+  });
+
+  it('should allow switching to the supplier service group', () => {
+    (component as any).selectCategory('suppliers');
+    fixture.detectChanges();
+
+    const content = (fixture.nativeElement as HTMLElement).textContent ?? '';
+    expect(content).toContain('Distribution');
+    expect(content).toContain('Regulatory Affairs');
+    expect(content).toContain('Scientific Office');
   });
 });

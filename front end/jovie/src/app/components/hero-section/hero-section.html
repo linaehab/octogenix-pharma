@@ -1,5 +1,14 @@
 <section class="hero" aria-labelledby="hero-title">
-  <div class="hero-image" role="img" [attr.aria-label]="'hero.imageAlt' | translate"></div>
+  <div class="hero-slider" aria-live="polite" aria-atomic="true">
+    @for (slide of slides; track slide; let index = $index) {
+      <div
+        class="hero-slide"
+        [class.is-active]="index === activeIndex()"
+        [style.background-image]="'url(' + slide + ')'"
+        [attr.aria-hidden]="index === activeIndex() ? 'false' : 'true'"
+      ></div>
+    }
+  </div>
   <div class="hero-shade"></div>
   <div class="hero-copy">
     <p class="eyebrow light-eyebrow"><span></span>{{ 'hero.kicker' | translate }}</p>
@@ -21,6 +30,18 @@
     <span>{{ 'hero.noteOne' | translate }}</span>
     <span class="hero-note-line"></span>
     <span>{{ 'hero.noteTwo' | translate }}</span>
+  </div>
+  <div class="hero-dots" role="tablist" aria-label="Hero slides">
+    @for (slide of slides; track slide; let index = $index) {
+      <button
+        type="button"
+        class="hero-dot"
+        [class.is-active]="index === activeIndex()"
+        [attr.aria-label]="'Slide ' + (index + 1)"
+        [attr.aria-selected]="index === activeIndex()"
+        (click)="selectSlide(index)"
+      ></button>
+    }
   </div>
   <a class="scroll-cue" routerLink="/about" [attr.aria-label]="'hero.scroll' | translate">
     <span>{{ 'hero.scroll' | translate }}</span><span aria-hidden="true">↓</span>

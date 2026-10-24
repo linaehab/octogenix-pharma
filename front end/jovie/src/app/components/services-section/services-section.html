@@ -4,16 +4,35 @@
       <p class="eyebrow"><span></span>{{ 'services.kicker' | translate }}</p>
       <h2 id="services-title">{{ 'services.title' | translate }}</h2>
     </div>
-    <p class="section-summary">
-      {{ 'services.summary' | translate }}
-    </p>
+    <div class="service-category-switcher" role="tablist" aria-label="{{ 'services.kicker' | translate }}">
+      <button
+        type="button"
+        class="service-category-button"
+        [class.is-active]="selectedCategory() === 'customers'"
+        role="tab"
+        [attr.aria-selected]="selectedCategory() === 'customers'"
+        (click)="selectCategory('customers')"
+      >
+        {{ 'services.customers' | translate }}
+      </button>
+      <button
+        type="button"
+        class="service-category-button"
+        [class.is-active]="selectedCategory() === 'suppliers'"
+        role="tab"
+        [attr.aria-selected]="selectedCategory() === 'suppliers'"
+        (click)="selectCategory('suppliers')"
+      >
+        {{ 'services.suppliers' | translate }}
+      </button>
+    </div>
   </div>
   <div class="service-list">
-    @for (service of services; track service.number) {
+    @for (service of currentServices(); track service.number) {
       <article class="service-item reveal-step">
-        <div class="service-image">
-          <img class="image-primary" [src]="service.image" [alt]="service.imageAlt | translate" loading="lazy" />
-          <img class="image-hover" [src]="service.hoverImage" alt="" aria-hidden="true" loading="lazy" />
+        <div class="service-image image-swap">
+          <img class="image-swap__primary" [src]="service.image" [alt]="service.imageAlt | translate" loading="lazy" />
+          <img class="image-swap__alternate" [src]="service.hoverImage" alt="" aria-hidden="true" loading="lazy" />
           <span class="service-number">{{ service.number }}</span>
         </div>
         <div class="service-copy">

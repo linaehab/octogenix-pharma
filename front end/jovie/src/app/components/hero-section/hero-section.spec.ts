@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { HeroSection } from './hero-section';
@@ -11,8 +11,7 @@ describe('HeroSection', () => {
     await TestBed.configureTestingModule({
       imports: [HeroSection],
       providers: [provideRouter([])],
-    })
-    .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(HeroSection);
     component = fixture.componentInstance;
@@ -22,4 +21,14 @@ describe('HeroSection', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should move to a selected slide and auto-advance', fakeAsync(() => {
+    (component as any).selectSlide(2);
+    fixture.detectChanges();
+    expect((component as any).activeIndex()).toBe(2);
+
+    tick(5000);
+    fixture.detectChanges();
+    expect((component as any).activeIndex()).toBe(3);
+  }));
 });
