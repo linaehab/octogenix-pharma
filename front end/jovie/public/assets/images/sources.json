@@ -82,5 +82,12 @@
     "photoId": "1492725764893-90b379c2b6e7",
     "source": "https://images.unsplash.com/photo-1492725764893-90b379c2b6e7",
     "license": "https://unsplash.com/license"
+  },
+  {
+    "file": "impact-egypt.jpg",
+    "provider": "Wikimedia Commons",
+    "author": "David Broad",
+    "source": "https://commons.wikimedia.org/wiki/File:Pyramids_of_Giza,_Egypt_-_Cairo_skyline_in_the_background_-_panoramio.jpg",
+    "license": "https://creativecommons.org/licenses/by/3.0"
   }
 ]
