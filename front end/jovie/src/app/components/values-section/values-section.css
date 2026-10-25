@@ -1,10 +1,11 @@
+
 :host {
   display: block;
 }
 
 .guiding {
-  padding-top: 122px;
-  padding-bottom: 126px;
+  padding-top: 78px;
+  padding-bottom: 80px;
   overflow: hidden;
   background: var(--paper);
 }
@@ -14,9 +15,9 @@
 }
 
 .guiding-heading h2 {
-  margin: 22px 0 15px;
+  margin: 16px 0 12px;
   font-family: var(--serif);
-  font-size: clamp(42px, 5.2vw, 68px);
+  font-size: clamp(38px, 5vw, 64px);
   font-weight: 400;
   letter-spacing: -0.055em;
   line-height: 1.08;
@@ -27,14 +28,14 @@
   margin-bottom: 0;
   color: var(--ink-soft);
   font-size: 12px;
-  line-height: 1.9;
+  line-height: 1.85;
 }
 
 .mission-vision {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-  margin-top: 42px;
+  gap: 16px;
+  margin-top: 28px;
 }
 
 .principle-card {
@@ -46,20 +47,19 @@
   transition: transform 240ms ease, box-shadow 240ms ease;
 }
 
-.principle-card:hover,
-.core-value:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 17px 34px rgba(32, 59, 98, 0.14);
+.principle-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px rgba(32, 59, 98, 0.12);
 }
 
 .principle-image {
-  height: 195px;
+  height: 170px;
   background: var(--image-placeholder);
 }
 
 .principle-copy {
-  min-height: 215px;
-  padding: 26px 30px 30px;
+  min-height: 180px;
+  padding: 22px 25px 24px;
 }
 
 .principle-number {
@@ -69,9 +69,9 @@
 }
 
 .principle-card h3 {
-  margin: 20px 0 11px;
+  margin: 14px 0 9px;
   font-family: var(--serif);
-  font-size: 27px;
+  font-size: 25px;
   font-weight: 500;
 }
 
@@ -80,14 +80,14 @@
   margin: 0;
   color: var(--ink-soft);
   font-size: 12px;
-  line-height: 1.85;
+  line-height: 1.8;
 }
 
 /* CORE VALUES */
 
 .core-values,
 .company-values {
-  margin-top: 100px;
+  margin-top: 68px;
 }
 
 .core-values > h3,
@@ -95,7 +95,7 @@
   margin: 0;
   color: var(--ink);
   font-family: var(--serif);
-  font-size: clamp(32px, 4vw, 48px);
+  font-size: clamp(30px, 3.8vw, 44px);
   font-weight: 400;
   letter-spacing: -0.04em;
 }
@@ -106,18 +106,18 @@
 
 .values-intro {
   max-width: 510px;
-  margin: 16px auto 0;
+  margin: 11px auto 0;
   color: var(--ink-soft);
   font-size: 12px;
-  line-height: 1.9;
+  line-height: 1.8;
   text-align: center;
 }
 
 .core-value-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 22px;
-  margin-top: 55px;
+  gap: 16px;
+  margin-top: 34px;
 }
 
 .core-value {
@@ -128,15 +128,15 @@
   justify-content: center;
   aspect-ratio: 1;
   min-width: 0;
-  padding: 22px;
+  padding: 18px;
   text-align: center;
   border: 1px solid rgba(15, 27, 40, 0.15);
   border-radius: 50%;
   background: transparent;
   transition:
-    transform 350ms ease,
-    border-color 350ms ease,
-    background 350ms ease;
+    transform 300ms ease,
+    border-color 300ms ease,
+    background 300ms ease;
 }
 
 .core-value::before {
@@ -145,27 +145,27 @@
   inset: 7px;
   border: 1px solid rgba(15, 27, 40, 0.07);
   border-radius: 50%;
-  transition: inset 350ms ease, border-color 350ms ease;
+  transition: inset 300ms ease, border-color 300ms ease;
   pointer-events: none;
 }
 
 .core-value:hover {
-  transform: translateY(-5px);
+  transform: translateY(-4px);
   border-color: #607D98;
   background: rgba(222, 232, 240, 0.22);
 }
 
 .core-value:hover::before {
-  inset: 11px;
+  inset: 10px;
   border-color: rgba(96, 125, 152, 0.3);
 }
 
 .core-icon {
   display: grid;
-  width: 49px;
-  height: 49px;
+  width: 43px;
+  height: 43px;
   place-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   color: #48647E;
 }
 
@@ -180,38 +180,38 @@
 }
 
 .core-value-index {
-  margin-bottom: 7px;
+  margin-bottom: 5px;
   color: #75889A;
   font-size: 9px;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
 }
 
 .core-value h4 {
   margin: 0;
   color: var(--ink);
   font-family: var(--serif);
-  font-size: clamp(13px, 1.2vw, 16px);
+  font-size: clamp(12px, 1.15vw, 15px);
   font-weight: 500;
-  line-height: 1.5;
+  line-height: 1.45;
 }
 
 .core-value p {
   max-width: 150px;
-  margin: 8px 0 0;
+  margin: 6px 0 0;
   color: var(--ink-soft);
   font-size: 10px;
-  line-height: 1.65;
+  line-height: 1.6;
 }
 
-/* COMPANY VALUES — Editorial Layout */
+/* COMPANY VALUES */
 
 .company-values {
-  padding-top: 45px;
+  padding-top: 28px;
   border-top: 1px solid rgba(15, 27, 40, 0.12);
 }
 
 .company-values > h3 {
-  margin-bottom: 34px;
+  margin-bottom: 22px;
 }
 
 .company-value-list {
@@ -225,10 +225,10 @@
 
 .company-value-list article {
   display: grid;
-  grid-template-columns: 42px minmax(190px, 0.85fr) minmax(0, 1.5fr);
+  grid-template-columns: 36px minmax(180px, 0.85fr) minmax(0, 1.5fr);
   align-items: center;
-  gap: 25px;
-  padding: 27px 10px;
+  gap: 20px;
+  padding: 19px 8px;
   border: 0;
   border-bottom: 1px solid rgba(15, 27, 40, 0.12);
   background: transparent;
@@ -240,13 +240,13 @@
   content: "0" counter(company-value);
   color: #71869A;
   font-family: var(--serif);
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 400;
 }
 
 .company-value-list article:hover {
-  padding-right: 18px;
-  padding-left: 18px;
+  padding-right: 14px;
+  padding-left: 14px;
   background: rgba(222, 232, 240, 0.2);
 }
 
@@ -254,9 +254,9 @@
   margin: 0;
   color: var(--ink);
   font-family: var(--serif);
-  font-size: clamp(19px, 2vw, 24px);
+  font-size: clamp(18px, 1.9vw, 22px);
   font-weight: 400;
-  line-height: 1.45;
+  line-height: 1.4;
 }
 
 .company-value-list p {
@@ -264,87 +264,158 @@
   margin: 0;
   color: var(--ink-soft);
   font-size: 12px;
-  line-height: 1.9;
+  line-height: 1.8;
 }
 
-/* RESPONSIVE */
+/* TABLET */
 
 @media (max-width: 1000px) {
+  .guiding {
+    padding-top: 65px;
+    padding-bottom: 68px;
+  }
+
   .core-value-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 28px 20px;
+    gap: 22px 16px;
+    margin-top: 30px;
   }
 
   .core-value {
-    width: min(100%, 210px);
+    width: min(100%, 200px);
     justify-self: center;
   }
 }
 
+/* MOBILE */
+
 @media (max-width: 650px) {
+  .guiding {
+    padding-top: 48px;
+    padding-bottom: 52px;
+  }
+
+  .guiding-heading h2 {
+    margin-top: 12px;
+    font-size: clamp(35px, 9vw, 48px);
+  }
+
+  .guiding-heading > p:last-child {
+    font-size: 11px;
+  }
+
+  .mission-vision {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 22px;
+  }
+
+  .principle-card {
+    min-height: 0;
+  }
+
+  .principle-image {
+    height: 140px;
+  }
+
+  .principle-copy {
+    min-height: 0;
+    padding: 18px 20px 21px;
+  }
+
+  .principle-card h3 {
+    margin: 12px 0 8px;
+    font-size: 23px;
+  }
+
   .core-values,
   .company-values {
-    margin-top: 65px;
+    margin-top: 48px;
+  }
+
+  .core-values > h3,
+  .company-values > h3 {
+    font-size: 32px;
+  }
+
+  .values-intro {
+    margin-top: 9px;
+    font-size: 11px;
   }
 
   .core-value-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px 10px;
-    margin-top: 35px;
+    gap: 16px 10px;
+    margin-top: 26px;
   }
 
   .core-value {
     width: 100%;
-    padding: 15px;
+    max-width: 175px;
+    padding: 13px;
   }
 
   .core-icon {
-    width: 38px;
-    height: 38px;
-    margin-bottom: 10px;
+    width: 35px;
+    height: 35px;
+    margin-bottom: 7px;
+  }
+
+  .core-value-index {
+    margin-bottom: 4px;
+    font-size: 8px;
   }
 
   .core-value h4 {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .core-value p {
+    margin-top: 5px;
     font-size: 9px;
   }
 
   .company-values {
-    padding-top: 30px;
+    padding-top: 22px;
+  }
+
+  .company-values > h3 {
+    margin-bottom: 18px;
   }
 
   .company-value-list article {
-    grid-template-columns: 30px minmax(0, 1fr);
-    gap: 8px 12px;
-    padding: 22px 2px;
+    grid-template-columns: 27px minmax(0, 1fr);
+    gap: 7px 10px;
+    padding: 17px 2px;
   }
 
   .company-value-list article::before {
     grid-row: 1 / 3;
     align-self: start;
-    padding-top: 3px;
-    font-size: 15px;
+    padding-top: 2px;
+    font-size: 14px;
   }
 
   .company-value-list h4 {
-    font-size: 19px;
+    font-size: 18px;
   }
 
   .company-value-list p {
     grid-column: 2;
     font-size: 11px;
+    line-height: 1.75;
   }
 
   .company-value-list article:hover {
-    padding-right: 8px;
-    padding-left: 8px;
+    padding-right: 7px;
+    padding-left: 7px;
   }
 }
 
+/* ACCESSIBILITY */
+
 @media (prefers-reduced-motion: reduce) {
+  .principle-card,
   .core-value,
   .core-value::before,
   .company-value-list article {

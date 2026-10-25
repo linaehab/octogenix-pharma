@@ -1,10 +1,11 @@
+
 :host {
   display: block;
 }
 
 .leadership {
-  padding-top: 35px;
-  padding-bottom: 115px;
+  padding-top: 24px;
+  padding-bottom: 65px;
 }
 
 .leadership-heading {
@@ -12,14 +13,16 @@
 }
 
 .leadership-heading h2 {
-  margin: 20px 0 12px;
+  margin: 14px 0 9px;
   font-family: var(--serif);
-  font-size: clamp(40px, 5vw, 64px);
+  font-size: clamp(38px, 4.8vw, 60px);
   font-weight: 400;
   letter-spacing: -0.05em;
+  line-height: 1.1;
 }
 
 .leadership-heading > p:last-child {
+  margin-bottom: 0;
   color: var(--ink-soft);
   font-size: 12px;
   line-height: 1.8;
@@ -28,57 +31,61 @@
 .leader-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  margin-top: 19px;
+  gap: 14px;
+  margin-top: 15px;
 }
 
 .leadership-list {
   display: grid;
-  gap: 20px;
-  margin-top: 24px;
+  gap: 0;
+  margin-top: 18px;
 }
 
 .leader-entry {
   display: flex;
-  gap: 18px;
-  padding: 24px 0;
+  gap: 14px;
+  padding: 17px 0;
   border-bottom: 1px solid rgba(34, 53, 84, 0.14);
 }
 
 .leader-arrow {
   display: inline-flex;
   align-items: center;
+  flex-shrink: 0;
   color: var(--berry);
-  font-size: clamp(18px, 1.8vw, 24px);
+  font-size: clamp(17px, 1.7vw, 22px);
   line-height: 1;
 }
 
 .leader-body {
   display: flex;
-  gap: 18px;
+  gap: 15px;
   align-items: center;
   width: 100%;
+  min-width: 0;
 }
 
 .leader-avatar {
   display: grid;
-  width: 68px;
-  height: 68px;
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
   place-items: center;
   border: 1px solid rgba(38, 59, 105, 0.16);
   border-radius: 50%;
   color: var(--berry);
   background: var(--ticker-bg);
   font-family: var(--serif);
-  font-size: 18px;
+  font-size: 17px;
 }
 
 .leader-entry h3 {
-  margin: 0 0 7px;
+  margin: 0 0 5px;
   font-family: var(--serif);
-  font-size: clamp(24px, 2vw, 30px);
+  font-size: clamp(22px, 1.9vw, 28px);
   font-weight: 500;
   letter-spacing: -0.02em;
+  line-height: 1.3;
 }
 
 .leader-entry p,
@@ -90,9 +97,11 @@
 }
 
 .portrait-note {
-  margin-top: 16px;
+  margin-top: 10px;
   font-size: 10px;
 }
+
+/* Arabic / RTL */
 
 [dir='rtl'] .leader-entry,
 :host-context([dir='rtl']) .leader-entry {
@@ -109,33 +118,82 @@
   transform: scaleX(-1);
 }
 
-@media (max-width: 760px) {
+/* Tablet */
+
+@media (max-width: 1000px) {
   .leadership {
-    padding-top: 12px;
-    padding-bottom: 82px;
-  }
-
-  .leader-entry {
-    gap: 12px;
-    padding: 18px 0;
-  }
-
-  .leader-body {
-    gap: 14px;
-    align-items: flex-start;
+    padding-bottom: 55px;
   }
 
   .leader-avatar {
-    width: 52px;
-    height: 52px;
-    font-size: 13px;
+    width: 54px;
+    height: 54px;
+    font-size: 15px;
+  }
+
+  .leader-body {
+    gap: 12px;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 760px) {
+  .leadership {
+    padding-top: 10px;
+    padding-bottom: 42px;
+  }
+
+  .leadership-heading h2 {
+    margin-top: 10px;
+    font-size: clamp(35px, 8.5vw, 46px);
+  }
+
+  .leadership-heading > p:last-child {
+    font-size: 11px;
+  }
+
+  .leader-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .leadership-list {
+    margin-top: 14px;
+  }
+
+  .leader-entry {
+    gap: 10px;
+    padding: 14px 0;
+  }
+
+  .leader-body {
+    gap: 12px;
+    align-items: center;
+  }
+
+  .leader-avatar {
+    width: 46px;
+    height: 46px;
+    font-size: 12px;
   }
 
   .leader-entry h3 {
     margin-bottom: 4px;
-    font-size: 22px;
+    font-size: 20px;
+  }
+
+  .leader-entry p {
+    font-size: 11px;
+  }
+
+  .portrait-note {
+    margin-top: 8px;
   }
 }
+
+/* Accessibility */
 
 @media (prefers-reduced-motion: reduce) {
   .leader-entry {

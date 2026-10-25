@@ -6,6 +6,7 @@ import { HeroSection } from '../../components/hero-section/hero-section';
 import { ServicesSection } from '../../components/services-section/services-section';
 import { ValuesSection } from '../../components/values-section/values-section';
 import { QualitySection } from '../../components/quality-section/quality-section';
+import { CompanyImpact } from '../../components/company-impact/company-impact';
 
 @Component({
   selector: 'app-home-page',
@@ -17,7 +18,8 @@ import { QualitySection } from '../../components/quality-section/quality-section
     QualitySection,
     BrandsSection,
     ContactSection,
-  ],
+    CompanyImpact
+],
   templateUrl: './home-page.html',
   styleUrl: './home-page.css',
 })

@@ -1,0 +1,208 @@
+
+<section class="company-impact">
+
+  <div class="impact-top">
+
+    <!-- Company introduction -->
+    <div class="purpose">
+      <span class="eyebrow">
+        {{ 'companyImpact.purpose' | translate }}
+      </span>
+
+      <h2>
+        {{ 'companyImpact.headlineLine1' | translate }}<br />
+        {{ 'companyImpact.headlineLine2' | translate }}
+      </h2>
+
+      <p>
+        {{ 'companyImpact.description' | translate }}
+      </p>
+
+      <a class="about-link" [routerLink]="routes.about">
+        {{ 'companyImpact.aboutCta' | translate }}
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+
+    <!-- Navigation image cards -->
+    <div class="feature-cards">
+
+      <a
+        class="feature-card"
+        [routerLink]="routes.services"
+        [attr.aria-label]="'companyImpact.services' | translate"
+      >
+        <img
+          src="assets/images/pharmacists-analyzing-tablet-pharmacy.jpg"
+          [alt]="'companyImpact.servicesAlt' | translate"
+          loading="lazy"
+        />
+        <span class="card-overlay"></span>
+
+        <span class="card-caption">
+          {{ 'companyImpact.services' | translate }}
+          <span class="circle-arrow" aria-hidden="true">↗</span>
+        </span>
+      </a>
+
+      <a
+        class="feature-card"
+        [routerLink]="routes.brands"
+        [attr.aria-label]="'companyImpact.brands' | translate"
+      >
+        <img
+          src="assets/images/proddd.jpg"
+          [alt]="'companyImpact.brandsAlt' | translate"
+          loading="lazy"
+        />
+        <span class="card-overlay"></span>
+
+        <span class="card-caption">
+          {{ 'companyImpact.brands' | translate }}
+          <span class="circle-arrow" aria-hidden="true">↗</span>
+        </span>
+      </a>
+
+      <a
+        class="feature-card"
+        [routerLink]="routes.contact"
+        [attr.aria-label]="'companyImpact.aboutUs' | translate"
+      >
+        <img
+          src="assets/images/medium-shot-smiley-scientist.jpg"
+          [alt]="'companyImpact.aboutUsAlt' | translate"
+          loading="lazy"
+        />
+        <span class="card-overlay"></span>
+
+        <span class="card-caption">
+          {{ 'companyImpact.aboutUs' | translate }}
+          <span class="circle-arrow" aria-hidden="true">↗</span>
+        </span>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- Company impact -->
+  <div class="impact-bottom">
+
+    <div class="impact-heading">
+      <span class="eyebrow">
+        {{ 'companyImpact.impact' | translate }}
+      </span>
+
+      <h2>
+        {{ 'companyImpact.impactLine1' | translate }}<br />
+        {{ 'companyImpact.impactLine2' | translate }}
+      </h2>
+    </div>
+
+    <div class="impact-stats">
+
+      <!-- Worldwide partners -->
+      <a
+        class="impact-item"
+        [routerLink]="routes.contact"
+        [attr.aria-label]="
+          ('companyImpact.partnersLine1' | translate) + ' ' +
+          ('companyImpact.partnersLine2' | translate) + ' ' +
+          ('companyImpact.partnersLine3' | translate)
+        "
+      >
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <g>
+            <circle cx="24" cy="12" r="6" />
+            <circle cx="9" cy="19" r="4.5" />
+            <circle cx="39" cy="19" r="4.5" />
+            <path d="M12 40v-5a12 12 0 0 1 24 0v5z" />
+            <path d="M2 39v-4a7 7 0 0 1 9-6.7" />
+            <path d="M46 39v-4a7 7 0 0 0-9-6.7" />
+          </g>
+        </svg>
+
+        <span>
+          {{ 'companyImpact.partnersLine1' | translate }}<br />
+          {{ 'companyImpact.partnersLine2' | translate }}<br />
+          {{ 'companyImpact.partnersLine3' | translate }}
+        </span>
+      </a>
+
+      <!-- Pharmaceutical products -->
+      <a
+        class="impact-item"
+        [routerLink]="routes.brands"
+        [attr.aria-label]="
+          ('companyImpact.productsLine1' | translate) + ' ' +
+          ('companyImpact.productsLine2' | translate) + ' ' +
+          ('companyImpact.productsLine3' | translate)
+        "
+      >
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <g transform="rotate(-42 24 24)">
+            <rect x="7" y="15" width="34" height="18" rx="9" />
+            <path d="M24 15v18" />
+          </g>
+        </svg>
+
+        <span>
+          {{ 'companyImpact.productsLine1' | translate }}<br />
+          {{ 'companyImpact.productsLine2' | translate }}<br />
+          {{ 'companyImpact.productsLine3' | translate }}
+        </span>
+      </a>
+
+      <!-- Egypt distribution -->
+      <a
+        class="impact-item"
+        [routerLink]="routes.distribution"
+        [attr.aria-label]="
+          ('companyImpact.distributionLine1' | translate) + ' ' +
+          ('companyImpact.distributionLine2' | translate) + ' ' +
+          ('companyImpact.distributionLine3' | translate)
+        "
+      >
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M10 5l10 2 5-3 7 4 7-1-2 9 3 8-5 6 1 8-10-2-7 4-4-7-7-3 3-8-3-8z" />
+          <path d="M20 7l1 9 7 3-3 8 5 11" />
+        </svg>
+
+        <span>
+          {{ 'companyImpact.distributionLine1' | translate }}<br />
+          {{ 'companyImpact.distributionLine2' | translate }}<br />
+          {{ 'companyImpact.distributionLine3' | translate }}
+        </span>
+      </a>
+
+      <!-- Healthcare professionals -->
+      <a
+        class="impact-item"
+        [routerLink]="routes.healthcare"
+        [attr.aria-label]="
+          ('companyImpact.healthcareLine1' | translate) + ' ' +
+          ('companyImpact.healthcareLine2' | translate) + ' ' +
+          ('companyImpact.healthcareLine3' | translate)
+        "
+      >
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <g>
+            <circle cx="24" cy="11" r="5" />
+            <circle cx="9" cy="16" r="4" />
+            <circle cx="39" cy="16" r="4" />
+            <path d="M15 40v-5a9 9 0 0 1 18 0v5z" />
+            <path d="M1 39v-5a8 8 0 0 1 9-8" />
+            <path d="M47 39v-5a8 8 0 0 0-9-8" />
+          </g>
+        </svg>
+
+        <span>
+          {{ 'companyImpact.healthcareLine1' | translate }}<br />
+          {{ 'companyImpact.healthcareLine2' | translate }}<br />
+          {{ 'companyImpact.healthcareLine3' | translate }}
+        </span>
+      </a>
+
+    </div>
+  </div>
+
+</section>
