@@ -81,7 +81,7 @@
   height: 245px;
   overflow: hidden;
   border-radius: var(--card-radius);
-  background: #dce7ed url("/assets/images/about-baby.jpg") center / cover;
+  background: #dce7ed url("/assets/images/portrait-female-pharmacist-working-drugstore.jpg") center / cover;
   box-shadow: 0 14px 32px rgba(31, 47, 82, 0.16);
   transition: transform 350ms ease, box-shadow 350ms ease;
 }

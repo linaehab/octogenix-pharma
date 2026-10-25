@@ -11,9 +11,9 @@ import { HomeBanner } from '../home-banner/home-banner';
 })
 export class HeroSection implements OnDestroy {
   protected readonly slides = [
-    'https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=1800&q=80',
-    'https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=1800&q=80',
-    'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1800&q=80',
+    '/assets/images/factory-worker-packaging-boxes.jpg',
+    '/assets/images/interior-large-distribution-warehouse-with-shelves-stacked-with-palettes-goods-ready-market.jpg',
+    '/assets/images/medium-shot-delivery-man-with-mask.jpg',
   ];
 
   readonly activeIndex = signal(0);
