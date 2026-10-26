@@ -142,7 +142,9 @@ Seeded keys (values are **placeholders** until the client confirms them):
 | image_ar_path | VARCHAR(255) | yes | NULL | optional RTL variant |
 | updated_by_admin_id | BIGINT UNSIGNED | yes | NULL | → admin_users SN |
 
-Index `(site, group)`. Required flags, max lengths and image limits come from the registry. Static UI labels stay in Angular only.
+Index `(site, group)`. Required flags, max lengths and image limits come from the registry (`backend/resources/content/{site}.php`). Static UI labels stay in Angular only.
+
+**Image path convention (all `*_path` image columns):** `/assets/images/<file>` = an image bundled with the Angular app (returned to Angular unchanged); `uploads/images/<yyyy>/<mm>/<uuid>.<ext>` = an admin upload on the public disk (returned as a full URL). Anything else is rejected. Seeded content uses the bundled paths of the current site, so no image changes until an admin uploads a replacement.
 
 #### `content_items` · ts
 | Column | Type | NULL | Default | Rules |
@@ -175,6 +177,7 @@ Index `(site, list_key, is_active, sort_order)`. Lists, their fields and min/max
 | description_en/ar | TEXT | yes | NULL | |
 | logo_path | VARCHAR(255) | yes | NULL | |
 | image_path | VARCHAR(255) | yes | NULL | |
+| hover_image_path | VARCHAR(255) | yes | NULL | added in phase 3: the brands card swaps images on hover, like services |
 | image_alt_en/ar | VARCHAR(255) | yes | NULL | |
 | cta_label_en/ar | VARCHAR(80) | yes | NULL | |
 | link_type | VARCHAR(20) | no | `'none'` | `none`, `internal`, `external` |

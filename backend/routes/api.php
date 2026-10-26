@@ -2,11 +2,18 @@
 
 use App\Http\Controllers\Api\V1\Admin\AdminUserController;
 use App\Http\Controllers\Api\V1\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\Api\V1\Admin\BrandController as AdminBrandController;
 use App\Http\Controllers\Api\V1\Admin\ContactMessageController as AdminContactMessageController;
+use App\Http\Controllers\Api\V1\Admin\ContentController as AdminContentController;
+use App\Http\Controllers\Api\V1\Admin\ImageUploadController as AdminImageUploadController;
 use App\Http\Controllers\Api\V1\Admin\PasswordResetController as AdminPasswordResetController;
+use App\Http\Controllers\Api\V1\Admin\ServiceController as AdminServiceController;
 use App\Http\Controllers\Api\V1\Admin\SettingsController as AdminSettingsController;
+use App\Http\Controllers\Api\V1\BrandController;
 use App\Http\Controllers\Api\V1\ContactMessageController;
+use App\Http\Controllers\Api\V1\ContentController;
 use App\Http\Controllers\Api\V1\HealthController;
+use App\Http\Controllers\Api\V1\ServiceController;
 use App\Http\Controllers\Api\V1\SettingsController;
 use App\Http\Middleware\EnsureAdminIsActive;
 use Illuminate\Support\Facades\Route;
@@ -16,6 +23,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
     // Public website API (corporate site and Jovie store).
     Route::get('/settings', SettingsController::class)->name('settings');
+    Route::get('/sites/{site}/content', [ContentController::class, 'show'])->name('sites.content');
+    Route::get('/brands', [BrandController::class, 'index'])->name('brands.index');
+    Route::get('/brands/{slug}', [BrandController::class, 'show'])->name('brands.show');
+    Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
     Route::post('/contact-messages', [ContactMessageController::class, 'store'])
         ->middleware('throttle:contact-messages')->name('contact-messages.store');
 
@@ -43,6 +54,26 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
                 Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings.index');
                 Route::patch('/settings', [AdminSettingsController::class, 'update'])->name('settings.update');
             });
+
+            Route::middleware('can:content.manage')->group(function () {
+                Route::get('/content/{site}', [AdminContentController::class, 'show'])->name('content.show');
+                Route::patch('/content/{site}/entries', [AdminContentController::class, 'updateEntries'])
+                    ->name('content.entries.update');
+                Route::post('/content/{site}/lists/{listKey}/items', [AdminContentController::class, 'storeItem'])
+                    ->name('content.items.store');
+                Route::put('/content/{site}/lists/{listKey}/order', [AdminContentController::class, 'reorder'])
+                    ->name('content.items.reorder');
+                Route::patch('/content-items/{contentItem}', [AdminContentController::class, 'updateItem'])
+                    ->name('content.items.update');
+                Route::delete('/content-items/{contentItem}', [AdminContentController::class, 'destroyItem'])
+                    ->name('content.items.destroy');
+
+                Route::apiResource('brands', AdminBrandController::class);
+                Route::apiResource('services', AdminServiceController::class);
+            });
+
+            Route::post('/uploads/images', [AdminImageUploadController::class, 'store'])
+                ->middleware(['can:upload-images', 'throttle:60,1'])->name('uploads.images');
 
             Route::middleware('can:messages.view')->group(function () {
                 Route::get('/contact-messages', [AdminContactMessageController::class, 'index'])

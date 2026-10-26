@@ -23,6 +23,10 @@ class MigrationRollbackTest extends TestCase
         'admin_password_reset_tokens',
         'settings',
         'contact_messages',
+        'content_entries',
+        'content_items',
+        'brands',
+        'services',
     ];
 
     /** Tables that must never be created (design v0.3 §4.3). */
