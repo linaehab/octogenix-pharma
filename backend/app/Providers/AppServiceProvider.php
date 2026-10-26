@@ -68,6 +68,17 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('admin-password-link', fn (Request $request) => Limit::perMinute(3)
             ->by($request->ip()));
 
+        RateLimiter::for('customer-login', fn (Request $request) => Limit::perMinute(5)
+            ->by(Str::lower((string) $request->input('email')).'|'.$request->ip()));
+
+        RateLimiter::for('customer-register', fn (Request $request) => [
+            Limit::perMinute(3)->by('minute|'.$request->ip()),
+            Limit::perHour(10)->by('hour|'.$request->ip()),
+        ]);
+
+        RateLimiter::for('customer-password-link', fn (Request $request) => Limit::perMinute(3)
+            ->by($request->ip()));
+
         RateLimiter::for('contact-messages', fn (Request $request) => [
             Limit::perMinute(3)->by('minute|'.$request->ip()),
             Limit::perDay(20)->by('day|'.$request->ip()),

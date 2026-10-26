@@ -23,7 +23,7 @@ enum AdminRole: string
             self::ContentEditor => [P::ManageContent, P::ViewMessages],
             self::StoreManager => [
                 P::ManageCatalog, P::ManageInventory, P::ViewOrders, P::ManageOrders,
-                P::ManagePayments, P::ViewCustomers,
+                P::ManagePayments, P::ViewCustomers, P::ManageShipping,
             ],
             self::Support => [P::ViewMessages, P::ManageMessages, P::ViewOrders, P::ViewCustomers],
         };

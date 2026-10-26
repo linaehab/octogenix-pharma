@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\AdminUser;
+use App\Models\Customer;
 
 return [
 
@@ -26,7 +27,6 @@ return [
     |
     | Session (cookie) guards used through Sanctum's stateful SPA middleware.
     | Admins and customers are separate tables and separate guards (design v0.3 §7.6).
-    | The customer guard is added with the customers table (phase 5).
     |
     */
 
@@ -34,6 +34,10 @@ return [
         'admin' => [
             'driver' => 'session',
             'provider' => 'admin_users',
+        ],
+        'customer' => [
+            'driver' => 'session',
+            'provider' => 'customers',
         ],
     ],
 
@@ -47,6 +51,10 @@ return [
         'admin_users' => [
             'driver' => 'eloquent',
             'model' => AdminUser::class,
+        ],
+        'customers' => [
+            'driver' => 'eloquent',
+            'model' => Customer::class,
         ],
     ],
 
@@ -64,6 +72,12 @@ return [
         'admin_users' => [
             'provider' => 'admin_users',
             'table' => 'admin_password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'customers' => [
+            'provider' => 'customers',
+            'table' => 'customer_password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
         ],

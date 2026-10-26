@@ -18,7 +18,7 @@ class AdminRoleTest extends TestCase
     {
         $this->assertSame([P::ManageContent, P::ViewMessages], AdminRole::ContentEditor->permissions());
         $this->assertSame(
-            [P::ManageCatalog, P::ManageInventory, P::ViewOrders, P::ManageOrders, P::ManagePayments, P::ViewCustomers],
+            [P::ManageCatalog, P::ManageInventory, P::ViewOrders, P::ManageOrders, P::ManagePayments, P::ViewCustomers, P::ManageShipping],
             AdminRole::StoreManager->permissions()
         );
         $this->assertSame(

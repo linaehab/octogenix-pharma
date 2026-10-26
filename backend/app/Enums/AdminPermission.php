@@ -19,4 +19,5 @@ enum AdminPermission: string
     case ManageOrders = 'orders.manage';
     case ManagePayments = 'payments.manage';
     case ViewCustomers = 'customers.view';
+    case ManageShipping = 'shipping.manage';
 }

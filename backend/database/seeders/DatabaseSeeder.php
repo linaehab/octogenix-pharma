@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             SettingsSeeder::class,
             ContentSeeder::class,
             JovieCatalogSeeder::class,
+            GovernorateSeeder::class,
         ]);
     }
 }

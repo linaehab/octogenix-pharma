@@ -86,7 +86,7 @@ Supersedes v0.2. Target: **MySQL 8.0.16 or newer** (CHECK constraints are only e
 | name | VARCHAR(120) | no | | |
 | email | VARCHAR(255) | no | | UNIQUE, lowercase |
 | password | VARCHAR(255) | no | | hash |
-| role | VARCHAR(30) | no | | `super_admin`, `content_editor`, `store_manager`, `support` (role set pending D-09) |
+| role | VARCHAR(30) | no | | `super_admin`, `content_editor`, `store_manager`, `support` (role set pending D-09). Permissions are defined in code (`App\Enums\AdminRole`); phase 5 added `shipping.manage` (super admin, store manager) |
 | is_active | TINYINT(1) | no | 1 | |
 | locale | CHAR(2) | no | `'en'` | `en`/`ar` |
 | last_login_at | DATETIME | yes | NULL | |
@@ -329,7 +329,7 @@ Seeded with the 27 governorates (names and ISO codes only).
 | id | BIGINT UNSIGNED | no | AI | PK |
 | first_name / last_name | VARCHAR(80) | no | | |
 | email | VARCHAR(255) | no | | UNIQUE; login identifier |
-| phone | VARCHAR(20) | no | | Egyptian mobile; not unique |
+| phone | VARCHAR(20) | **yes** | NULL | Egyptian mobile, required at registration; nullable in the database so account deletion can erase it (phase 5); not unique |
 | password | VARCHAR(255) | no | | hash |
 | email_verified_at | DATETIME | yes | NULL | |
 | locale | CHAR(2) | no | `'en'` | |
