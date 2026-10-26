@@ -37,7 +37,9 @@ return [
     |
     */
 
-    'guard' => ['web'],
+    // Unused: routes authenticate with an explicit guard (auth:admin / auth:customer),
+    // never auth:sanctum, and API tokens are not issued (design v0.3 §7.6).
+    'guard' => [],
 
     /*
     |--------------------------------------------------------------------------

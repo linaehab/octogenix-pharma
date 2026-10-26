@@ -54,6 +54,9 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    // Base URL of the Angular app, used for links in emails (e.g. /admin/reset-password).
+    'frontend_url' => env('FRONTEND_APP_URL', 'http://localhost:4200'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

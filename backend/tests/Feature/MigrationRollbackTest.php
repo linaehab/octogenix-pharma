@@ -19,6 +19,8 @@ class MigrationRollbackTest extends TestCase
         'jobs',
         'job_batches',
         'failed_jobs',
+        'admin_users',
+        'admin_password_reset_tokens',
     ];
 
     /** Tables that must never be created (design v0.3 §4.3). */
