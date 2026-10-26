@@ -6,13 +6,18 @@ use App\Http\Controllers\Api\V1\Admin\BrandController as AdminBrandController;
 use App\Http\Controllers\Api\V1\Admin\ContactMessageController as AdminContactMessageController;
 use App\Http\Controllers\Api\V1\Admin\ContentController as AdminContentController;
 use App\Http\Controllers\Api\V1\Admin\ImageUploadController as AdminImageUploadController;
+use App\Http\Controllers\Api\V1\Admin\InventoryController as AdminInventoryController;
 use App\Http\Controllers\Api\V1\Admin\PasswordResetController as AdminPasswordResetController;
+use App\Http\Controllers\Api\V1\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Api\V1\Admin\ProductImageController as AdminProductImageController;
+use App\Http\Controllers\Api\V1\Admin\ProductVariantController as AdminProductVariantController;
 use App\Http\Controllers\Api\V1\Admin\ServiceController as AdminServiceController;
 use App\Http\Controllers\Api\V1\Admin\SettingsController as AdminSettingsController;
 use App\Http\Controllers\Api\V1\BrandController;
 use App\Http\Controllers\Api\V1\ContactMessageController;
 use App\Http\Controllers\Api\V1\ContentController;
 use App\Http\Controllers\Api\V1\HealthController;
+use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\ServiceController;
 use App\Http\Controllers\Api\V1\SettingsController;
 use App\Http\Middleware\EnsureAdminIsActive;
@@ -27,6 +32,8 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::get('/brands', [BrandController::class, 'index'])->name('brands.index');
     Route::get('/brands/{slug}', [BrandController::class, 'show'])->name('brands.show');
     Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
+    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
     Route::post('/contact-messages', [ContactMessageController::class, 'store'])
         ->middleware('throttle:contact-messages')->name('contact-messages.store');
 
@@ -70,6 +77,33 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
                 Route::apiResource('brands', AdminBrandController::class);
                 Route::apiResource('services', AdminServiceController::class);
+            });
+
+            Route::middleware('can:catalog.manage')->group(function () {
+                Route::apiResource('products', AdminProductController::class);
+                Route::post('/products/{product}/variants', [AdminProductVariantController::class, 'store'])
+                    ->name('products.variants.store');
+                Route::patch('/product-variants/{variant}', [AdminProductVariantController::class, 'update'])
+                    ->name('product-variants.update');
+                Route::delete('/product-variants/{variant}', [AdminProductVariantController::class, 'destroy'])
+                    ->name('product-variants.destroy');
+                Route::post('/products/{product}/images', [AdminProductImageController::class, 'store'])
+                    ->name('products.images.store');
+                Route::put('/products/{product}/images/order', [AdminProductImageController::class, 'reorder'])
+                    ->name('products.images.reorder');
+                Route::patch('/product-images/{image}', [AdminProductImageController::class, 'update'])
+                    ->name('product-images.update');
+                Route::delete('/product-images/{image}', [AdminProductImageController::class, 'destroy'])
+                    ->name('product-images.destroy');
+            });
+
+            Route::middleware('can:inventory.manage')->group(function () {
+                Route::post('/product-variants/{variant}/stock-adjustments', [AdminInventoryController::class, 'adjust'])
+                    ->name('product-variants.stock-adjustments.store');
+                Route::get('/product-variants/{variant}/stock-movements', [AdminInventoryController::class, 'movements'])
+                    ->name('product-variants.stock-movements.index');
+                Route::get('/inventory/low-stock', [AdminInventoryController::class, 'lowStock'])
+                    ->name('inventory.low-stock');
             });
 
             Route::post('/uploads/images', [AdminImageUploadController::class, 'store'])

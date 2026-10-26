@@ -27,6 +27,10 @@ class MigrationRollbackTest extends TestCase
         'content_items',
         'brands',
         'services',
+        'products',
+        'product_variants',
+        'product_images',
+        'inventory_movements',
     ];
 
     /** Tables that must never be created (design v0.3 §4.3). */
