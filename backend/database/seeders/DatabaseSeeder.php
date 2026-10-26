@@ -10,12 +10,14 @@ class DatabaseSeeder extends Seeder
     use WithoutModelEvents;
 
     /**
-     * Seed the application's database.
+     * Seed the application's database. Every seeder here must be safe to run repeatedly.
      *
-     * Seeders for admins, settings, content, governorates and catalog data are added per phase.
+     * Admin accounts are not seeded; create the first one with `php artisan admin:create-super-admin`.
      */
     public function run(): void
     {
-        //
+        $this->call([
+            SettingsSeeder::class,
+        ]);
     }
 }

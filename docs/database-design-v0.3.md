@@ -210,8 +210,8 @@ Index `(category, is_active, sort_order)`.
 | last_name | VARCHAR(80) | yes | NULL | |
 | email | VARCHAR(255) | no | | |
 | phone | VARCHAR(20) | yes | NULL | E.164; international allowed |
-| subject | VARCHAR(30) | yes | NULL | `general`, `partnership`, `distribution`, `import_export`, `other` |
-| message | TEXT | no | | 10–5000 chars |
+| subject | VARCHAR(30) | yes | NULL | `general`, `partnership`, `distribution`, `import-export`, `other` (exact values of the Angular form's `<select>`) |
+| message | TEXT | no | | 2–5000 chars (the Angular form only requires a value) |
 | locale | CHAR(2) | no | | |
 | status | VARCHAR(20) | no | `'new'` | `new`, `read`, `in_progress`, `resolved`, `spam`, `archived` |
 | assigned_admin_id | BIGINT UNSIGNED | yes | NULL | → admin_users SN |
