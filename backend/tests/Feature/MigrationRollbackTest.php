@@ -36,6 +36,10 @@ class MigrationRollbackTest extends TestCase
         'customer_password_reset_tokens',
         'customer_addresses',
         'cart_items',
+        'orders',
+        'order_items',
+        'order_status_histories',
+        'payments',
     ];
 
     /** Tables that must never be created (design v0.3 §4.3). */

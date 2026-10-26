@@ -628,7 +628,7 @@ Save first (201) → queued email after commit → status recorded; failures nev
 | 19 | `create_order_items_table` | orders, products, product_variants | 6 |
 | 20 | `create_order_status_histories_table` | orders, admin_users | 6 |
 | 21 | `add_order_foreign_key_to_inventory_movements_table` | orders | 6 |
-| 22 | `create_payments_table` | orders, admin_users | 7 |
+| 22 | `create_payments_table` | orders, admin_users | 6 (moved from 7: COD orders need a payment row when placed) |
 | 23 | `create_payment_webhook_events_table` | payments | 7 |
 
 Rollback: Laravel reverses migrations (LIFO), so dependents are always dropped first. #21 `down()` drops only the FK. `add_*` migrations drop FK then column. `create_*` use `dropIfExists`. CHECK constraints are added with `ALTER TABLE … ADD CONSTRAINT` in the same migration as their table and disappear with it. **Production is never rolled back; fixes are forward migrations.** Every phase's test suite runs `migrate:fresh` and a full `migrate:rollback` on MySQL.

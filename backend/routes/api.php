@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\Admin\CustomerController as AdminCustomerControl
 use App\Http\Controllers\Api\V1\Admin\GovernorateController as AdminGovernorateController;
 use App\Http\Controllers\Api\V1\Admin\ImageUploadController as AdminImageUploadController;
 use App\Http\Controllers\Api\V1\Admin\InventoryController as AdminInventoryController;
+use App\Http\Controllers\Api\V1\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\V1\Admin\PasswordResetController as AdminPasswordResetController;
 use App\Http\Controllers\Api\V1\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Api\V1\Admin\ProductImageController as AdminProductImageController;
@@ -17,6 +18,9 @@ use App\Http\Controllers\Api\V1\Admin\ServiceController as AdminServiceControlle
 use App\Http\Controllers\Api\V1\Admin\SettingsController as AdminSettingsController;
 use App\Http\Controllers\Api\V1\BrandController;
 use App\Http\Controllers\Api\V1\CartPreviewController;
+use App\Http\Controllers\Api\V1\CheckoutController;
+use App\Http\Controllers\Api\V1\Customer\OrderController as CustomerOrderController;
+use App\Http\Controllers\Api\V1\GuestOrderController;
 use App\Http\Controllers\Api\V1\ContactMessageController;
 use App\Http\Controllers\Api\V1\ContentController;
 use App\Http\Controllers\Api\V1\Customer\AddressController as CustomerAddressController;
@@ -45,6 +49,13 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
     Route::get('/governorates', GovernorateController::class)->name('governorates.index');
     Route::post('/cart/preview', CartPreviewController::class)->middleware('throttle:60,1')->name('cart.preview');
+
+    // Checkout for guests and signed-in customers (the session decides which). Guest orders are
+    // opened with the private token from the confirmation email.
+    Route::post('/checkout', [CheckoutController::class, 'store'])->middleware('throttle:checkout')->name('checkout');
+    Route::post('/orders/lookup', [GuestOrderController::class, 'lookup'])->middleware('throttle:order-lookup')->name('orders.lookup');
+    Route::get('/orders/{orderNumber}', [GuestOrderController::class, 'show'])->middleware('throttle:30,1')->name('orders.guest.show');
+    Route::post('/orders/{orderNumber}/cancel', [GuestOrderController::class, 'cancel'])->middleware('throttle:10,1')->name('orders.guest.cancel');
 
     // Jovie store customer API (Angular /jovie/...). Protected routes name the customer guard explicitly.
     Route::prefix('customer')->name('customer.')->group(function () {
@@ -81,6 +92,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::put('/cart/items/{variant}', [CustomerCartController::class, 'setItem'])->name('cart.items.set');
             Route::delete('/cart/items/{variant}', [CustomerCartController::class, 'removeItem'])
                 ->whereNumber('variant')->name('cart.items.remove');
+
+            Route::get('/orders', [CustomerOrderController::class, 'index'])->name('orders.index');
+            Route::get('/orders/{orderNumber}', [CustomerOrderController::class, 'show'])->name('orders.show');
+            Route::post('/orders/{orderNumber}/cancel', [CustomerOrderController::class, 'cancel'])->name('orders.cancel');
         });
     });
     Route::post('/contact-messages', [ContactMessageController::class, 'store'])
@@ -160,6 +175,19 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
                 Route::patch('/governorates/{governorate}', [AdminGovernorateController::class, 'update'])
                     ->name('governorates.update');
             });
+
+            Route::middleware('can:orders.view')->group(function () {
+                Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
+                Route::get('/orders/{order:order_number}', [AdminOrderController::class, 'show'])->name('orders.show');
+            });
+            Route::middleware('can:orders.manage')->group(function () {
+                Route::post('/orders/{order:order_number}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.status');
+                Route::patch('/orders/{order:order_number}/note', [AdminOrderController::class, 'updateNote'])->name('orders.note');
+                Route::post('/orders/{order:order_number}/restock-returned', [AdminOrderController::class, 'restockReturned'])
+                    ->middleware('can:inventory.manage')->name('orders.restock-returned');
+            });
+            Route::post('/orders/{order:order_number}/cod-collected', [AdminOrderController::class, 'codCollected'])
+                ->middleware('can:payments.manage')->name('orders.cod-collected');
 
             Route::middleware('can:customers.view')->group(function () {
                 Route::get('/customers', [AdminCustomerController::class, 'index'])->name('customers.index');
