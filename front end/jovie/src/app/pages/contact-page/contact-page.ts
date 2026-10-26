@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { SiteContentService } from '../../core/content/site-content.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ContactSection } from '../../components/contact-section/contact-section';
 import { RouteIntro } from '../../components/route-intro/route-intro';
@@ -9,4 +10,6 @@ import { RouteIntro } from '../../components/route-intro/route-intro';
   templateUrl: './contact-page.html',
   styleUrl: './contact-page.css',
 })
-export class ContactPage {}
+export class ContactPage {
+  protected readonly content = inject(SiteContentService);
+}

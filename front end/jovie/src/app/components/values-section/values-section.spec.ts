@@ -1,3 +1,5 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ValuesSection } from './values-section';
@@ -8,7 +10,8 @@ describe('ValuesSection', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ValuesSection]
+      imports: [ValuesSection],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     })
     .compileComponents();
 

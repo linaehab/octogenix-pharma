@@ -1,3 +1,5 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { QualitySection } from './quality-section';
@@ -8,7 +10,8 @@ describe('QualitySection', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [QualitySection]
+      imports: [QualitySection],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     })
     .compileComponents();
 

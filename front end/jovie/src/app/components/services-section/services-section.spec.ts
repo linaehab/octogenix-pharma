@@ -1,6 +1,10 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ServicesSection } from './services-section';
+import { SiteContentService } from '../../core/content/site-content.service';
+import { LanguageService } from '../../core/i18n/language.service';
 
 describe('ServicesSection', () => {
   let component: ServicesSection;
@@ -8,7 +12,8 @@ describe('ServicesSection', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ServicesSection]
+      imports: [ServicesSection],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     })
     .compileComponents();
 
@@ -37,4 +42,26 @@ describe('ServicesSection', () => {
     expect(content).toContain('Regulatory Affairs');
     expect(content).toContain('Scientific Office');
   });
+
+  it('shows services from the API, numbered in order and in the current language', () => {
+    TestBed.inject(SiteContentService).services.set({
+      customers: [
+        { id: 7, title: { en: 'Cold Chain', ar: 'سلسلة التبريد' }, description: { en: 'Cooled storage.', ar: 'تخزين مبرد.' },
+          image_url: '/assets/images/hero-warehouse.jpg', hover_image_url: null, image_alt: { en: 'Warehouse', ar: 'مستودع' } },
+      ],
+      suppliers: [],
+    });
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.textContent).toContain('Cold Chain');
+    expect(element.textContent).not.toContain('Contracting and Documentation');
+    expect(element.querySelector('.service-number')?.textContent).toBe('01');
+
+    TestBed.inject(LanguageService).setLanguage('ar');
+    fixture.detectChanges();
+    expect(element.textContent).toContain('سلسلة التبريد');
+    TestBed.inject(LanguageService).setLanguage('en');
+  });
 });
+

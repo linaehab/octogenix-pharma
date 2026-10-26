@@ -5,14 +5,14 @@
     <p>{{ 'leadership.description' | translate }}</p>
   </header>
   <div class="leadership-list" role="list">
-    @for (leader of leaders; track leader.name) {
+    @for (leader of leaders(); track $index) {
       <article class="leader-entry" role="listitem">
         <span class="leader-arrow" aria-hidden="true">→</span>
         <div class="leader-body">
           <span class="leader-avatar" aria-hidden="true">{{ leader.initials }}</span>
           <div>
-            <h3>{{ leader.name | translate }}</h3>
-            <p>{{ leader.role | translate }}</p>
+            <h3>{{ leader.name }}</h3>
+            <p>{{ leader.role }}</p>
           </div>
         </div>
       </article>

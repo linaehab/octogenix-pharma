@@ -1,4 +1,6 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { ComponentFixture, TestBed, discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { HeroSection } from './hero-section';
@@ -10,7 +12,7 @@ describe('HeroSection', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HeroSection],
-      providers: [provideRouter([])],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HeroSection);
@@ -27,8 +29,10 @@ describe('HeroSection', () => {
     fixture.detectChanges();
     expect((component as any).activeIndex()).toBe(2);
 
+    // Three bundled slides (0–2): advancing from the last one wraps to the first.
     tick(5000);
     fixture.detectChanges();
-    expect((component as any).activeIndex()).toBe(3);
+    expect((component as any).activeIndex()).toBe(0);
+    discardPeriodicTasks();
   }));
 });

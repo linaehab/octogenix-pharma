@@ -41,7 +41,7 @@ const translations: Record<Language, Record<string, string>> = {
     'hero.scroll': 'Discover our company',
     'hero.imageAlt': 'A mother holding her baby in a bright studio',
     'about.kicker': 'About Octogenix Pharma',
-    'about.aside': 'Founded in 2020.<br>Serving healthcare.',
+    'about.aside': 'Founded in 2020.\nServing healthcare.',
     'about.title': 'Pharmaceutical solutions for a healthier future.',
     'about.description':
       'Octogenix Pharma was founded in 2020 as a company specializing in pharmaceutical import, export, and distribution, under the leadership of its founder and owner, Dr. Tarek Kandil.',
@@ -221,10 +221,13 @@ const translations: Record<Language, Record<string, string>> = {
     'contact.messagePlaceholder': 'Write your message here...',
     'contact.requiredError': 'This field is required.',
     'contact.emailError': 'Enter a valid email address.',
-    'contact.integrationNote':
-      'This form currently validates in your browser only. A contact service must be connected before messages can be sent.',
-    'contact.integrationFeedback':
-      'Your details passed the checks. This website is not yet connected to a message delivery service, so nothing has been sent.',
+    'contact.sending': 'Sending…',
+    'contact.success': 'Thank you. Your message has been sent and our team will get back to you soon.',
+    'contact.errorValidation': 'Some details could not be accepted. Please review the form and try again.',
+    'contact.errorRateLimited':
+      'Too many messages were sent from this connection. Please try again in a few minutes.',
+    'contact.errorGeneric':
+      'Your message could not be sent right now. Please try again later, or contact us by phone or email.',
     'contact.submit': 'Send Message',
     'footer.tagline': 'Trusted pharmaceutical solutions for better healthcare.',
     'footer.navigation': 'Footer navigation',
@@ -323,7 +326,7 @@ const translations: Record<Language, Record<string, string>> = {
     'hero.scroll': 'اكتشفوا الشركة',
     'hero.imageAlt': 'أم تحتضن طفلها في أجواء مشرقة',
     'about.kicker': 'عن أوكتوجينيكس فارما',
-    'about.aside': 'تأسست عام 2020.<br>من أجل الرعاية الصحية.',
+    'about.aside': 'تأسست عام 2020.\nمن أجل الرعاية الصحية.',
     'about.title': 'حلول صيدلانية من أجل مستقبل صحي أفضل.',
     'about.description':
       'تأسست شركة أوكتوجينيكس فارما عام 2020، وهي شركة متخصصة في استيراد وتصدير وتوزيع المنتجات الصيدلانية، تحت قيادة مؤسسها ومالكها الدكتور طارق قنديل.',
@@ -493,10 +496,12 @@ const translations: Record<Language, Record<string, string>> = {
     'contact.messagePlaceholder': 'اكتب رسالتك هنا...',
     'contact.requiredError': 'هذا الحقل مطلوب.',
     'contact.emailError': 'أدخل عنوان بريد إلكتروني صحيحًا.',
-    'contact.integrationNote':
-      'يتحقق هذا النموذج من البيانات داخل المتصفح فقط. يجب ربط خدمة تواصل قبل إمكانية إرسال الرسائل.',
-    'contact.integrationFeedback':
-      'اجتازت البيانات التحقق. هذا الموقع غير مرتبط حاليًا بخدمة لإرسال الرسائل، لذلك لم يتم إرسال أي شيء.',
+    'contact.sending': 'جارٍ الإرسال…',
+    'contact.success': 'شكرًا لك. تم إرسال رسالتك وسيتواصل معك فريقنا قريبًا.',
+    'contact.errorValidation': 'تعذّر قبول بعض البيانات. يرجى مراجعة النموذج والمحاولة مرة أخرى.',
+    'contact.errorRateLimited': 'تم إرسال عدد كبير من الرسائل من هذا الاتصال. يرجى المحاولة مرة أخرى بعد بضع دقائق.',
+    'contact.errorGeneric':
+      'تعذّر إرسال رسالتك الآن. يرجى المحاولة لاحقًا أو التواصل معنا عبر الهاتف أو البريد الإلكتروني.',
     'contact.submit': 'إرسال الرسالة',
     'footer.tagline': 'حلول صيدلانية موثوقة لرعاية صحية أفضل.',
     'footer.navigation': 'روابط التذييل',
@@ -562,11 +567,13 @@ const translations: Record<Language, Record<string, string>> = {
 export class LanguageService {
   private readonly document = inject(DOCUMENT);
   readonly currentLanguage = signal<Language>('en');
+  /** Texts edited in the dashboard; they override the bundled dictionary key by key. */
+  private readonly remoteTranslations = signal<Record<string, Partial<Record<Language, string | null>>>>({});
   private currentTitleKey = 'title.home';
   private fallbackTitle = 'Home | Octogenix Pharma';
 
   translate(key: string, params?: Record<string, string | number>): string {
-    let value = translations[this.currentLanguage()][key] ?? key;
+    let value = this.lookup(key) ?? key;
     for (const [name, replacement] of Object.entries(params ?? {})) {
       value = value.replaceAll(`{${name}}`, String(replacement));
     }
@@ -590,8 +597,21 @@ export class LanguageService {
     this.updateDocumentTitle();
   }
 
+  /**
+   * Applies texts loaded from the API. Keys without a non-empty value for a language keep
+   * using the bundled translation, so the bundled dictionary always remains the fallback.
+   */
+  setRemoteTranslations(texts: Record<string, Partial<Record<Language, string | null>>>): void {
+    this.remoteTranslations.set(texts);
+    this.updateDocumentTitle();
+  }
+
+  private lookup(key: string): string | undefined {
+    const language = this.currentLanguage();
+    return this.remoteTranslations()[key]?.[language] || translations[language][key];
+  }
+
   private updateDocumentTitle(): void {
-    this.document.title =
-      translations[this.currentLanguage()][this.currentTitleKey] ?? this.fallbackTitle;
+    this.document.title = this.lookup(this.currentTitleKey) ?? this.fallbackTitle;
   }
 }

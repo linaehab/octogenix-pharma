@@ -8,9 +8,9 @@
   <div class="mission-vision">
     <article class="principle-card">
       <div class="principle-image image-swap">
-        <img class="image-swap__primary" src="/assets/images/working-office.jpg"
+        <img class="image-swap__primary" [src]="content.image('values.missionImage', '/assets/images/working-office.jpg')"
           [alt]="'values.missionImageAlt' | translate" loading="lazy" />
-        <img class="image-swap__alternate" src="/assets/images/i-m-glad-we-made-agreement.jpg" alt="" aria-hidden="true" loading="lazy" />
+        <img class="image-swap__alternate" [src]="content.image('values.missionHoverImage', '/assets/images/i-m-glad-we-made-agreement.jpg')" alt="" aria-hidden="true" loading="lazy" />
       </div>
       <div class="principle-copy">
         <span class="principle-number">01</span>
@@ -20,9 +20,9 @@
     </article>
     <article class="principle-card">
       <div class="principle-image image-swap">
-        <img class="image-swap__primary" src="/assets/images/mission (2).jpg"
+        <img class="image-swap__primary" [src]="content.image('values.visionImage', '/assets/images/mission (2).jpg')"
           [alt]="'values.visionImageAlt' | translate" loading="lazy" />
-        <img class="image-swap__alternate" src="/assets/images/mission (1).jpg" alt="" aria-hidden="true" loading="lazy" />
+        <img class="image-swap__alternate" [src]="content.image('values.visionHoverImage', '/assets/images/mission (1).jpg')" alt="" aria-hidden="true" loading="lazy" />
       </div>
       <div class="principle-copy">
         <span class="principle-number">02</span>
@@ -40,30 +40,30 @@
   </p>
 
   <div class="core-value-grid">
-    @for (value of coreValues; track value.title) {
+    @for (value of coreValues(); track $index) {
       <article class="core-value">
 
         <div class="core-icon" aria-hidden="true">
-          @switch (value.title) {
-            @case ('values.quality') {
+          @switch (value.icon) {
+            @case ('quality') {
               <svg viewBox="0 0 48 48" fill="none">
                 <path d="M24 5 39 14V32L24 41 9 32V14L24 5Z"/>
                 <path d="m16 24 5 5 11-12"/>
               </svg>
             }
-            @case ('values.innovation') {
+            @case ('innovation') {
               <svg viewBox="0 0 48 48" fill="none">
                 <path d="M18 30c0-4-6-6-6-14a12 12 0 0 1 24 0c0 8-6 10-6 14"/>
                 <path d="M18 35h12M20 40h8M24 2v4M5 16h4M39 16h4M10 5l3 3M38 5l-3 3"/>
               </svg>
             }
-            @case ('values.integrity') {
+            @case ('integrity') {
               <svg viewBox="0 0 48 48" fill="none">
                 <path d="M24 5 39 11V22c0 10-6 16-15 21C15 38 9 32 9 22V11L24 5Z"/>
                 <path d="m17 23 5 5 10-11"/>
               </svg>
             }
-            @case ('values.distributionExcellence') {
+            @case ('distribution') {
               <svg viewBox="0 0 48 48" fill="none">
                 <rect x="6" y="13" width="23" height="24" rx="2"/>
                 <path d="M29 21h7l6 7v9H29M35 14v13h7M13 20h9M13 26h9"/>
@@ -71,7 +71,7 @@
                 <circle cx="35" cy="38" r="3"/>
               </svg>
             }
-            @case ('values.sustainable') {
+            @case ('sustainable') {
               <svg viewBox="0 0 48 48" fill="none">
                 <path d="M39 8C23 8 10 14 10 27c0 7 5 11 11 11C35 38 39 23 39 8Z"/>
                 <path d="M8 42c5-11 12-17 23-24"/>
@@ -84,10 +84,10 @@
           {{ '0' + ($index + 1) }}
         </span>
 
-        <h4>{{ value.title | translate }}</h4>
+        <h4>{{ value.title }}</h4>
 
         @if (value.description) {
-          <p>{{ value.description | translate }}</p>
+          <p>{{ value.description }}</p>
         }
 
       </article>
@@ -98,10 +98,10 @@
   <div class="company-values">
     <h3>{{ 'values.companyTitle' | translate }}</h3>
     <div class="company-value-list">
-      @for (value of companyValues; track value.title) {
+      @for (value of companyValues(); track $index) {
         <article>
-          <h4>{{ value.title | translate }}</h4>
-          <p>{{ value.description | translate }}</p>
+          <h4>{{ value.title }}</h4>
+          <p>{{ value.description }}</p>
         </article>
       }
     </div>

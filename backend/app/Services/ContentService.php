@@ -15,6 +15,7 @@ use App\Support\Localized;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -295,6 +296,11 @@ class ContentService
             foreach (ContentItem::FIELD_COLUMNS[$field] as $column) {
                 $allowedColumns[] = $column;
                 $rules[$column] = [...explode('|', $presence), ...$this->itemColumnRules($field)];
+            }
+
+            // Lists whose icon picks one of the component's built-in graphics.
+            if ($field === 'icon' && isset($definition['icons'])) {
+                $rules['icon'][] = Rule::in($definition['icons']);
             }
         }
 

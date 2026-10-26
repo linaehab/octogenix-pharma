@@ -1,5 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { SiteContentService } from '../../core/content/site-content.service';
+import { LanguageService } from '../../core/i18n/language.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 type ServiceCategory = 'customers' | 'suppliers';
@@ -12,9 +14,12 @@ type ServiceCategory = 'customers' | 'suppliers';
 })
 export class ServicesSection {
   private readonly route = inject(ActivatedRoute, { optional: true });
+  private readonly content = inject(SiteContentService);
+  private readonly language = inject(LanguageService);
   protected readonly selectedCategory = signal<ServiceCategory>('customers');
 
-  protected readonly serviceGroups: Record<
+  /** Bundled services (translation keys), shown until (or unless) the API services are loaded. */
+  private readonly bundledGroups: Record<
     ServiceCategory,
     { title: string; description?: string; items: { number: string; title: string; description: string; image: string; hoverImage: string; imageAlt: string }[] }
   > = {
@@ -126,7 +131,28 @@ export class ServicesSection {
     },
   };
 
-  protected readonly currentServices = computed(() => this.serviceGroups[this.selectedCategory()].items);
+  protected readonly currentServices = computed(() => {
+    const category = this.selectedCategory();
+    const remote = this.content.services()?.[category];
+
+    if (remote) {
+      return remote.map((service, index) => ({
+        number: String(index + 1).padStart(2, '0'),
+        title: this.content.pick(service.title),
+        description: this.content.pick(service.description),
+        image: service.image_url ?? '',
+        hoverImage: service.hover_image_url ?? service.image_url ?? '',
+        imageAlt: this.content.pick(service.image_alt),
+      }));
+    }
+
+    return this.bundledGroups[category].items.map((item) => ({
+      ...item,
+      title: this.language.translate(item.title),
+      description: this.language.translate(item.description),
+      imageAlt: this.language.translate(item.imageAlt),
+    }));
+  });
 
   constructor() {
     if (!this.route) {

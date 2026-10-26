@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { SiteContentService } from '../../core/content/site-content.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 @Component({
@@ -7,4 +8,6 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
   templateUrl: './quality-section.html',
   styleUrl: './quality-section.css',
 })
-export class QualitySection {}
+export class QualitySection {
+  protected readonly content = inject(SiteContentService);
+}

@@ -177,18 +177,37 @@
   font-size: 10px;
 }
 
-.integration-note,
-.integration-feedback {
+.form-status {
   margin: 17px 0 0;
+  padding: 10px 12px;
   color: var(--ink-soft);
   font-size: 10px;
   line-height: 1.7;
-}
-
-.integration-feedback {
-  padding: 10px 12px;
   border-inline-start: 3px solid var(--clay);
   background: #f8f3ee;
+}
+
+.form-status--success {
+  border-inline-start-color: var(--green);
+}
+
+.form-status--error {
+  color: #a64638;
+  border-inline-start-color: #a64638;
+}
+
+.form-honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.button-submit:disabled {
+  opacity: 0.7;
+  cursor: wait;
 }
 
 .button-submit {

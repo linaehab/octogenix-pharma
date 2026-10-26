@@ -8,22 +8,32 @@
       </p>
     </div>
   </div>
-  <div class="brand-feature">
-    <div class="brand-image image-swap">
-      <img class="image-swap__primary" src="/assets/images/jovie.jpg"
-        [alt]="'brands.imageAlt' | translate" loading="lazy" />
-      <img class="image-swap__alternate" src="/assets/images/mom.jpg" alt="" aria-hidden="true" loading="lazy" />
+  @for (brand of brands(); track $index) {
+    <div class="brand-feature">
+      <div class="brand-image image-swap">
+        <img class="image-swap__primary" [src]="brand.image"
+          [alt]="brand.imageAlt" loading="lazy" />
+        @if (brand.hoverImage) {
+          <img class="image-swap__alternate" [src]="brand.hoverImage" alt="" aria-hidden="true" loading="lazy" />
+        }
+      </div>
+      <div class="brand-panel">
+        <span class="brand-label">{{ brand.label }}</span>
+        <h3 class="brand-name">{{ brand.name }}</h3>
+        <p class="brand-description">
+          {{ brand.description }}
+        </p>
+        <span class="brand-asset-note">{{ 'brands.assetNote' | translate }}</span>
+        @if (brand.link.type === 'internal' && brand.link.url) {
+          <a class="text-link" [routerLink]="brand.link.url">
+            {{ brand.ctaLabel }} <span aria-hidden="true">↗</span>
+          </a>
+        } @else if (brand.link.type === 'external' && brand.link.url) {
+          <a class="text-link" [href]="brand.link.url" target="_blank" rel="noopener noreferrer">
+            {{ brand.ctaLabel }} <span aria-hidden="true">↗</span>
+          </a>
+        }
+      </div>
     </div>
-    <div class="brand-panel">
-      <span class="brand-label">{{ 'brands.label' | translate }}</span>
-      <h3 class="brand-name">{{ 'brands.jovie' | translate }}</h3>
-      <p class="brand-description">
-        {{ 'brands.description' | translate }}
-      </p>
-      <span class="brand-asset-note">{{ 'brands.assetNote' | translate }}</span>
-      <a class="text-link" routerLink="/contact">
-        {{ 'brands.cta' | translate }} <span aria-hidden="true">↗</span>
-      </a>
-    </div>
-  </div>
+  }
 </section>

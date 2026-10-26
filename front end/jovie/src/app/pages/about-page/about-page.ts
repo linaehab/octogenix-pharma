@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { SiteContentService } from '../../core/content/site-content.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { AboutSection } from '../../components/about-section/about-section';
 import { RouteIntro } from '../../components/route-intro/route-intro';
@@ -12,4 +13,6 @@ import { QualitySection } from '../../components/quality-section/quality-section
   templateUrl: './about-page.html',
   styleUrl: './about-page.css',
 })
-export class AboutPage {}
+export class AboutPage {
+  protected readonly content = inject(SiteContentService);
+}

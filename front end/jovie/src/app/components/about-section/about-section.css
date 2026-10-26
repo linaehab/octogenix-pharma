@@ -29,6 +29,8 @@
   font-size: 17px;
   font-style: italic;
   line-height: 1.5;
+  /* The text is plain (editable in the dashboard); line breaks come from "\n". */
+  white-space: pre-line;
 }
 
 .intro-content {

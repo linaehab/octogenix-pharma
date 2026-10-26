@@ -148,6 +148,19 @@ class AdminContentTest extends TestCase
         $this->postJson(self::URL.'/lists/unknown.list/items', [])->assertNotFound();
     }
 
+    public function test_core_values_only_accept_the_icons_the_page_can_draw(): void
+    {
+        $this->actingAsEditor();
+        $url = self::URL.'/lists/values.core/items';
+
+        $this->postJson($url, ['title_en' => 'Care', 'title_ar' => 'رعاية', 'icon' => '★'])
+            ->assertUnprocessable()->assertJsonValidationErrors('icon');
+        $this->postJson($url, ['title_en' => 'Care', 'title_ar' => 'رعاية', 'icon' => '◈', 'image_path' => '/assets/images/jovie.jpg'])
+            ->assertUnprocessable()->assertJsonValidationErrors('image_path');
+        $this->postJson($url, ['title_en' => 'Care', 'title_ar' => 'رعاية', 'icon' => '◈'])
+            ->assertCreated()->assertJsonPath('data.icon', '◈');
+    }
+
     public function test_lists_cannot_drop_below_their_minimum_active_items(): void
     {
         $this->actingAsEditor();

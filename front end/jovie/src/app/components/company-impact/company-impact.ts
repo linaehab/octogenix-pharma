@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { SiteContentService } from '../../core/content/site-content.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 @Component({
   selector: 'app-company-impact',
@@ -8,6 +9,8 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
   styleUrl: './company-impact.css',
 })
 export class CompanyImpact {
+  protected readonly content = inject(SiteContentService);
+
   readonly routes = {
     about: '/about',
     services: '/services',

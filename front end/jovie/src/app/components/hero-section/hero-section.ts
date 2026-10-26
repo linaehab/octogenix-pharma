@@ -1,7 +1,15 @@
-import { Component, OnDestroy, signal } from '@angular/core';
+import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { SiteContentService } from '../../core/content/site-content.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { HomeBanner } from '../home-banner/home-banner';
+
+/** Bundled slides, shown until (or unless) the dashboard's hero slides are loaded. */
+const DEFAULT_SLIDES = [
+  '/assets/images/factory-worker-packaging-boxes.jpg',
+  '/assets/images/interior-large-distribution-warehouse-with-shelves-stacked-with-palettes-goods-ready-market.jpg',
+  '/assets/images/medium-shot-delivery-man-with-mask.jpg',
+];
 
 @Component({
   selector: 'app-hero-section',
@@ -10,11 +18,14 @@ import { HomeBanner } from '../home-banner/home-banner';
   styleUrl: './hero-section.css',
 })
 export class HeroSection implements OnDestroy {
-  protected readonly slides = [
-    '/assets/images/factory-worker-packaging-boxes.jpg',
-    '/assets/images/interior-large-distribution-warehouse-with-shelves-stacked-with-palettes-goods-ready-market.jpg',
-    '/assets/images/medium-shot-delivery-man-with-mask.jpg',
-  ];
+  private readonly content = inject(SiteContentService);
+
+  protected readonly slides = computed(() => {
+    const remote = (this.content.list('home.hero_slides') ?? [])
+      .map((item) => item.image?.url)
+      .filter((url): url is string => !!url);
+    return remote.length ? remote : DEFAULT_SLIDES;
+  });
 
   readonly activeIndex = signal(0);
   private slideIntervalId: number | null = null;
@@ -39,7 +50,7 @@ export class HeroSection implements OnDestroy {
 
     this.stopSlider();
     this.slideIntervalId = window.setInterval(() => {
-      this.activeIndex.update((index) => (index + 1) % this.slides.length);
+      this.activeIndex.update((index) => (index + 1) % this.slides().length);
     }, 5000);
   }
 

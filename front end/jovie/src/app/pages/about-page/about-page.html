@@ -1,6 +1,6 @@
 <app-route-intro
   variant="about"
-  image="/assets/images/about us.jpg"
+  [image]="content.image('page.about.image', '/assets/images/about us.jpg')"
   [imageAlt]="'page.about.imageAlt' | translate"
   [eyebrow]="'page.about.kicker' | translate"
   [title]="'page.about.title' | translate"
