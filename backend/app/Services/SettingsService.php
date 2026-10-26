@@ -168,7 +168,7 @@ class SettingsService
     private function crossFieldErrors(array $values): array
     {
         $errors = [];
-        $cardDrivers = config('payments.card_drivers', []);
+        $cardDrivers = array_keys(config('payments.drivers', []));
 
         if ($values['store.cod_enabled'] && $values['store.cod_fee_piastres'] === null) {
             $errors['settings.store.cod_enabled'][] = 'Set the COD fee (0 is allowed) before enabling cash on delivery.';

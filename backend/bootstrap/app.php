@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Sanctum SPA (cookie/session) authentication for the Angular app (design v0.3 §7.6).
         $middleware->statefulApi();
+
+        // Provider servers authenticate webhooks with their own signatures, not CSRF tokens.
+        $middleware->validateCsrfTokens(except: ['api/v1/payments/webhooks/*']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // API routes always answer with JSON errors, whatever the Accept header says.

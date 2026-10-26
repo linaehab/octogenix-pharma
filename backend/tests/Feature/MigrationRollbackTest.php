@@ -40,6 +40,7 @@ class MigrationRollbackTest extends TestCase
         'order_items',
         'order_status_histories',
         'payments',
+        'payment_webhook_events',
     ];
 
     /** Tables that must never be created (design v0.3 §4.3). */

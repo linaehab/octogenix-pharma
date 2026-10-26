@@ -141,7 +141,7 @@ class OrderLifecycleTest extends TestCase
         $this->postJson("/api/v1/orders/{$order->order_number}/cancel", ['token' => $token])
             ->assertOk()->assertJsonPath('data.status', 'cancelled');
         $this->assertSame('customer', $order->refresh()->cancelled_by);
-        $this->assertSame('guest', $order->histories()->latest('id')->first()->actor_type->value);
+        $this->assertSame('guest', $order->histories()->reorder()->latest('id')->first()->actor_type->value);
     }
 
     public function test_find_my_order_emails_a_fresh_link_and_reveals_nothing(): void
