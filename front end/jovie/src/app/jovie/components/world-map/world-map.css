@@ -1,0 +1,220 @@
+/* Colours and layout after the official jovieproducts.com "Where to find" map. */
+:host {
+  /* Official market colours; Egypt (added for this store) uses the brand turquoise. */
+  --market-europe: #bed630;
+  --market-middle-east: #f6bc25;
+  --market-southeast-asia: #f06680;
+  --market-egypt: var(--jv-playtime);
+  position: relative;
+  display: block;
+  color: var(--jv-white);
+}
+
+.map {
+  position: relative;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Geography never mirrors in Arabic. */
+  direction: ltr;
+}
+
+path {
+  fill: var(--jv-map-land);
+  stroke: var(--jv-map-sea);
+  stroke-width: 0.6;
+  stroke-linejoin: round;
+  cursor: pointer;
+  transition: fill 160ms ease;
+}
+
+path.is-selected {
+  fill: var(--jv-map-land-active);
+}
+
+[data-region='europe'] {
+  --market: var(--market-europe);
+}
+
+[data-region='middle-east'] {
+  --market: var(--market-middle-east);
+}
+
+[data-region='southeast-asia'] {
+  --market: var(--market-southeast-asia);
+}
+
+[data-region='egypt'] {
+  --market: var(--market-egypt);
+}
+
+path.is-market {
+  fill: var(--market);
+}
+
+path.is-market.is-selected {
+  fill: var(--jv-white);
+}
+
+.is-static path {
+  cursor: default;
+}
+
+/* Popup with a pointer towards its region. */
+.tooltip {
+  position: absolute;
+  z-index: 2;
+  width: min(15rem, 80vw);
+  padding: 1rem 0.75rem 0.85rem;
+  border-radius: 3px;
+  background: var(--jv-white);
+  color: var(--jv-night);
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(10, 20, 50, 0.3);
+  transform: translate(-50%, calc(-100% - 16px));
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -10px;
+  margin-left: -10px;
+  border: 10px solid transparent;
+  border-bottom: 0;
+  border-top-color: var(--jv-white);
+}
+
+.tooltip-title {
+  margin: 0 0 0.6rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.box {
+  display: block;
+  margin: 0 0 0.4rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 2px;
+  background: var(--jv-panel);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.box p {
+  margin: 0;
+}
+
+.box .link {
+  margin-top: 0.6rem;
+}
+
+.countries {
+  margin: 0.3rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-weight: 700;
+}
+
+.link {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding-bottom: 0.15rem;
+  border-bottom: 2px solid currentColor;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.close {
+  position: absolute;
+  top: 0.2rem;
+  inset-inline-end: 0.35rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 0;
+  background: none;
+  color: var(--jv-night);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+/* "Available in" legend, over the Pacific off South America on wide screens (the map does not
+   mirror in Arabic, so neither does the legend's place). */
+.legend {
+  position: absolute;
+  top: 66%;
+  left: 2%;
+}
+
+.legend h2 {
+  margin: 0 0 0.6rem;
+  font-size: clamp(1.4rem, 2.2vw, 1.75rem);
+  font-weight: 700;
+}
+
+.legend ul {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  gap: 0.7rem 1.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0 0.2rem;
+  border: 0;
+  border-bottom: 2px solid currentColor;
+  background: none;
+  color: var(--jv-white);
+  font-family: inherit;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.legend-item.is-active {
+  color: var(--jv-faq-red);
+}
+
+.dot {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--market);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  path {
+    transition: none;
+  }
+}
+
+/* Small screens: the legend and the popup sit under the map. */
+@media (max-width: 699px) {
+  .legend {
+    position: static;
+    margin-top: 1.5rem;
+  }
+
+  .tooltip {
+    position: relative;
+    left: auto !important;
+    top: auto !important;
+    width: auto;
+    margin-top: 1rem;
+    transform: none;
+  }
+
+  .tooltip::after {
+    display: none;
+  }
+}

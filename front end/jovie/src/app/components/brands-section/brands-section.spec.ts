@@ -42,7 +42,24 @@ describe('BrandsSection', () => {
   it('shows the bundled Jovie card until brands are loaded', () => {
     expect(compiled.querySelectorAll('.brand-feature').length).toBe(1);
     expect(compiled.querySelector('.brand-name')?.textContent).toContain('Jovie');
-    expect(compiled.querySelector('.brand-panel a')?.getAttribute('href')).toBe('/contact');
+    expect(compiled.querySelector('.brand-panel .text-link')?.getAttribute('href')).toBe('/contact');
+    expect(compiled.querySelector('.brand-panel .store-button')?.getAttribute('href')).toBe('/jovie');
+  });
+
+  it('offers a store button only for brands with a store in this app', () => {
+    TestBed.inject(SiteContentService).brands.set([
+      brand({ slug: 'jovie', name: { en: 'Jovie', ar: 'جوفي' }, has_store: true }),
+      brand({ slug: 'other', has_store: true }),
+      brand({ slug: 'plain' }),
+    ]);
+    fixture.detectChanges();
+
+    const cards = compiled.querySelectorAll('.brand-feature');
+    const store = cards[0].querySelector('.store-button');
+    expect(store?.getAttribute('href')).toBe('/jovie');
+    expect(store?.textContent).toContain('Visit the Jovie store');
+    expect(cards[1].querySelector('.store-button')).toBeNull();
+    expect(cards[2].querySelector('.store-button')).toBeNull();
   });
 
   it('renders one card per active brand with the right kind of link', () => {

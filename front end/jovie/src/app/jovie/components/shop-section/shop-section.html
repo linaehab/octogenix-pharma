@@ -1,0 +1,53 @@
+<section id="shop" class="jv-section shop" [attr.aria-labelledby]="summary() ? 'jovie-shop-title' : null"
+  [attr.aria-label]="summary() ? null : ('jovie.nav.shop' | translate)">
+  <app-decor-shape class="decor-blob" shape="cloud-lightblue" />
+  <div class="jv-container">
+    @if (summary()) {
+      <div class="jv-center">
+        <p class="jv-eyebrow">{{ 'jovie.shop.kicker' | translate }}</p>
+        <h2 id="jovie-shop-title" class="jv-title">{{ 'jovie.shop.title' | translate }}</h2>
+        <p class="jv-lead">{{ 'jovie.shop.description' | translate }}</p>
+      </div>
+    }
+
+    <div aria-live="polite" [attr.aria-busy]="catalog.status() === 'loading'">
+      @switch (catalog.status()) {
+        @case ('loading') {
+          <p class="visually-hidden">{{ 'jovie.shop.loading' | translate }}</p>
+          <ul class="grid" aria-hidden="true">
+            @for (item of skeletons; track item) {
+              <li class="skeleton"><span></span><span></span><span></span></li>
+            }
+          </ul>
+        }
+        @case ('error') {
+          <div class="state" role="alert">
+            <p>{{ 'jovie.shop.error' | translate }}</p>
+            <button class="jv-button jv-button--night" type="button" (click)="catalog.retry()">
+              {{ 'jovie.shop.retry' | translate }}
+            </button>
+          </div>
+        }
+        @default {
+          @if (catalog.products().length) {
+            <ul class="grid">
+              @for (product of catalog.products(); track product.slug) {
+                <li><app-product-card [product]="product" [isPreview]="catalog.isPreview()" /></li>
+              }
+            </ul>
+          } @else {
+            <div class="state">
+              <p>{{ 'jovie.shop.empty' | translate }}</p>
+            </div>
+          }
+        }
+      }
+    </div>
+
+    @if (summary()) {
+      <p class="jv-section-cta">
+        <a class="jv-button jv-button--night" routerLink="/jovie/shop">{{ 'jovie.shop.viewAll' | translate }}</a>
+      </p>
+    }
+  </div>
+</section>

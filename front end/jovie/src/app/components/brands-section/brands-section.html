@@ -24,6 +24,11 @@
           {{ brand.description }}
         </p>
         <span class="brand-asset-note">{{ 'brands.assetNote' | translate }}</span>
+        @if (brand.storeUrl) {
+          <a class="store-button" [routerLink]="brand.storeUrl">
+            {{ 'brands.visitStore' | translate: { brand: brand.name } }} <span aria-hidden="true">↗</span>
+          </a>
+        }
         @if (brand.link.type === 'internal' && brand.link.url) {
           <a class="text-link" [routerLink]="brand.link.url">
             {{ brand.ctaLabel }} <span aria-hidden="true">↗</span>

@@ -190,6 +190,7 @@ const translations: Record<Language, Record<string, string>> = {
     'page.brands.imageAlt': 'Healthcare researchers collaborating in a bright laboratory',
     'page.contact.imageAlt': 'Healthcare researchers collaborating in a bright laboratory',
     'brands.cta': 'Contact us about our portfolio',
+    'brands.visitStore': 'Visit the {brand} store',
     'contact.kicker': 'Contact Octogenix Pharma',
     'contact.title': 'Let’s start a conversation.',
     'contact.description':
@@ -468,6 +469,7 @@ const translations: Record<Language, Record<string, string>> = {
     'page.brands.imageAlt': 'باحثون صحيون يتعاونون في مختبر مشرق',
     'page.contact.imageAlt': 'باحثون صحيون يتعاونون في مختبر مشرق',
     'brands.cta': 'تواصلوا معنا بشأن العلامات',
+    'brands.visitStore': 'زيارة متجر {brand}',
     'contact.kicker': 'تواصلوا مع أوكتوجينيكس فارما',
     'contact.title': 'لنبدأ حوارًا.',
     'contact.description': 'هل لديك استفسار أو ترغب في مناقشة فرصة تعاون؟ تواصل مع فريقنا.',
@@ -569,6 +571,8 @@ export class LanguageService {
   readonly currentLanguage = signal<Language>('en');
   /** Texts edited in the dashboard; they override the bundled dictionary key by key. */
   private readonly remoteTranslations = signal<Record<string, Partial<Record<Language, string | null>>>>({});
+  /** Bundled texts of lazily loaded sections (the Jovie store), registered when they load. */
+  private readonly sectionTranslations = signal<Record<Language, Record<string, string>>>({ en: {}, ar: {} });
   private currentTitleKey = 'title.home';
   private fallbackTitle = 'Home | Octogenix Pharma';
 
@@ -601,6 +605,15 @@ export class LanguageService {
    * Applies texts loaded from the API. Keys without a non-empty value for a language keep
    * using the bundled translation, so the bundled dictionary always remains the fallback.
    */
+  /** Adds the bundled dictionary of a lazily loaded section; corporate keys keep precedence. */
+  addTranslations(texts: Record<Language, Record<string, string>>): void {
+    this.sectionTranslations.update((current) => ({
+      en: { ...current.en, ...texts.en },
+      ar: { ...current.ar, ...texts.ar },
+    }));
+    this.updateDocumentTitle();
+  }
+
   setRemoteTranslations(texts: Record<string, Partial<Record<Language, string | null>>>): void {
     this.remoteTranslations.set(texts);
     this.updateDocumentTitle();
@@ -608,7 +621,11 @@ export class LanguageService {
 
   private lookup(key: string): string | undefined {
     const language = this.currentLanguage();
-    return this.remoteTranslations()[key]?.[language] || translations[language][key];
+    return (
+      this.remoteTranslations()[key]?.[language] ||
+      translations[language][key] ||
+      this.sectionTranslations()[language][key]
+    );
   }
 
   private updateDocumentTitle(): void {

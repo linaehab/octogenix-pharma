@@ -17,7 +17,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'top' })),
+    provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'top', anchorScrolling: 'enabled' })),
     provideClientHydration(withEventReplay()),
     // XSRF: Angular sends the XSRF-TOKEN cookie (set by Laravel Sanctum) as X-XSRF-TOKEN on
     // same-origin POST/PUT/PATCH/DELETE requests by default.

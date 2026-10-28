@@ -1,0 +1,107 @@
+:host {
+  position: relative;
+  display: block;
+}
+
+/* Official heights: 720 px (home/about) and 560 px (FAQ/content) on desktop. */
+.intro {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 720px;
+  padding-block: calc(var(--jv-header-height) + 1.5rem) 5rem;
+  overflow: hidden;
+  background: var(--jv-sunshine);
+  clip-path: url(#jv-pageHeader);
+}
+
+.intro[data-layout='content'] {
+  min-height: 560px;
+}
+
+.intro[data-tone='red'] {
+  background: var(--jv-faq-red);
+  color: var(--jv-white);
+}
+
+.intro[data-tone='green'] {
+  background: var(--jv-green);
+  color: var(--jv-white);
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  max-width: 62rem;
+  text-align: center;
+}
+
+h1 {
+  margin: 0 0 1.5rem;
+  font-size: clamp(2.6rem, 6.6vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+p {
+  max-width: 36rem;
+  margin: 0 auto 2.25rem;
+  font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+  line-height: 1.6;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 2.75rem;
+}
+
+.actions:empty {
+  display: none;
+}
+
+.scroll {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  margin-left: -1.7rem;
+  transform: translateY(-15%);
+  border: 0;
+  border-radius: 50%;
+  background: var(--jv-night);
+  color: var(--jv-white);
+  cursor: pointer;
+}
+
+.scroll svg {
+  width: 1.6rem;
+  height: 1.6rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (max-width: 1199px) {
+  .intro {
+    min-height: 660px;
+  }
+
+  .intro[data-layout='content'] {
+    min-height: 480px;
+  }
+}
+
+@media (max-width: 699px) {
+  .intro,
+  .intro[data-layout='content'] {
+    min-height: 420px;
+  }
+}

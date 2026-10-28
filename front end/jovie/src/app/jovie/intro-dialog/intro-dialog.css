@@ -1,0 +1,43 @@
+.intro {
+  width: min(38rem, calc(100% - 2rem));
+  padding: clamp(2rem, 6vw, 4rem) clamp(1.5rem, 5vw, 3.5rem);
+  border: 0;
+  border-radius: 4px;
+  background: var(--jv-white);
+  color: var(--jv-night);
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(32, 53, 100, 0.25);
+}
+
+.intro::backdrop {
+  background: rgba(253, 195, 45, 0.75);
+}
+
+h2 {
+  margin-bottom: 1.25rem;
+  font-size: clamp(2rem, 6vw, 3.25rem);
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+p {
+  margin-bottom: 2rem;
+  font-size: clamp(1.05rem, 2.6vw, 1.3rem);
+  line-height: 1.6;
+}
+
+.intro-button {
+  padding: 0.25rem 0;
+  border: 0;
+  border-bottom: 3px solid var(--jv-night);
+  background: none;
+  color: var(--jv-night);
+  font-size: 1.35rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.intro-button:hover {
+  color: var(--jv-sweetypie);
+  border-color: var(--jv-sweetypie);
+}

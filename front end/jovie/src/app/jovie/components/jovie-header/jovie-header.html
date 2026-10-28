@@ -1,0 +1,35 @@
+<header class="header" [class.is-solid]="isScrolled() || isMenuOpen()" [attr.data-tone]="tone()">
+  <div class="bar jv-container">
+    <a class="logo" routerLink="/jovie" (click)="closeMenu()" [attr.aria-label]="'jovie.header.homeLabel' | translate">
+      <img src="/assets/images/jovie/logo-official-white.png" alt="" width="72" height="72" />
+    </a>
+
+    <button class="menu-toggle" type="button" aria-controls="jovie-navigation"
+      [attr.aria-expanded]="isMenuOpen()" [attr.aria-label]="'jovie.header.menu' | translate" (click)="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav id="jovie-navigation" class="nav" [class.is-open]="isMenuOpen()" [attr.aria-label]="'jovie.header.navigation' | translate">
+      <ul>
+        @for (page of pages; track page.path) {
+          <li>
+            <a [routerLink]="page.path" routerLinkActive="is-active" ariaCurrentWhenActive="page"
+              (click)="closeMenu()">{{ page.label | translate }}</a>
+          </li>
+        }
+      </ul>
+      <div class="actions">
+        <a class="jv-button jv-button--light hello" routerLink="/jovie/contact" routerLinkActive="is-active"
+          ariaCurrentWhenActive="page" (click)="closeMenu()">{{ 'jovie.nav.sayHello' | translate }}</a>
+        <button class="language-toggle" type="button" (click)="toggleLanguage()"
+          [attr.lang]="language.currentLanguage() === 'en' ? 'ar' : 'en'">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
+            <path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18" fill="none" stroke="currentColor" stroke-width="2" />
+          </svg>
+          {{ 'jovie.header.switchLanguage' | translate }}
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>

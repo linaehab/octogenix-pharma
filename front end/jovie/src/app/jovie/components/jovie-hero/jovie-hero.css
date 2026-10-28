@@ -1,0 +1,122 @@
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: clamp(34rem, 46vw, 44rem);
+  padding-block: calc(var(--jv-header-height) + 1.5rem) 5rem;
+  overflow: hidden;
+  background: var(--jv-sunshine);
+}
+
+.clip-defs {
+  position: absolute;
+}
+
+.layout {
+  position: relative;
+  z-index: 2;
+}
+
+.copy {
+  max-width: min(34rem, 44%);
+}
+
+h1 {
+  margin: 0 0 1.25rem;
+  font-size: clamp(2.8rem, 5.6vw, 5rem);
+  font-weight: 700;
+  line-height: 1.02;
+}
+
+.lead {
+  margin: 0 0 2rem;
+  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+  line-height: 1.55;
+}
+
+.ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.ctas .jv-button {
+  border-radius: 2px;
+}
+
+/* The curved media frame: from the top edge to just above the bottom, out to the far edge. */
+.media {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 2.5rem;
+  inset-inline-end: 0;
+  width: 56%;
+  clip-path: url(#jovie-hero-frame);
+  background: var(--jv-sunshine-soft);
+}
+
+[dir='rtl'] .media {
+  clip-path: url(#jovie-hero-frame-rtl);
+}
+
+.media img,
+.media video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.play {
+  position: absolute;
+  top: 50%;
+  left: 55%;
+  display: grid;
+  place-items: center;
+  width: 5rem;
+  height: 5rem;
+  margin: -2.5rem 0 0 -2.5rem;
+  border: 3px solid var(--jv-white);
+  border-radius: 50%;
+  background: rgba(32, 53, 100, 0.18);
+  color: var(--jv-white);
+  cursor: pointer;
+}
+
+.play svg {
+  width: 2.4rem;
+  height: 2.4rem;
+  fill: currentColor;
+}
+
+@media (min-width: 900px) and (max-width: 1279px) {
+  .media {
+    width: 47%;
+  }
+
+  .copy {
+    max-width: 48%;
+  }
+}
+
+@media (max-width: 899px) {
+  .hero {
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 0;
+    padding-bottom: 0;
+  }
+
+  .copy {
+    max-width: none;
+  }
+
+  .media {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: clamp(16rem, 62vw, 26rem);
+    margin-top: 2rem;
+  }
+}

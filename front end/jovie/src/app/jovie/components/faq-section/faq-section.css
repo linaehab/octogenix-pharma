@@ -1,0 +1,82 @@
+/* After the official FAQ: centred group titles, pale question panels with a caret. */
+.faq {
+  background: var(--jv-white);
+}
+
+.narrow {
+  max-width: 64rem;
+}
+
+.group + .group {
+  margin-top: clamp(4rem, 8vw, 7rem);
+}
+
+.group-title {
+  margin: 0 0 clamp(1.5rem, 4vw, 2.75rem);
+  font-size: clamp(1.75rem, 3.2vw, 2.25rem);
+  font-weight: 700;
+  text-align: center;
+}
+
+.item {
+  margin-bottom: 1rem;
+  border-radius: 3px;
+  background: var(--jv-panel);
+}
+
+summary {
+  position: relative;
+  padding: 0.6rem 3.5rem 0.6rem 1.1rem;
+  font-size: clamp(1.05rem, 1.6vw, 1.27rem);
+  font-weight: 700;
+  line-height: 1.45;
+  cursor: pointer;
+  list-style: none;
+}
+
+[dir='rtl'] summary {
+  padding: 0.6rem 1.1rem 0.6rem 3.5rem;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Caret: down when closed, up when open. */
+summary::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  inset-inline-end: 1.4rem;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: -0.575rem;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 9l7 7 7-7' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 9l7 7 7-7' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  transition: transform 200ms ease;
+}
+
+.item[open] summary::after {
+  transform: rotate(180deg);
+}
+
+.answer {
+  max-width: 56rem;
+  margin: 0;
+  padding: 0 1.1rem 1.1rem;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  line-height: 1.65;
+}
+
+.answer a {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  summary::after {
+    transition: none;
+  }
+}

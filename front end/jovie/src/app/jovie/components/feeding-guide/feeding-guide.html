@@ -1,0 +1,52 @@
+<section id="feeding-guide" class="jv-section guide" [attr.aria-labelledby]="summary() ? 'jovie-guide-title' : null"
+  [attr.aria-label]="summary() ? null : ('jovie.nav.feedingGuide' | translate)">
+  <app-decor-shape class="burst" shape="snowflake-red" />
+  <div class="jv-container">
+    @if (summary()) {
+      <div class="jv-center">
+        <p class="jv-eyebrow">{{ 'jovie.guide.kicker' | translate }}</p>
+        <h2 id="jovie-guide-title" class="jv-title">{{ 'jovie.guide.title' | translate }}</h2>
+        <p class="jv-lead">{{ 'jovie.guide.description' | translate }}</p>
+      </div>
+
+      <nav class="ages" [attr.aria-label]="'jovie.guide.ageLabel' | translate">
+        @for (stage of stages; track stage) {
+          <a class="age" routerLink="/jovie/feeding-guide" [queryParams]="{ stage: stage }">
+            <span class="age-range">{{ 'jovie.guide.age' + stage | translate }}</span>
+            <span class="age-stage">{{ 'jovie.guide.stage' | translate: { stage: stage } }}</span>
+          </a>
+        }
+      </nav>
+    } @else {
+      <div class="ages" role="group" [attr.aria-label]="'jovie.guide.ageLabel' | translate">
+        @for (stage of stages; track stage) {
+          <button type="button" class="age" [class.is-selected]="selected() === stage"
+            [attr.aria-pressed]="selected() === stage" (click)="select(stage)">
+            <span class="age-range">{{ 'jovie.guide.age' + stage | translate }}</span>
+            <span class="age-stage">{{ 'jovie.guide.stage' | translate: { stage: stage } }}</span>
+          </button>
+        }
+      </div>
+
+      <div class="result" aria-live="polite">
+        @if (product()?.image; as image) {
+          <img [src]="image.url" alt="" width="520" height="705" loading="lazy" />
+        }
+        <div>
+          <p class="result-stage">{{ 'jovie.guide.stage' | translate: { stage: selected() } }} · {{ 'jovie.guide.age' + selected() | translate }}</p>
+          @if (productName()) {
+            <h3>{{ productName() }}</h3>
+          }
+          <ol class="steps">
+            <li>{{ 'jovie.guide.step1' | translate }}</li>
+            <li>{{ 'jovie.guide.step2' | translate }}</li>
+            <li>{{ 'jovie.guide.step3' | translate }}</li>
+          </ol>
+          <a class="jv-button" routerLink="/jovie/shop">{{ 'jovie.guide.shopCta' | translate: { stage: selected() } }}</a>
+        </div>
+      </div>
+    }
+
+    <p class="note">{{ 'jovie.guide.note' | translate }}</p>
+  </div>
+</section>

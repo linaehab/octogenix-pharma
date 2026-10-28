@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { SiteFooter } from './components/site-footer/site-footer';
-import { SiteHeader } from './components/site-header/site-header';
 
+/** Each site (Octogenix corporate, Jovie store) brings its own layout through the routes. */
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, SiteHeader, SiteFooter],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })

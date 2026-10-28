@@ -7,7 +7,15 @@ export class LocalizedTitleStrategy extends TitleStrategy {
   private readonly language = inject(LanguageService);
 
   override updateTitle(snapshot: RouterStateSnapshot): void {
-    const routePath = snapshot.root.firstChild?.routeConfig?.path || 'home';
+    // Pages sit inside layout routes, so join the paths of the whole branch:
+    // '' + 'about' → 'about', 'jovie' + '' → 'jovie', 'jovie' + 'contact' → 'jovie/contact'.
+    const segments: string[] = [];
+    for (let route = snapshot.root.firstChild; route; route = route.firstChild) {
+      if (route.routeConfig?.path) {
+        segments.push(route.routeConfig.path);
+      }
+    }
+    const routePath = segments.join('/') || 'home';
     const fallbackTitle = this.buildTitle(snapshot) ?? 'Octogenix Pharma';
     this.language.setRouteTitle(`title.${routePath}`, fallbackTitle);
   }

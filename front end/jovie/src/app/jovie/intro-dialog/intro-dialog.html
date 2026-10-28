@@ -1,0 +1,8 @@
+<dialog #dialog class="intro" aria-labelledby="jovie-intro-title" aria-describedby="jovie-intro-text"
+  (close)="onClosed()">
+  <h2 id="jovie-intro-title">{{ 'jovie.intro.title' | translate }}</h2>
+  <p id="jovie-intro-text">{{ 'jovie.intro.text' | translate }}</p>
+  <button type="button" class="intro-button" (click)="close()" autofocus>
+    {{ 'jovie.intro.continue' | translate }}
+  </button>
+</dialog>

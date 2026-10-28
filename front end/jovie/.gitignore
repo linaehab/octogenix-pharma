@@ -55,3 +55,6 @@ Thumbs.db
 **/.env
 **/.env.*
 !**/.env.example
+# Original Jovie brand assets (~850 MB, incl. videos over GitHub's file limit). Only the
+# compressed copies in src/assets/images/jovie/ are used by the app and committed.
+/src/assets/jovie assets/

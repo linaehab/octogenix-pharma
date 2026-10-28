@@ -1,0 +1,65 @@
+<div class="map" [class.is-static]="!interactive()">
+  <svg [attr.viewBox]="viewBox" role="img" [attr.aria-label]="'jovie.where.mapDescription' | translate" focusable="false"
+    (click)="onMapClick($event)">
+    @for (country of countries; track country.iso + $index) {
+      <path [attr.d]="country.d" [attr.data-iso]="country.iso" [attr.data-region]="country.region"
+        [class.is-market]="isMarket(country.region)" [class.is-selected]="selected() === country.region" />
+    }
+  </svg>
+
+  @if (popup(); as popup) {
+    <div class="tooltip" [style.left.%]="popup.left" [style.top.%]="popup.top"
+      role="region" [attr.aria-labelledby]="'jovie-map-tooltip-' + popup.region" aria-live="polite">
+      <button class="close" type="button" (click)="close()" [attr.aria-label]="'jovie.where.closePopup' | translate">×</button>
+      <p class="tooltip-title" [id]="'jovie-map-tooltip-' + popup.region">{{ 'jovie.where.region.' + popup.region | translate }}</p>
+      @if (popup.market; as market) {
+        <div class="box">
+          <p>{{ 'jovie.where.marketText.' + popup.region | translate }}</p>
+          @if (market.countries.length) {
+            <ul class="countries">
+              @for (country of market.countries; track country) {
+                <li>{{ country | translate }}</li>
+              }
+            </ul>
+          }
+        </div>
+        <div class="box">
+          <p>{{ 'jovie.where.knowMore' | translate }}</p>
+        </div>
+        @for (phone of market.phones; track phone.href) {
+          <a class="box" dir="ltr" [href]="phone.href">{{ phone.label }}</a>
+        }
+        @for (email of market.emails; track email) {
+          <a class="box" dir="ltr" [href]="'mailto:' + email">{{ email }}</a>
+        }
+        @if (market.link.external) {
+          <a class="link" [href]="market.link.href" target="_blank" rel="noopener noreferrer">{{ market.link.label | translate }}</a>
+        } @else {
+          <a class="link" [routerLink]="market.link.href">{{ market.link.label | translate }}</a>
+        }
+      } @else {
+        <div class="box">
+          <p>{{ 'jovie.where.notAvailable' | translate }}</p>
+          <a class="link" [href]="globalContact" target="_blank" rel="noopener noreferrer">{{ 'jovie.where.contactUs' | translate }}</a>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+@if (interactive()) {
+  <div class="legend">
+    <h2>{{ 'jovie.where.availableIn' | translate }}</h2>
+    <ul>
+      @for (market of markets; track market.region) {
+        <li>
+          <button type="button" class="legend-item" [attr.data-region]="market.region"
+            [class.is-active]="selected() === market.region" [attr.aria-expanded]="selected() === market.region"
+            (click)="toggle(market.region)">
+            <span class="dot" aria-hidden="true"></span>{{ 'jovie.where.region.' + market.region | translate }}
+          </button>
+        </li>
+      }
+    </ul>
+  </div>
+}

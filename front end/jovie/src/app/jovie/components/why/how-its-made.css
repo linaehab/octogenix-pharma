@@ -1,0 +1,206 @@
+/* After the official him-carousel: the next step peeks in at half opacity. */
+.him {
+  --dir: 1;
+  overflow: hidden;
+  padding-block: clamp(5rem, 11vw, 10rem);
+  scroll-margin-top: 4rem;
+}
+
+:host-context([dir='rtl']) .him {
+  --dir: -1;
+}
+
+.title {
+  margin: 0 0 clamp(3rem, 6vw, 5rem);
+  text-align: center;
+  font-size: clamp(2rem, 3.6vw, 3rem);
+  font-weight: 700;
+}
+
+.viewport {
+  width: min(100%, 52rem);
+  margin: 0 auto 4.5rem;
+}
+
+.track {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transform: translateX(calc(var(--dir) * -100% * var(--active)));
+  transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.slide {
+  display: flex;
+  flex: 0 0 100%;
+  align-items: center;
+  gap: 2.25rem;
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
+
+.slide.is-active {
+  opacity: 1;
+}
+
+/* Like the official carousel, only the coming step peeks in; past steps fade out. */
+.slide.is-past {
+  opacity: 0;
+}
+
+.image {
+  position: relative;
+  flex: 0 0 min(428px, 52%);
+}
+
+.step {
+  position: absolute;
+  z-index: 1;
+  top: 1.5rem;
+  inset-inline-start: 0;
+  width: 66px;
+  height: 80px;
+  padding-inline-end: 14px;
+  background: var(--jv-night);
+  color: var(--jv-white);
+  font-size: 1.4rem;
+  line-height: 80px;
+  text-align: center;
+  clip-path: url(#jv-himStep);
+}
+
+.mask {
+  clip-path: url(#jv-himImage);
+}
+
+.mask img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+h4 {
+  margin: 0 0 0.5rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.caption p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.nav {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 2rem;
+}
+
+.arrow {
+  padding: 0.25rem 0;
+  border: 0;
+  background: none;
+  color: var(--jv-faq-red);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Range bar: grey line, grey dots, red handle with a white centre (official shapes). */
+.range {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 2rem;
+}
+
+.range::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  height: 4px;
+  margin-top: -2px;
+  background: var(--jv-panel);
+}
+
+.fill {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 50%;
+  width: calc(var(--progress) * 100%);
+  height: 4px;
+  margin-top: -2px;
+  background: var(--jv-faq-red);
+  transition: width 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.dot {
+  position: relative;
+  z-index: 1;
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  border: 0;
+  background: var(--jv-panel);
+  cursor: pointer;
+  clip-path: url(#jv-himTrigger);
+}
+
+.dot.is-active {
+  background: transparent;
+}
+
+.handle {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  inset-inline-start: calc(var(--progress) * (100% - 32px));
+  width: 32px;
+  height: 32px;
+  margin-top: -16px;
+  background: var(--jv-faq-red);
+  clip-path: url(#jv-himTrigger);
+  pointer-events: none;
+  transition: inset-inline-start 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.handle::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--jv-white);
+}
+
+@media (max-width: 767px) {
+  .slide {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .image {
+    flex-basis: auto;
+    margin-bottom: 1rem;
+  }
+
+  .nav {
+    gap: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track,
+  .fill,
+  .handle {
+    transition: none;
+  }
+}

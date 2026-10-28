@@ -24,7 +24,7 @@ export class ContactMessageService {
    * Fetches Sanctum's XSRF-TOKEN cookie first (Angular then sends it as X-XSRF-TOKEN),
    * then posts the message. The API stores it before emailing the company.
    */
-  send(form: ContactMessage, locale: Language): Observable<void> {
+  send(form: ContactMessage, locale: Language, site: 'corporate' | 'jovie' = 'corporate'): Observable<void> {
     return this.http.get(`${this.baseUrl}/sanctum/csrf-cookie`).pipe(
       switchMap(() =>
         this.http.post(`${this.baseUrl}/api/v1/contact-messages`, {
@@ -35,7 +35,7 @@ export class ContactMessageService {
           subject: form.subject,
           message: form.message,
           website: form.website,
-          site: 'corporate',
+          site,
           locale,
         }),
       ),

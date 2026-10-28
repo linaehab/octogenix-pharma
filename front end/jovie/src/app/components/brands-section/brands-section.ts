@@ -13,7 +13,12 @@ interface BrandCard {
   imageAlt: string;
   ctaLabel: string;
   link: { type: 'none' | 'internal' | 'external'; url: string | null };
+  /** Route of the brand's own store in this app, when it has one. */
+  storeUrl: string | null;
 }
+
+/** Brand stores that exist in this Angular app (has_store only says the brand sells online). */
+const BRAND_STORE_ROUTES: Record<string, string> = { jovie: '/jovie' };
 
 @Component({
   selector: 'app-brands-section',
@@ -38,6 +43,7 @@ export class BrandsSection {
         imageAlt: this.content.pick(brand.image_alt),
         ctaLabel: this.content.pick(brand.cta_label),
         link: brand.link,
+        storeUrl: brand.has_store ? (BRAND_STORE_ROUTES[brand.slug] ?? null) : null,
       }));
     }
 
@@ -51,6 +57,7 @@ export class BrandsSection {
       imageAlt: t('brands.imageAlt'),
       ctaLabel: t('brands.cta'),
       link: { type: 'internal', url: '/contact' },
+      storeUrl: BRAND_STORE_ROUTES['jovie'],
     }];
   });
 }

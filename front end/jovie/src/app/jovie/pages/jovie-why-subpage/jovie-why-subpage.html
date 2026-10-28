@@ -1,0 +1,41 @@
+<app-page-intro [title]="page().title" tone="green" layout="content" />
+
+<article class="article" lang="en" dir="ltr">
+  <div class="jv-container narrow">
+    @if (language.currentLanguage() === 'ar') {
+      <p class="notice" lang="ar" dir="rtl">{{ 'jovie.why.englishOnly' | translate }}</p>
+    }
+    @for (group of groups(); track $index) {
+      @switch (group.kind) {
+        @case ('list') {
+          <ul>
+            @for (item of asList(group); track $index) {
+              <li>{{ item.text }}</li>
+            }
+          </ul>
+        }
+        @case ('h3') {
+          <h2>{{ asBlock(group).text }}</h2>
+        }
+        @case ('h4') {
+          <h3 [id]="asBlock(group).id ?? null">{{ asBlock(group).text }}</h3>
+        }
+        @case ('strong') {
+          <p><strong>{{ asBlock(group).text }}</strong></p>
+        }
+        @case ('em') {
+          <p><em>{{ asBlock(group).text }}</em></p>
+        }
+        @case ('img') {
+          <img [src]="asBlock(group).src" [alt]="asBlock(group).text" loading="lazy" />
+        }
+        @default {
+          <p>{{ asBlock(group).text }}</p>
+        }
+      }
+    }
+    <p class="back" [attr.lang]="language.currentLanguage()" [attr.dir]="language.currentLanguage() === 'ar' ? 'rtl' : 'ltr'">
+      <a class="jv-link jv-link--small" routerLink="/jovie/why">{{ 'jovie.why.back' | translate }}</a>
+    </p>
+  </div>
+</article>

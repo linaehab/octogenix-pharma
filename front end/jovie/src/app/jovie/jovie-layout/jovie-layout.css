@@ -1,0 +1,227 @@
+/* Foco (Dalton Maag) and the handwritten AlwaysInMyMilk: the official jovieproducts.com web fonts,
+   used with the brand owner's permission. */
+@font-face {
+  font-family: "Foco";
+  src: url("/fonts/jovie/foco-regular.woff2") format("woff2"), url("/fonts/jovie/foco-regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Foco";
+  src: url("/fonts/jovie/foco-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "AlwaysInMyMilk";
+  src: url("/fonts/jovie/always-in-my-milk.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Colours measured from the official Jovie graphic-element files (Pantone 123 C / 294 C). */
+app-jovie-layout {
+  --jv-sunshine: #fdc32d;
+  --jv-sunshine-soft: #fee7a6;
+  --jv-sweetypie: #e50754;
+  --jv-night: #203564;
+  --jv-playtime: #0aaca8;
+  --jv-breeze: #add9dd;
+  --jv-peach: #ffb3ab;
+  --jv-white: #ffffff;
+  --jv-cream: #fff8e6;
+  /* Measured from the official jovieproducts.com pages. */
+  --jv-faq-red: #ee215a;
+  --jv-map-sea: #1f3366;
+  --jv-map-land: #476088;
+  --jv-map-land-active: #729bb1;
+  --jv-panel: #f4f5f9;
+  --jv-green: #00b5ab;
+  --jv-header-height: 6rem;
+  /* Foco has no Arabic glyphs, so Arabic keeps Baloo Bhaijaan 2. */
+  --jv-font: "Foco", "Baloo Bhaijaan 2", "Segoe UI", sans-serif;
+  display: block;
+  min-height: 100vh;
+  background: var(--jv-white);
+  color: var(--jv-night);
+  font-family: var(--jv-font);
+  line-height: 1.55;
+}
+
+/* Official handwritten lettering (quotes, step badges). Latin only; Arabic falls back. */
+.jv-handwritten {
+  font-family: "AlwaysInMyMilk", var(--jv-font);
+  font-weight: 400;
+}
+
+/* Official text link: bold, with a slightly tilted hand-drawn underline that lifts on hover. */
+.jv-link {
+  position: relative;
+  display: inline-block;
+  padding: 0 0 0.45rem;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.6;
+  cursor: pointer;
+}
+
+.jv-link::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0.3rem;
+  height: 2px;
+  border-radius: 3px;
+  background: currentColor;
+  transform: rotate(-1deg);
+  transform-origin: bottom left;
+  transition: bottom 0.3s ease;
+}
+
+.jv-link:hover::before {
+  bottom: 0.15rem;
+}
+
+.jv-link--small {
+  font-size: 1rem;
+}
+
+[dir="rtl"] app-jovie-layout {
+  --jv-font: "Baloo Bhaijaan 2", "Foco", "Segoe UI", sans-serif;
+  line-height: 1.7;
+}
+
+/* The header floats over the first (yellow) band of every Jovie page. */
+app-jovie-layout main {
+  margin-top: calc(-1 * var(--jv-header-height));
+}
+
+app-jovie-layout main:focus {
+  outline: none;
+}
+
+app-jovie-layout :is(a, button, select, input, textarea, summary):focus-visible {
+  outline: 3px solid var(--jv-sweetypie);
+  outline-offset: 3px;
+}
+
+.jv-skip-link {
+  position: absolute;
+  inset-inline-start: 1rem;
+  top: -4rem;
+  z-index: 60;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  background: var(--jv-night);
+  color: var(--jv-white);
+  font-weight: 800;
+}
+
+.jv-skip-link:focus {
+  top: 1rem;
+}
+
+.jv-container {
+  width: min(72rem, 100% - 2rem);
+  margin-inline: auto;
+}
+
+.jv-section {
+  position: relative;
+  padding-block: clamp(3.5rem, 8vw, 6.5rem);
+  overflow: hidden;
+  scroll-margin-top: 5rem;
+}
+
+/* Content stays above the decorative shapes positioned inside a section. */
+.jv-section > .jv-container {
+  position: relative;
+  z-index: 1;
+}
+
+.jv-eyebrow {
+  margin: 0 0 0.5rem;
+  color: var(--jv-sweetypie);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.jv-title {
+  margin: 0 0 1rem;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 900;
+  line-height: 1.08;
+}
+
+.jv-lead {
+  max-width: 40rem;
+  margin: 0 0 1.5rem;
+  font-size: clamp(1.05rem, 2.2vw, 1.2rem);
+}
+
+.jv-center {
+  text-align: center;
+}
+
+.jv-center .jv-lead {
+  margin-inline: auto;
+}
+
+.jv-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0.7rem 1.6rem;
+  border: 0;
+  border-radius: 4px;
+  background: var(--jv-sweetypie);
+  color: var(--jv-white);
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.jv-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(32, 53, 100, 0.18);
+}
+
+.jv-button--light {
+  background: var(--jv-white);
+  color: var(--jv-night);
+}
+
+.jv-button--night {
+  background: var(--jv-night);
+}
+
+.jv-section-cta {
+  margin: 2.25rem 0 0;
+  text-align: center;
+}
+
+.jv-button:disabled {
+  background: #d9dee8;
+  color: #5b6b86;
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jv-button {
+    transition: none;
+  }
+}

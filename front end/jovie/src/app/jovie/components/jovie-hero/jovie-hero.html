@@ -1,0 +1,49 @@
+<section class="hero" aria-labelledby="jovie-hero-title">
+  <!-- Curved frame of the media (objectBoundingBox units), and its mirror for right-to-left. -->
+  <svg class="clip-defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <defs>
+      <clipPath id="jovie-hero-frame" clipPathUnits="objectBoundingBox">
+        <path d="M0.64,0 L1,0 L1,0.87 C0.93,0.84 0.87,1 0.74,0.985 C0.6,0.97 0.56,0.86 0.42,0.875 C0.27,0.89 0.2,0.99 0.09,0.96 C0.02,0.94 0.01,0.86 0.025,0.76 C0.04,0.64 0.005,0.55 0.02,0.42 C0.035,0.31 0.08,0.26 0.17,0.22 C0.28,0.17 0.35,0.14 0.43,0.08 C0.51,0.02 0.57,0 0.64,0 Z" />
+      </clipPath>
+      <clipPath id="jovie-hero-frame-rtl" clipPathUnits="objectBoundingBox">
+        <path transform="translate(1 0) scale(-1 1)"
+          d="M0.64,0 L1,0 L1,0.87 C0.93,0.84 0.87,1 0.74,0.985 C0.6,0.97 0.56,0.86 0.42,0.875 C0.27,0.89 0.2,0.99 0.09,0.96 C0.02,0.94 0.01,0.86 0.025,0.76 C0.04,0.64 0.005,0.55 0.02,0.42 C0.035,0.31 0.08,0.26 0.17,0.22 C0.28,0.17 0.35,0.14 0.43,0.08 C0.51,0.02 0.57,0 0.64,0 Z" />
+      </clipPath>
+    </defs>
+  </svg>
+
+  <!-- The official animated header pattern. -->
+  <app-pattern-overlay set="header" layout="about" />
+
+  <div class="jv-container layout">
+    <div class="copy">
+      <h1 id="jovie-hero-title">{{ 'jovie.hero.title' | translate }}</h1>
+      <p class="lead">{{ 'jovie.hero.description' | translate }}</p>
+      <div class="ctas">
+        <a class="jv-button" routerLink="/jovie/why">{{ 'jovie.hero.whyCta' | translate }}</a>
+        <a class="jv-button jv-button--light" routerLink="/jovie/shop">{{ 'jovie.hero.productsCta' | translate }}</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="media">
+    @if (media.video) {
+      <video #video muted loop playsinline preload="metadata" [poster]="media.poster" aria-hidden="true">
+        @if (media.videoWebm) {
+          <source [src]="media.videoWebm" type="video/webm" />
+        }
+        <source [src]="media.video" type="video/mp4" />
+      </video>
+      <button class="play" type="button" (click)="togglePlayback()"
+        [attr.aria-label]="(isPlaying() ? 'jovie.hero.pauseVideo' : 'jovie.hero.playVideo') | translate">
+        @if (isPlaying()) {
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="7" y="6" width="3.5" height="12" rx="1" /><rect x="13.5" y="6" width="3.5" height="12" rx="1" /></svg>
+        } @else {
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6.5v11l9-5.5z" /></svg>
+        }
+      </button>
+    } @else {
+      <img [src]="media.poster" [alt]="'jovie.hero.imageAlt' | translate" fetchpriority="high" />
+    }
+  </div>
+</section>

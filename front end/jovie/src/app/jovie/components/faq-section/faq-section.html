@@ -1,0 +1,47 @@
+<section id="faq" class="jv-section faq" [attr.aria-labelledby]="summary() ? 'jovie-faq-title' : null"
+  [attr.aria-label]="summary() ? null : ('jovie.nav.faq' | translate)">
+  <div class="jv-container narrow">
+    @if (summary()) {
+      <div class="jv-center">
+        <p class="jv-eyebrow">{{ 'jovie.faq.kicker' | translate }}</p>
+        <h2 id="jovie-faq-title" class="jv-title">{{ 'jovie.faq.title' | translate }}</h2>
+      </div>
+    }
+
+    @for (group of groups(); track group.title) {
+      <div class="group">
+        @if (summary()) {
+          <h3 class="group-title">{{ group.title }}</h3>
+        } @else {
+          <h2 class="group-title">{{ group.title }}</h2>
+        }
+        @for (item of group.items; track item.question) {
+          <details class="item">
+            <summary>{{ item.question }}</summary>
+            <p class="answer">
+              @for (part of item.answer; track $index) {
+                @switch (part.kind) {
+                  @case ('email') {
+                    <a dir="ltr" [href]="'mailto:' + part.text">{{ part.text }}</a>
+                  }
+                  @case ('phone') {
+                    <a dir="ltr" [href]="part.href">{{ part.text }}</a>
+                  }
+                  @default {
+                    {{ part.text }}
+                  }
+                }
+              }
+            </p>
+          </details>
+        }
+      </div>
+    }
+
+    @if (summary()) {
+      <p class="jv-section-cta">
+        <a class="jv-button jv-button--night" routerLink="/jovie/faq">{{ 'jovie.faq.allQuestions' | translate }}</a>
+      </p>
+    }
+  </div>
+</section>

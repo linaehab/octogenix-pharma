@@ -1,0 +1,39 @@
+<footer class="footer">
+  <div class="jv-container grid">
+    <div class="brand">
+      <img src="/assets/images/jovie/logo-official-yellow-border.png" alt="Jovie" width="88" height="88" loading="lazy" />
+      <p>{{ 'jovie.footer.tagline' | translate }}</p>
+    </div>
+
+    <nav [attr.aria-label]="'jovie.footer.navigation' | translate">
+      <h2>{{ 'jovie.footer.explore' | translate }}</h2>
+      <ul>
+        @for (page of pages; track page.path) {
+          <li><a [routerLink]="page.path">{{ page.label | translate }}</a></li>
+        }
+        <li><a routerLink="/jovie/contact">{{ 'jovie.nav.sayHello' | translate }}</a></li>
+      </ul>
+    </nav>
+
+    <div>
+      <h2>{{ 'jovie.footer.contact' | translate }}</h2>
+      <ul>
+        @for (phone of phones(); track phone.href) {
+          <li><a dir="ltr" [href]="phone.href">{{ phone.label }}</a></li>
+        }
+        <li><a dir="ltr" [href]="'mailto:' + email()">{{ email() }}</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>{{ 'jovie.footer.distributor' | translate }}</h2>
+      <p>{{ 'jovie.footer.distributorText' | translate }}</p>
+      <a class="distributor-link" routerLink="/">{{ 'jovie.footer.distributorLink' | translate }}</a>
+    </div>
+  </div>
+
+  <div class="jv-container notice">
+    <p><strong>{{ 'jovie.intro.title' | translate }}.</strong> {{ 'jovie.footer.notice' | translate }}</p>
+    <p class="copyright">{{ 'jovie.footer.copyright' | translate: { year: year } }}</p>
+  </div>
+</footer>

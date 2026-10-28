@@ -103,6 +103,24 @@
   line-height: 1.6;
 }
 
+.store-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+  padding: 11px 20px;
+  border-radius: 999px;
+  background: var(--green);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  transition: background 180ms ease;
+}
+
+.store-button:hover {
+  background: var(--clay);
+}
+
 @media (max-width: 1050px) {
   .brands-heading {
     grid-template-columns: 0.6fr 2fr;

@@ -1,0 +1,43 @@
+<article class="card" [attr.aria-labelledby]="'product-' + product().slug">
+  <div class="media">
+    @if (product().image; as image) {
+      <img [src]="image.url" [alt]="imageAlt()" width="520" height="705" loading="lazy" />
+    } @else {
+      <img class="placeholder" src="/assets/images/jovie/logo-official-yellow.png" alt="" width="120" height="120" />
+    }
+  </div>
+
+  <div class="body">
+    @if (subtitle()) {
+      <p class="stage">{{ subtitle() }}</p>
+    }
+    <h3 [id]="'product-' + product().slug">{{ name() }}</h3>
+    @if (description()) {
+      <p class="description">{{ description() }}</p>
+    }
+
+    <div class="meta">
+      @if (price(); as price) {
+        <p class="price">
+          <span>{{ price }}</span>
+          @if (weight()) {
+            <small> / {{ weight() }}</small>
+          }
+        </p>
+        @if (isPreview()) {
+          <p class="preview-note">{{ 'jovie.shop.previewPrice' | translate }}</p>
+        }
+      } @else {
+        <p class="price price--pending">{{ 'jovie.shop.pricePending' | translate }}</p>
+      }
+      @if (!product().is_available) {
+        <p class="availability">{{ 'jovie.shop.unavailable' | translate }}</p>
+      }
+    </div>
+
+    <button class="jv-button add" type="button" disabled [attr.aria-describedby]="'cart-note-' + product().slug">
+      {{ 'jovie.shop.addToCart' | translate }}
+    </button>
+    <p class="cart-note" [id]="'cart-note-' + product().slug">{{ 'jovie.shop.cartComingSoon' | translate }}</p>
+  </div>
+</article>

@@ -1,6 +1,6 @@
 <section class="hero" aria-labelledby="hero-title">
   <div class="hero-slider" aria-live="polite" aria-atomic="true">
-    @for (slide of slides(); track $index; let index = $index) {
+    @for (slide of slides; track $index; let index = $index) {
       <div
         class="hero-slide"
         [class.is-active]="index === activeIndex()"
@@ -20,7 +20,7 @@
       {{ 'hero.description' | translate }}
     </p>
     <a class="button button-light" routerLink="/about">
-      {{ 'hero.cta' | translate }} <span aria-hidden="true">↗</span>
+      {{ 'hero.cta' | translate }} <span aria-hidden="true">↗</span>`
     </a>
     <a class="button button-outline" routerLink="/contact">
       {{ 'hero.contactCta' | translate }} <span aria-hidden="true">↗</span>
@@ -32,7 +32,7 @@
     <span>{{ 'hero.noteTwo' | translate }}</span>
   </div>
   <div class="hero-dots" role="tablist" aria-label="Hero slides">
-    @for (slide of slides(); track $index; let index = $index) {
+    @for (slide of slides; track $index; let index = $index) {
       <button
         type="button"
         class="hero-dot"

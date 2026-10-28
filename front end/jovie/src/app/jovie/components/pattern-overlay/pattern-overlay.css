@@ -1,0 +1,93 @@
+/* Positions, sizes and keyframes copied from the official jovieproducts.com stylesheet (desktop),
+   scaled down on smaller screens. The art does not mirror in Arabic. */
+:host {
+  --scale: 1;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.pattern {
+  position: absolute;
+  width: calc(var(--w) * var(--scale));
+  height: auto;
+  animation-duration: 1.5s;
+  animation-timing-function: ease;
+  animation-iteration-count: 1;
+}
+
+.p1 { --w: 206px; top: 114px; left: -66px; transform-origin: left bottom; animation-name: jv-pattern1; }
+.p2 { --w: 160px; top: -88px; left: 16.5%; animation-name: jv-pattern2; }
+.p3 { --w: 259px; top: -73px; right: -13px; animation-name: jv-pattern3; }
+.p4 { --w: 206px; top: 409px; right: -59px; animation-name: jv-pattern4; }
+.p5 { --w: 176px; top: 636px; right: 14.8%; animation-name: jv-pattern5; }
+.p6 { --w: 194px; top: 331px; left: 7.8%; transform-origin: left bottom; animation-name: jv-pattern6; }
+
+/* Home and about (Why Jovie Goat) headers. */
+:host([data-layout='about']) .p1 { --w: 128px; top: 86px; }
+:host([data-layout='about']) .p2,
+:host([data-layout='about']) .p5 { opacity: 0; }
+:host([data-layout='about']) .p3 { --w: 210px; top: -36px; right: -45px; }
+:host([data-layout='about']) .p6 { --w: 193px; top: 336px; left: 20px; }
+
+/* FAQ and content headers. */
+:host([data-layout='content']) .p1 { --w: 50px; top: 88px; left: 2.97%; }
+:host([data-layout='content']) .p2 { --w: 156px; top: -98px; left: 16%; }
+:host([data-layout='content']) .p3 { --w: 160px; top: -42px; right: -53px; }
+:host([data-layout='content']) .p4 { --w: 206px; top: 288px; }
+:host([data-layout='content']) .p5 { --w: 176px; top: 509px; right: 21.25%; }
+:host([data-layout='content']) .p6 { --w: 194px; top: 334px; left: -26px; }
+
+@keyframes jv-pattern1 {
+  0% { opacity: 0; transform: rotate(-35deg) translateX(-130px); }
+  100% { opacity: 1; transform: rotate(0deg) translateX(0); }
+}
+
+@keyframes jv-pattern2 {
+  0% { opacity: 0; transform: translateY(-130px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes jv-pattern3 {
+  0% { opacity: 0; transform: translateY(-130px) translateX(130px); }
+  100% { opacity: 1; transform: translateY(0) translateX(0); }
+}
+
+@keyframes jv-pattern4 {
+  0% { opacity: 0; transform: translateX(80px) rotate(30deg); }
+  100% { opacity: 1; transform: translateX(0) rotate(0deg); }
+}
+
+@keyframes jv-pattern5 {
+  0% { opacity: 0; transform: translateY(130px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes jv-pattern6 {
+  0% { opacity: 0; transform: translateY(30px) rotate(30deg); }
+  100% { opacity: 1; transform: translateY(0) rotate(0deg); }
+}
+
+@media (max-width: 1199px) {
+  :host {
+    --scale: 0.8;
+  }
+}
+
+@media (max-width: 699px) {
+  :host {
+    --scale: 0.55;
+  }
+
+  .p4,
+  .p5 {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pattern {
+    animation: none;
+  }
+}

@@ -1,0 +1,36 @@
+<section id="howItsMade" class="him" aria-labelledby="jovie-how-its-made" aria-roledescription="carousel">
+  <div class="jv-container">
+    <h3 id="jovie-how-its-made" class="title">{{ content().howItsMade.title }}</h3>
+
+    <div class="viewport">
+      <ol class="track" [style.--active]="active()" aria-live="polite">
+        @for (slide of content().howItsMade.slides; track $index) {
+          <li class="slide" [class.is-active]="active() === $index" [class.is-past]="$index < active()" [attr.aria-hidden]="active() !== $index"
+            aria-roledescription="slide" [attr.aria-label]="slide.step">
+            <div class="image">
+              <span class="step jv-handwritten">{{ slide.step }}</span>
+              <div class="mask"><img [src]="images[$index]" alt="" loading="lazy" /></div>
+            </div>
+            <div class="caption">
+              <h4>{{ slide.title }}</h4>
+              <p>{{ slide.text }}</p>
+            </div>
+          </li>
+        }
+      </ol>
+    </div>
+
+    <div class="nav">
+      <button class="arrow" type="button" (click)="previous()">{{ content().howItsMade.previous }}</button>
+      <div class="range" [style.--progress]="active() / (content().howItsMade.slides.length - 1)">
+        <span class="fill" aria-hidden="true"></span>
+        @for (slide of content().howItsMade.slides; track $index) {
+          <button type="button" class="dot" [class.is-active]="active() === $index" [attr.aria-label]="slide.step + ': ' + slide.title"
+            [attr.aria-current]="active() === $index ? 'step' : null" (click)="go($index)"></button>
+        }
+        <span class="handle" aria-hidden="true"></span>
+      </div>
+      <button class="arrow" type="button" (click)="next()">{{ content().howItsMade.next }}</button>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,61 @@
+/* After the official "simple-content" article pages. */
+:host {
+  display: block;
+}
+
+.article {
+  padding-block: clamp(5rem, 9vw, 7.5rem);
+}
+
+.narrow {
+  max-width: 48rem;
+}
+
+.notice {
+  margin: 0 0 2rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: 3px;
+  background: var(--jv-panel);
+  font-weight: 700;
+}
+
+h2 {
+  margin: 0 0 1.25rem;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+h3 {
+  margin: 2.5rem 0 1rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.3;
+  scroll-margin-top: 7rem;
+}
+
+p,
+li {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+p {
+  margin: 0 0 1rem;
+}
+
+ul {
+  margin: 0 0 1rem;
+  padding-inline-start: 1.25rem;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1rem 0 1.5rem;
+}
+
+.back {
+  margin-top: 3rem;
+}

@@ -1,0 +1,103 @@
+<section class="jv-section contact" aria-labelledby="jovie-form-title">
+  <div class="jv-container layout">
+    <aside class="details" [attr.aria-label]="'jovie.contact.detailsTitle' | translate">
+      <h2>{{ 'jovie.contact.detailsTitle' | translate }}</h2>
+      <p>{{ 'jovie.contact.detailsText' | translate }}</p>
+      <div class="detail">
+        <h3>{{ 'contact.phoneLabel' | translate }}</h3>
+        @for (phone of phones(); track phone.href) {
+          <a dir="ltr" [href]="phone.href">{{ phone.label }}</a>
+        }
+      </div>
+      <div class="detail">
+        <h3>{{ 'contact.emailLabel' | translate }}</h3>
+        <a dir="ltr" [href]="'mailto:' + email()">{{ email() }}</a>
+      </div>
+      <div class="detail">
+        <h3>{{ 'jovie.contact.distributorLabel' | translate }}</h3>
+        <p>{{ 'contact.address' | translate }}</p>
+      </div>
+    </aside>
+
+    <form class="form" [formGroup]="contactForm" (ngSubmit)="submitMessage()" novalidate>
+      <h2 id="jovie-form-title">{{ 'jovie.contact.formTitle' | translate }}</h2>
+      <p>{{ 'jovie.contact.formDescription' | translate }}</p>
+
+      <div class="grid">
+        <div class="field">
+          <label for="jv-first-name">{{ 'contact.firstName' | translate }} <span aria-hidden="true">*</span></label>
+          <input id="jv-first-name" type="text" autocomplete="given-name" formControlName="firstName" required
+            [placeholder]="'contact.firstNamePlaceholder' | translate"
+            [attr.aria-invalid]="firstName.invalid && firstName.touched"
+            [attr.aria-describedby]="firstName.invalid && firstName.touched ? 'jv-first-name-error' : null" />
+          @if (firstName.hasError('required') && firstName.touched) {
+            <span class="error" id="jv-first-name-error">{{ 'contact.requiredError' | translate }}</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="jv-last-name">{{ 'contact.lastName' | translate }}</label>
+          <input id="jv-last-name" type="text" autocomplete="family-name" formControlName="lastName"
+            [placeholder]="'contact.lastNamePlaceholder' | translate" />
+        </div>
+
+        <div class="field">
+          <label for="jv-email">{{ 'contact.emailLabel' | translate }} <span aria-hidden="true">*</span></label>
+          <input id="jv-email" type="email" autocomplete="email" dir="ltr" formControlName="email" required
+            placeholder="name@example.com"
+            [attr.aria-invalid]="emailControl.invalid && emailControl.touched"
+            [attr.aria-describedby]="emailControl.invalid && emailControl.touched ? 'jv-email-error' : null" />
+          @if (emailControl.hasError('required') && emailControl.touched) {
+            <span class="error" id="jv-email-error">{{ 'contact.requiredError' | translate }}</span>
+          } @else if (emailControl.hasError('email') && emailControl.touched) {
+            <span class="error" id="jv-email-error">{{ 'contact.emailError' | translate }}</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="jv-phone">{{ 'contact.phoneLabel' | translate }}</label>
+          <input id="jv-phone" type="tel" autocomplete="tel" dir="ltr" formControlName="phone"
+            [placeholder]="'contact.phonePlaceholder' | translate" />
+        </div>
+
+        <div class="field wide">
+          <label for="jv-subject">{{ 'contact.subject' | translate }}</label>
+          <select id="jv-subject" formControlName="subject">
+            <option value="">{{ 'contact.subjectPlaceholder' | translate }}</option>
+            @for (subject of subjects; track subject.value) {
+              <option [value]="subject.value">{{ subject.label | translate }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field wide">
+          <label for="jv-message">{{ 'contact.message' | translate }} <span aria-hidden="true">*</span></label>
+          <textarea id="jv-message" rows="5" formControlName="message" required
+            [placeholder]="'contact.messagePlaceholder' | translate"
+            [attr.aria-invalid]="message.invalid && message.touched"
+            [attr.aria-describedby]="message.invalid && message.touched ? 'jv-message-error' : null"></textarea>
+          @if (message.hasError('required') && message.touched) {
+            <span class="error" id="jv-message-error">{{ 'contact.requiredError' | translate }}</span>
+          }
+        </div>
+
+        <!-- Honeypot: hidden from people and assistive technology; bots that fill it are ignored. -->
+        <div class="honeypot" aria-hidden="true">
+          <label for="jv-website">Website</label>
+          <input id="jv-website" type="text" tabindex="-1" autocomplete="off" formControlName="website" />
+        </div>
+      </div>
+
+      <div aria-live="polite">
+        @if (status() === 'sent') {
+          <p class="status status--success" role="status">{{ 'contact.success' | translate }}</p>
+        } @else if (status() === 'error') {
+          <p class="status status--error" role="alert">{{ errorKey() | translate }}</p>
+        }
+      </div>
+      <button class="jv-button submit" type="submit" [disabled]="status() === 'sending'">
+        {{ (status() === 'sending' ? 'contact.sending' : 'contact.submit') | translate }}
+      </button>
+    </form>
+  </div>
+</section>
