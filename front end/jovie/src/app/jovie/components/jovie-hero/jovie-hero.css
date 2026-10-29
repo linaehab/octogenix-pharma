@@ -17,8 +17,9 @@
   z-index: 2;
 }
 
+/* Narrow enough to stay clear of the media frame in both directions. */
 .copy {
-  max-width: min(34rem, 44%);
+  max-width: min(34rem, 40%);
 }
 
 h1 {
@@ -32,6 +33,7 @@ h1 {
   margin: 0 0 2rem;
   font-size: clamp(1.05rem, 1.5vw, 1.3rem);
   line-height: 1.55;
+  text-wrap: pretty;
 }
 
 .ctas {
@@ -56,8 +58,18 @@ h1 {
   background: var(--jv-sunshine-soft);
 }
 
-[dir='rtl'] .media {
+:host-context([dir='rtl']) .media {
   clip-path: url(#jovie-hero-frame-rtl);
+}
+
+/* Keeps the white header links readable where they cross a bright part of the photo. */
+.media::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 9rem;
+  background: linear-gradient(rgba(32, 53, 100, 0.38), rgba(32, 53, 100, 0));
+  pointer-events: none;
 }
 
 .media img,
@@ -118,5 +130,10 @@ h1 {
     width: 100%;
     height: clamp(16rem, 62vw, 26rem);
     margin-top: 2rem;
+  }
+
+  /* Here the photo sits below the text, away from the header. */
+  .media::after {
+    display: none;
   }
 }

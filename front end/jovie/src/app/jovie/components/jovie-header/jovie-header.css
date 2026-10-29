@@ -89,7 +89,7 @@
   transition: transform 220ms ease;
 }
 
-[dir='rtl'] .nav ul a::after {
+:host-context([dir='rtl']) .nav ul a::after {
   transform-origin: right;
 }
 

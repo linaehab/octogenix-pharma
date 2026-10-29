@@ -34,7 +34,7 @@ summary {
   list-style: none;
 }
 
-[dir='rtl'] summary {
+:host-context([dir='rtl']) summary {
   padding: 0.6rem 1.1rem 0.6rem 3.5rem;
 }
 

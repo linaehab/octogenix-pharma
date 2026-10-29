@@ -103,17 +103,7 @@
 
 /* Arabic / RTL */
 
-[dir='rtl'] .leader-entry,
-:host-context([dir='rtl']) .leader-entry {
-  direction: rtl;
-}
-
-[dir='rtl'] .leader-body,
-:host-context([dir='rtl']) .leader-body {
-  flex-direction: row-reverse;
-}
-
-[dir='rtl'] .leader-arrow,
+/* The page direction already mirrors the rows; only the arrow needs flipping. */
 :host-context([dir='rtl']) .leader-arrow {
   transform: scaleX(-1);
 }
