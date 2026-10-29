@@ -1,10 +1,7 @@
 <app-page-intro [title]="page().title" tone="green" layout="content" />
 
-<article class="article" lang="en" dir="ltr">
+<article class="article">
   <div class="jv-container narrow">
-    @if (language.currentLanguage() === 'ar') {
-      <p class="notice" lang="ar" dir="rtl">{{ 'jovie.why.englishOnly' | translate }}</p>
-    }
     @for (group of groups(); track $index) {
       @switch (group.kind) {
         @case ('list') {
@@ -34,7 +31,7 @@
         }
       }
     }
-    <p class="back" [attr.lang]="language.currentLanguage()" [attr.dir]="language.currentLanguage() === 'ar' ? 'rtl' : 'ltr'">
+    <p class="back">
       <a class="jv-link jv-link--small" routerLink="/jovie/why">{{ 'jovie.why.back' | translate }}</a>
     </p>
   </div>

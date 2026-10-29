@@ -23,6 +23,14 @@
   --header-solid: var(--jv-green);
 }
 
+.header[data-tone='pink'] {
+  --header-solid: var(--jv-pink);
+}
+
+.header[data-tone='blue'] {
+  --header-solid: var(--jv-blue);
+}
+
 .header.is-solid {
   background: var(--header-solid);
   box-shadow: 0 6px 18px rgba(32, 53, 100, 0.12);

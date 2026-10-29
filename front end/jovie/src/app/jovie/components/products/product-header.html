@@ -1,0 +1,62 @@
+<section class="product-header" [attr.data-tone]="product().tone" aria-labelledby="jovie-product-title">
+  <div class="jv-container inner">
+    <div class="title-row">
+      <a class="round round--plain" [routerLink]="siblings().previous.link" [attr.aria-label]="siblings().previous.label">
+        <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7" /></svg>
+      </a>
+      <div class="titles">
+        <h1 id="jovie-product-title">{{ text().name }}</h1>
+        <p>{{ content().brand }}</p>
+      </div>
+      <a class="round round--plain" [routerLink]="siblings().next.link" [attr.aria-label]="siblings().next.label">
+        <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7" /></svg>
+      </a>
+    </div>
+
+    <div class="gallery" role="group" aria-roledescription="carousel" [attr.aria-label]="text().name">
+      <ul class="slides">
+        @for (view of views; track view) {
+          <li class="slide" [attr.data-position]="position($index)" [attr.aria-hidden]="position($index) !== 'active'"
+            aria-roledescription="slide" [attr.aria-label]="content().detail.views[view]">
+            <img [src]="image(view)" [alt]="alt(view)" width="640" height="867" [attr.loading]="$index === 0 ? null : 'lazy'" />
+            <span class="cloud jv-handwritten" aria-hidden="true">
+              <span>{{ view === 'front' ? content().detail.cloudFront : content().detail.cloudOther }}</span>
+            </span>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <div class="controls">
+      <a class="jv-button jv-button--night where" routerLink="/jovie/where-to-find">{{ content().detail.whereToFind }}</a>
+      <div class="view-nav">
+        <button class="round round--night" type="button" (click)="show(-1)" [attr.aria-label]="content().detail.previousView">
+          <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7" /></svg>
+        </button>
+        <span class="view-label" aria-live="polite">{{ content().detail.views[activeView()] }}</span>
+        <button class="round round--night" type="button" (click)="show(1)" [attr.aria-label]="content().detail.nextView">
+          <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7" /></svg>
+        </button>
+      </div>
+      <button class="round round--night zoom-button" type="button" aria-haspopup="dialog" (click)="openZoom()"
+        [attr.aria-label]="content().detail.zoom">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="10.5" cy="10.5" r="6" /><path d="M15 15l5 5M10.5 8v5M8 10.5h5" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<dialog #zoom class="zoom" [attr.aria-label]="alt(activeView())" (click)="onZoomClick($event)">
+  <button class="round round--light close" type="button" (click)="closeZoom()" [attr.aria-label]="content().detail.closeZoom">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" /></svg>
+  </button>
+  <button class="round round--night zoom-prev" type="button" (click)="show(-1)" [attr.aria-label]="content().detail.previousView">
+    <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7" /></svg>
+  </button>
+  <img [src]="image(activeView(), true)" [alt]="alt(activeView())" width="1400" height="1896" loading="lazy" />
+  <button class="round round--night zoom-next" type="button" (click)="show(1)" [attr.aria-label]="content().detail.nextView">
+    <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7" /></svg>
+  </button>
+</dialog>

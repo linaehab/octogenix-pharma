@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="189px" height="220px" viewBox="0 0 189 220" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 61.1 (89650) - https://sketch.com -->
+    <title>tekst ballon</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Design" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="product-detail" transform="translate(-820.000000, -174.000000)" stroke="#FFFFFF" stroke-width="2">
+            <g id="::-component-/-product-header">
+                <g id="tekst-ballon" transform="translate(916.000000, 276.500000) rotate(-14.000000) translate(-916.000000, -276.500000) translate(806.000000, 172.000000)">
+                    <path d="M72,172.5 C62.6666667,190.833333 52.5,202.166667 41.5,206.5" id="Path-4"></path>
+                    <path d="M42.8461538,199 L42.2307692,203 L41,207 C44.6923077,208.333333 47.3589744,209 49,209" id="Path-5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M34.9700495,41.9632283 C43.2805425,26.955241 54.3343451,8.05529556 90.332021,1.94884036 C126.331763,-4.15761484 162.000985,20.8757412 172.346237,29.522233 C182.689423,38.1707982 218.220241,73.1382891 197.796218,129.417205 C189.465067,152.368768 164.684388,171.826484 153.678098,177.787795 C142.66561,183.753252 115.899749,201.446421 75.6590328,174.412138 C35.4224477,147.382002 17.8181671,122.236677 18.0168539,95.9094575 C18.2147902,69.5843114 27.7399413,55.0200529 34.9700495,41.9632283" id="Fill-6"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

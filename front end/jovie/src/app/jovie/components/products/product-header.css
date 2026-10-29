@@ -1,0 +1,338 @@
+/* After the official product-header and product-carousel. */
+:host {
+  --dir: 1;
+  display: block;
+}
+
+:host-context([dir='rtl']) {
+  --dir: -1;
+}
+
+.product-header {
+  --tone: var(--jv-sunshine);
+  position: relative;
+  padding: calc(var(--jv-header-height) + 1.5rem) 0 5.5rem;
+  overflow: hidden;
+  background: var(--tone);
+  color: var(--jv-white);
+  clip-path: url(#jv-pageHeader);
+}
+
+.product-header[data-tone='pink'] {
+  --tone: var(--jv-pink);
+}
+
+.product-header[data-tone='blue'] {
+  --tone: var(--jv-blue);
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  max-width: 34rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.titles {
+  flex: 1;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.4vw, 1.95rem);
+  line-height: 1.25;
+}
+
+.titles p {
+  margin: 0.15rem 0 0;
+  font-size: 0.95rem;
+}
+
+/* Round icon buttons in the official blob shape. */
+.round {
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 2.65rem;
+  height: 2.65rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--jv-white);
+  cursor: pointer;
+  clip-path: url(#jv-btnIcon);
+}
+
+.round svg {
+  width: 1.3rem;
+  height: 1.3rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.round--night {
+  background: var(--jv-night);
+}
+
+.round--night:hover,
+.round--plain:hover {
+  background: #152653;
+}
+
+.round--light {
+  background: var(--jv-white);
+  color: var(--jv-night);
+}
+
+/* The blob shape clips outlines: focus shows as colour. */
+.round:focus-visible {
+  outline: none;
+  background: var(--jv-sweetypie);
+  color: var(--jv-white);
+}
+
+:host-context([dir='rtl']) .chevron {
+  transform: scaleX(-1);
+}
+
+/* Active view in the middle, neighbours small and blurred. */
+.gallery {
+  position: relative;
+  height: 27rem;
+  margin: 2rem 0 1.75rem;
+}
+
+.slides {
+  position: relative;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.slide {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 19.7rem;
+  margin-left: -9.85rem;
+  transition: transform 0.45s ease, opacity 0.45s ease;
+}
+
+.slide img {
+  width: 100%;
+  height: auto;
+  filter: blur(8px);
+  transition: filter 0.45s ease;
+}
+
+.slide[data-position='active'] {
+  z-index: 2;
+}
+
+.slide[data-position='active'] img {
+  filter: none;
+}
+
+.slide[data-position='next'] {
+  transform: translateX(calc(var(--dir) * min(30vw, 27rem))) scale(0.5);
+}
+
+.slide[data-position='previous'] {
+  transform: translateX(calc(var(--dir) * -1 * min(30vw, 27rem))) scale(0.5);
+}
+
+.slide[data-position='hidden'] {
+  opacity: 0;
+  transform: scale(0.3);
+  pointer-events: none;
+}
+
+/* Official speech bubble. */
+.cloud {
+  position: absolute;
+  top: -3.7rem;
+  inset-inline-end: -8.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 10.5rem;
+  height: 12.2rem;
+  opacity: 0;
+  color: var(--jv-white);
+  font-size: 1.5rem;
+  line-height: 1.75rem;
+  text-align: center;
+  transform: rotate(calc(var(--dir) * 15deg));
+  transition: opacity 0.3s ease;
+}
+
+.cloud::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/assets/images/jovie/products/cloud.svg') no-repeat center / contain;
+}
+
+:host-context([dir='rtl']) .cloud::before {
+  transform: scaleX(-1);
+}
+
+.cloud span {
+  position: relative;
+  width: 75%;
+  margin-top: -1.65rem;
+}
+
+.slide[data-position='active'] .cloud {
+  opacity: 1;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1rem;
+  max-width: 54rem;
+  margin: 0 auto;
+}
+
+.where {
+  justify-self: start;
+}
+
+.view-nav {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.view-nav::before {
+  content: '';
+  position: absolute;
+  inset: 0 1.3rem;
+  background: rgba(43, 54, 101, 0.11);
+}
+
+.view-label {
+  position: relative;
+  width: 7.3rem;
+  text-align: center;
+  line-height: 2.65rem;
+}
+
+.zoom-button {
+  justify-self: end;
+}
+
+/* Official product-zoom. */
+.zoom {
+  width: 100vw;
+  max-width: none;
+  height: 100vh;
+  max-height: none;
+  padding: 5rem 1rem;
+  border: 0;
+  background: transparent;
+}
+
+.zoom::backdrop {
+  background: rgba(43, 54, 101, 0.82);
+}
+
+.zoom[open] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zoom img {
+  width: auto;
+  max-width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.zoom .close {
+  position: absolute;
+  top: 1.25rem;
+  inset-inline-end: 1.25rem;
+}
+
+.zoom-prev,
+.zoom-next {
+  position: absolute;
+  top: 50%;
+  margin-top: -1.3rem;
+}
+
+.zoom-prev {
+  inset-inline-start: 1.25rem;
+}
+
+.zoom-next {
+  inset-inline-end: 1.25rem;
+}
+
+@media (max-width: 991px) {
+  .gallery {
+    height: 22rem;
+    margin-block: 1.5rem;
+  }
+
+  .slide {
+    width: 16rem;
+    margin-left: -8rem;
+  }
+
+  .slide[data-position='next'],
+  .slide[data-position='previous'] {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .cloud {
+    display: none;
+  }
+
+  .controls {
+    grid-template-columns: auto auto;
+    justify-content: center;
+  }
+
+  .where {
+    grid-column: 1 / -1;
+    justify-self: center;
+    order: 3;
+  }
+}
+
+@media (max-width: 479px) {
+  .gallery {
+    height: 19rem;
+  }
+
+  .slide {
+    width: 14rem;
+    margin-left: -7rem;
+  }
+
+  .zoom img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide,
+  .slide img,
+  .cloud {
+    transition: none;
+  }
+}

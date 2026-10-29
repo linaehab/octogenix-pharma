@@ -11,9 +11,9 @@ import { HomeBanner } from '../home-banner/home-banner';
 })
 export class HeroSection implements OnDestroy {
   protected readonly slides = [
-    '/assets/images/factory-worker-packaging-boxes.jpg',
-    '/assets/images/interior-large-distribution-warehouse-with-shelves-stacked-with-palettes-goods-ready-market.jpg',
-    '/assets/images/medium-shot-delivery-man-with-mask.jpg',
+    '/assets/images/hero/hero-egypt-nile.jpg',
+    '/assets/images/hero/hero-infant-nutrition.jpg',
+    '/assets/images/hero/hero-research-lab.jpg',
   ];
 
   readonly activeIndex = signal(0);

@@ -1,0 +1,40 @@
+<app-page-intro [title]="content().listing.title" layout="content" headingId="jovie-products-title">
+  <div actions>
+    @for (product of products; track product.slug) {
+      <a class="jv-link" [routerLink]="link(product.slug)">{{ content().products[product.slug].name }}</a>
+    }
+  </div>
+</app-page-intro>
+
+<div class="products">
+  @for (product of products; track product.slug) {
+    @let text = content().products[product.slug];
+    <article class="product" [attr.data-tone]="product.tone" [attr.aria-labelledby]="'jovie-product-' + product.slug">
+      <div class="tile">
+        <img [src]="image(product.stage, 'front')" [alt]="text.name + ' — ' + text.labelName" width="640" height="867"
+          [attr.loading]="$first ? null : 'lazy'" />
+      </div>
+      <div class="info">
+        <p class="stage">{{ fill(content().listing.stage, { stage: product.stage }) }}</p>
+        <h2 [id]="'jovie-product-' + product.slug">{{ text.name }}</h2>
+        <p class="brand">{{ content().brand }}</p>
+        <ul class="facts">
+          <li>{{ text.labelName }}</li>
+          <li>{{ text.labelAge }}</li>
+          <li>{{ content().listing.netWeight }}</li>
+        </ul>
+        <p class="text">{{ text.intro[0] }}</p>
+        <a class="jv-button jv-button--night" [routerLink]="link(product.slug)"
+          [attr.aria-label]="content().listing.moreDetails + ': ' + text.name">{{ content().listing.moreDetails }}</a>
+      </div>
+    </article>
+  }
+</div>
+
+<section class="find" aria-labelledby="jovie-products-find">
+  <div class="jv-container">
+    <h2 id="jovie-products-find">{{ content().listing.findTitle }}</h2>
+    <p>{{ content().listing.findText }}</p>
+    <a class="jv-button" routerLink="/jovie/where-to-find">{{ content().listing.findButton }}</a>
+  </div>
+</section>

@@ -10,13 +10,14 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 export const JOVIE_NAV = [
   { path: '/jovie/shop', label: 'jovie.nav.shop' },
   { path: '/jovie/why', label: 'jovie.nav.why' },
+  { path: '/jovie/products', label: 'jovie.nav.products' },
   { path: '/jovie/feeding-guide', label: 'jovie.nav.feedingGuide' },
   { path: '/jovie/where-to-find', label: 'jovie.nav.whereToFind' },
   { path: '/jovie/faq', label: 'jovie.nav.faq' },
 ] as const;
 
 /** Colour of the solid header, from the route's `headerTone` data (default yellow). */
-export type HeaderTone = 'yellow' | 'navy' | 'red' | 'green';
+export type HeaderTone = 'yellow' | 'navy' | 'red' | 'green' | 'pink' | 'blue';
 
 const toneOf = (route: ActivatedRouteSnapshot | null): HeaderTone => {
   let tone: HeaderTone = 'yellow';

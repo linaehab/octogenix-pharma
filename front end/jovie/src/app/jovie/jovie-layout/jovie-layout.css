@@ -42,6 +42,9 @@ app-jovie-layout {
   --jv-map-land-active: #729bb1;
   --jv-panel: #f4f5f9;
   --jv-green: #00b5ab;
+  /* Product colours of the official product pages (stage 2 pink, stage 3 blue). */
+  --jv-pink: #f184b2;
+  --jv-blue: #a4dadc;
   --jv-header-height: 6rem;
   /* Foco has no Arabic glyphs, so Arabic keeps Baloo Bhaijaan 2. */
   --jv-font: "Foco", "Baloo Bhaijaan 2", "Segoe UI", sans-serif;

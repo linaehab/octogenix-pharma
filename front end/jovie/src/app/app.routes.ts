@@ -42,6 +42,24 @@ export const routes: Routes = [
         data: { subpage, headerTone: 'green' },
       })),
       {
+        path: 'products',
+        loadComponent: () => import('./jovie/pages/jovie-products-page/jovie-products-page').then((m) => m.JovieProductsPage),
+        title: 'Jovie Goat Products | Jovie',
+      },
+      // The official product pages; the header takes each product's colour.
+      ...(
+        [
+          ['infant-goat-milk', 'yellow', 'Organic Infant Goat Milk | Jovie'],
+          ['follow-on-goat-milk', 'pink', 'Organic Follow-on Goat Milk | Jovie'],
+          ['toddler-goat-milk', 'blue', 'Organic Toddler Goat Milk | Jovie'],
+        ] as const
+      ).map(([product, headerTone, title]) => ({
+        path: `products/${product}`,
+        loadComponent: () => import('./jovie/pages/jovie-product-page/jovie-product-page').then((m) => m.JovieProductPage),
+        title,
+        data: { product, headerTone },
+      })),
+      {
         path: 'feeding-guide',
         loadComponent: () =>
           import('./jovie/pages/jovie-feeding-guide-page/jovie-feeding-guide-page').then((m) => m.JovieFeedingGuidePage),

@@ -11,14 +11,6 @@
   max-width: 48rem;
 }
 
-.notice {
-  margin: 0 0 2rem;
-  padding: 0.9rem 1.1rem;
-  border-radius: 3px;
-  background: var(--jv-panel);
-  font-weight: 700;
-}
-
 h2 {
   margin: 0 0 1.25rem;
   font-size: clamp(1.8rem, 3vw, 2.4rem);

@@ -13,8 +13,7 @@ type Group = { kind: 'list'; items: WhyBlock[] } | WhyBlock;
 
 /**
  * /jovie/why/makes-good-sense, /organic and /without-promise: the official "More information" pages
- * (green content header, then the article). The official text exists in English only, so the
- * Arabic version shows it with a short note.
+ * (green content header, then the article), in the selected language.
  */
 @Component({
   selector: 'app-jovie-why-subpage',
@@ -29,7 +28,7 @@ export class JovieWhySubpage {
     initialValue: 'makes-good-sense' as WhySubpageKey,
   });
 
-  protected readonly page = computed(() => WHY_SUBPAGES[this.key()]);
+  protected readonly page = computed(() => WHY_SUBPAGES[this.language.currentLanguage()][this.key()]);
 
   constructor() {
     // The benefit cards link to a heading (#fat, #digest, ...): scroll to it once it is rendered.
