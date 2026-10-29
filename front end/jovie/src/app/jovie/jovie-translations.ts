@@ -110,9 +110,14 @@ export const jovieTranslations: Record<Language, Record<string, string>> = {
     'jovie.shop.empty': 'Jovie products will be available here soon.',
     'jovie.shop.previewPrice': 'Preview price for display only',
     'jovie.shop.pricePending': 'Price coming soon',
-    'jovie.shop.unavailable': 'Not available to order yet',
-    'jovie.shop.addToCart': 'Add to cart',
-    'jovie.shop.cartComingSoon': 'Online ordering is coming soon.',
+    'jovie.shop.priceFrom': 'From {price}',
+    'jovie.shop.ageMonths': '{from}–{to} months',
+    'jovie.shop.ageYears': '{from}–{to} years',
+    'jovie.shop.tin': '1 Jovie tin ({weight})',
+    'jovie.shop.shopNow': 'Shop now',
+    'jovie.shop.reviews': '{count} reviews',
+    'jovie.shop.ratingLabel': 'Rated {rating} out of 5',
+    'jovie.shop.previewPriceRating': 'Preview price and rating for display only',
 
 
 
@@ -263,9 +268,14 @@ export const jovieTranslations: Record<Language, Record<string, string>> = {
     'jovie.shop.empty': 'ستتوفر منتجات جوفي هنا قريبًا.',
     'jovie.shop.previewPrice': 'سعر تجريبي للعرض فقط',
     'jovie.shop.pricePending': 'السعر قريبًا',
-    'jovie.shop.unavailable': 'غير متاح للطلب حاليًا',
-    'jovie.shop.addToCart': 'أضف إلى السلة',
-    'jovie.shop.cartComingSoon': 'الطلب عبر الإنترنت متاح قريبًا.',
+    'jovie.shop.priceFrom': 'ابتداءً من {price}',
+    'jovie.shop.ageMonths': '{from}–{to} أشهر',
+    'jovie.shop.ageYears': '{from}–{to} سنوات',
+    'jovie.shop.tin': 'علبة جوفي واحدة ({weight})',
+    'jovie.shop.shopNow': 'تسوّق الآن',
+    'jovie.shop.reviews': '{count} تقييم',
+    'jovie.shop.ratingLabel': 'التقييم {rating} من 5',
+    'jovie.shop.previewPriceRating': 'سعر وتقييم تجريبيان للعرض فقط',
 
 
 

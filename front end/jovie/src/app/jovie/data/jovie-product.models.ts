@@ -38,6 +38,8 @@ export interface ApiProduct {
   age_to_months: number | null;
   is_featured: boolean;
   image: ApiProductImage | null;
+  /** Customer rating; the API does not send one yet, so only the preview catalogue has it. */
+  rating?: { average: number; count: number } | null;
   price_from: Money | null;
   is_available: boolean;
   variants: ApiProductVariant[];

@@ -8,6 +8,8 @@ import { ApiProduct, Money } from './jovie-product.models';
  *   (backend/database/seeders/data/jovie-products.php).
  * - PRICES ARE PLACEHOLDERS approved for the visual preview only; they are not client prices.
  *   The UI labels them as preview prices, and nothing here can be added to a cart.
+ * - RATINGS ARE PLACEHOLDERS too, for the card design only: they are not customer reviews,
+ *   and the UI labels them as preview ratings. Real ratings must come from real reviews.
  * - Set PREVIEW_CATALOG_ENABLED to false (or delete this file) before launch.
  */
 export const PREVIEW_CATALOG_ENABLED = true;
@@ -24,6 +26,7 @@ const product = (
   shortDescription: ApiProduct['short_description'],
   ages: [number, number],
   pounds: number,
+  rating: [number, number],
 ): ApiProduct => ({
   slug,
   brand,
@@ -36,11 +39,12 @@ const product = (
   is_featured: false,
   image: {
     id: -stage,
-    url: `/assets/images/jovie/pack-stage-${stage}.png`,
+    url: `/assets/images/jovie/products/eg-stage-${stage}-front.webp`,
     alt: { en: `${name.en} tin`, ar: `علبة ${name.ar}` },
     is_primary: true,
     sort_order: 0,
   },
+  rating: { average: rating[0], count: rating[1] },
   price_from: previewPrice(pounds),
   is_available: false,
   variants: [
@@ -70,6 +74,7 @@ export const PREVIEW_PRODUCTS: ApiProduct[] = [
     },
     [0, 6],
     1200,
+    [4.5, 172],
   ),
   product(
     2,
@@ -82,6 +87,7 @@ export const PREVIEW_PRODUCTS: ApiProduct[] = [
     },
     [6, 12],
     1150,
+    [4.5, 206],
   ),
   product(
     3,
@@ -97,5 +103,6 @@ export const PREVIEW_PRODUCTS: ApiProduct[] = [
     },
     [12, 36],
     1050,
+    [4.5, 192],
   ),
 ];

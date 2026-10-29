@@ -1,43 +1,55 @@
 <article class="card" [attr.aria-labelledby]="'product-' + product().slug">
-  <div class="media">
+  <!-- The picture repeats the "Shop now" link for pointer users only. -->
+  <a class="media" [class.has-duo]="!!duoImage()" [routerLink]="link()" tabindex="-1" aria-hidden="true">
     @if (product().image; as image) {
-      <img [src]="image.url" [alt]="imageAlt()" width="520" height="705" loading="lazy" />
+      <img class="main" [src]="image.url" [alt]="imageAlt()" width="640" height="867" loading="lazy" />
     } @else {
-      <img class="placeholder" src="/assets/images/jovie/logo-official-yellow.png" alt="" width="120" height="120" />
+      <img class="main placeholder" src="/assets/images/jovie/logo-official-yellow.png" alt="" width="120" height="120" />
     }
-  </div>
+    @if (duoImage(); as duo) {
+      <img class="duo" [src]="duo" alt="" width="800" height="800" loading="lazy" />
+    }
+  </a>
 
   <div class="body">
-    @if (subtitle()) {
-      <p class="stage">{{ subtitle() }}</p>
-    }
-    <h3 [id]="'product-' + product().slug">{{ name() }}</h3>
-    @if (description()) {
-      <p class="description">{{ description() }}</p>
-    }
-
-    <div class="meta">
-      @if (price(); as price) {
-        <p class="price">
-          <span>{{ price }}</span>
-          @if (weight()) {
-            <small> / {{ weight() }}</small>
+    @if (product().rating; as rating) {
+      <p class="rating">
+        <span class="stars" role="img" [attr.aria-label]="'jovie.shop.ratingLabel' | translate: { rating: rating.average }">
+          @for (fill of stars(); track $index) {
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path class="empty" [attr.d]="starPath" />
+              <path class="full" [attr.d]="starPath" [style.clip-path]="'inset(0 ' + (100 - fill * 100) + '% 0 0)'" />
+            </svg>
           }
-        </p>
-        @if (isPreview()) {
-          <p class="preview-note">{{ 'jovie.shop.previewPrice' | translate }}</p>
-        }
-      } @else {
-        <p class="price price--pending">{{ 'jovie.shop.pricePending' | translate }}</p>
-      }
-      @if (!product().is_available) {
-        <p class="availability">{{ 'jovie.shop.unavailable' | translate }}</p>
-      }
-    </div>
+        </span>
+        <span>{{ 'jovie.shop.reviews' | translate: { count: rating.count } }}</span>
+      </p>
+    }
 
-    <button class="jv-button add" type="button" disabled [attr.aria-describedby]="'cart-note-' + product().slug">
-      {{ 'jovie.shop.addToCart' | translate }}
-    </button>
-    <p class="cart-note" [id]="'cart-note-' + product().slug">{{ 'jovie.shop.cartComingSoon' | translate }}</p>
+    <h3 [id]="'product-' + product().slug">{{ name() }}</h3>
+
+    @if (price(); as price) {
+      <p class="price">{{ 'jovie.shop.priceFrom' | translate: { price: price } }}</p>
+      @if (isPreview()) {
+        <p class="preview-note">
+          {{ (product().rating ? 'jovie.shop.previewPriceRating' : 'jovie.shop.previewPrice') | translate }}
+        </p>
+      }
+    } @else {
+      <p class="price">{{ 'jovie.shop.pricePending' | translate }}</p>
+    }
+
+    <ul class="chips">
+      @if (age(); as age) {
+        <li>{{ age.key | translate: { from: age.from, to: age.to } }}</li>
+      }
+      @if (weight()) {
+        <li>{{ 'jovie.shop.tin' | translate: { weight: weight() } }}</li>
+      }
+    </ul>
+
+    <a class="shop-now" [routerLink]="link()" [attr.aria-label]="('jovie.shop.shopNow' | translate) + ': ' + name()">
+      {{ 'jovie.shop.shopNow' | translate }}
+    </a>
   </div>
 </article>

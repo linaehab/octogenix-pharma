@@ -1,116 +1,168 @@
 :host {
-  --stage-tint: var(--jv-breeze);
   display: block;
   height: 100%;
-}
-
-:host([data-stage='2']) {
-  --stage-tint: var(--jv-peach);
-}
-
-:host([data-stage='3']) {
-  --stage-tint: var(--jv-sunshine-soft);
 }
 
 .card {
   display: flex;
   flex-direction: column;
   height: 100%;
-  border-radius: 24px;
-  background: var(--jv-white);
-  box-shadow: 0 14px 36px rgba(32, 53, 100, 0.1);
-  overflow: hidden;
+  padding: 1rem;
+  border-radius: 18px;
+  /* The light grey of the official Jovie cards, the same for every stage. */
+  background: var(--jv-panel);
 }
 
+/* The tin, crossfading to the two-tin photo on hover (and when the card's link has focus). */
 .media {
+  position: relative;
   display: grid;
   place-items: center;
-  padding: 1.75rem 1.5rem 0;
-  background: radial-gradient(circle at 50% 62%, var(--stage-tint) 0 58%, transparent 59%);
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 12px;
 }
 
 .media img {
   display: block;
-  width: min(13rem, 70%);
-  height: auto;
-  filter: drop-shadow(0 14px 16px rgba(32, 53, 100, 0.18));
 }
 
-.media .placeholder {
-  width: 7rem;
-  margin-block: 4rem;
+.main {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 86%;
+  margin: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 14px rgba(32, 53, 100, 0.16));
+  transition: opacity 0.45s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.main.placeholder {
+  height: 7rem;
   opacity: 0.5;
+}
+
+.duo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.08);
+  transition: opacity 0.5s ease, transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (hover: hover) {
+  .card:hover .has-duo .main,
+  .card:focus-within .has-duo .main {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+
+  .card:hover .duo,
+  .card:focus-within .duo {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Rating line, as on kabrita.eu: five stars (partly filled) and the review count. */
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0 0 0.45rem;
+  font-size: 0.95rem;
+}
+
+.stars {
+  display: inline-flex;
+  gap: 0.1rem;
+}
+
+.stars svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.stars path {
+  fill: #f6bc25;
+}
+
+.stars .empty {
+  fill: #dfe2ea;
+}
+
+:host-context([dir='rtl']) .stars {
+  transform: scaleX(-1);
 }
 
 .body {
   display: flex;
   flex: 1;
   flex-direction: column;
-  padding: 1.25rem 1.5rem 1.5rem;
-}
-
-.stage {
-  align-self: flex-start;
-  margin: 0 0 0.75rem;
-  padding: 0.2rem 0.75rem;
-  border-radius: 999px;
-  background: var(--jv-night);
-  color: var(--jv-white);
-  font-size: 0.9rem;
-  font-weight: 800;
+  padding: 1.25rem 0.25rem 0.25rem;
 }
 
 h3 {
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.6rem;
   font-size: 1.3rem;
-  font-weight: 900;
-  line-height: 1.2;
-}
-
-.description {
-  margin: 0 0 1rem;
-}
-
-.meta {
-  margin-top: auto;
-}
-
-.meta p {
-  margin: 0 0 0.35rem;
+  font-weight: 700;
+  line-height: 1.25;
 }
 
 .price {
-  font-size: 1.5rem;
-  font-weight: 900;
-}
-
-.price small {
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-.price--pending {
-  font-size: 1.1rem;
-}
-
-.preview-note,
-.availability,
-.cart-note {
-  font-size: 0.9rem;
-  font-weight: 700;
+  margin: 0;
+  font-size: 1.05rem;
 }
 
 .preview-note {
+  margin: 0.15rem 0 0;
   color: var(--jv-sweetypie);
+  font-size: 0.85rem;
+  font-weight: 700;
 }
 
-.add {
-  width: 100%;
-  margin-top: 0.85rem;
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.9rem 0 1.25rem;
+  padding: 0;
+  list-style: none;
 }
 
-.cart-note {
-  margin: 0.5rem 0 0;
-  text-align: center;
-  opacity: 0.8;
+.chips li {
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  background: var(--jv-white);
+  font-size: 0.88rem;
+}
+
+.shop-now {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.1rem;
+  margin-top: auto;
+  border-radius: 12px;
+  background: var(--jv-night);
+  color: var(--jv-white);
+  font-size: 1.1rem;
+  font-weight: 700;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.shop-now:hover {
+  background: var(--jv-sunshine);
+  color: var(--jv-night);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .main,
+  .duo {
+    transition: opacity 0.2s linear;
+  }
 }

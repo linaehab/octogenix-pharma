@@ -1,5 +1,5 @@
 .shop {
-  background: var(--jv-cream);
+  background: var(--jv-white);
 }
 
 .decor-blob {
@@ -26,14 +26,14 @@
   flex-direction: column;
   gap: 0.9rem;
   min-height: 30rem;
-  padding: 1.5rem;
-  border-radius: 24px;
-  background: var(--jv-white);
+  padding: 1rem;
+  border-radius: 18px;
+  background: var(--jv-panel);
 }
 
 .skeleton span {
   border-radius: 12px;
-  background: linear-gradient(90deg, #f1ede2 25%, #faf7ef 50%, #f1ede2 75%);
+  background: linear-gradient(90deg, #e6e9f0 25%, #f9fafc 50%, #e6e9f0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite linear;
 }
@@ -50,8 +50,8 @@
   max-width: 34rem;
   margin: 2rem auto 0;
   padding: 2rem;
-  border-radius: 24px;
-  background: var(--jv-white);
+  border-radius: 18px;
+  background: var(--jv-panel);
   text-align: center;
   font-weight: 700;
 }
