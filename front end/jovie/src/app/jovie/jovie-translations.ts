@@ -137,8 +137,6 @@ export const jovieTranslations: Record<Language, Record<string, string>> = {
     'jovie.guide.note':
       'Breast milk is the best for your child. Infant formula should be used on the advice of a healthcare professional.',
 
-    'jovie.where.kicker': 'Where to find',
-    'jovie.where.title': 'Jovie in Egypt',
     'jovie.where.description': 'Jovie is available in Egypt through its official distributor, Octogenix Pharma.',
 
     'jovie.faq.kicker': 'FAQ',
@@ -294,8 +292,6 @@ export const jovieTranslations: Record<Language, Record<string, string>> = {
     'jovie.guide.shopCta': 'تسوّق المرحلة {stage}',
     'jovie.guide.note': 'حليب الأم هو الأفضل لطفلك. يجب استخدام حليب الرضع بناءً على نصيحة مقدم الرعاية الصحية.',
 
-    'jovie.where.kicker': 'أماكن التوفر',
-    'jovie.where.title': 'جوفي في مصر',
     'jovie.where.description': 'تتوفر جوفي في مصر من خلال الموزع الرسمي، أوكتوجينيكس فارما.',
 
     'jovie.faq.kicker': 'الأسئلة الشائعة',

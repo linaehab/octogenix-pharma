@@ -114,22 +114,33 @@ describe('App', () => {
       }
     });
 
-    it('summarises each section on the home page with a link to its page', async () => {
+    it('follows the official home: hero, the Shop, then the official sections with their links', async () => {
       const { compiled } = await open('/jovie');
       const hrefs = (selector: string) =>
         Array.from(compiled.querySelectorAll(`${selector} a`)).map((a) => a.getAttribute('href'));
 
+      const sections = Array.from(compiled.querySelectorAll('app-jovie-home-page > *')).map((el) => el.tagName.toLowerCase());
+      expect(sections).toEqual([
+        'app-jovie-hero',
+        'app-shop-section',
+        'app-home-solution',
+        'app-home-parents',
+        'app-home-products',
+        'app-home-where',
+      ]);
       expect(hrefs('app-jovie-hero')).toEqual(['/jovie/why', '/jovie/shop']);
       expect(hrefs('app-shop-section')).toContain('/jovie/shop');
-      expect(hrefs('app-why-benefits')).toContain('/jovie/why');
-      expect(hrefs('app-feeding-guide')).toEqual([
-        '/jovie/feeding-guide?stage=1',
-        '/jovie/feeding-guide?stage=2',
-        '/jovie/feeding-guide?stage=3',
+      expect(hrefs('app-home-solution')).toEqual(['/jovie/why', '/jovie/why', '/jovie/why']);
+      expect(hrefs('app-home-parents')).toEqual(['/jovie/why']);
+      expect(hrefs('app-home-products')).toEqual([
+        '/jovie/products',
+        '/jovie/products/infant-goat-milk',
+        '/jovie/products/follow-on-goat-milk',
+        '/jovie/products/toddler-goat-milk',
       ]);
-      expect(hrefs('app-where-to-find')).toContain('/jovie/where-to-find');
-      expect(hrefs('app-faq-section')).toContain('/jovie/faq');
-      expect(compiled.querySelectorAll('app-faq-section details').length).toBe(3);
+      expect(compiled.querySelector('app-home-products .tile img')?.getAttribute('src')).toBe('/assets/images/jovie/products/eg-stage-1-front.webp');
+      expect(hrefs('app-home-where')).toEqual(['/jovie/where-to-find']);
+      expect(compiled.querySelector('app-home-where')?.textContent).toContain('Octogenix Pharma');
       expect(compiled.querySelector('a[href="#"], a:not([href])')).toBeNull();
     });
 
