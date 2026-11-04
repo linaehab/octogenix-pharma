@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, InjectionToken, computed, inject, signal } from '@angular/core';
-import { timeout } from 'rxjs';
+import { Observable, map, timeout } from 'rxjs';
 import { API_BASE_URL } from '../../core/api/api-base-url';
 import { ApiProduct } from './jovie-product.models';
 import { PREVIEW_CATALOG_ENABLED, PREVIEW_PRODUCTS } from './preview-catalog';
@@ -43,6 +43,13 @@ export class JovieCatalogService {
     }
     this.requested = true;
     this.fetch();
+  }
+
+  /** One active product with its variants (GET /api/v1/products/{slug}); 404 when not on sale. */
+  productDetail(slug: string): Observable<ApiProduct> {
+    return this.http
+      .get<{ data: ApiProduct }>(`${this.baseUrl ?? ''}/api/v1/products/${encodeURIComponent(slug)}`)
+      .pipe(timeout(JovieCatalogService.TIMEOUT_MS), map((response) => response.data));
   }
 
   retry(): void {

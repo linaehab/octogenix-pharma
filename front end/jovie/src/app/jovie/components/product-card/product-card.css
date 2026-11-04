@@ -141,12 +141,95 @@ h3 {
   font-size: 0.88rem;
 }
 
+.actions {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: auto;
+}
+
+/* Add to Cart: outlined, with the bag icon, so it reads apart from Shop now (the original
+   filled navy button below it). */
+.add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3.1rem;
+  border: 2px solid var(--jv-night);
+  border-radius: 12px;
+  background: var(--jv-white);
+  color: var(--jv-night);
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+.add:hover:not(:disabled) {
+  border-color: var(--jv-sunshine);
+  background: var(--jv-sunshine);
+}
+
+.add:disabled {
+  border-color: #d9dee8;
+  background: #eef0f5;
+  color: #4d5d78;
+  cursor: not-allowed;
+}
+
+.add svg {
+  width: 1.3rem;
+  height: 1.3rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+
+.spinner {
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 2px solid currentColor;
+  border-inline-end-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cart-status {
+  min-height: 1.4rem;
+  margin: 0.55rem 0 0;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.cart-status a {
+  margin-inline-start: 0.4rem;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.ok {
+  color: #11795f;
+  font-weight: 700;
+}
+
+.warn {
+  color: var(--jv-sweetypie);
+  font-weight: 700;
+}
+
 .shop-now {
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 3.1rem;
-  margin-top: auto;
   border-radius: 12px;
   background: var(--jv-night);
   color: var(--jv-white);
@@ -164,5 +247,9 @@ h3 {
   .main,
   .duo {
     transition: opacity 0.2s linear;
+  }
+
+  .spinner {
+    animation-duration: 2s;
   }
 }

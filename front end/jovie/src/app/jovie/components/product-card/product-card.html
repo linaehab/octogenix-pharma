@@ -12,7 +12,7 @@
   </a>
 
   <div class="body">
-    @if (product().rating; as rating) {
+    @if (rating(); as rating) {
       <p class="rating">
         <span class="stars" role="img" [attr.aria-label]="'jovie.shop.ratingLabel' | translate: { rating: rating.average }">
           @for (fill of stars(); track $index) {
@@ -32,11 +32,14 @@
       <p class="price">{{ 'jovie.shop.priceFrom' | translate: { price: price } }}</p>
       @if (isPreview()) {
         <p class="preview-note">
-          {{ (product().rating ? 'jovie.shop.previewPriceRating' : 'jovie.shop.previewPrice') | translate }}
+          {{ (rating() ? 'jovie.shop.previewPriceRating' : 'jovie.shop.previewPrice') | translate }}
         </p>
       }
     } @else {
       <p class="price">{{ 'jovie.shop.pricePending' | translate }}</p>
+    }
+    @if (!isPreview() && isPreviewRating()) {
+      <p class="preview-note">{{ 'jovie.shop.previewRating' | translate }}</p>
     }
 
     <ul class="chips">
@@ -48,8 +51,39 @@
       }
     </ul>
 
-    <a class="shop-now" [routerLink]="link()" [attr.aria-label]="('jovie.shop.shopNow' | translate) + ': ' + name()">
-      {{ 'jovie.shop.shopNow' | translate }}
-    </a>
+    <!-- Two separate actions: add straight to the cart (stays here), or open the product page. -->
+    <div class="actions">
+      <button class="add" type="button" [disabled]="!!unavailableReason() || adding()" [attr.aria-busy]="adding()"
+        [attr.aria-label]="(unavailableReason() ? '' : ('jovie.cart.add' | translate) + ': ') + name()"
+        [attr.aria-describedby]="'cart-status-' + product().slug" (click)="addToCart()">
+        @if (adding()) {
+          <span class="spinner" aria-hidden="true"></span>{{ 'jovie.cart.adding' | translate }}
+        } @else if (unavailableReason(); as reason) {
+          {{ reason | translate }}
+        } @else {
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 8h12l-1 12H7z" /><path d="M9 10V7a3 3 0 0 1 6 0v3" /></svg>
+          {{ 'jovie.cart.add' | translate }}
+        }
+      </button>
+      <a class="shop-now" [routerLink]="link()" [attr.aria-label]="('jovie.shop.shopNow' | translate) + ': ' + name()">
+        {{ 'jovie.shop.shopNow' | translate }}
+      </a>
+    </div>
+
+    <p class="cart-status" [id]="'cart-status-' + product().slug" role="status" aria-live="polite">
+      @switch (feedback()?.kind) {
+        @case ('added') {
+          <span class="ok">{{ 'jovie.cart.added' | translate }}</span>
+          <a routerLink="/jovie/cart">{{ 'jovie.cart.view' | translate }}</a>
+        }
+        @case ('adjusted') {
+          <span class="warn">{{ 'jovie.cart.limited' | translate: { count: feedback()?.allowed ?? 0 } }}</span>
+          <a routerLink="/jovie/cart">{{ 'jovie.cart.view' | translate }}</a>
+        }
+        @case ('error') {
+          <span class="warn">{{ feedback()?.key ?? '' | translate }}</span>
+        }
+      }
+    </p>
   </div>
 </article>

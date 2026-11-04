@@ -10,6 +10,8 @@
       </div>
     }
 
+    <app-test-mode-notice class="test-notice" />
+
     <div aria-live="polite" [attr.aria-busy]="catalog.status() === 'loading'">
       @switch (catalog.status()) {
         @case ('loading') {

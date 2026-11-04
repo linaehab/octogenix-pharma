@@ -5,13 +5,15 @@ import { provideRouter } from '@angular/router';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { JOVIE_PREVIEW_PRODUCTS } from '../../data/jovie-catalog.service';
 import { PREVIEW_PRODUCTS } from '../../data/preview-catalog';
+import { SiteContentService } from '../../../core/content/site-content.service';
 import { jovieTranslations } from '../../jovie-translations';
+import { CartService } from '../../store/cart.service';
 import { ShopSection } from './shop-section';
 
 describe('ShopSection', () => {
   let http: HttpTestingController;
 
-  const render = (preview = PREVIEW_PRODUCTS) => {
+  const render = (preview = PREVIEW_PRODUCTS, storeOpen = false) => {
     TestBed.configureTestingModule({
       imports: [ShopSection],
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([]), { provide: JOVIE_PREVIEW_PRODUCTS, useValue: preview }],
@@ -20,6 +22,11 @@ describe('ShopSection', () => {
     const language = TestBed.inject(LanguageService);
     language.addTranslations(jovieTranslations);
     language.setLanguage('en');
+    if (storeOpen) {
+      // The published store switch (GET /api/v1/settings): orders open.
+      const content = TestBed.inject(SiteContentService);
+      spyOn(content, 'setting').and.callFake(((key: string, fallback: unknown) => (key === 'store.enabled' ? true : fallback)) as never);
+    }
     const fixture = TestBed.createComponent(ShopSection);
     fixture.detectChanges();
     return { fixture, element: fixture.nativeElement as HTMLElement };
@@ -66,18 +73,80 @@ describe('ShopSection', () => {
       '/jovie/products/follow-on-goat-milk',
       '/jovie/products/toddler-goat-milk',
     ]);
-    expect(element.querySelector('app-product-card button')).toBeNull();
+    // Preview products have no real variant: Add to Cart stays off.
+    const add = cards[0].querySelector<HTMLButtonElement>('button.add');
+    expect(add?.disabled).toBeTrue();
+    expect(add?.textContent?.trim()).toBe('Available soon');
   });
 
   it('shows real API products without the preview label', () => {
     const { fixture, element } = render();
-    flush({ data: [{ ...PREVIEW_PRODUCTS[1], price_from: null, rating: undefined }] });
+    const variant = { ...PREVIEW_PRODUCTS[1].variants[0], id: 2, price: null, is_available: false };
+    flush({ data: [{ ...PREVIEW_PRODUCTS[1], price_from: null, rating: undefined, variants: [variant] }] });
     fixture.detectChanges();
 
     expect(element.querySelectorAll('app-product-card').length).toBe(1);
     expect(element.textContent).toContain('Price coming soon');
     expect(element.textContent).not.toContain('Preview price');
-    expect(element.querySelector('.rating')).toBeNull();
+    // No reviews in the API yet: the stage's placeholder rating, labelled as a preview.
+    expect(element.querySelector('.rating')?.textContent).toContain('206 reviews');
+    expect(element.querySelector('.preview-note')?.textContent).toContain('Preview rating for display only');
+  });
+
+  /** A product as the API sends it once the admin has a price and stock (test values). */
+  const sellable = (stage = 1) => {
+    const product = PREVIEW_PRODUCTS[stage - 1];
+    const price = { amount_piastres: 50000, currency: 'EGP' };
+    return { ...product, rating: undefined, price_from: price, is_available: true, variants: [{ ...product.variants[0], id: stage, price, is_available: true }] };
+  };
+
+  it('adds the chosen product to the cart, priced by the server', () => {
+    const { fixture, element } = render(PREVIEW_PRODUCTS, true);
+    flush({ data: [sellable(1)] });
+    fixture.detectChanges();
+
+    const card = element.querySelector<HTMLElement>('app-product-card')!;
+    expect(card.querySelector('.price')?.textContent).toContain('500');
+    // Two separate actions: Add to Cart stays here, Shop now opens the shop product page.
+    expect(card.querySelector('a.shop-now')?.getAttribute('href')).toBe(`/jovie/shop/${sellable(1).slug}`);
+    const add = card.querySelector<HTMLButtonElement>('button.add')!;
+    expect(add.disabled).toBeFalse();
+    expect(add.textContent?.trim()).toBe('Add to cart');
+
+    add.click();
+    fixture.detectChanges();
+    expect(add.textContent).toContain('Adding');
+
+    http.expectOne('/sanctum/csrf-cookie').flush(null);
+    const preview = http.expectOne('/api/v1/cart/preview');
+    expect(preview.request.body).toEqual({ items: [{ variant_id: 1, quantity: 1 }] });
+    preview.flush({ data: { items: [{ variant_id: 1, quantity: 1, is_available: true, max_quantity: 10, exceeds_available_quantity: false }], subtotal: { amount_piastres: 50000, currency: 'EGP' }, item_count: 1, has_unavailable_items: false } });
+    fixture.detectChanges();
+
+    expect(TestBed.inject(CartService).count()).toBe(1);
+    expect(card.querySelector('.cart-status')?.textContent).toContain('Added to your cart.');
+    expect(card.querySelector('.cart-status a')?.getAttribute('href')).toBe('/jovie/cart');
+    localStorage.removeItem('jovie.cart');
+  });
+
+  it('lowers the quantity to what the server allows', () => {
+    localStorage.setItem('jovie.cart', JSON.stringify([{ variant_id: 1, quantity: 3 }]));
+    const { fixture, element } = render(PREVIEW_PRODUCTS, true);
+    flush({ data: [sellable(1)] });
+    fixture.detectChanges();
+
+    element.querySelector<HTMLButtonElement>('app-product-card button.add')!.click();
+    http.expectOne('/sanctum/csrf-cookie').flush(null);
+    const line = { variant_id: 1, is_available: true, max_quantity: 3, exceeds_available_quantity: true };
+    http.expectOne('/api/v1/cart/preview').flush({ data: { items: [{ ...line, quantity: 4 }], subtotal: { amount_piastres: 0, currency: 'EGP' }, item_count: 0, has_unavailable_items: true } });
+    const corrected = http.expectOne('/api/v1/cart/preview');
+    expect(corrected.request.body).toEqual({ items: [{ variant_id: 1, quantity: 3 }] });
+    corrected.flush({ data: { items: [{ ...line, quantity: 3, exceeds_available_quantity: false }], subtotal: { amount_piastres: 150000, currency: 'EGP' }, item_count: 3, has_unavailable_items: false } });
+    fixture.detectChanges();
+
+    expect(TestBed.inject(CartService).quantityOf(1)).toBe(3);
+    expect(element.querySelector('.cart-status')?.textContent).toContain('Only 3 can be ordered');
+    localStorage.removeItem('jovie.cart');
   });
 
   it('shows an error with a retry button', () => {

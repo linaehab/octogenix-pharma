@@ -135,7 +135,51 @@
   height: 1.6rem;
 }
 
+/* The cart stays in the bar on every screen: after the navigation on desktop, beside the menu
+   button on smaller screens. */
+.nav {
+  order: 1;
+}
+
+.cart-link {
+  position: relative;
+  display: grid;
+  flex: none;
+  order: 2;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: var(--jv-white);
+  color: var(--jv-night);
+}
+
+.cart-link svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+
+.cart-count {
+  position: absolute;
+  top: -0.3rem;
+  inset-inline-end: -0.35rem;
+  min-width: 1.35rem;
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  background: var(--jv-sweetypie);
+  color: var(--jv-white);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.35rem;
+  text-align: center;
+}
+
 .menu-toggle {
+  order: 3;
   display: none;
   flex-direction: column;
   gap: 5px;
@@ -165,6 +209,10 @@
 @media (max-width: 1023px) {
   .menu-toggle {
     display: flex;
+  }
+
+  .cart-link {
+    margin-inline-start: auto;
   }
 
   .nav {

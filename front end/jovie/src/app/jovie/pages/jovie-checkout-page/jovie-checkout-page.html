@@ -1,0 +1,240 @@
+<app-store-page-header [title]="'jovie.checkout.title' | translate">
+  <a class="back" routerLink="/jovie/cart">{{ 'jovie.checkout.backToCart' | translate }}</a>
+</app-store-page-header>
+
+<section class="jv-container page">
+  <app-test-mode-notice class="test" />
+
+  @if (!isBrowser) {
+    <p class="state">{{ 'jovie.cart.loading' | translate }}</p>
+  } @else if (cart.isEmpty()) {
+    <div class="state">
+      <p>{{ 'jovie.cart.emptyTitle' | translate }}</p>
+      <a class="jv-button" routerLink="/jovie/shop">{{ 'jovie.cart.continue' | translate }}</a>
+    </div>
+  } @else {
+    @if (blocked(); as reason) {
+      <p class="banner" role="alert">{{ reason | translate }}
+        @if (reason === 'jovie.cart.fixUnavailable') {
+          <a routerLink="/jovie/cart">{{ 'jovie.checkout.backToCart' | translate }}</a>
+        }
+      </p>
+    }
+
+    <form class="layout" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="steps">
+        <!-- 1. Contact -->
+        <fieldset class="step" formGroupName="contact">
+          <legend><span class="num">1</span>{{ 'jovie.checkout.contact' | translate }}</legend>
+          <p class="hint">{{ 'jovie.checkout.guestNote' | translate }}</p>
+          <div class="row two">
+            <div class="field">
+              <label for="co-first">{{ 'jovie.checkout.firstName' | translate }}</label>
+              <input id="co-first" formControlName="first_name" autocomplete="given-name"
+                [attr.aria-invalid]="!!problem('contact.first_name')" aria-describedby="co-first-error" />
+              <p class="error" id="co-first-error">@if (problem('contact.first_name'); as p) { {{ p | translate }} }</p>
+            </div>
+            <div class="field">
+              <label for="co-last">{{ 'jovie.checkout.lastName' | translate }}</label>
+              <input id="co-last" formControlName="last_name" autocomplete="family-name"
+                [attr.aria-invalid]="!!problem('contact.last_name')" aria-describedby="co-last-error" />
+              <p class="error" id="co-last-error">@if (problem('contact.last_name'); as p) { {{ p | translate }} }</p>
+            </div>
+          </div>
+          <div class="row two">
+            <div class="field">
+              <label for="co-email">{{ 'jovie.checkout.email' | translate }}</label>
+              <input id="co-email" type="email" formControlName="email" autocomplete="email" dir="ltr"
+                [attr.aria-invalid]="!!problem('contact.email')" aria-describedby="co-email-error" />
+              <p class="error" id="co-email-error">@if (problem('contact.email'); as p) { {{ p | translate }} }</p>
+            </div>
+            <div class="field">
+              <label for="co-phone">{{ 'jovie.checkout.phone' | translate }}</label>
+              <input id="co-phone" type="tel" formControlName="phone" autocomplete="tel" inputmode="tel" dir="ltr"
+                placeholder="01012345678" [attr.aria-invalid]="!!problem('contact.phone')" aria-describedby="co-phone-error" />
+              <p class="error" id="co-phone-error">@if (problem('contact.phone'); as p) { {{ p | translate }} }</p>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- 2. Delivery address -->
+        <fieldset class="step" formGroupName="address">
+          <legend><span class="num">2</span>{{ 'jovie.checkout.delivery' | translate }}</legend>
+          <div class="row two">
+            <div class="field">
+              <label for="ad-name">{{ 'jovie.checkout.recipient' | translate }}</label>
+              <input id="ad-name" formControlName="recipient_name" autocomplete="name"
+                [attr.aria-invalid]="!!problem('address.recipient_name')" aria-describedby="ad-name-error" />
+              <p class="error" id="ad-name-error">@if (problem('address.recipient_name'); as p) { {{ p | translate }} }</p>
+            </div>
+            <div class="field">
+              <label for="ad-phone">{{ 'jovie.checkout.recipientPhone' | translate }}</label>
+              <input id="ad-phone" type="tel" formControlName="phone" autocomplete="tel" inputmode="tel" dir="ltr"
+                [attr.aria-invalid]="!!problem('address.phone')" aria-describedby="ad-phone-error" />
+              <p class="error" id="ad-phone-error">@if (problem('address.phone'); as p) { {{ p | translate }} }</p>
+            </div>
+          </div>
+          <div class="row two">
+            <div class="field">
+              <label for="ad-gov">{{ 'jovie.checkout.governorate' | translate }}</label>
+              <select id="ad-gov" formControlName="governorate_id" autocomplete="address-level1"
+                [attr.aria-invalid]="!!problem('address.governorate_id')" aria-describedby="ad-gov-error">
+                <option [ngValue]="null" disabled>{{ (governorates() ? 'jovie.checkout.chooseGovernorate' : 'jovie.cart.loading') | translate }}</option>
+                @for (g of deliverable(); track g.id) {
+                  <option [ngValue]="g.id">{{ pick(g.name) }}</option>
+                }
+              </select>
+              <p class="error" id="ad-gov-error">
+                @if (governorateError()) {
+                  {{ 'jovie.checkout.governorateError' | translate }}
+                  <button type="button" class="link" (click)="loadGovernorates()">{{ 'jovie.shop.retry' | translate }}</button>
+                } @else if (problem('address.governorate_id'); as p) {
+                  {{ p | translate }}
+                }
+              </p>
+            </div>
+            <div class="field">
+              <label for="ad-city">{{ 'jovie.checkout.city' | translate }}</label>
+              <input id="ad-city" formControlName="city" autocomplete="address-level2"
+                [attr.aria-invalid]="!!problem('address.city')" aria-describedby="ad-city-error" />
+              <p class="error" id="ad-city-error">@if (problem('address.city'); as p) { {{ p | translate }} }</p>
+            </div>
+          </div>
+          <div class="row two">
+            <div class="field">
+              <label for="ad-area">{{ 'jovie.checkout.area' | translate }} <span class="optional">{{ 'jovie.form.optional' | translate }}</span></label>
+              <input id="ad-area" formControlName="area" autocomplete="address-level3" />
+            </div>
+            <div class="field">
+              <label for="ad-street">{{ 'jovie.checkout.street' | translate }}</label>
+              <input id="ad-street" formControlName="street" autocomplete="address-line1"
+                [attr.aria-invalid]="!!problem('address.street')" aria-describedby="ad-street-error" />
+              <p class="error" id="ad-street-error">@if (problem('address.street'); as p) { {{ p | translate }} }</p>
+            </div>
+          </div>
+          <div class="row three">
+            <div class="field">
+              <label for="ad-building">{{ 'jovie.checkout.building' | translate }} <span class="optional">{{ 'jovie.form.optional' | translate }}</span></label>
+              <input id="ad-building" formControlName="building" />
+            </div>
+            <div class="field">
+              <label for="ad-floor">{{ 'jovie.checkout.floor' | translate }} <span class="optional">{{ 'jovie.form.optional' | translate }}</span></label>
+              <input id="ad-floor" formControlName="floor" />
+            </div>
+            <div class="field">
+              <label for="ad-apartment">{{ 'jovie.checkout.apartment' | translate }} <span class="optional">{{ 'jovie.form.optional' | translate }}</span></label>
+              <input id="ad-apartment" formControlName="apartment" />
+            </div>
+          </div>
+          <div class="row two">
+            <div class="field">
+              <label for="ad-landmark">{{ 'jovie.checkout.landmark' | translate }} <span class="optional">{{ 'jovie.form.optional' | translate }}</span></label>
+              <input id="ad-landmark" formControlName="landmark" />
+            </div>
+            <div class="field">
+              <label for="ad-postal">{{ 'jovie.checkout.postalCode' | translate }} <span class="optional">{{ 'jovie.form.optional' | translate }}</span></label>
+              <input id="ad-postal" formControlName="postal_code" autocomplete="postal-code" inputmode="numeric" dir="ltr"
+                [attr.aria-invalid]="!!problem('address.postal_code')" aria-describedby="ad-postal-error" />
+              <p class="error" id="ad-postal-error">@if (problem('address.postal_code'); as p) { {{ p | translate }} }</p>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- 3. Shipping -->
+        <section class="step" aria-labelledby="co-shipping">
+          <h2 id="co-shipping"><span class="num">3</span>{{ 'jovie.checkout.shipping' | translate }}</h2>
+          @if (governorate(); as g) {
+            <p class="shipping">
+              <strong>{{ 'jovie.checkout.deliveryTo' | translate: { governorate: pick(g.name) } }}</strong>
+              <span>{{ price(shippingFee()) }}</span>
+            </p>
+            <p class="hint">
+              @if (g.delivery_days; as days) {
+                {{ 'jovie.checkout.deliveryDays' | translate: { min: days.min, max: days.max ?? days.min } }}
+              } @else {
+                {{ 'jovie.checkout.deliveryConfirmed' | translate }}
+              }
+            </p>
+          } @else {
+            <p class="hint">{{ 'jovie.checkout.chooseGovernorateFirst' | translate }}</p>
+          }
+        </section>
+
+        <!-- 4. Payment -->
+        <fieldset class="step">
+          <legend><span class="num">4</span>{{ 'jovie.checkout.payment' | translate }}</legend>
+          @if (methods().length) {
+            <div class="methods" role="radiogroup" [attr.aria-invalid]="!!problem('payment_method')" aria-describedby="co-method-error">
+              @for (m of methods(); track m) {
+                <label class="method" [class.is-selected]="method() === m">
+                  <input type="radio" formControlName="payment_method" [value]="m" />
+                  <span>
+                    <strong>{{ ('jovie.checkout.method.' + m) | translate }}</strong>
+                    <small>
+                      @if (m === 'cod') {
+                        {{ 'jovie.checkout.codNote' | translate: { fee: price(checkout.config().codFee) } }}
+                      } @else if (checkout.config().testMode) {
+                        {{ 'jovie.checkout.cardTestNote' | translate }}
+                      } @else {
+                        {{ 'jovie.checkout.cardNote' | translate }}
+                      }
+                    </small>
+                  </span>
+                </label>
+              }
+            </div>
+            <p class="error" id="co-method-error">@if (problem('payment_method'); as p) { {{ p | translate }} }</p>
+          } @else {
+            <p class="hint">{{ (governorate() ? 'jovie.checkout.noPaymentHere' : 'jovie.checkout.chooseGovernorateFirst') | translate }}</p>
+          }
+          @if (method() === 'card') {
+            <app-test-mode-notice [payment]="true" />
+          }
+        </fieldset>
+
+        <div class="step field">
+          <label for="co-note">{{ 'jovie.checkout.note' | translate }} <span class="optional">{{ 'jovie.form.optional' | translate }}</span></label>
+          <textarea id="co-note" rows="3" formControlName="customer_note"></textarea>
+        </div>
+      </div>
+
+      <!-- Order summary -->
+      <aside class="summary" [attr.aria-label]="'jovie.cart.summary' | translate">
+        <h2>{{ 'jovie.cart.summary' | translate }}</h2>
+        <ul class="lines">
+          @for (line of cart.summary()?.items ?? []; track line.variant_id) {
+            <li>
+              <span class="thumb">
+                @if (line.product?.image_url; as image) {
+                  <img [src]="image" alt="" width="56" height="56" />
+                }
+                <span class="badge">{{ line.quantity }}</span>
+              </span>
+              <span class="name">{{ pick(line.product?.name) }}<small>{{ pick(line.variant_name) }}</small></span>
+              <span>{{ line.is_available ? price(line.line_total) : ('jovie.cart.unavailable' | translate) }}</span>
+            </li>
+          }
+        </ul>
+        <dl class="totals">
+          <div><dt>{{ 'jovie.cart.subtotal' | translate }}</dt><dd>{{ price(serverTotals()?.subtotal ?? subtotal()) }}</dd></div>
+          <div><dt>{{ 'jovie.checkout.shipping' | translate }}</dt><dd>{{ governorate() ? price(serverTotals()?.shipping_fee ?? shippingFee()) : ('jovie.checkout.chooseGovernorateShort' | translate) }}</dd></div>
+          @if (method() === 'cod') {
+            <div><dt>{{ 'jovie.checkout.codFee' | translate }}</dt><dd>{{ price(serverTotals()?.cod_fee ?? codFee()) }}</dd></div>
+          }
+          <div class="total"><dt>{{ 'jovie.checkout.total' | translate }}</dt><dd>{{ price(serverTotals()?.total ?? total()) }}</dd></div>
+        </dl>
+        <p class="hint">{{ 'jovie.checkout.totalNote' | translate }}</p>
+
+        <p class="form-error" role="alert">
+          @if (error(); as e) {
+            {{ e.key | translate: e.params }}
+          }
+        </p>
+
+        <button class="jv-button place" type="submit" [disabled]="!!blocked() || submitting()" [attr.aria-busy]="submitting()">
+          {{ (submitting() ? 'jovie.checkout.placing' : serverTotals() ? 'jovie.checkout.confirmNewTotal' : method() === 'card' ? 'jovie.checkout.placeAndPay' : 'jovie.checkout.place') | translate }}
+        </button>
+      </aside>
+    </form>
+  }
+</section>

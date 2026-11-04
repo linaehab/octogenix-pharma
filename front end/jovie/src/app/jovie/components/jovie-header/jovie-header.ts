@@ -5,6 +5,7 @@ import { ActivatedRouteSnapshot, NavigationEnd, Router, RouterLink, RouterLinkAc
 import { filter } from 'rxjs';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { CartService } from '../../store/cart.service';
 
 /** Jovie store pages, in navigation order (Shop first). */
 export const JOVIE_NAV = [
@@ -40,6 +41,7 @@ const toneOf = (route: ActivatedRouteSnapshot | null): HeaderTone => {
 })
 export class JovieHeader {
   protected readonly language = inject(LanguageService);
+  protected readonly cart = inject(CartService);
   protected readonly pages = JOVIE_NAV;
   protected readonly isMenuOpen = signal(false);
   protected readonly isScrolled = signal(false);

@@ -84,6 +84,45 @@ export const routes: Routes = [
           import('./jovie/pages/jovie-contact-page/jovie-contact-page').then((m) => m.JovieContactPage),
         title: 'Say hello | Jovie',
       },
+      // Shop product page (Add to Cart, sizes, quantity) of an API product, opened from the Shop cards.
+      {
+        path: 'shop/:slug',
+        loadComponent: () =>
+          import('./jovie/pages/jovie-shop-product-page/jovie-shop-product-page').then((m) => m.JovieShopProductPage),
+        title: 'Shop | Jovie',
+      },
+      // Store: cart and guest checkout on the Laravel API (rendered in the browser, see app.routes.server.ts).
+      {
+        path: 'cart',
+        loadComponent: () => import('./jovie/pages/jovie-cart-page/jovie-cart-page').then((m) => m.JovieCartPage),
+        title: 'Cart | Jovie',
+      },
+      {
+        path: 'checkout',
+        loadComponent: () => import('./jovie/pages/jovie-checkout-page/jovie-checkout-page').then((m) => m.JovieCheckoutPage),
+        title: 'Checkout | Jovie',
+      },
+      {
+        // TEST MODE only: the stand-in payment page of the mock card driver.
+        path: 'checkout/mock-payment',
+        loadComponent: () =>
+          import('./jovie/pages/jovie-mock-payment-page/jovie-mock-payment-page').then((m) => m.JovieMockPaymentPage),
+        title: 'Test payment | Jovie',
+      },
+      {
+        path: 'checkout/payment-result',
+        loadComponent: () =>
+          import('./jovie/pages/jovie-payment-result-page/jovie-payment-result-page').then((m) => m.JoviePaymentResultPage),
+        title: 'Payment | Jovie',
+      },
+      {
+        path: 'checkout/confirmation/:orderNumber',
+        loadComponent: () =>
+          import('./jovie/pages/jovie-order-confirmation-page/jovie-order-confirmation-page').then(
+            (m) => m.JovieOrderConfirmationPage,
+          ),
+        title: 'Order confirmed | Jovie',
+      },
       { path: '**', redirectTo: '' },
     ],
   },

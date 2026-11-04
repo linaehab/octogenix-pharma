@@ -4,6 +4,14 @@
       <img src="/assets/images/jovie/logo-official-white.png" alt="" width="72" height="72" />
     </a>
 
+    <a class="cart-link" routerLink="/jovie/cart" routerLinkActive="is-active" ariaCurrentWhenActive="page"
+      (click)="closeMenu()" [attr.aria-label]="'jovie.cart.headerLabel' | translate: { count: cart.count() }">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 8h12l-1 12H7z" /><path d="M9 10V7a3 3 0 0 1 6 0v3" /></svg>
+      @if (cart.count() > 0) {
+        <span class="cart-count" aria-hidden="true">{{ cart.count() > 99 ? '99+' : cart.count() }}</span>
+      }
+    </a>
+
     <button class="menu-toggle" type="button" aria-controls="jovie-navigation"
       [attr.aria-expanded]="isMenuOpen()" [attr.aria-label]="'jovie.header.menu' | translate" (click)="toggleMenu()">
       <span></span><span></span><span></span>

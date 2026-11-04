@@ -1,0 +1,205 @@
+<div class="band">
+  <nav class="jv-container crumbs" [attr.aria-label]="'jovie.pdp.breadcrumb' | translate">
+    <ol>
+      <li><a routerLink="/jovie">{{ 'jovie.pdp.home' | translate }}</a></li>
+      <li><a routerLink="/jovie/shop">{{ 'jovie.nav.shop' | translate }}</a></li>
+      @if (name()) {
+        <li aria-current="page">{{ name() }}</li>
+      }
+    </ol>
+  </nav>
+</div>
+
+@switch (state()) {
+  @case ('notFound') {
+    <section class="jv-container state">
+      <h1>{{ 'jovie.pdp.notFoundTitle' | translate }}</h1>
+      <p>{{ 'jovie.pdp.notFoundText' | translate }}</p>
+      <a class="jv-button jv-button--night" routerLink="/jovie/shop">{{ 'jovie.cart.continue' | translate }}</a>
+    </section>
+  }
+  @case ('error') {
+    <section class="jv-container state" role="alert">
+      <p>{{ 'jovie.shop.error' | translate }}</p>
+      <button class="jv-button jv-button--night" type="button" (click)="load()">{{ 'jovie.shop.retry' | translate }}</button>
+    </section>
+  }
+  @case ('loading') {
+    <section class="jv-container state" aria-busy="true"><p>{{ 'jovie.shop.loading' | translate }}</p></section>
+  }
+  @default {
+    @let p = product()!;
+    <section class="jv-container main" [attr.data-tone]="tone()" aria-labelledby="pdp-title">
+      <app-shop-gallery class="gallery" [images]="images()" [zoomLabel]="'jovie.pdp.zoom' | translate" />
+
+      <div class="buy">
+        <app-test-mode-notice class="test" />
+
+        @if (rating(); as r) {
+          <app-shop-rating class="rating" [average]="r.average" [count]="r.count" [preview]="!p.rating" />
+        }
+
+        <h1 id="pdp-title">{{ name() }}</h1>
+        <p class="price">{{ unitPrice() ? price(unitPrice()) : ('jovie.shop.pricePending' | translate) }}</p>
+        @if (pick(p.short_description)) {
+          <p class="short">{{ pick(p.short_description) }}</p>
+        }
+
+        <ul class="facts">
+          @if (officialText(); as t) {
+            <li>{{ t.labelName }} · {{ t.labelAge }}</li>
+          }
+          @if (variant(); as v) {
+            <li>{{ 'jovie.shop.tin' | translate: { weight: pick(v.name) } }}</li>
+          }
+          <li>{{ 'jovie.pdp.madeIn' | translate }}</li>
+        </ul>
+
+        <!-- Egypt has one size per product (400 g): the choice appears only when there are several. -->
+        @if (p.variants.length > 1) {
+          <fieldset class="sizes">
+            <legend>{{ 'jovie.pdp.selectSize' | translate }}</legend>
+            @for (v of p.variants; track v.id) {
+              <label class="size" [class.is-selected]="variant()?.id === v.id" [class.is-off]="!v.is_available">
+                <input type="radio" name="pdp-size" [checked]="variant()?.id === v.id" (change)="selectVariant(v)" />
+                <strong>{{ pick(v.name) }}</strong>
+                <span>{{ v.price ? price(v.price) : ('jovie.shop.pricePending' | translate) }}</span>
+              </label>
+            }
+          </fieldset>
+        }
+
+        <div class="purchase">
+          <app-quantity-stepper class="stepper" [value]="quantity()" [max]="maxQuantity()" [label]="'jovie.cart.quantity' | translate"
+            [decreaseLabel]="'jovie.cart.decrease' | translate" [increaseLabel]="'jovie.cart.increase' | translate"
+            (changed)="setQuantity($event)" />
+          <button #buyButton class="add" type="button" [disabled]="!!unavailableReason() || adding()" [attr.aria-busy]="adding()"
+            aria-describedby="pdp-status" (click)="addToCart()">
+            @if (adding()) {
+              {{ 'jovie.cart.adding' | translate }}
+            } @else if (unavailableReason(); as reason) {
+              {{ reason | translate }}
+            } @else {
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 8h12l-1 12H7z" /><path d="M9 10V7a3 3 0 0 1 6 0v3" /></svg>
+              {{ 'jovie.pdp.addWithPrice' | translate: { price: price(linePrice()) } }}
+            }
+          </button>
+        </div>
+
+        <p class="status" id="pdp-status" role="status" aria-live="polite">
+          @if (feedback(); as f) {
+            <span [class.ok]="f.ok" [class.warn]="!f.ok">{{ f.key | translate: f.params }}</span>
+            <a routerLink="/jovie/cart">{{ 'jovie.cart.view' | translate }}</a>
+          }
+        </p>
+
+        <ul class="assurance">
+          <li [class.in]="variant()?.is_available">{{ (variant()?.is_available ? 'jovie.pdp.inStock' : 'jovie.cart.outOfStock') | translate }}</li>
+          <li>{{ 'jovie.pdp.shippingAtCheckout' | translate }}</li>
+          <li>{{ 'jovie.pdp.cardSafe' | translate }}</li>
+        </ul>
+
+        <!-- Information panels (kabrita.com order). -->
+        <div class="panels">
+          @if (label(); as l) {
+            <details open>
+              <summary>{{ 'jovie.pdp.important' | translate }}</summary>
+              <p>{{ l.stage.importantNotice }}</p>
+              <p class="note">{{ 'jovie.guide.note' | translate }}</p>
+            </details>
+          }
+          @if (officialText(); as t) {
+            <details>
+              <summary>{{ 'jovie.pdp.description' | translate }}</summary>
+              @for (paragraph of t.intro; track $index) {
+                <p>{{ paragraph }}</p>
+              }
+              <a class="more" [routerLink]="officialLink()">{{ 'jovie.pdp.moreAbout' | translate }}</a>
+            </details>
+          }
+          <details>
+            <summary>{{ 'jovie.pdp.feedingGuide' | translate }}</summary>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">{{ (stage() === 1 ? 'jovie.pdp.weight' : 'jovie.pdp.age') | translate }}</th>
+                    <th scope="col">{{ feedingText().feeds }}</th>
+                    <th scope="col">{{ feedingText().water }}</th>
+                    <th scope="col">{{ feedingText().scoops }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of feeding(); track row.id) {
+                    <tr><th scope="row">{{ row.label }}</th><td>{{ row.feeds }}</td><td>{{ row.water }}</td><td>{{ row.scoops }}</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            <p class="note">{{ 'jovie.pdp.feedingNote' | translate }}</p>
+            <p class="links">
+              <a routerLink="/jovie/feeding-guide" [queryParams]="{ stage: stage() }">{{ 'jovie.pdp.fullGuide' | translate }}</a>
+              <a [href]="feedingPdf()" download>{{ feedingText().download }}</a>
+            </p>
+          </details>
+          @if (label(); as l) {
+            <details>
+              <summary>{{ 'jovie.pdp.ingredients' | translate }}</summary>
+              @if (isArabic()) {
+                <p class="note">{{ 'jovie.pdp.ingredientsArabic' | translate }}</p>
+              }
+              <p lang="en" dir="ltr">{{ l.stage.ingredients }}</p>
+              <p><strong>{{ 'jovie.pdp.allergens' | translate }}</strong> {{ l.stage.allergens }}</p>
+              <img class="label" [src]="'/assets/images/jovie/products/eg-stage-' + stage() + '-ingredients.webp'"
+                [alt]="'jovie.pdp.labelImage' | translate" width="640" height="867" loading="lazy" />
+            </details>
+            <details>
+              <summary>{{ 'jovie.pdp.preparation' | translate }}</summary>
+              <p>{{ l.preparationIntro.replace('{grams}', '' + l.stage.scoopGrams) }}</p>
+              <ol class="steps">
+                @for (step of l.steps; track $index) {
+                  <li>{{ step }}</li>
+                }
+              </ol>
+              <p><strong>{{ l.afterPreparation }}</strong></p>
+              <p>{{ l.stage.friendlyAdvice }}</p>
+              <h3>{{ 'jovie.pdp.storage' | translate }}</h3>
+              <p>{{ l.stage.storage }}</p>
+            </details>
+          }
+          <details>
+            <summary>{{ 'jovie.pdp.nutrition' | translate }}</summary>
+            <p class="note">{{ 'jovie.pdp.nutritionNote' | translate }}</p>
+            <a [href]="'/assets/images/jovie/products/eg-stage-' + stage() + '-table-zoom.webp'" target="_blank" rel="noopener">
+              <img class="label" [src]="'/assets/images/jovie/products/eg-stage-' + stage() + '-table.webp'"
+                [alt]="'jovie.pdp.nutritionImage' | translate" width="640" height="867" loading="lazy" />
+            </a>
+            @if (download(); as file) {
+              <p class="links"><a [href]="file" download>{{ 'jovie.pdp.downloadLabel' | translate }}</a></p>
+            }
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <app-shop-highlights [title]="'jovie.pdp.highlights' | translate" [items]="usps()" />
+
+    @if (related().length) {
+      <section class="related jv-container" aria-labelledby="pdp-related">
+        <h2 id="pdp-related" class="jv-title">{{ 'jovie.pdp.allProducts' | translate }}</h2>
+        <ul class="grid">
+          @for (item of related(); track item.slug) {
+            <li><app-product-card [product]="item" [isPreview]="relatedArePreview()" /></li>
+          }
+        </ul>
+      </section>
+    }
+
+    <app-faq-section [summary]="true" />
+
+    <app-shop-sticky-bar [shown]="showSticky()" [image]="images()[0]?.src" [name]="name()"
+      [disabled]="!!unavailableReason() || adding()"
+      [label]="unavailableReason() ? (unavailableReason()! | translate) : ('jovie.pdp.addWithPrice' | translate: { price: price(linePrice()) })"
+      (add)="addToCart()" />
+  }
+}

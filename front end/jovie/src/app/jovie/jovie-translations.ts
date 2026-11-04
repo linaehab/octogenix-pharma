@@ -1,4 +1,5 @@
 import type { Language } from '../core/i18n/language.service';
+import { storeTranslations } from './store/store-translations';
 
 /**
  * Bundled texts of the Jovie store (/jovie). Loaded with the Jovie bundle and registered by JovieLayout
@@ -130,10 +131,6 @@ export const jovieTranslations: Record<Language, Record<string, string>> = {
     'jovie.guide.age2': '6–12 months',
     'jovie.guide.age3': '1–3 years',
     'jovie.guide.stage': 'Stage {stage}',
-    'jovie.guide.step1': "Choose the stage that matches your baby's age.",
-    'jovie.guide.step2': 'Prepare every feed exactly as shown in the instructions and feeding table on the tin.',
-    'jovie.guide.step3': 'Talk to your paediatrician before starting formula or changing stage.',
-    'jovie.guide.shopCta': 'Shop Stage {stage}',
     'jovie.guide.note':
       'Breast milk is the best for your child. Infant formula should be used on the advice of a healthcare professional.',
 
@@ -166,6 +163,7 @@ export const jovieTranslations: Record<Language, Record<string, string>> = {
     'jovie.contact.subjectGeneral': 'Question about Jovie',
     'jovie.contact.subjectStockists': 'Pharmacies & stockists',
     'jovie.contact.subjectPartnership': 'Business partnership',
+    ...storeTranslations.en,
   },
   ar: {
     'title.jovie': 'جوفي | تركيبة حليب الماعز العضوي',
@@ -286,10 +284,6 @@ export const jovieTranslations: Record<Language, Record<string, string>> = {
     'jovie.guide.age2': 'من 6 إلى 12 شهرًا',
     'jovie.guide.age3': 'من سنة إلى 3 سنوات',
     'jovie.guide.stage': 'المرحلة {stage}',
-    'jovie.guide.step1': 'اختر المرحلة المناسبة لعمر طفلك.',
-    'jovie.guide.step2': 'حضّر كل رضعة تمامًا كما هو موضح في التعليمات وجدول الرضعات على العلبة.',
-    'jovie.guide.step3': 'استشر طبيب الأطفال قبل البدء بالتركيبة أو تغيير المرحلة.',
-    'jovie.guide.shopCta': 'تسوّق المرحلة {stage}',
     'jovie.guide.note': 'حليب الأم هو الأفضل لطفلك. يجب استخدام حليب الرضع بناءً على نصيحة مقدم الرعاية الصحية.',
 
     'jovie.where.description': 'تتوفر جوفي في مصر من خلال الموزع الرسمي، أوكتوجينيكس فارما.',
@@ -319,5 +313,6 @@ export const jovieTranslations: Record<Language, Record<string, string>> = {
     'jovie.contact.subjectGeneral': 'سؤال عن جوفي',
     'jovie.contact.subjectStockists': 'الصيدليات ونقاط البيع',
     'jovie.contact.subjectPartnership': 'شراكة تجارية',
+    ...storeTranslations.ar,
   },
 };

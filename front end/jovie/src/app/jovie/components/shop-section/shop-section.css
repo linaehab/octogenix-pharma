@@ -97,3 +97,8 @@
     width: 100%;
   }
 }
+
+.test-notice {
+  max-width: 48rem;
+  margin: 0 auto 1.5rem;
+}

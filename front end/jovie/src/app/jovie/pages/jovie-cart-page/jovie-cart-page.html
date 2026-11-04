@@ -1,0 +1,105 @@
+<app-store-page-header [title]="'jovie.cart.title' | translate">
+  <a class="continue" routerLink="/jovie/shop">{{ 'jovie.cart.continue' | translate }}</a>
+</app-store-page-header>
+
+<section class="jv-container page" [attr.aria-busy]="cart.status() === 'loading'">
+  <app-test-mode-notice class="test" />
+
+  <p class="message" role="status" aria-live="polite">
+    @if (message(); as m) {
+      {{ m.key | translate: m.params }}
+    }
+  </p>
+
+  @if (!isBrowser || (cart.status() === 'loading' && !cart.summary() && !cart.isEmpty())) {
+    <p class="state">{{ 'jovie.cart.loading' | translate }}</p>
+  } @else if (cart.status() === 'error' && !cart.summary()) {
+    <div class="state" role="alert">
+      <p>{{ 'jovie.cart.loadError' | translate }}</p>
+      <button class="jv-button jv-button--night" type="button" (click)="retry()">{{ 'jovie.shop.retry' | translate }}</button>
+    </div>
+  } @else if (cart.isEmpty()) {
+    <div class="empty">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 8h12l-1 12H7z" /><path d="M9 10V7a3 3 0 0 1 6 0v3" /></svg>
+      <h2>{{ 'jovie.cart.emptyTitle' | translate }}</h2>
+      <p>{{ 'jovie.cart.emptyText' | translate }}</p>
+      <a class="jv-button" routerLink="/jovie/shop">{{ 'jovie.cart.continue' | translate }}</a>
+    </div>
+  } @else {
+    <div class="layout">
+      <table class="lines">
+        <caption class="visually-hidden">{{ 'jovie.cart.title' | translate }}</caption>
+        <thead>
+          <tr>
+            <th scope="col">{{ 'jovie.cart.product' | translate }}</th>
+            <th scope="col">{{ 'jovie.cart.quantity' | translate }}</th>
+            <th scope="col" class="end">{{ 'jovie.cart.total' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (line of lines(); track line.variant_id) {
+            <tr [class.is-unavailable]="!line.is_available" [attr.aria-busy]="busy() === line.variant_id">
+              <td class="product">
+                <div class="product-cell">
+                  @if (line.product?.image_url; as image) {
+                    <img [src]="image" alt="" width="96" height="96" />
+                  } @else {
+                    <span class="no-image" aria-hidden="true"></span>
+                  }
+                  <div>
+                    <p class="name">{{ pick(line.product?.name) }}</p>
+                    @if (line.unit_price) {
+                      <p class="unit">{{ price(line.unit_price) }}</p>
+                    }
+                    <p class="variant">{{ 'jovie.cart.sizeValue' | translate: { size: pick(line.variant_name) } }}</p>
+                    @if (!line.is_available) {
+                      <p class="warn">{{ 'jovie.cart.unavailable' | translate }}</p>
+                    } @else if (line.exceeds_available_quantity) {
+                      <p class="warn">{{ 'jovie.cart.limited' | translate: { count: line.max_quantity } }}</p>
+                    }
+                  </div>
+                </div>
+              </td>
+              <td class="qty">
+                <div class="qty-row">
+                  @if (line.is_available) {
+                    <div class="stepper" role="group" [attr.aria-label]="('jovie.cart.quantityOf' | translate: { name: pick(line.product?.name) })">
+                      <button type="button" [disabled]="line.quantity <= 1 || busy() !== null"
+                        [attr.aria-label]="'jovie.cart.decrease' | translate" (click)="change(line, line.quantity - 1)">−</button>
+                      <input type="number" inputmode="numeric" min="1" [max]="line.max_quantity" [value]="line.quantity"
+                        [disabled]="busy() !== null" [attr.aria-label]="'jovie.cart.quantity' | translate"
+                        (change)="typed(line, $event)" />
+                      <button type="button" [disabled]="line.quantity >= line.max_quantity || busy() !== null"
+                        [attr.aria-label]="'jovie.cart.increase' | translate" (click)="change(line, line.quantity + 1)">+</button>
+                    </div>
+                  }
+                  <button class="remove" type="button" [disabled]="busy() !== null" (click)="remove(line)"
+                    [attr.aria-label]="'jovie.cart.removeItem' | translate: { name: pick(line.product?.name) }">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6" /></svg>
+                  </button>
+                </div>
+              </td>
+              <td class="end line-total">{{ line.is_available ? price(line.line_total) : '—' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <aside class="summary" [attr.aria-label]="'jovie.cart.summary' | translate">
+        <dl>
+          <div>
+            <dt>{{ 'jovie.cart.subtotal' | translate }}</dt>
+            <dd>{{ price(cart.summary()?.subtotal ?? null) }}</dd>
+          </div>
+        </dl>
+        <p class="note">{{ 'jovie.cart.feesNote' | translate }}</p>
+        @if (checkoutBlocked(); as reason) {
+          <button class="jv-button checkout" type="button" disabled>{{ 'jovie.cart.checkout' | translate }}</button>
+          <p class="blocked">{{ reason | translate }}</p>
+        } @else {
+          <a class="jv-button checkout" routerLink="/jovie/checkout">{{ 'jovie.cart.checkout' | translate }}</a>
+        }
+      </aside>
+    </div>
+  }
+</section>
