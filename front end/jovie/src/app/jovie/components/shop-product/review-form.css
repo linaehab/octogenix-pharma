@@ -1,0 +1,204 @@
+dialog {
+  width: min(42rem, 100% - 1.5rem);
+  max-height: calc(100dvh - 2rem);
+  padding: 0;
+  border: 0;
+  border-radius: 18px;
+  color: var(--jv-night);
+}
+
+dialog::backdrop {
+  background: rgba(32, 53, 100, 0.55);
+}
+
+.panel {
+  padding: clamp(1.25rem, 4vw, 2rem);
+}
+
+header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.close {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-radius: 50%;
+  background: var(--jv-panel);
+  color: inherit;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.product {
+  margin: 0.25rem 0 1rem;
+  font-weight: 700;
+}
+
+fieldset {
+  margin: 0 0 0.5rem;
+  padding: 0;
+  border: 0;
+}
+
+legend,
+label {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.stars {
+  display: flex;
+  gap: 0.25rem;
+  margin-top: 0.4rem;
+}
+
+.stars label {
+  position: relative;
+  cursor: pointer;
+}
+
+.stars input {
+  position: absolute;
+  opacity: 0;
+}
+
+.stars svg {
+  width: 2.4rem;
+  height: 2.4rem;
+  fill: #dfe2ea;
+  transition: fill 0.15s ease;
+}
+
+.stars .on svg {
+  fill: #f6bc25;
+}
+
+.stars label:focus-within svg {
+  outline: 3px solid var(--jv-sweetypie);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 1rem;
+}
+
+.field {
+  display: grid;
+  align-content: start;
+  gap: 0.3rem;
+}
+
+input:not([type='radio']),
+textarea {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid rgba(32, 53, 100, 0.4);
+  border-radius: 10px;
+  color: inherit;
+  font: inherit;
+}
+
+textarea {
+  resize: vertical;
+}
+
+[aria-invalid='true'] {
+  border-color: var(--jv-sweetypie);
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.error,
+.form-error {
+  min-height: 1.2rem;
+  margin: 0 0 0.3rem;
+  color: var(--jv-sweetypie);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.optional {
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.choice label {
+  margin-inline-end: 1.25rem;
+  font-weight: 400;
+}
+
+.verify {
+  margin: 0.75rem 0;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background: var(--jv-panel);
+}
+
+.verify summary {
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.verify .hint {
+  margin: 0.5rem 0;
+}
+
+.honeypot {
+  position: absolute;
+  inset-inline-start: -9999px;
+  width: 1px;
+  height: 1px;
+}
+
+.send {
+  width: 100%;
+  margin-top: 0.75rem;
+}
+
+.sent {
+  padding-block: 1.5rem 0.5rem;
+  text-align: center;
+}
+
+.big {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+@media (max-width: 599px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stars svg {
+    transition: none;
+  }
+}

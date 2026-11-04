@@ -44,6 +44,10 @@ class ProductResource extends JsonResource
             'is_featured' => $this->is_featured,
             'image' => $this->images->first() ? new ProductImageResource($this->images->first()) : null,
             'price_from' => Money::of($prices->min()),
+            // Average of approved reviews only (null until one is approved or when not loaded).
+            'rating' => ($this->approved_reviews_count ?? 0) > 0
+                ? ['average' => round((float) $this->approved_reviews_avg_rating, 1), 'count' => (int) $this->approved_reviews_count]
+                : null,
             'is_available' => $variants->contains(fn (ProductVariant $v) => $v->isAvailable()),
             'variants' => $variants->map(fn (ProductVariant $variant) => [
                 'id' => $variant->id,

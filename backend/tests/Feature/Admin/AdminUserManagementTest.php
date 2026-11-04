@@ -68,7 +68,7 @@ class AdminUserManagementTest extends TestCase
         ])
             ->assertCreated()
             ->assertJsonPath('data.email', 'content@example.com')
-            ->assertJsonPath('data.permissions', ['content.manage', 'messages.view']);
+            ->assertJsonPath('data.permissions', ['content.manage', 'messages.view', 'reviews.manage']);
 
         $created = AdminUser::where('email', 'content@example.com')->firstOrFail();
         Notification::assertSentTo($created, AdminPasswordLinkNotification::class, fn ($n) => $n->isInvitation);

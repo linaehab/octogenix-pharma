@@ -25,6 +25,7 @@ class ProductController extends Controller
         $products = Product::query()
             ->visible()
             ->with(self::RELATIONS)
+            ->withReviewRating()
             ->when($filters['brand'] ?? null, fn (Builder $q, string $slug) => $q->whereHas('brand', fn (Builder $b) => $b->where('slug', $slug)))
             ->when(isset($filters['stage']), fn (Builder $q) => $q->where('stage', $filters['stage']))
             ->when($request->boolean('featured'), fn (Builder $q) => $q->where('is_featured', true))
@@ -36,7 +37,7 @@ class ProductController extends Controller
 
     public function show(string $slug): ProductResource
     {
-        $product = Product::query()->visible()->with(self::RELATIONS)->where('slug', $slug)->firstOrFail();
+        $product = Product::query()->visible()->with(self::RELATIONS)->withReviewRating()->where('slug', $slug)->firstOrFail();
 
         return (new ProductResource($product))->detailed();
     }

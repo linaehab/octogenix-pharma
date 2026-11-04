@@ -16,9 +16,9 @@ class AdminRoleTest extends TestCase
 
     public function test_role_permission_matrix(): void
     {
-        $this->assertSame([P::ManageContent, P::ViewMessages], AdminRole::ContentEditor->permissions());
+        $this->assertSame([P::ManageContent, P::ViewMessages, P::ManageReviews], AdminRole::ContentEditor->permissions());
         $this->assertSame(
-            [P::ManageCatalog, P::ManageInventory, P::ViewOrders, P::ManageOrders, P::ManagePayments, P::ViewCustomers, P::ManageShipping],
+            [P::ManageCatalog, P::ManageInventory, P::ViewOrders, P::ManageOrders, P::ManagePayments, P::ViewCustomers, P::ManageShipping, P::ManageReviews],
             AdminRole::StoreManager->permissions()
         );
         $this->assertSame(

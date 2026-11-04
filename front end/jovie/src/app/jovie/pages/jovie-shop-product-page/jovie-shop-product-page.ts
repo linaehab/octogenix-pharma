@@ -23,6 +23,7 @@ import { fill, injectProductsContent } from '../../components/products/products-
 import { GalleryImage, ShopGallery } from '../../components/shop-product/shop-gallery';
 import { QuantityStepper } from '../../components/shop-product/quantity-stepper';
 import { ShopRating } from '../../components/shop-product/shop-rating';
+import { ShopReviews } from '../../components/shop-product/shop-reviews';
 import { ShopHighlights } from '../../components/shop-product/shop-highlights';
 import { ShopStickyBar } from '../../components/shop-product/shop-sticky-bar';
 import {
@@ -58,7 +59,7 @@ const span = ([a, b]: readonly [number, number]) => (a === b ? `${a}` : `${a}–
  */
 @Component({
   selector: 'app-jovie-shop-product-page',
-  imports: [RouterLink, TranslatePipe, ShopGallery, ShopRating, QuantityStepper, ShopHighlights, ShopStickyBar, ProductCard, FaqSection, TestModeNotice],
+  imports: [RouterLink, TranslatePipe, ShopGallery, ShopRating, ShopReviews, QuantityStepper, ShopHighlights, ShopStickyBar, ProductCard, FaqSection, TestModeNotice],
   templateUrl: './jovie-shop-product-page.html',
   styleUrl: './jovie-shop-product-page.css',
 })

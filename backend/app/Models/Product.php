@@ -80,6 +80,18 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class)->chaperone()->orderBy('sort_order')->orderBy('id');
     }
 
+    /** @return HasMany<ProductReview, $this> */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(ProductReview::class);
+    }
+
+    /** @return HasMany<ProductReview, $this> */
+    public function approvedReviews(): HasMany
+    {
+        return $this->reviews()->approved();
+    }
+
     /** @return HasMany<ProductImage, $this> */
     public function images(): HasMany
     {
@@ -100,6 +112,16 @@ class Product extends Model
     public function scopeVisible(Builder $query): void
     {
         $query->where('is_active', true)->whereHas('brand', fn (Builder $q) => $q->where('is_active', true));
+    }
+
+    /**
+     * Adds approved_reviews_count and approved_reviews_avg_rating (public rating of the product).
+     *
+     * @param  Builder<Product>  $query
+     */
+    public function scopeWithReviewRating(Builder $query): void
+    {
+        $query->withCount('approvedReviews')->withAvg('approvedReviews', 'rating');
     }
 
     /** @param Builder<Product> $query */

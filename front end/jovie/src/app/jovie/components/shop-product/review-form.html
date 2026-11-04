@@ -1,0 +1,95 @@
+<dialog #dialog aria-labelledby="review-form-title" (click)="backdrop($event)">
+  <div class="panel">
+    <header>
+      <h2 id="review-form-title">{{ 'jovie.reviews.write' | translate }}</h2>
+      <button type="button" class="close" [attr.aria-label]="'jovie.reviews.close' | translate" (click)="close()">×</button>
+    </header>
+
+    @if (state() === 'sent') {
+      <div class="sent" role="status">
+        <p class="big">{{ 'jovie.reviews.sentTitle' | translate }}</p>
+        <p>{{ 'jovie.reviews.sentText' | translate }}</p>
+        <button type="button" class="jv-button jv-button--night" (click)="close()">{{ 'jovie.reviews.close' | translate }}</button>
+      </div>
+    } @else {
+      <p class="product">{{ productName() }}</p>
+      <form [formGroup]="form" (ngSubmit)="send()" novalidate>
+        <fieldset class="rating" [attr.aria-invalid]="!!problem('rating')" aria-describedby="rv-rating-error">
+          <legend>{{ 'jovie.reviews.yourRating' | translate }}</legend>
+          <div class="stars" (mouseleave)="hover.set(0)">
+            @for (n of stars; track n) {
+              <label [class.on]="n <= (hover() || form.controls.rating.value || 0)" (mouseenter)="hover.set(n)">
+                <input type="radio" formControlName="rating" [value]="n" />
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5-4.7-4.6 6.5-.9z" />
+                </svg>
+                <span class="visually-hidden">{{ 'jovie.reviews.stars' | translate: { count: n } }}</span>
+              </label>
+            }
+          </div>
+          <p class="error" id="rv-rating-error">@if (problem('rating'); as p) { {{ p | translate }} }</p>
+        </fieldset>
+
+        <div class="row">
+          <div class="field">
+            <label for="rv-name">{{ 'jovie.reviews.name' | translate }}</label>
+            <input id="rv-name" formControlName="name" autocomplete="given-name" [attr.aria-invalid]="!!problem('name')" aria-describedby="rv-name-hint rv-name-error" />
+            <p class="hint" id="rv-name-hint">{{ 'jovie.reviews.nameHint' | translate }}</p>
+            <p class="error" id="rv-name-error">@if (problem('name'); as p) { {{ p | translate }} }</p>
+          </div>
+          <div class="field">
+            <label for="rv-email">{{ 'jovie.checkout.email' | translate }} <span class="optional">{{ 'jovie.form.optional' | translate }}</span></label>
+            <input id="rv-email" type="email" formControlName="email" autocomplete="email" dir="ltr" [attr.aria-invalid]="!!problem('email')" aria-describedby="rv-email-hint rv-email-error" />
+            <p class="hint" id="rv-email-hint">{{ 'jovie.reviews.emailHint' | translate }}</p>
+            <p class="error" id="rv-email-error">@if (problem('email'); as p) { {{ p | translate }} }</p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="rv-title">{{ 'jovie.reviews.titleLabel' | translate }}</label>
+          <input id="rv-title" formControlName="title" [attr.aria-invalid]="!!problem('title')" aria-describedby="rv-title-error" />
+          <p class="error" id="rv-title-error">@if (problem('title'); as p) { {{ p | translate }} }</p>
+        </div>
+
+        <div class="field">
+          <label for="rv-body">{{ 'jovie.reviews.bodyLabel' | translate }}</label>
+          <textarea id="rv-body" rows="5" formControlName="body" [attr.aria-invalid]="!!problem('body')" aria-describedby="rv-body-count rv-body-error"></textarea>
+          <p class="hint" id="rv-body-count">{{ form.controls.body.value.length }} / 3000</p>
+          <p class="error" id="rv-body-error">@if (problem('body'); as p) { {{ p | translate }} }</p>
+        </div>
+
+        <fieldset class="choice">
+          <legend>{{ 'jovie.reviews.recommendQuestion' | translate }} <span class="optional">{{ 'jovie.form.optional' | translate }}</span></legend>
+          <label><input type="radio" formControlName="recommends" [value]="true" /> {{ 'jovie.reviews.yes' | translate }}</label>
+          <label><input type="radio" formControlName="recommends" [value]="false" /> {{ 'jovie.reviews.no' | translate }}</label>
+        </fieldset>
+
+        <details class="verify">
+          <summary>{{ 'jovie.reviews.verifyTitle' | translate }}</summary>
+          <p class="hint">{{ 'jovie.reviews.verifyText' | translate }}</p>
+          <div class="row">
+            <div class="field">
+              <label for="rv-order">{{ 'jovie.order.number' | translate }}</label>
+              <input id="rv-order" formControlName="order_number" dir="ltr" placeholder="JV-000000-00000" [attr.aria-invalid]="!!problem('order_number')" aria-describedby="rv-order-error" />
+              <p class="error" id="rv-order-error">@if (problem('order_number'); as p) { {{ p | translate }} }</p>
+            </div>
+            <div class="field">
+              <label for="rv-order-email">{{ 'jovie.reviews.orderEmail' | translate }}</label>
+              <input id="rv-order-email" type="email" formControlName="order_email" dir="ltr" [attr.aria-invalid]="!!problem('order_email')" aria-describedby="rv-order-email-error" />
+              <p class="error" id="rv-order-email-error">@if (problem('order_email'); as p) { {{ p | translate }} }</p>
+            </div>
+          </div>
+        </details>
+
+        <!-- Honeypot: hidden from people, filled in by bots. -->
+        <input class="honeypot" formControlName="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+        <p class="form-error" role="alert">@if (error(); as e) { {{ e | translate }} }</p>
+        <p class="hint">{{ 'jovie.reviews.moderationNote' | translate }}</p>
+        <button type="submit" class="jv-button send" [disabled]="state() === 'sending'" [attr.aria-busy]="state() === 'sending'">
+          {{ (state() === 'sending' ? 'jovie.reviews.sending' : 'jovie.reviews.send') | translate }}
+        </button>
+      </form>
+    }
+  </div>
+</dialog>

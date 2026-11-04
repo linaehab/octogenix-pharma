@@ -20,10 +20,10 @@ enum AdminRole: string
     {
         return match ($this) {
             self::SuperAdmin => P::cases(),
-            self::ContentEditor => [P::ManageContent, P::ViewMessages],
+            self::ContentEditor => [P::ManageContent, P::ViewMessages, P::ManageReviews],
             self::StoreManager => [
                 P::ManageCatalog, P::ManageInventory, P::ViewOrders, P::ManageOrders,
-                P::ManagePayments, P::ViewCustomers, P::ManageShipping,
+                P::ManagePayments, P::ViewCustomers, P::ManageShipping, P::ManageReviews,
             ],
             self::Support => [P::ViewMessages, P::ManageMessages, P::ViewOrders, P::ViewCustomers],
         };

@@ -1,0 +1,90 @@
+<section id="reviews" class="jv-container reviews" aria-labelledby="reviews-title" [attr.aria-busy]="state() === 'loading'">
+  <h2 id="reviews-title" class="jv-title">{{ 'jovie.reviews.title' | translate }}</h2>
+
+  @let s = summary();
+  <div class="summary">
+    <div class="score">
+      @if (s?.count) {
+        <p class="average">{{ s!.average }}</p>
+        <app-review-stars class="big-stars" [value]="s!.average ?? 0" />
+        <p>{{ 'jovie.reviews.basedOn' | translate: { count: s!.count } }}</p>
+        @if (s!.recommend_percent !== null) {
+          <p class="recommend">{{ 'jovie.reviews.recommendPercent' | translate: { percent: s!.recommend_percent } }}</p>
+        }
+      } @else if (state() !== 'loading') {
+        <p class="none">{{ 'jovie.reviews.none' | translate }}</p>
+        <p>{{ 'jovie.reviews.beFirst' | translate }}</p>
+      }
+    </div>
+
+    <ul class="bars" [attr.aria-label]="'jovie.reviews.distribution' | translate">
+      @for (bar of bars(); track bar.level) {
+        <li>
+          <button type="button" [disabled]="!bar.count" [attr.aria-pressed]="rating() === bar.level" (click)="filter(bar.level)"
+            [attr.aria-label]="'jovie.reviews.barLabel' | translate: { stars: bar.level, count: bar.count, percent: bar.percent }">
+            <span class="level">{{ bar.level }} ★</span>
+            <span class="track" aria-hidden="true"><span class="fill" [style.width.%]="bar.percent"></span></span>
+            <span class="count">{{ bar.percent }}% ({{ bar.count }})</span>
+          </button>
+        </li>
+      }
+    </ul>
+
+    <div class="cta">
+      <button type="button" class="jv-button write" (click)="write()">{{ 'jovie.reviews.write' | translate }}</button>
+      <p>{{ 'jovie.reviews.moderationNote' | translate }}</p>
+    </div>
+  </div>
+
+  @if (s?.count) {
+    <div class="toolbar">
+      <label>
+        {{ 'jovie.reviews.sortBy' | translate }}
+        <select [value]="sort()" (change)="changeSort($event)">
+          @for (option of sorts; track option) {
+            <option [value]="option">{{ ('jovie.reviews.sort.' + option) | translate }}</option>
+          }
+        </select>
+      </label>
+      <div class="chips" role="group" [attr.aria-label]="'jovie.reviews.filterBy' | translate">
+        <button type="button" [attr.aria-pressed]="rating() === null" (click)="filter(null)">{{ 'jovie.reviews.all' | translate }}</button>
+        @for (level of levels; track level) {
+          <button type="button" [attr.aria-pressed]="rating() === level" (click)="filter(level)">{{ level }} ★</button>
+        }
+      </div>
+    </div>
+  }
+
+  <div aria-live="polite">
+    @switch (state()) {
+      @case ('loading') {
+        <p class="state">{{ 'jovie.reviews.loading' | translate }}</p>
+      }
+      @case ('error') {
+        <div class="state" role="alert">
+          <p>{{ 'jovie.reviews.loadError' | translate }}</p>
+          <button type="button" class="jv-button jv-button--night" (click)="retry()">{{ 'jovie.shop.retry' | translate }}</button>
+        </div>
+      }
+      @default {
+        @if (reviews().length) {
+          <p class="shown">{{ 'jovie.reviews.showing' | translate: { shown: reviews().length, total: total() } }}</p>
+          @for (review of reviews(); track review.id) {
+            <app-review-card [review]="review" />
+          }
+          @if (page() < lastPage()) {
+            <p class="more">
+              <button type="button" class="jv-button jv-button--light" [disabled]="loadingMore()" (click)="more()">
+                {{ (loadingMore() ? 'jovie.reviews.loading' : 'jovie.reviews.loadMore') | translate }}
+              </button>
+            </p>
+          }
+        } @else if (s?.count) {
+          <p class="state">{{ 'jovie.reviews.noneForFilter' | translate }}</p>
+        }
+      }
+    }
+  </div>
+
+  <app-review-form [slug]="slug()" [productName]="productName()" />
+</section>

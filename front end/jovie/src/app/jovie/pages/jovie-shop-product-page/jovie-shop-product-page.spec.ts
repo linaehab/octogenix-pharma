@@ -22,6 +22,11 @@ describe('JovieShopProductPage', () => {
     variants: [{ ...PREVIEW_PRODUCTS[0].variants[0], id: 1, price, is_available: true, max_per_order: null }],
   };
 
+  const emptyReviews = {
+    data: [],
+    meta: { current_page: 1, last_page: 1, total: 0, summary: { count: 0, average: null, distribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }, recommend_percent: null } },
+  };
+
   const render = () => {
     localStorage.removeItem('jovie.cart');
     TestBed.configureTestingModule({
@@ -54,6 +59,8 @@ describe('JovieShopProductPage', () => {
   it('shows the product from the API with the label panels and adds the chosen quantity to the cart', () => {
     const { fixture, element } = render();
     http.expectOne(`/api/v1/products/${product.slug}`).flush({ data: product });
+    fixture.detectChanges();
+    http.expectOne((req) => req.url === `/api/v1/products/${product.slug}/reviews`).flush(emptyReviews);
     fixture.detectChanges();
     // One size per product in Egypt: no size choice.
     expect(element.querySelector('.sizes')).toBeNull();

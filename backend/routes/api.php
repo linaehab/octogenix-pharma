@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\V1\Admin\PaymentWebhookEventController as AdminPaym
 use App\Http\Controllers\Api\V1\Admin\PasswordResetController as AdminPasswordResetController;
 use App\Http\Controllers\Api\V1\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Api\V1\Admin\ProductImageController as AdminProductImageController;
+use App\Http\Controllers\Api\V1\Admin\ProductReviewController as AdminProductReviewController;
 use App\Http\Controllers\Api\V1\Admin\ProductVariantController as AdminProductVariantController;
 use App\Http\Controllers\Api\V1\Admin\ServiceController as AdminServiceController;
 use App\Http\Controllers\Api\V1\Admin\SettingsController as AdminSettingsController;
@@ -35,6 +36,7 @@ use App\Http\Controllers\Api\V1\Customer\PasswordResetController as CustomerPass
 use App\Http\Controllers\Api\V1\GovernorateController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\ProductController;
+use App\Http\Controllers\Api\V1\ProductReviewController;
 use App\Http\Controllers\Api\V1\ServiceController;
 use App\Http\Controllers\Api\V1\SettingsController;
 use App\Http\Middleware\EnsureAccountIsActive;
@@ -52,6 +54,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
     Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
     Route::get('/governorates', GovernorateController::class)->name('governorates.index');
+    // Product reviews: approved ones are public; new ones wait for moderation.
+    Route::get('/products/{slug}/reviews', [ProductReviewController::class, 'index'])->middleware('throttle:60,1,reviews-index')->name('products.reviews.index');
+    Route::post('/products/{slug}/reviews', [ProductReviewController::class, 'store'])->middleware('throttle:reviews')->name('products.reviews.store');
+    Route::post('/reviews/{review}/votes', [ProductReviewController::class, 'vote'])->whereNumber('review')->middleware('throttle:review-votes')->name('reviews.votes.store');
     Route::post('/cart/preview', CartPreviewController::class)->middleware('throttle:60,1,cart-preview')->name('cart.preview');
 
     // The store's unnamed rate limits each get their own counter (third throttle parameter):
@@ -173,6 +179,13 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
                     ->name('product-images.update');
                 Route::delete('/product-images/{image}', [AdminProductImageController::class, 'destroy'])
                     ->name('product-images.destroy');
+            });
+
+            Route::middleware('can:reviews.manage')->group(function () {
+                Route::get('/reviews', [AdminProductReviewController::class, 'index'])->name('reviews.index');
+                Route::get('/reviews/{review}', [AdminProductReviewController::class, 'show'])->name('reviews.show');
+                Route::patch('/reviews/{review}', [AdminProductReviewController::class, 'update'])->name('reviews.update');
+                Route::delete('/reviews/{review}', [AdminProductReviewController::class, 'destroy'])->name('reviews.destroy');
             });
 
             Route::middleware('can:inventory.manage')->group(function () {

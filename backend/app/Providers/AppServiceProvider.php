@@ -83,6 +83,13 @@ class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('order-lookup', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
 
+        RateLimiter::for('reviews', fn (Request $request) => [
+            Limit::perMinute(3)->by('minute|'.$request->ip()),
+            Limit::perDay(20)->by('day|'.$request->ip()),
+        ]);
+
+        RateLimiter::for('review-votes', fn (Request $request) => Limit::perMinute(30)->by($request->ip()));
+
         RateLimiter::for('contact-messages', fn (Request $request) => [
             Limit::perMinute(3)->by('minute|'.$request->ip()),
             Limit::perDay(20)->by('day|'.$request->ip()),

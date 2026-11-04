@@ -36,7 +36,9 @@
         <app-test-mode-notice class="test" />
 
         @if (rating(); as r) {
-          <app-shop-rating class="rating" [average]="r.average" [count]="r.count" [preview]="!p.rating" />
+          <a class="rating" [routerLink]="[]" fragment="reviews" [attr.aria-label]="'jovie.reviews.goTo' | translate">
+            <app-shop-rating [average]="r.average" [count]="r.count" [preview]="!p.rating" />
+          </a>
         }
 
         <h1 id="pdp-title">{{ name() }}</h1>
@@ -196,6 +198,8 @@
     }
 
     <app-faq-section [summary]="true" />
+
+    <app-shop-reviews [slug]="p.slug" [productName]="name()" />
 
     <app-shop-sticky-bar [shown]="showSticky()" [image]="images()[0]?.src" [name]="name()"
       [disabled]="!!unavailableReason() || adding()"
