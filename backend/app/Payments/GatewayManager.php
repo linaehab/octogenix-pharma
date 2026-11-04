@@ -24,6 +24,11 @@ class GatewayManager
             throw new LogicException('The fake payment driver can only be used in automated tests.');
         }
 
+        // The TEST MODE driver simulates payments: it must never run in production, even if listed.
+        if ($class === MockCardGateway::class && $this->container->environment('production')) {
+            throw new LogicException('The mock payment driver cannot be used in production.');
+        }
+
         return $this->container->make($class);
     }
 }

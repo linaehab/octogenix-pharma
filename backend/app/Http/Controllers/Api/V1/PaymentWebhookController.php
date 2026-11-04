@@ -19,6 +19,9 @@ use Throwable;
  * 1. Authenticate the request (driver checks the signature). Invalid → stored as ignored, 401.
  * 2. Store the event; a duplicate (provider, event_key) → 200 without processing it again.
  * 3. Queue the processing job and answer quickly, so the provider does not time out and retry.
+ *
+ * مستقبلاً: هذا هو المكان الذي تصل إليه إشعارات بوابة الدفع الحقيقية (webhooks/{اسم المزود})؛
+ * التحقق من التوقيع يتم داخل الـ driver الخاص بالمزود (parseWebhook) ولا يتغير هذا الكود.
  */
 class PaymentWebhookController extends Controller
 {

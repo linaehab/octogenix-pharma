@@ -22,6 +22,7 @@ use App\Http\Controllers\Api\V1\CartPreviewController;
 use App\Http\Controllers\Api\V1\CheckoutController;
 use App\Http\Controllers\Api\V1\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Api\V1\GuestOrderController;
+use App\Http\Controllers\Api\V1\MockPaymentController;
 use App\Http\Controllers\Api\V1\OrderPaymentController;
 use App\Http\Controllers\Api\V1\PaymentWebhookController;
 use App\Http\Controllers\Api\V1\ContactMessageController;
@@ -51,18 +52,23 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
     Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
     Route::get('/governorates', GovernorateController::class)->name('governorates.index');
-    Route::post('/cart/preview', CartPreviewController::class)->middleware('throttle:60,1')->name('cart.preview');
+    Route::post('/cart/preview', CartPreviewController::class)->middleware('throttle:60,1,cart-preview')->name('cart.preview');
 
+    // The store's unnamed rate limits each get their own counter (third throttle parameter):
+    // without it every throttle:N,1 route shares one per-IP counter, so cart updates used up the
+    // allowance of /pay.
     // Checkout for guests and signed-in customers (the session decides which). Guest orders are
     // opened with the private token from the confirmation email.
     Route::post('/checkout', [CheckoutController::class, 'store'])->middleware('throttle:checkout')->name('checkout');
     Route::post('/orders/lookup', [GuestOrderController::class, 'lookup'])->middleware('throttle:order-lookup')->name('orders.lookup');
-    Route::get('/orders/{orderNumber}', [GuestOrderController::class, 'show'])->middleware('throttle:30,1')->name('orders.guest.show');
-    Route::post('/orders/{orderNumber}/cancel', [GuestOrderController::class, 'cancel'])->middleware('throttle:10,1')->name('orders.guest.cancel');
+    Route::get('/orders/{orderNumber}', [GuestOrderController::class, 'show'])->middleware('throttle:30,1,orders-show')->name('orders.guest.show');
+    Route::post('/orders/{orderNumber}/cancel', [GuestOrderController::class, 'cancel'])->middleware('throttle:10,1,orders-cancel')->name('orders.guest.cancel');
 
     // Card payment for a pending order (customer session or guest token) and provider webhooks.
-    Route::post('/orders/{orderNumber}/pay', [OrderPaymentController::class, 'pay'])->middleware('throttle:10,1')->name('orders.pay');
-    Route::post('/orders/{orderNumber}/payment-status', [OrderPaymentController::class, 'status'])->middleware('throttle:30,1')->name('orders.payment-status');
+    Route::post('/orders/{orderNumber}/pay', [OrderPaymentController::class, 'pay'])->middleware('throttle:10,1,orders-pay')->name('orders.pay');
+    Route::post('/orders/{orderNumber}/payment-status', [OrderPaymentController::class, 'status'])->middleware('throttle:30,1,orders-payment-status')->name('orders.payment-status');
+    // TEST MODE only (404 otherwise): simulated result of a mock card payment attempt.
+    Route::post('/orders/{orderNumber}/mock-payment', MockPaymentController::class)->middleware('throttle:10,1,orders-mock-payment')->name('orders.mock-payment');
     Route::post('/payments/webhooks/{provider}', PaymentWebhookController::class)->middleware('throttle:300,1')->name('payments.webhook');
 
     // Jovie store customer API (Angular /jovie/...). Protected routes name the customer guard explicitly.

@@ -12,6 +12,7 @@ use App\Models\Payment;
 use App\Payments\CardDataSanitizer;
 use App\Payments\GatewayManager;
 use App\Payments\GatewayResult;
+use App\Payments\MockCardGateway;
 use App\Payments\PaymentMismatch;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -59,11 +60,14 @@ class PaymentService
                 'amount_piastres' => $locked->total_piastres,
                 'currency' => $locked->currency,
                 'expires_at' => $locked->payment_expires_at,
-                'is_test' => $provider === 'fake',
+                // Test drivers (automated tests, TEST MODE) never produce real payments.
+                'is_test' => in_array($provider, ['fake', MockCardGateway::NAME], true),
             ]);
         });
 
         try {
+            // مستقبلاً: عند ربط بوابة الدفع الحقيقية يتم هنا استدعاء الـ driver الخاص بها لإنشاء صفحة الدفع،
+            // ولا يتغير هذا الكود: يكفي إضافة الـ driver في config/payments.php واختياره من لوحة التحكم.
             $checkout = $gateway->createCheckout($payment, $order, (string) config('payments.return_url'));
         } catch (Throwable $e) {
             report($e);

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Services\PaymentService;
+use App\Support\OrderAccess;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -37,23 +38,8 @@ class OrderPaymentController extends Controller
         return new OrderResource($order->refresh()->load(['items', 'histories']));
     }
 
-    /** The signed-in customer's own order, or a guest order opened with its token; otherwise 404. */
     private function order(Request $request, string $orderNumber): Order
     {
-        $customer = $request->user('customer');
-        $query = Order::query()->where('order_number', $orderNumber);
-
-        if ($customer !== null && $customer->is_active) {
-            $order = (clone $query)->where('customer_id', $customer->id)->first();
-            if ($order) {
-                return $order;
-            }
-        }
-
-        $order = $query->whereNull('customer_id')->first();
-        $token = (string) $request->input('token', '');
-        abort_unless($order !== null && $token !== '' && $order->hasGuestToken($token), 404);
-
-        return $order;
+        return OrderAccess::resolve($request, $orderNumber);
     }
 }
