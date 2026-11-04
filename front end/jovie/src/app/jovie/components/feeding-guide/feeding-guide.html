@@ -18,33 +18,70 @@
         }
       </nav>
     } @else {
-      <div class="ages" role="group" [attr.aria-label]="'jovie.guide.ageLabel' | translate">
-        @for (stage of stages; track stage) {
-          <button type="button" class="age" [class.is-selected]="selected() === stage"
-            [attr.aria-pressed]="selected() === stage" (click)="select(stage)">
-            <span class="age-range">{{ 'jovie.guide.age' + stage | translate }}</span>
-            <span class="age-stage">{{ 'jovie.guide.stage' | translate: { stage: stage } }}</span>
-          </button>
+      <div class="jv-center chart-head">
+        <h2 class="jv-title">{{ text().title }}</h2>
+        <p class="chart-sub">{{ text().subtitle }}</p>
+      </div>
+
+      <div class="tabs" role="group" [attr.aria-label]="text().tabsLabel">
+        @for (group of groups; track group.stage) {
+          <div class="tab-group" [attr.data-stage]="group.stage">
+            <p class="tab-group-label">{{ text().stageGroup[group.stage] }}</p>
+            <div class="tab-row">
+              @for (row of group.rows; track row.id) {
+                <button type="button" class="tab" [class.is-selected]="selected() === row.id"
+                  [attr.aria-pressed]="selected() === row.id" [attr.aria-controls]="'feeding-' + row.id"
+                  (click)="select(row)">{{ text().rows[row.id] }}</button>
+              }
+            </div>
+          </div>
         }
       </div>
 
-      <div class="result" aria-live="polite">
-        @if (product()?.image; as image) {
-          <img [src]="image.url" alt="" width="520" height="705" loading="lazy" />
+      <div #track class="track" role="region" tabindex="0" [attr.aria-label]="text().cardsLabel" (scroll)="onScroll()">
+        @for (card of cards(); track card.row.id) {
+          <article #card class="card" [id]="'feeding-' + card.row.id" [attr.data-row]="card.row.id"
+            [attr.data-stage]="card.row.stage" [class.is-selected]="selected() === card.row.id"
+            [attr.aria-labelledby]="'feeding-title-' + card.row.id">
+            <header class="card-head">
+              <div>
+                <h3 [id]="'feeding-title-' + card.row.id">{{ card.title }}</h3>
+                <p class="card-product">{{ card.product }}</p>
+              </div>
+              <img [src]="card.image" alt="" width="640" height="867" loading="lazy" />
+            </header>
+
+            <dl class="rows">
+              <div><dt>{{ text().feeds }}</dt><dd>{{ card.feeds }}</dd></div>
+              <div><dt>{{ text().water }}</dt><dd>{{ card.water }}</dd></div>
+              <div><dt>{{ text().scoops }}</dt><dd>{{ card.scoops }} <span class="hint">({{ card.scoopWeight }})</span></dd></div>
+              <div><dt>{{ text().daily }}</dt><dd>{{ card.daily }}</dd></div>
+              <div class="with-shop">
+                <dt>{{ text().tins }}</dt>
+                <dd>
+                  <span>{{ card.tins }}</span>
+                  <a class="shop" [routerLink]="card.link" [attr.aria-label]="card.shop" [attr.title]="card.shop">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M6 8h12l-1 12H7z" /><path d="M9 10V7a3 3 0 0 1 6 0v3" />
+                    </svg>
+                  </a>
+                </dd>
+              </div>
+            </dl>
+
+            <p class="card-note">{{ card.note }}</p>
+          </article>
         }
-        <div>
-          <p class="result-stage">{{ 'jovie.guide.stage' | translate: { stage: selected() } }} · {{ 'jovie.guide.age' + selected() | translate }}</p>
-          @if (productName()) {
-            <h3>{{ productName() }}</h3>
-          }
-          <ol class="steps">
-            <li>{{ 'jovie.guide.step1' | translate }}</li>
-            <li>{{ 'jovie.guide.step2' | translate }}</li>
-            <li>{{ 'jovie.guide.step3' | translate }}</li>
-          </ol>
-          <a class="jv-button" routerLink="/jovie/shop">{{ 'jovie.guide.shopCta' | translate: { stage: selected() } }}</a>
-        </div>
       </div>
+
+      <p class="footnote">{{ text().footnote }}</p>
+
+      <p class="download">
+        <a class="jv-button" [href]="pdf()" download>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14" /></svg>
+          {{ text().download }}
+        </a>
+      </p>
     }
 
     <p class="note">{{ 'jovie.guide.note' | translate }}</p>

@@ -313,9 +313,53 @@ describe('App', () => {
     it('opens the feeding guide on the stage given in the link', async () => {
       const { compiled } = await open('/jovie/feeding-guide?stage=2');
 
-      const selected = compiled.querySelector('app-feeding-guide .age.is-selected');
-      expect(selected?.textContent).toContain('Stage 2');
-      expect(compiled.querySelector('app-feeding-guide .result-stage')?.textContent).toContain('6–12 months');
+      const selected = compiled.querySelector('app-feeding-guide .tab.is-selected');
+      expect(selected?.textContent?.trim()).toBe('6–8 months');
+      expect(selected?.closest('.tab-group')?.getAttribute('data-stage')).toBe('2');
+      expect(compiled.querySelector('app-feeding-guide .card.is-selected')?.id).toBe('feeding-6-8m');
+    });
+
+    it('shows the feeding table of the Egyptian tins, with shop links and the chart PDF', async () => {
+      const { fixture, compiled } = await open('/jovie/feeding-guide');
+      const cards = compiled.querySelectorAll('app-feeding-guide .card');
+
+      expect(compiled.querySelectorAll('app-feeding-guide .tab').length).toBe(9);
+      expect(cards.length).toBe(9);
+      expect(compiled.querySelector('app-feeding-guide .tab.is-selected')?.textContent?.trim()).toBe('Under 3 kg');
+
+      // Stage 1, under 3 kg: 7 feeds of 60 ml water and 2 scoops of 4.3 g -> 60.2 g a day, 5 tins a month.
+      const first = cards[0].querySelectorAll('dd');
+      expect(first[0].textContent?.trim()).toBe('7');
+      expect(first[1].textContent?.trim()).toBe('60 ml');
+      expect(first[2].textContent).toContain('2');
+      expect(first[3].textContent?.trim()).toBe('420 ml water · 14 scoops');
+      expect(first[4].textContent).toContain('5 tins (400 g)');
+      // Stage 2, 10-12 months: 2-3 feeds of 210 ml and 7 scoops.
+      expect(cards[7].querySelectorAll('dd')[0].textContent?.trim()).toBe('2–3');
+      expect(cards[7].querySelectorAll('dd')[4].textContent).toContain('5–7 tins');
+      // Stage 3: 2 feeds of 150 ml and 5 scoops of 4.5 g -> 4 tins.
+      expect(cards[8].querySelectorAll('dd')[4].textContent).toContain('4 tins');
+
+      const shops = Array.from(compiled.querySelectorAll('app-feeding-guide .shop'), (a) => a.getAttribute('href'));
+      expect(shops.slice(0, 5).every((href) => href === '/jovie/products/infant-goat-milk')).toBeTrue();
+      expect(shops.slice(5, 8).every((href) => href === '/jovie/products/follow-on-goat-milk')).toBeTrue();
+      expect(shops[8]).toBe('/jovie/products/toddler-goat-milk');
+
+      const download = compiled.querySelector('app-feeding-guide .download a');
+      expect(download?.getAttribute('href')).toBe('/downloads/jovie/jovie-goat-feeding-chart-egypt-en.pdf');
+      expect(download?.hasAttribute('download')).toBeTrue();
+
+      (compiled.querySelectorAll('app-feeding-guide .tab')[8] as HTMLButtonElement).click();
+      fixture.detectChanges();
+      expect(compiled.querySelector('app-feeding-guide .card.is-selected')?.id).toBe('feeding-12m-plus');
+
+      TestBed.inject(LanguageService).setLanguage('ar');
+      fixture.detectChanges();
+      expect(compiled.querySelector('app-feeding-guide .tab.is-selected')?.textContent?.trim()).toBe('12 شهرًا فأكثر');
+      expect(compiled.querySelector('app-feeding-guide .download a')?.getAttribute('href')).toBe(
+        '/downloads/jovie/jovie-goat-feeding-chart-egypt-ar.pdf',
+      );
+      TestBed.inject(LanguageService).setLanguage('en');
     });
 
     it('shows the whole FAQ on its page', async () => {
