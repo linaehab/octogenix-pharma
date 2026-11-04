@@ -41,7 +41,6 @@ import { LABEL_CONTENT } from '../../data/label-content';
 import { PREVIEW_PRODUCTS } from '../../data/preview-catalog';
 import { PRODUCTS, PRODUCT_VIEWS, productImage, productLink } from '../../data/products-content';
 import { CartService } from '../../store/cart.service';
-import { CheckoutService } from '../../store/checkout.service';
 import { TestModeNotice } from '../../store/test-mode-notice';
 
 const MAX_QUANTITY = 99;
@@ -66,7 +65,6 @@ const span = ([a, b]: readonly [number, number]) => (a === b ? `${a}` : `${a}–
 export class JovieShopProductPage {
   private readonly catalog = inject(JovieCatalogService);
   private readonly cart = inject(CartService);
-  private readonly checkout = inject(CheckoutService);
   private readonly content = inject(SiteContentService);
   private readonly language = inject(LanguageService);
   private readonly official = injectProductsContent();
@@ -140,9 +138,6 @@ export class JovieShopProductPage {
     const variant = this.variant();
     if (!variant) {
       return 'jovie.cart.outOfStock';
-    }
-    if (!this.checkout.config().enabled) {
-      return 'jovie.cart.storeClosed';
     }
     if (!variant.price) {
       return 'jovie.shop.pricePending';

@@ -8,7 +8,6 @@ import { ApiProduct } from '../../data/jovie-product.models';
 import { PREVIEW_PRODUCTS } from '../../data/preview-catalog';
 import { PRODUCTS, productLink } from '../../data/products-content';
 import { CartService } from '../../store/cart.service';
-import { CheckoutService } from '../../store/checkout.service';
 
 /** Feedback under the card's buttons. */
 interface CartFeedback {
@@ -36,7 +35,6 @@ export class ProductCard {
   private readonly content = inject(SiteContentService);
   private readonly language = inject(LanguageService);
   private readonly cart = inject(CartService);
-  private readonly checkout = inject(CheckoutService);
   private feedbackTimer: ReturnType<typeof setTimeout> | undefined;
 
   readonly product = input.required<ApiProduct>();
@@ -115,9 +113,6 @@ export class ProductCard {
     const variant = this.variant();
     if (this.isPreview() || !variant || variant.id <= 0) {
       return 'jovie.cart.previewOnly';
-    }
-    if (!this.checkout.config().enabled) {
-      return 'jovie.cart.storeClosed';
     }
     if (!variant.price) {
       return 'jovie.shop.pricePending';
