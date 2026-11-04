@@ -7,6 +7,7 @@ use App\Models\AdminUser;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductReview;
+use Database\Seeders\ReviewTestDataSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Notification;
@@ -220,6 +221,37 @@ class ProductReviewTest extends TestCase
         $this->deleteJson("/api/v1/admin/reviews/{$mona->id}")->assertNoContent();
         $this->assertSoftDeleted($mona);
         $this->getJson("/api/v1/products/{$this->product->slug}/reviews")->assertJsonPath('meta.summary.count', 0);
+    }
+
+    public function test_the_review_test_seeder_runs_only_in_test_mode(): void
+    {
+        $this->expectException(\RuntimeException::class);
+
+        $this->seed(ReviewTestDataSeeder::class);
+    }
+
+    public function test_the_review_test_seeder_creates_marked_reviews_and_replaces_them_on_rerun(): void
+    {
+        config(['payments.test_mode' => true]);
+        $this->product->brand->forceFill(['slug' => 'jovie'])->save(); // the seeder targets Jovie products
+        $real = $this->approved(5, ['author_name' => 'Real parent']);
+
+        $this->seed(ReviewTestDataSeeder::class);
+        $this->seed(ReviewTestDataSeeder::class);
+
+        $seeded = ProductReview::where('author_email', 'like', '%'.ReviewTestDataSeeder::EMAIL_DOMAIN)->get();
+        $this->assertCount(10, $seeded, 'Ten per product, not duplicated by the second run.');
+        $this->assertTrue($seeded->every(fn ($r) => str_starts_with($r->title, '[TEST] ')));
+        $this->assertSame(['approved' => 8, 'pending' => 1, 'rejected' => 1], $seeded->countBy(fn ($r) => $r->status->value)->sortKeys()->all());
+        $this->assertTrue($seeded->every(fn ($r) => $r->votes()->where('is_helpful', true)->count() === $r->helpful_count));
+
+        $this->getJson("/api/v1/products/{$this->product->slug}/reviews")
+            ->assertJsonPath('meta.summary.count', 9)
+            ->assertJsonPath('meta.total', 9);
+
+        $this->assertSame(10, ReviewTestDataSeeder::remove());
+        $this->assertSame([$real->id], ProductReview::pluck('id')->all(), 'Real reviews are never touched.');
+        $this->assertSame(0, \App\Models\ProductReviewVote::count());
     }
 
     public function test_only_admins_with_the_reviews_permission_can_moderate(): void
