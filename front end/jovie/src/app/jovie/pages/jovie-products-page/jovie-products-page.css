@@ -66,7 +66,9 @@ h2 {
 
 .brand {
   margin: 0.3rem 0 1.25rem;
-  font-size: 1.1rem;
+  font-size: var(--jv-h4);
+  font-weight: 700;
+  line-height: calc(2.2777777778 * var(--jv-u, 16px));
 }
 
 .facts {
@@ -100,14 +102,15 @@ h2 {
 
 .find h2 {
   margin-bottom: 1.25rem;
-  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  font-size: var(--jv-h1);
+  line-height: var(--jv-h1-lh);
 }
 
 .find p {
   max-width: 32rem;
   margin: 0 auto 2.4rem;
-  font-size: 1.05rem;
-  line-height: 1.6;
+  font-size: var(--jv-p);
+  line-height: var(--jv-p-lh);
 }
 
 @media (max-width: 767px) {

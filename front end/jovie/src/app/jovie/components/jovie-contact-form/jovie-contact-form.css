@@ -24,14 +24,14 @@
 h2 {
   margin: 0 0 0.5rem;
   font-size: 1.6rem;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .details h3 {
   margin: 0 0 0.3rem;
   color: var(--jv-sunshine);
   font-size: 1rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .detail {
@@ -65,7 +65,7 @@ h2 {
 }
 
 label {
-  font-weight: 800;
+  font-weight: 700;
 }
 
 input,

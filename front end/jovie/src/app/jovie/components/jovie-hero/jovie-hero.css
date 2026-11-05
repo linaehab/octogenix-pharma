@@ -24,15 +24,15 @@
 
 h1 {
   margin: 0 0 1.25rem;
-  font-size: clamp(2.8rem, 5.6vw, 5rem);
+  font-size: var(--jv-h1);
   font-weight: 700;
-  line-height: 1.02;
+  line-height: var(--jv-h1-lh);
 }
 
 .lead {
   margin: 0 0 2rem;
-  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
-  line-height: 1.55;
+  font-size: var(--jv-large);
+  line-height: var(--jv-large-lh);
   text-wrap: pretty;
 }
 

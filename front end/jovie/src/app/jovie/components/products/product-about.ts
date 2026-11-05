@@ -39,14 +39,14 @@ import { injectProductsContent } from './products-content';
     .about::after { content: ''; position: absolute; bottom: -0.55rem; inset-inline-end: -0.28rem; width: 8.65rem; height: 18rem; background: url('/assets/images/jovie/products/content-pattern-2.svg') no-repeat 100% 100% / contain; }
     :host-context([dir='rtl']) .about::before, :host-context([dir='rtl']) .about::after { transform: scaleX(-1); }
     .jv-container { max-width: 56rem; }
-    h2 { margin: 0 0 2.7rem; text-align: center; font-size: clamp(2rem, 3.6vw, 2.75rem); font-weight: 700; line-height: 1.15; }
+    h2 { margin: 0 0 2.7rem; text-align: center; font-size: var(--jv-h3); font-weight: 700; line-height: var(--jv-h3-lh); }
     .intro { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 2rem; margin-bottom: 0.5rem; }
-    .intro p { margin: 0; font-size: 1.15rem; line-height: 1.65; }
+    .intro p { margin: 0; font-size: var(--jv-large); line-height: var(--jv-large-lh); }
     .usps { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 2rem; margin: 0; padding: 0; list-style: none; }
     .usp { flex: 0 1 calc(50% - 1rem); margin-top: 2.2rem; padding-inline-start: 2.2rem; background: url('/assets/images/jovie/products/usp-icon.svg') no-repeat; background-position: top 6px left; }
     :host-context([dir='rtl']) .usp { background-position: top 6px right; }
-    h3 { margin: 0 0 0.55rem; font-size: 1.35rem; font-weight: 700; line-height: 1.3; }
-    .usp p { margin: 0 0 0.35rem; font-size: 1rem; line-height: 1.6; }
+    h3 { margin: 0 0 0.55rem; font-size: var(--jv-h4); font-weight: 700; line-height: var(--jv-h4-lh); }
+    .usp p { margin: 0 0 0.35rem; font-size: var(--jv-p); line-height: var(--jv-p-lh); }
     @media (max-width: 991px) { .about::before, .about::after { display: none; } }
     @media (max-width: 767px) { .intro { grid-template-columns: 1fr; } .usp { flex-basis: 100%; } }
   `,

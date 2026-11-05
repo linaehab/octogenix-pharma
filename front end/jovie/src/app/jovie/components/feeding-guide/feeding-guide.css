@@ -39,7 +39,7 @@ a.age:hover {
 
 .age-range {
   font-size: 1.15rem;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .age-stage {
@@ -76,7 +76,7 @@ a.age:hover {
   margin: 0 0 0.5rem;
   color: var(--jv-sweetypie);
   font-size: 0.9rem;
-  font-weight: 800;
+  font-weight: 700;
   text-align: center;
 }
 

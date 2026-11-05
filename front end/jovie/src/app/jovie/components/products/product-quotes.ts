@@ -43,8 +43,8 @@ import { injectProductsContent } from './products-content';
   styles: `
     .quotes { padding-block: clamp(5rem, 11vw, 8.9rem); background: var(--jv-panel); }
     .head { max-width: 34rem; margin: 0 auto 3.5rem; text-align: center; }
-    h2 { margin: 0 0 1.35rem; font-size: clamp(2rem, 3.6vw, 2.75rem); font-weight: 700; line-height: 1.15; }
-    .head p { margin: 0 0 2.6rem; font-size: 1rem; line-height: 1.6; }
+    h2 { margin: 0 0 1.35rem; font-size: var(--jv-h3); font-weight: 700; line-height: var(--jv-h3-lh); }
+    .head p { margin: 0 0 2.6rem; font-size: var(--jv-p); line-height: var(--jv-p-lh); }
     .list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; margin: 0; padding: 0; list-style: none; }
     .item { position: relative; display: flex; padding-bottom: 7.5rem; }
     .item img { display: block; width: 72%; height: auto; clip-path: url(#jv-quoteImage); }
@@ -54,8 +54,8 @@ import { injectProductsContent } from './products-content';
     .icon { position: absolute; top: 50%; inset-inline-start: 0.7rem; display: grid; place-items: center; width: 1.8rem; height: 1.8rem; margin-top: -0.9rem; background: var(--jv-white); color: var(--jv-night); clip-path: url(#jv-quoteIcon); }
     .item:nth-child(2n) .icon { inset-inline: auto 0.7rem; }
     .icon svg { width: 0.9rem; height: 0.9rem; fill: currentColor; }
-    blockquote { margin: 0 0 1rem; font-size: 0.85rem; line-height: 1.35; }
-    figcaption { display: flex; flex-direction: column; font-size: 0.85rem; line-height: 1.35; }
+    blockquote { margin: 0 0 1rem; font-size: var(--jv-caption); line-height: var(--jv-caption-lh); }
+    figcaption { display: flex; flex-direction: column; font-size: var(--jv-caption); line-height: var(--jv-caption-lh); }
     @media (max-width: 1199px) {
       .list { grid-template-columns: 1fr; max-width: 30rem; margin-inline: auto; gap: 2.5rem; }
       .item, .item:nth-child(2n) { padding: 0 0 8rem; flex-direction: row; }
@@ -63,7 +63,8 @@ import { injectProductsContent } from './products-content';
       .item .caption, .item:nth-child(2n) .caption { top: auto; bottom: 0; width: 70%; }
       .item .caption { inset-inline: auto 0; }
       .item:nth-child(2n) .caption { inset-inline: 0 auto; }
-      blockquote, figcaption { font-size: 0.95rem; }
+      /* Official caption below 1200px: 15px / 20px. */
+      blockquote, figcaption { line-height: 20px; }
     }
     @media (max-width: 479px) {
       .item, .item:nth-child(2n) { flex-direction: column; padding: 0; }

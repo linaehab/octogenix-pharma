@@ -35,9 +35,9 @@ import { injectProductsContent } from './products-content';
     .caption-wrap { position: relative; padding-inline: 3.5rem 0; }
     .caption { position: relative; z-index: 1; padding: 1rem 0 0.5rem; text-align: center; }
     .caption::before { content: ''; position: absolute; z-index: -1; inset: -4.9rem -5.2rem 0.55rem; background: var(--jv-white); clip-path: url(#jv-ctaCaption); }
-    .kicker { margin: 0 0 0.45rem; font-size: 1.35rem; font-weight: 700; line-height: 1.25; }
-    h2 { margin: 0 0 1.4rem; font-size: clamp(2rem, 3.3vw, 2.6rem); font-weight: 700; line-height: 1.15; }
-    .text { margin: 0 0 1.4rem; font-size: 0.95rem; line-height: 1.6; }
+    .kicker { margin: 0 0 0.45rem; font-size: var(--jv-h4); font-weight: 700; line-height: var(--jv-h4-lh); }
+    h2 { margin: 0 0 1.4rem; font-size: var(--jv-h3); font-weight: 700; line-height: var(--jv-h3-lh); }
+    .text { margin: 0 0 1.4rem; font-size: var(--jv-small); line-height: var(--jv-small-lh); }
     .note { margin: 0 0 1rem; font-size: 0.85rem; font-weight: 700; }
     .arrow { position: absolute; inset-inline-start: -1rem; bottom: -5.5rem; width: 14.7rem; margin: 0; padding-inline-end: 3.3rem; color: var(--jv-white); font-size: 1.75rem; line-height: 1.8rem; text-align: center; background: url('/assets/images/jovie/products/cta-arrow.svg') no-repeat 100% 0; }
     :host-context([dir='rtl']) .arrow { background-position: 0 0; padding-inline-end: 0; padding-inline-start: 3.3rem; }

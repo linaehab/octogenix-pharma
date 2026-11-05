@@ -1,29 +1,3 @@
-/* Foco (Dalton Maag) and the handwritten AlwaysInMyMilk: the official jovieproducts.com web fonts,
-   used with the brand owner's permission. */
-@font-face {
-  font-family: "Foco";
-  src: url("/fonts/jovie/foco-regular.woff2") format("woff2"), url("/fonts/jovie/foco-regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Foco";
-  src: url("/fonts/jovie/foco-bold.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "AlwaysInMyMilk";
-  src: url("/fonts/jovie/always-in-my-milk.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
 /* Colours measured from the official Jovie graphic-element files (Pantone 123 C / 294 C). */
 app-jovie-layout {
   --jv-sunshine: #fdc32d;
@@ -46,61 +20,10 @@ app-jovie-layout {
   --jv-pink: #f184b2;
   --jv-blue: #a4dadc;
   --jv-header-height: 6rem;
-  /* Foco has no Arabic glyphs, so Arabic keeps Baloo Bhaijaan 2. */
-  --jv-font: "Foco", "Baloo Bhaijaan 2", "Segoe UI", sans-serif;
   display: block;
   min-height: 100vh;
   background: var(--jv-white);
   color: var(--jv-night);
-  font-family: var(--jv-font);
-  line-height: 1.55;
-}
-
-/* Official handwritten lettering (quotes, step badges). Latin only; Arabic falls back. */
-.jv-handwritten {
-  font-family: "AlwaysInMyMilk", var(--jv-font);
-  font-weight: 400;
-}
-
-/* Official text link: bold, with a slightly tilted hand-drawn underline that lifts on hover. */
-.jv-link {
-  position: relative;
-  display: inline-block;
-  padding: 0 0 0.45rem;
-  border: 0;
-  background: none;
-  color: inherit;
-  font-family: inherit;
-  font-size: 1.15rem;
-  font-weight: 700;
-  line-height: 1.6;
-  cursor: pointer;
-}
-
-.jv-link::before {
-  content: '';
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0.3rem;
-  height: 2px;
-  border-radius: 3px;
-  background: currentColor;
-  transform: rotate(-1deg);
-  transform-origin: bottom left;
-  transition: bottom 0.3s ease;
-}
-
-.jv-link:hover::before {
-  bottom: 0.15rem;
-}
-
-.jv-link--small {
-  font-size: 1rem;
-}
-
-[dir="rtl"] app-jovie-layout {
-  --jv-font: "Baloo Bhaijaan 2", "Foco", "Segoe UI", sans-serif;
-  line-height: 1.7;
 }
 
 /* The header floats over the first (yellow) band of every Jovie page. */
@@ -126,7 +49,7 @@ app-jovie-layout :is(a, button, select, input, textarea, summary):focus-visible 
   border-radius: 999px;
   background: var(--jv-night);
   color: var(--jv-white);
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .jv-skip-link:focus {
@@ -154,22 +77,25 @@ app-jovie-layout :is(a, button, select, input, textarea, summary):focus-visible 
 .jv-eyebrow {
   margin: 0 0 0.5rem;
   color: var(--jv-sweetypie);
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
+  font-size: var(--jv-h4);
+  font-weight: 700;
+  line-height: var(--jv-h4-lh);
 }
 
+/* Section titles: the official .h3 size. */
 .jv-title {
   margin: 0 0 1rem;
-  font-size: clamp(2rem, 5vw, 3.25rem);
-  font-weight: 900;
-  line-height: 1.08;
+  font-size: var(--jv-h3);
+  font-weight: 700;
+  line-height: var(--jv-h3-lh);
 }
 
+/* Introductions: the official p.large size. */
 .jv-lead {
   max-width: 40rem;
   margin: 0 0 1.5rem;
-  font-size: clamp(1.05rem, 2.2vw, 1.2rem);
+  font-size: var(--jv-large);
+  line-height: var(--jv-large-lh);
 }
 
 .jv-center {
@@ -191,9 +117,10 @@ app-jovie-layout :is(a, button, select, input, textarea, summary):focus-visible 
   border-radius: 4px;
   background: var(--jv-sweetypie);
   color: var(--jv-white);
-  font-family: inherit;
-  font-size: 1.1rem;
-  font-weight: 800;
+  font-family: var(--jv-font);
+  font-size: var(--jv-btn);
+  font-weight: 700;
+  line-height: var(--jv-btn-lh);
   cursor: pointer;
   transition: transform 160ms ease, box-shadow 160ms ease;
 }
@@ -210,6 +137,11 @@ app-jovie-layout :is(a, button, select, input, textarea, summary):focus-visible 
 
 .jv-button--night {
   background: var(--jv-night);
+}
+
+/* Official .btn--small: the same text on a 24px line. */
+.jv-button--small {
+  line-height: var(--jv-small-lh);
 }
 
 .jv-section-cta {

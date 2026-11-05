@@ -38,16 +38,22 @@
 
 h1 {
   margin: 0 0 1.5rem;
-  font-size: clamp(2.6rem, 6.6vw, 4.5rem);
+  font-size: var(--jv-h1);
   font-weight: 700;
-  line-height: 1;
+  line-height: var(--jv-h1-lh);
 }
 
+/* Official page introductions are regular text (FAQ); the Why page uses the large size. */
 p {
   max-width: 36rem;
   margin: 0 auto 2.25rem;
-  font-size: clamp(1.05rem, 1.6vw, 1.2rem);
-  line-height: 1.6;
+  font-size: var(--jv-p);
+  line-height: var(--jv-p-lh);
+}
+
+:host(.large-lead) p {
+  font-size: var(--jv-large);
+  line-height: var(--jv-large-lh);
 }
 
 .actions {

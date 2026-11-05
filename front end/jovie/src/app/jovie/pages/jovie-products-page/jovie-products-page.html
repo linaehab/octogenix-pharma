@@ -1,7 +1,7 @@
 <app-page-intro [title]="content().listing.title" layout="content" headingId="jovie-products-title">
   <div actions>
     @for (product of products; track product.slug) {
-      <a class="jv-link" [routerLink]="link(product.slug)">{{ content().products[product.slug].name }}</a>
+      <a class="jv-link jv-link--small" [routerLink]="link(product.slug)">{{ content().products[product.slug].name }}</a>
     }
   </div>
 </app-page-intro>
@@ -24,7 +24,7 @@
           <li>{{ content().listing.netWeight }}</li>
         </ul>
         <p class="text">{{ text.intro[0] }}</p>
-        <a class="jv-button jv-button--night" [routerLink]="link(product.slug)"
+        <a class="jv-button jv-button--night jv-button--small" [routerLink]="link(product.slug)"
           [attr.aria-label]="content().listing.moreDetails + ': ' + text.name">{{ content().listing.moreDetails }}</a>
       </div>
     </article>

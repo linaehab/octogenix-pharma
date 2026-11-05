@@ -14,7 +14,7 @@ import { WhySpirit } from '../../components/why/why-spirit';
   selector: 'app-jovie-why-page',
   imports: [PageIntro, WhySpirit, WhyQuote, WhyBenefits, WhyOrganic, WhyDifferent, HowItsMade],
   template: `
-    <app-page-intro [title]="content().title" [lead]="content().intro" [scrollButton]="false">
+    <app-page-intro class="large-lead" [title]="content().title" [lead]="content().intro" [scrollButton]="false">
       <div actions>
         @for (button of content().buttons; track button.target) {
           <button class="jv-link" type="button" (click)="scrollTo(button.target)">{{ button.label }}</button>

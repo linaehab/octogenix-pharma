@@ -15,9 +15,8 @@ import { injectWhyContent } from './why-content';
   styles: `
     .quote { margin: 0; padding-block: clamp(4rem, 7vw, 5rem); background: var(--jv-night); color: var(--jv-white); clip-path: url(#jv-ctaBackground); }
     .inner { max-width: 40rem; text-align: center; }
-    blockquote { margin: 0 0 2.5rem; font-size: clamp(1.75rem, 3vw, 2.5rem); line-height: 1.2; }
-    :host-context([dir='rtl']) blockquote { font-size: clamp(1.4rem, 2.4vw, 1.9rem); line-height: 1.6; }
-    figcaption { font-size: 1rem; line-height: 1.6; }
+    blockquote { margin: 0 0 2.5rem; font-size: var(--jv-quote); line-height: var(--jv-quote-lh); }
+    figcaption { font-size: var(--jv-p); line-height: var(--jv-p-lh); }
   `,
 })
 export class WhyQuote {

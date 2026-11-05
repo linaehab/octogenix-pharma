@@ -19,7 +19,7 @@ import { jovieTranslations } from '../jovie-translations';
   selector: 'app-jovie-layout',
   imports: [RouterOutlet, TranslatePipe, JovieHeader, JovieFooter, JovieIntroDialog, JovieMasks],
   templateUrl: './jovie-layout.html',
-  styleUrl: './jovie-layout.css',
+  styleUrls: ['./jovie-type.css', './jovie-layout.css'],
   encapsulation: ViewEncapsulation.None,
 })
 export class JovieLayout {

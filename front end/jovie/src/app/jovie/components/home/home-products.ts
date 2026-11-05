@@ -38,8 +38,8 @@ import { injectHomeContent } from './home-content';
     .block::before { content: ''; position: absolute; inset: 0 0 50%; background: var(--jv-panel); }
     .backdrop { position: absolute; top: -1.24rem; inset-inline: 0; height: 47.7rem; background: var(--jv-panel); clip-path: url(#jv-productTile); }
     .head { position: relative; max-width: 40.5rem; text-align: center; }
-    h2 { margin: 0 0 1.69rem; font-size: clamp(2.25rem, 3.6vw, 3.38rem); font-weight: 700; line-height: 1.15; }
-    .head p { margin: 0 0 2.98rem; font-size: 1.12rem; line-height: 1.6; }
+    h2 { margin: 0 0 1.69rem; font-size: var(--jv-h3); font-weight: 700; line-height: var(--jv-h3-lh); }
+    .head p { margin: 0 0 2.98rem; font-size: var(--jv-p); line-height: var(--jv-p-lh); }
     .head .jv-button { border-radius: 2px; }
     .tiles { position: relative; display: flex; justify-content: space-between; margin: 0 -5.51rem; padding: 0; list-style: none; }
     .tiles li { margin-top: -3.88rem; }
@@ -47,10 +47,10 @@ import { injectHomeContent } from './home-content';
     .tile { --tone: var(--jv-sunshine); display: flex; flex-direction: column; align-items: center; justify-content: center; width: 26.78rem; height: 30.04rem; background: var(--tone); color: var(--jv-white); text-align: center; clip-path: url(#jv-productTile); }
     .tile[data-tone='pink'] { --tone: var(--jv-pink); }
     .tile[data-tone='blue'] { --tone: var(--jv-blue); }
-    .brand { font-size: 1.52rem; font-weight: 700; line-height: 2.59rem; }
-    .name { margin-bottom: 2.19rem; font-size: 1.01rem; }
+    .brand { font-size: var(--jv-h4); font-weight: 700; line-height: calc(2.2777777778 * var(--jv-u, 18px)); }
+    .name { margin-bottom: 2.19rem; font-size: var(--jv-small); line-height: var(--jv-small-lh); }
     .tile img { width: auto; max-height: 50%; margin-bottom: 1.74rem; filter: drop-shadow(0 10px 12px rgba(32, 53, 100, 0.18)); }
-    .more { padding: 0.51rem 1.24rem; background: var(--jv-white); color: var(--jv-night); font-size: 1.01rem; font-weight: 700; transition: background 0.3s ease; }
+    .more { padding: 0.51rem 1.24rem; background: var(--jv-white); color: var(--jv-night); font-size: var(--jv-small); font-weight: 700; transition: background 0.3s ease; line-height: var(--jv-small-lh); }
     .tile:hover .more { background: var(--jv-panel); }
     @media (max-width: 991px) {
       .block { padding-block: 5.62rem; }

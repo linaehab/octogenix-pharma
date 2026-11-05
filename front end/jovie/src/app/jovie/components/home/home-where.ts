@@ -36,8 +36,8 @@ import { injectHomeContent } from './home-content';
     .mask img { display: block; width: 100%; height: auto; }
     .caption { position: relative; z-index: 1; padding: 1.12rem 0 0.56rem; text-align: center; }
     .caption::before { content: ''; position: absolute; z-index: -1; inset: -5.51rem -5.85rem 0.62rem; background: var(--jv-white); clip-path: url(#jv-ctaCaption); }
-    .kicker { margin: 0 0 0.34rem; font-size: 1.52rem; font-weight: 700; line-height: 1.25; }
-    h2 { margin: 0 0 1.69rem; font-size: clamp(2.25rem, 3.4vw, 3.09rem); font-weight: 700; line-height: 1.15; }
+    .kicker { margin: 0 0 0.34rem; font-size: var(--jv-h4); font-weight: 700; line-height: var(--jv-h4-lh); }
+    h2 { margin: 0 0 1.69rem; font-size: var(--jv-h3); font-weight: 700; line-height: var(--jv-h3-lh); }
     .text { margin: 0 0 3.49rem; font-size: 1.07rem; line-height: 1.6; }
     .caption .jv-button { border-radius: 2px; }
     @media (max-width: 991px) {

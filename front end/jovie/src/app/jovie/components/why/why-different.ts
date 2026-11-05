@@ -33,13 +33,13 @@ import { injectWhyContent } from './why-content';
     :host-context([dir='rtl']) .different::after { right: auto; left: -20px; transform: rotate(15deg); }
     .background { position: absolute; inset: 0; background: var(--jv-panel); clip-path: url(#jv-organicBlock); }
     .jv-container { position: relative; }
-    .title { margin: 0 0 clamp(3rem, 7vw, 5.5rem); text-align: center; font-size: clamp(2rem, 3.6vw, 3rem); font-weight: 700; }
+    .title { margin: 0 0 clamp(3rem, 7vw, 5.5rem); text-align: center; font-size: var(--jv-h3); font-weight: 700; line-height: var(--jv-h3-lh); }
     .row { display: grid; grid-template-columns: 6fr 4fr; align-items: center; justify-content: space-between; gap: 10%; margin-bottom: 5rem; }
     .row.reverse .image { order: 2; }
     .mask { display: block; clip-path: url(#jv-organicImage1); }
     .mask.alt { clip-path: url(#jv-organicImage2); }
     .mask img { display: block; width: 100%; height: auto; }
-    .caption h3 { margin: 0 0 1rem; font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 700; line-height: 1.15; }
+    .caption h3 { margin: 0 0 1rem; font-size: var(--jv-h3); font-weight: 700; line-height: var(--jv-h3-lh); }
     .caption p { margin: 0 0 1.5rem; font-size: 1rem; line-height: 1.5; }
     @media (max-width: 991px) { .row { grid-template-columns: 1fr; gap: 2rem; } .row.reverse .image { order: 0; } }
   `,

@@ -1,0 +1,207 @@
+/* Typography of the official jovieproducts.com site (resources/website/css/app.css), reproduced as is:
+   - English: Foco Regular (400) and Foco Bold (used as 700); AlwaysInMyMilk for the handwritten
+     lettering. The same files as the official site (byte for byte) and as the brand's font package.
+   - Arabic (official /ae): Tajawal Regular and Bold for text, Baloo Bhaijaan for h1–h6 headings
+     (SIL Open Font License, the files the official site serves).
+   - Sizes: the official type scale. From 1200px wide the official root size is 1.40625vw, so every
+     size grows with the window (--jv-u is that unit; 18px at 1280px). */
+
+@font-face {
+  font-family: "Foco";
+  src: url("/fonts/jovie/foco-regular.woff2") format("woff2"), url("/fonts/jovie/foco-regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Foco";
+  src: url("/fonts/jovie/foco-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "AlwaysInMyMilk";
+  src: url("/fonts/jovie/always-in-my-milk.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Tajawal";
+  src: url("/fonts/jovie/tajawal-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Tajawal";
+  src: url("/fonts/jovie/tajawal-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "BalooBhaijaan";
+  src: url("/fonts/jovie/baloo-bhaijaan-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+app-jovie-layout {
+  --jv-font: "Foco", sans-serif;
+  --jv-font-heading: "Foco", sans-serif;
+  /* Official sizes below 992px (values in px), then 992–1199px, then scaled from 1200px. */
+  --jv-h1: 64px;
+  --jv-h1-lh: 72px;
+  --jv-h2: 40px;
+  --jv-h2-lh: 48px;
+  --jv-h3: 32px;
+  --jv-h3-lh: 40px;
+  --jv-h4: 24px;
+  --jv-h4-lh: 26px;
+  --jv-p: 18px;
+  --jv-p-lh: 28px;
+  --jv-large: 21px;
+  --jv-large-lh: 32px;
+  --jv-small: 16px;
+  --jv-small-lh: 24px;
+  --jv-btn: 16px;
+  --jv-btn-lh: 32px;
+  --jv-link: 21px;
+  --jv-link-lh: 40px;
+  --jv-link-small: 16px;
+  --jv-nav: 24px;
+  --jv-nav-lh: 26px;
+  --jv-footer: 16px;
+  --jv-footer-lh: 24px;
+  --jv-quote: 40px;
+  --jv-quote-lh: 48px;
+  --jv-faq-group: 32px;
+  --jv-faq-group-lh: 56px;
+  --jv-caption: 15px;
+  --jv-caption-lh: 22px;
+  /* Handwritten product badges (product header) and the product name beside them. */
+  --jv-badge: 28px;
+  --jv-badge-lh: 32px;
+  --jv-product-title-lh: 30px;
+  font-family: var(--jv-font);
+  font-size: var(--jv-p);
+  line-height: var(--jv-p-lh);
+}
+
+@media (min-width: 992px) {
+  app-jovie-layout {
+    --jv-h1: 96px;
+    --jv-h1-lh: 96px;
+    --jv-h2: 72px;
+    --jv-h2-lh: 80px;
+    --jv-h3: 48px;
+    --jv-h3-lh: 56px;
+    --jv-nav: 16px;
+    --jv-nav-lh: 28px;
+    --jv-footer-lh: 28px;
+    --jv-product-title-lh: 31.1px;
+  }
+}
+
+@media (min-width: 1200px) {
+  app-jovie-layout {
+    --jv-u: 1.40625vw;
+    --jv-h1: calc(3.8888888889 * var(--jv-u));
+    --jv-h1-lh: calc(3.6111111111 * var(--jv-u));
+    --jv-h2: calc(3.6111111111 * var(--jv-u));
+    --jv-h2-lh: calc(3.8888888889 * var(--jv-u));
+    --jv-h3: calc(2.6666666667 * var(--jv-u));
+    --jv-h3-lh: calc(3.1111111111 * var(--jv-u));
+    --jv-h4: calc(1.3333333333 * var(--jv-u));
+    --jv-h4-lh: calc(1.4444444444 * var(--jv-u));
+    --jv-p: var(--jv-u);
+    --jv-p-lh: calc(1.5555555556 * var(--jv-u));
+    --jv-large: calc(1.1666666667 * var(--jv-u));
+    --jv-large-lh: calc(1.7777777778 * var(--jv-u));
+    --jv-small: calc(0.8888888889 * var(--jv-u));
+    --jv-small-lh: calc(1.3333333333 * var(--jv-u));
+    --jv-btn: calc(0.8888888889 * var(--jv-u));
+    --jv-btn-lh: calc(1.7777777778 * var(--jv-u));
+    --jv-link: calc(1.1666666667 * var(--jv-u));
+    --jv-link-lh: calc(2.2222222222 * var(--jv-u));
+    --jv-link-small: calc(0.8888888889 * var(--jv-u));
+    /* Official size up to 1440px wide; held there, as the header does not widen like the official one. */
+    --jv-nav: min(calc(0.8888888889 * var(--jv-u)), 18px);
+    --jv-nav-lh: min(calc(1.5555555556 * var(--jv-u)), 31.5px);
+    --jv-footer: calc(0.8888888889 * var(--jv-u));
+    --jv-footer-lh: calc(1.5555555556 * var(--jv-u));
+    --jv-quote: calc(2.2222222222 * var(--jv-u));
+    --jv-quote-lh: calc(2.6666666667 * var(--jv-u));
+    --jv-faq-group: calc(1.7777777778 * var(--jv-u));
+    --jv-faq-group-lh: calc(3.1111111111 * var(--jv-u));
+    --jv-caption: calc(0.8333333333 * var(--jv-u));
+    --jv-caption-lh: calc(1.2222222222 * var(--jv-u));
+    --jv-badge: calc(1.5555555556 * var(--jv-u));
+    --jv-badge-lh: calc(1.7777777778 * var(--jv-u));
+    --jv-product-title-lh: calc(1.9444444444 * var(--jv-u));
+  }
+}
+
+/* Official Arabic: Tajawal for text and form fields, Baloo Bhaijaan for headings. */
+[dir='rtl'] app-jovie-layout {
+  --jv-font: "Tajawal", sans-serif;
+  --jv-font-heading: "BalooBhaijaan", cursive;
+}
+
+app-jovie-layout :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--jv-font-heading);
+}
+
+app-jovie-layout :is(input, select, textarea, button) {
+  font-family: var(--jv-font);
+}
+
+/* Official handwritten lettering (AlwaysInMyMilk has no Arabic letters: Arabic shows in Tajawal). */
+.jv-handwritten {
+  font-family: "AlwaysInMyMilk", var(--jv-font);
+  font-weight: 400;
+}
+
+/* Official .link: bold, with a slightly tilted hand-drawn underline that lifts on hover. */
+.jv-link {
+  position: relative;
+  display: inline-block;
+  padding: 0 0 0.45rem;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-family: var(--jv-font);
+  font-size: var(--jv-link);
+  font-weight: 700;
+  line-height: var(--jv-link-lh);
+  cursor: pointer;
+}
+
+.jv-link::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0.3rem;
+  height: 2px;
+  border-radius: 3px;
+  background: currentColor;
+  transform: rotate(-1deg);
+  transform-origin: bottom left;
+  transition: bottom 0.3s ease;
+}
+
+.jv-link:hover::before {
+  bottom: 0.15rem;
+}
+
+.jv-link--small {
+  font-size: var(--jv-link-small);
+}

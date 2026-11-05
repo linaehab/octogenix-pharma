@@ -27,10 +27,10 @@ import { injectHomeContent } from './home-content';
   styles: `
     .parents { position: relative; overflow: hidden; padding-block: clamp(5.62rem, 9vw, 8.44rem); background: var(--jv-night) url('/assets/images/jovie/official/home/block-pattern-1.svg') no-repeat right top / 100% 100%; color: var(--jv-white); clip-path: url(#jv-ctaBackground); }
     .layout { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: center; gap: 2.25rem; }
-    h2 { max-width: 29.25rem; margin: 0 0 1.97rem; font-size: clamp(2.48rem, 4.4vw, 3.82rem); font-weight: 700; line-height: 1.1; }
-    .caption p:not(.arrow) { max-width: 29.25rem; margin: 0 0 1.57rem; font-size: 1.12rem; line-height: 1.6; }
+    h2 { max-width: 29.25rem; margin: 0 0 1.97rem; font-size: var(--jv-h2); font-weight: 700; line-height: var(--jv-h2-lh); }
+    .caption p:not(.arrow) { max-width: 29.25rem; margin: 0 0 1.57rem; font-size: var(--jv-p); line-height: var(--jv-p-lh); }
     .caption .jv-button { margin-top: 1.41rem; border-radius: 2px; }
-    .arrow { margin: 2.02rem 0 0 5.17rem; padding: 1.12rem 0 0 4.27rem; font-size: 1.97rem; line-height: 3.94rem; background: url('/assets/images/jovie/official/home/cta-arrow.svg') no-repeat 0 0; }
+    .arrow { margin: 2.02rem 0 0 5.17rem; padding: 1.12rem 0 0 4.27rem; font-size: calc(1.7777777778 * var(--jv-u, 18px)); line-height: calc(3.5555555556 * var(--jv-u, 18px)); background: url('/assets/images/jovie/official/home/cta-arrow.svg') no-repeat 0 0; }
     :host-context([dir='rtl']) .arrow { margin: 2.02rem 5.17rem 0 0; padding: 1.12rem 4.27rem 0 0; background-image: url('/assets/images/jovie/official/home/cta-arrow-flipped.svg'); background-position: 100% 0; }
     .image { position: relative; }
     .image::before { content: ''; position: absolute; z-index: 1; top: -3.83rem; left: 5.85rem; width: 4.44rem; height: 6.3rem; background: url('/assets/images/jovie/official/home/cta-pattern-1.svg') no-repeat center / contain; }

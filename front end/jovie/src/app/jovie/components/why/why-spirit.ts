@@ -28,9 +28,13 @@ import { injectWhyContent } from './why-content';
     .image::before { content: ''; position: absolute; z-index: 1; top: 0; left: 0; width: 110px; height: 120px; background: url('/assets/images/jovie/official/patterns/cta-3.svg') no-repeat center / contain; }
     .mask { clip-path: url(#jv-ctaImage); }
     .mask img { display: block; width: 100%; height: auto; }
-    h3 { margin: 0 0 1.5rem; font-size: clamp(2rem, 3.6vw, 3rem); font-weight: 700; line-height: 1.15; }
-    .lead { margin: 0 0 1.5rem; font-size: 1.05rem; line-height: 1.55; }
-    p { margin: 0 0 1rem; font-size: 1rem; line-height: 1.5; }
+    h3 { margin: 0 0 1.5rem; font-size: var(--jv-h3); font-weight: 700; line-height: var(--jv-h3-lh); }
+    /* Official: an h5 (browser default 0.83em) in bold, then the caption's small text. */
+    .lead { margin: 0 0 1.5rem; font-size: calc(0.83 * var(--jv-p)); line-height: var(--jv-p-lh); }
+    /* The official Arabic page shows this sentence as regular small text. */
+    :host-context([dir='rtl']) .lead { font-size: var(--jv-small); line-height: var(--jv-small-lh); }
+    :host-context([dir='rtl']) .lead strong { font-weight: 400; }
+    p { margin: 0 0 1rem; font-size: var(--jv-small); line-height: var(--jv-small-lh); }
     @media (max-width: 991px) { .layout { grid-template-columns: 1fr; } .image { margin-bottom: 2rem; } .image::before { display: none; } }
   `,
 })

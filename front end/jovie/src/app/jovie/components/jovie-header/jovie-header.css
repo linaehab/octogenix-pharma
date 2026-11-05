@@ -72,8 +72,9 @@
   display: inline-block;
   padding-block: 0.35rem;
   color: var(--jv-white);
-  font-size: 1.15rem;
+  font-size: var(--jv-nav);
   text-shadow: 0 1px 2px rgba(32, 53, 100, 0.25);
+  line-height: var(--jv-nav-lh);
 }
 
 /* Official-style underline: grows from the start of the link on hover, focus and when active. */
@@ -110,7 +111,21 @@
   min-height: 2.6rem;
   padding: 0.45rem 1rem;
   border-radius: 2px;
-  font-size: 1.05rem;
+  font-size: 16px;
+  line-height: 28px;
+  white-space: nowrap;
+}
+
+/* From 1200px the official link size grows with the window while this header keeps its width: the
+   links stay on one line, with a little less space between them in Arabic (its words are wider). */
+@media (min-width: 1200px) {
+  .nav ul a {
+    white-space: nowrap;
+  }
+
+  :host-context([dir='rtl']) .nav ul {
+    gap: clamp(0.75rem, 1.2vw, 1.25rem);
+  }
 }
 
 .hello.is-active {
@@ -127,7 +142,7 @@
   background: none;
   color: var(--jv-white);
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 16px;
   cursor: pointer;
 }
 
@@ -249,6 +264,10 @@
     display: block;
     padding: 0.75rem 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+    /* Official phone menu: bold 24px / 26px. */
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 26px;
   }
 
   .nav ul a::after {

@@ -28,7 +28,7 @@ import { injectWhyContent } from './why-content';
     .blob { position: absolute; inset: 0; width: 100%; height: 100%; }
     .blob path { fill: #2b3d6d; }
     .layout { position: relative; display: grid; grid-template-columns: 5fr 6fr; align-items: center; gap: 8%; }
-    h3 { margin: 0 0 1.5rem; font-size: clamp(2rem, 3.6vw, 3rem); font-weight: 700; line-height: 1.15; }
+    h3 { margin: 0 0 1.5rem; font-size: var(--jv-h3); font-weight: 700; line-height: var(--jv-h3-lh); }
     p { max-width: 26rem; margin: 0 0 1.5rem; font-size: 1rem; line-height: 1.5; }
     .image { position: relative; }
     .image::before { content: ''; position: absolute; z-index: 1; right: 0; bottom: 0; width: 110px; height: 120px; background: url('/assets/images/jovie/official/patterns/cta-4.svg') no-repeat center / contain; }
