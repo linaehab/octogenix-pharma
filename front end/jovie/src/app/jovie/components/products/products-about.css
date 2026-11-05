@@ -1,0 +1,187 @@
+/* After section-jovie-about.css and .jovie-usps of jovieproducts.eu. */
+:host {
+  --about-blue: #002e6d;
+  display: block;
+  color: var(--about-blue);
+}
+
+.about {
+  padding: 1rem 0 2.5rem;
+  background: #f5f5f5;
+  text-align: center;
+}
+
+.container {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+h2 {
+  margin: 1.5rem 0;
+  font-size: 2.25rem;
+  font-weight: 400;
+  line-height: 2rem;
+}
+
+h2 strong {
+  font-weight: 700;
+}
+
+.team {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.text,
+.usps {
+  display: none;
+}
+
+.mobile-text {
+  margin: 1.5rem 0;
+  font-size: 1.25rem;
+  line-height: 2rem;
+}
+
+.usps {
+  margin: 0 auto;
+  padding: 3rem 0;
+  list-style: none;
+}
+
+.usps li {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The illustration fills the point's height behind its title. */
+.usps img {
+  position: absolute;
+  z-index: 0;
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.usps h3 {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin: 0;
+  padding: 2.5rem 0;
+  font-weight: 700;
+}
+
+.buttons {
+  margin: 0;
+}
+
+.pill {
+  display: inline-flex;
+  line-height: 1.2;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  background: var(--about-blue);
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.pill:hover {
+  background: #0d3f86;
+}
+
+.pill:focus-visible {
+  outline: 3px solid var(--about-blue);
+  outline-offset: 3px;
+}
+
+@media (min-width: 768px) {
+  .about {
+    padding: 4rem 0;
+  }
+
+  .container {
+    max-width: 768px;
+  }
+
+  h2 {
+    margin: 0 0 1.5rem;
+    font-size: 4rem;
+    line-height: 1;
+  }
+
+  .text {
+    display: block;
+    margin: 1.75rem 0 1rem;
+    font-size: 1.1rem;
+    line-height: 2.5rem;
+  }
+
+  .mobile-text {
+    display: none;
+  }
+
+  .usps {
+    display: flex;
+    width: min(43.5rem, 100%);
+    padding: 1rem 0;
+  }
+
+  .usps li {
+    min-height: 12.75rem;
+  }
+
+  .usps h3 {
+    font-size: 1.875rem;
+    line-height: 2rem;
+  }
+
+  .pill {
+    padding: 0.7rem 2rem;
+    font-size: 1.5rem;
+    letter-spacing: 0.1rem;
+  }
+}
+
+@media (min-width: 976px) {
+  .usps h3 {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+
+  .text {
+    font-size: 1.6rem;
+  }
+
+  .usps {
+    width: min(52rem, 100%);
+  }
+
+  .usps li {
+    min-height: 14.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}

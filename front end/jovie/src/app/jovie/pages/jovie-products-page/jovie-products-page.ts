@@ -3,6 +3,8 @@ import { RouterLink } from '@angular/router';
 import { PageIntro } from '../../components/page-intro/page-intro';
 import { fill, injectProductsContent } from '../../components/products/products-content';
 import { PRODUCTS, productImage, productLink } from '../../data/products-content';
+import { ProductsAbout } from '../../components/products/products-about';
+import { ProductsPros } from '../../components/products/products-pros';
 
 /**
  * /jovie/products: the official "Discover All Our Products" page. The official sideways-scrolling
@@ -11,7 +13,7 @@ import { PRODUCTS, productImage, productLink } from '../../data/products-content
  */
 @Component({
   selector: 'app-jovie-products-page',
-  imports: [PageIntro, RouterLink],
+  imports: [PageIntro, RouterLink, ProductsPros, ProductsAbout],
   templateUrl: './jovie-products-page.html',
   styleUrl: './jovie-products-page.css',
 })
