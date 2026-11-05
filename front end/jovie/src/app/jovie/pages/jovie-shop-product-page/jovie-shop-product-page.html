@@ -197,6 +197,10 @@
       </section>
     }
 
+    @if (showFamilyReviews) {
+      <app-family-reviews />
+    }
+
     <app-faq-section [summary]="true" />
 
     <app-shop-reviews [slug]="p.slug" [productName]="name()" />

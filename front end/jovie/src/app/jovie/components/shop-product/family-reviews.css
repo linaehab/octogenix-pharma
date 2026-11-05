@@ -1,0 +1,299 @@
+/* After section-jovie-reviews.css of jovieproducts.eu: colours, sizes and breakpoints of the original. */
+:host {
+  --fam-blue: #002e6d;
+  --fam-yellow: #ffb711;
+  --fam-green: #00aba6;
+  --fam-sky: #cfe7ea;
+  --spv: 1.5;
+  --gap: 20px;
+  display: block;
+}
+
+.family {
+  position: relative;
+  isolation: isolate;
+  margin: 2rem 0;
+  color: var(--fam-blue);
+}
+
+.defs {
+  position: absolute;
+}
+
+.flowers {
+  position: absolute;
+  z-index: -1;
+  display: none;
+  height: auto;
+  transform: rotate(94deg);
+}
+
+h2 {
+  max-width: 48rem;
+  margin: 0 auto 1rem;
+  padding-inline: 1.5rem;
+  font-size: 1.25rem;
+  line-height: 1;
+  text-align: center;
+}
+
+.frame {
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+.track {
+  display: flex;
+  gap: var(--gap);
+  padding-block: 2rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+.track:focus-visible {
+  outline: 3px solid var(--fam-blue);
+  outline-offset: -3px;
+}
+
+.slide {
+  flex: 0 0 calc((100% - (var(--spv) - 1) * var(--gap)) / var(--spv));
+  display: flex;
+  scroll-snap-align: center;
+}
+
+.card {
+  flex: 1;
+  padding: 2rem 1.5rem;
+  border-radius: 16px;
+  background: var(--fam-yellow);
+}
+
+[data-tone='sky'] .card {
+  background: var(--fam-sky);
+}
+
+[data-tone='green'] .card {
+  background: var(--fam-green);
+}
+
+.image {
+  position: relative;
+  top: -3.5rem;
+  inset-inline-start: -2rem;
+  display: flex;
+  align-items: center;
+  width: 110%;
+  aspect-ratio: 1 / 1;
+  margin-bottom: -1rem;
+  clip-path: url(#jovie-family-mask);
+}
+
+.image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+h3 {
+  margin: 0;
+  padding: 0 1rem 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 2rem;
+  text-align: center;
+}
+
+.content {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.content p {
+  margin: 0;
+}
+
+.long:focus {
+  outline: none;
+}
+
+.read-more {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.read-more:focus-visible,
+.arrow:focus-visible {
+  outline: 3px solid var(--fam-blue);
+  outline-offset: 2px;
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  display: none;
+  width: 40px;
+  height: 60px;
+  padding: 0;
+  border: 0;
+  background: none;
+  fill: var(--fam-sky);
+  cursor: pointer;
+}
+
+.arrow svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.prev {
+  top: 45%;
+  inset-inline-start: -4rem;
+  transform: rotate(180deg);
+}
+
+.next {
+  inset-inline-end: -4rem;
+}
+
+:host-context([dir='rtl']) .prev {
+  transform: none;
+}
+
+:host-context([dir='rtl']) .next {
+  transform: rotate(180deg);
+}
+
+/* Progress bar of the phone and tablet layouts (Swiper's scrollbar on the original). */
+.bar {
+  position: relative;
+  height: 4px;
+  margin-inline: 4px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.thumb {
+  position: absolute;
+  inset-block: 0;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+@media (min-width: 640px) {
+  :host {
+    --spv: 2.25;
+  }
+
+  .slide {
+    scroll-snap-align: start;
+  }
+}
+
+@media (min-width: 768px) {
+  .family {
+    margin: 6rem auto;
+  }
+
+  .frame {
+    padding: 0 0.5rem;
+  }
+
+  .flowers {
+    display: block;
+    /* Lower than on the official home page, so it stays clear of the product cards above. */
+    top: -4rem;
+    inset-inline-end: 4rem;
+    width: 10rem;
+  }
+
+  h2 {
+    margin-bottom: 3rem;
+    font-size: 3rem;
+  }
+
+  .content {
+    font-size: 1.2rem;
+    line-height: 1.75rem;
+  }
+}
+
+@media (min-width: 976px) {
+  :host {
+    --spv: 3;
+    --gap: 30px;
+  }
+
+  .frame {
+    width: 100%;
+    max-width: 768px;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  .arrow {
+    display: block;
+  }
+
+  .bar {
+    display: none;
+  }
+
+  .card {
+    padding-inline: 1rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+  }
+
+  .image {
+    top: -3rem;
+    inset-inline-start: -1.5rem;
+    margin-bottom: -2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .frame {
+    max-width: 976px;
+  }
+}
+
+@media (min-width: 1028px) {
+  :host {
+    --gap: 40px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .frame {
+    max-width: 1024px;
+  }
+
+  .flowers {
+    top: -6rem;
+    inset-inline-end: 5rem;
+    width: 16rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    scroll-behavior: auto;
+  }
+}

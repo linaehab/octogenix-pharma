@@ -1,0 +1,49 @@
+<section class="family" aria-labelledby="family-title">
+  <!-- The official organic image shape (clipPath "maskImage" of jovieproducts.eu). -->
+  <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <clipPath id="jovie-family-mask" clipPathUnits="objectBoundingBox" transform="scale(0.001923076923077, 0.001960784313725)">
+      <path d="M281.159662,510.037865 C178.919991,512.775437 89.6895899,432.72235 64.3481329,405.814968 C39.0124629,378.896434 -45.9702491,272.443336 32.548337,130.251256 C64.5738275,72.2715895 140.875977,29.7639467 173.729014,18.0275107 C206.593626,6.27992369 287.722168,-30.7748762 388.850727,56.3200725 C489.979286,143.409446 529.047607,216.978221 518.266348,287.006552 C507.496662,357.034883 475.419089,392.23304 450.285965,424.286613 C421.402838,461.129543 383.399333,507.300292 281.159662,510.037865 Z" />
+    </clipPath>
+  </svg>
+  <img class="flowers" src="/assets/images/jovie/family/flowers.svg" alt="" width="63" height="69" aria-hidden="true" />
+
+  <h2 id="family-title"><strong>{{ title() }}</strong></h2>
+
+  <div class="frame">
+    <button type="button" class="arrow prev" [attr.aria-label]="ui().previous" aria-controls="family-track" (click)="step(-1)">
+      <svg viewBox="0 0 126.88 188.21" aria-hidden="true" focusable="false"><path [attr.d]="arrow" /></svg>
+    </button>
+
+    <div #track id="family-track" class="track" role="region" tabindex="0" [attr.aria-label]="ui().carousel">
+      @for (slide of slides; track slide.key) {
+        <div class="slide" [attr.data-tone]="slide.tone" [attr.aria-hidden]="slide.clone || null" [attr.inert]="slide.clone || null"
+          [attr.role]="slide.clone ? null : 'group'" [attr.aria-label]="slide.clone ? null : slideLabel(slide.index)">
+          <article class="card">
+            <div class="image">
+              <img [src]="'/assets/images/jovie/family/' + (slide.review.image ?? 'placeholder-heart.webp')" alt="" width="640" height="640" loading="lazy" />
+            </div>
+            <h3 dir="auto">{{ slide.review.name[lang()] }}</h3>
+            <div class="content">
+              @if (expanded().has(slide.review.id)) {
+                <p class="long" tabindex="-1" dir="auto">{{ text(slide.review) }}</p>
+              } @else {
+                <p class="short" dir="auto">
+                  {{ excerpt(slide.review) }}
+                  <button type="button" class="read-more" (click)="readMore(slide.review, $event)">{{ ui().readMore }}</button>
+                </p>
+              }
+            </div>
+          </article>
+        </div>
+      }
+    </div>
+
+    <button type="button" class="arrow next" [attr.aria-label]="ui().next" aria-controls="family-track" (click)="step(1)">
+      <svg viewBox="0 0 126.88 188.21" aria-hidden="true" focusable="false"><path [attr.d]="arrow" /></svg>
+    </button>
+
+    <div class="bar" aria-hidden="true">
+      <span class="thumb" [style.width.%]="thumb() * 100" [style.inset-inline-start.%]="thumbStart()"></span>
+    </div>
+  </div>
+</section>

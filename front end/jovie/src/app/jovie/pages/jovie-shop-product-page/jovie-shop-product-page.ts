@@ -23,6 +23,8 @@ import { fill, injectProductsContent } from '../../components/products/products-
 import { GalleryImage, ShopGallery } from '../../components/shop-product/shop-gallery';
 import { QuantityStepper } from '../../components/shop-product/quantity-stepper';
 import { ShopRating } from '../../components/shop-product/shop-rating';
+import { FamilyReviews } from '../../components/shop-product/family-reviews';
+import { SHOW_FAMILY_REVIEWS } from '../../data/family-reviews';
 import { ShopReviews } from '../../components/shop-product/shop-reviews';
 import { ShopHighlights } from '../../components/shop-product/shop-highlights';
 import { ShopStickyBar } from '../../components/shop-product/shop-sticky-bar';
@@ -58,11 +60,13 @@ const span = ([a, b]: readonly [number, number]) => (a === b ? `${a}` : `${a}–
  */
 @Component({
   selector: 'app-jovie-shop-product-page',
-  imports: [RouterLink, TranslatePipe, ShopGallery, ShopRating, ShopReviews, QuantityStepper, ShopHighlights, ShopStickyBar, ProductCard, FaqSection, TestModeNotice],
+  imports: [RouterLink, TranslatePipe, ShopGallery, ShopRating, ShopReviews, QuantityStepper, ShopHighlights, ShopStickyBar, ProductCard, FaqSection, TestModeNotice, FamilyReviews],
   templateUrl: './jovie-shop-product-page.html',
   styleUrl: './jovie-shop-product-page.css',
 })
 export class JovieShopProductPage {
+  /** Parents' testimonials section: off for Egypt until approved (see SHOW_FAMILY_REVIEWS). */
+  protected readonly showFamilyReviews = SHOW_FAMILY_REVIEWS;
   private readonly catalog = inject(JovieCatalogService);
   private readonly cart = inject(CartService);
   private readonly content = inject(SiteContentService);
