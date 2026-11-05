@@ -1,11 +1,15 @@
 import { Component } from '@angular/core';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { BrandStory } from '../../components/where/brand-story';
 import { WorldMap } from '../../components/world-map/world-map';
 
-/** /jovie/where-to-find: the official full-page map, with Egypt as the available market. */
+/**
+ * /jovie/where-to-find: the official full-page map, with Egypt as the available market, followed by
+ * the brand story sections of the official "We are Jovie" page.
+ */
 @Component({
   selector: 'app-jovie-where-page',
-  imports: [TranslatePipe, WorldMap],
+  imports: [TranslatePipe, WorldMap, BrandStory],
   template: `
     <section class="where" aria-labelledby="jovie-page-title">
       <h1 id="jovie-page-title" class="visually-hidden">{{ 'jovie.page.where.title' | translate }}</h1>
@@ -13,6 +17,8 @@ import { WorldMap } from '../../components/world-map/world-map';
         <app-world-map />
       </div>
     </section>
+    <!-- "Joie de vivre" and "A Brand from Dutch origin", from the official We are Jovie page. -->
+    <app-brand-story />
   `,
   styles: `
     :host { display: block; }
