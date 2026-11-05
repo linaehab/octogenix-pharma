@@ -215,7 +215,11 @@
   cursor: pointer;
 }
 
-.menu-toggle span {
+.menu-toggle .bars {
+  display: contents;
+}
+
+.menu-toggle .bars > span {
   display: block;
   height: 3px;
   border-radius: 2px;
@@ -238,43 +242,5 @@
     margin-inline-start: auto;
   }
 
-  .nav {
-    position: absolute;
-    inset-inline: 0;
-    top: 100%;
-    display: none;
-    flex-direction: column;
-    align-items: stretch;
-    padding: 1rem 1.25rem 1.5rem;
-    background: var(--header-solid);
-    box-shadow: 0 16px 24px rgba(32, 53, 100, 0.15);
-  }
-
-  .nav.is-open {
-    display: flex;
-  }
-
-  .nav ul {
-    flex-direction: column;
-    gap: 0;
-    margin: 0;
-  }
-
-  .nav ul a {
-    display: block;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.35);
-    /* Official phone menu: bold 24px / 26px. */
-    font-size: 24px;
-    font-weight: 700;
-    line-height: 26px;
-  }
-
-  .nav ul a::after {
-    display: none;
-  }
-
-  .actions {
-    justify-content: space-between;
-  }
+  /* The phone / tablet menu itself: jovie-header-menu.css. */
 }

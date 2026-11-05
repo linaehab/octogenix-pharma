@@ -31,6 +31,17 @@ app-jovie-layout main {
   margin-top: calc(-1 * var(--jv-header-height));
 }
 
+/* The page-entry animation (styles.css) ends on translateY(0); keeping it would make this layout the
+   containing block of fixed elements (the full-screen phone menu). Same animation, nothing kept after. */
+router-outlet + app-jovie-layout {
+  animation-fill-mode: backwards;
+}
+
+/* The open phone menu covers the screen; the page behind it does not scroll (as on the official site). */
+body.jv-menu-open {
+  overflow: hidden;
+}
+
 app-jovie-layout main:focus {
   outline: none;
 }

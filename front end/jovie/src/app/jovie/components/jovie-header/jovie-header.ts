@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, DestroyRef, afterNextRender, inject, signal } from '@angular/core';
+import { Component, DestroyRef, afterNextRender, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRouteSnapshot, NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter } from 'rxjs';
@@ -38,7 +38,7 @@ const toneOf = (route: ActivatedRouteSnapshot | null): HeaderTone => {
   selector: 'app-jovie-header',
   imports: [RouterLink, RouterLinkActive, TranslatePipe, AccountMenu],
   templateUrl: './jovie-header.html',
-  styleUrl: './jovie-header.css',
+  styleUrls: ['./jovie-header.css', './jovie-header-menu.css'],
 })
 export class JovieHeader {
   protected readonly language = inject(LanguageService);
@@ -69,8 +69,27 @@ export class JovieHeader {
       const update = () => this.isScrolled.set(window.scrollY > 24);
       update();
       window.addEventListener('scroll', update, { passive: true });
-      destroyRef.onDestroy(() => window.removeEventListener('scroll', update));
+      // The phone menu covers the screen: Escape closes it, and it closes when the window becomes desktop wide.
+      const onKey = (event: KeyboardEvent) => {
+        if (event.key === 'Escape' && this.isMenuOpen()) {
+          this.closeMenu();
+          document.querySelector<HTMLElement>('.menu-toggle')?.focus();
+        }
+      };
+      const desktop = window.matchMedia('(min-width: 1024px)');
+      const onDesktop = () => desktop.matches && this.closeMenu();
+      window.addEventListener('keydown', onKey);
+      desktop.addEventListener('change', onDesktop);
+      destroyRef.onDestroy(() => {
+        window.removeEventListener('scroll', update);
+        window.removeEventListener('keydown', onKey);
+        desktop.removeEventListener('change', onDesktop);
+        document.body.classList.remove('jv-menu-open');
+      });
     });
+
+    // Like the official site, the page behind the open menu does not scroll.
+    effect(() => document.body.classList.toggle('jv-menu-open', this.isMenuOpen()));
   }
 
   protected toggleMenu(): void {

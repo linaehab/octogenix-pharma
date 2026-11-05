@@ -1,0 +1,121 @@
+/* Phone and tablet menu, after the official jovieproducts.com mobile navigation (.main-nav below 992px):
+   a full-screen navy layer with the official decoration that fades in (0.3s), the links centred in bold
+   white 24px / 26px and evenly spaced, and the menu button turned into the red "Close" button. Our
+   cart and account buttons stay above the layer. The desktop navbar (1024px and wider) is untouched. */
+
+@media (max-width: 1023px) {
+  /* While the menu is open the header itself is see-through: the navy layer is the background. */
+  .header.is-menu-open {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .logo,
+  .cart-link,
+  .account,
+  .menu-toggle {
+    position: relative;
+    z-index: 2;
+  }
+
+  .nav {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    overflow-y: auto;
+    background: #203366 url('/assets/images/jovie/official/menu/mobile-nav-bg.svg') no-repeat center / cover;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+  }
+
+  .nav.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .nav ul {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 1.25rem;
+    width: 100%;
+    margin: 0;
+    padding: 140px 1.5rem 1.25rem;
+  }
+
+  .nav ul a {
+    display: inline-block;
+    padding: 0;
+    border: 0;
+    color: #fff;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 26px;
+    text-align: center;
+    text-shadow: none;
+  }
+
+  /* "Say hello!" is one more link of the list on the official menu; the language switch sits below. */
+  .actions {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.75rem;
+    width: 100%;
+    padding: 1.25rem 1.5rem 2.75rem;
+  }
+
+  .hello {
+    min-height: 0;
+    padding: 0;
+    border-radius: 0;
+    background: none;
+    color: #fff;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 26px;
+    box-shadow: none;
+  }
+
+  .hello:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .language-toggle {
+    color: #fff;
+  }
+
+  /* The official red "Close" button (#openMenu.menu-open). */
+  .menu-toggle.is-open {
+    width: auto;
+    min-width: 64px;
+    height: auto;
+    min-height: 32px;
+    padding: 0;
+    border-radius: 0;
+    background: #ed225a;
+    color: #fff;
+  }
+
+  .close-label {
+    padding: 4px 12px;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+  }
+}
+
+@media (max-width: 1023px) and (prefers-reduced-motion: reduce) {
+  .nav {
+    transition: none;
+  }
+}

@@ -1,4 +1,4 @@
-<header class="header" [class.is-solid]="isScrolled() || isMenuOpen()" [attr.data-tone]="tone()">
+<header class="header" [class.is-solid]="isScrolled() && !isMenuOpen()" [class.is-menu-open]="isMenuOpen()" [attr.data-tone]="tone()">
   <div class="bar jv-container">
     <a class="logo" routerLink="/jovie" (click)="closeMenu()" [attr.aria-label]="'jovie.header.homeLabel' | translate">
       <img src="/assets/images/jovie/logo-official-white.png" alt="" width="72" height="72" />
@@ -14,9 +14,15 @@
 
     <app-account-menu class="account" />
 
-    <button class="menu-toggle" type="button" aria-controls="jovie-navigation"
-      [attr.aria-expanded]="isMenuOpen()" [attr.aria-label]="'jovie.header.menu' | translate" (click)="toggleMenu()">
-      <span></span><span></span><span></span>
+    <!-- Phones and tablets: the menu button becomes the official red "Close" button while the menu is open. -->
+    <button class="menu-toggle" type="button" aria-controls="jovie-navigation" [class.is-open]="isMenuOpen()"
+      [attr.aria-expanded]="isMenuOpen()" [attr.aria-label]="(isMenuOpen() ? 'jovie.header.closeMenu' : 'jovie.header.menu') | translate"
+      (click)="toggleMenu()">
+      @if (isMenuOpen()) {
+        <span class="close-label">{{ 'jovie.header.close' | translate }}</span>
+      } @else {
+        <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>
+      }
     </button>
 
     <nav id="jovie-navigation" class="nav" [class.is-open]="isMenuOpen()" [attr.aria-label]="'jovie.header.navigation' | translate">

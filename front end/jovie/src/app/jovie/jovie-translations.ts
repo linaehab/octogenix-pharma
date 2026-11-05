@@ -79,6 +79,8 @@ export const jovieTranslations: Record<Language, Record<string, string>> = {
 
     'jovie.header.homeLabel': 'Jovie home',
     'jovie.header.menu': 'Open menu',
+    'jovie.header.close': 'Close',
+    'jovie.header.closeMenu': 'Close menu',
     'jovie.header.navigation': 'Jovie navigation',
     'jovie.header.switchLanguage': 'العربية',
     'jovie.nav.shop': 'Shop',
@@ -231,6 +233,8 @@ export const jovieTranslations: Record<Language, Record<string, string>> = {
 
     'jovie.header.homeLabel': 'الصفحة الرئيسية لجوفي',
     'jovie.header.menu': 'فتح القائمة',
+    'jovie.header.close': 'إغلاق',
+    'jovie.header.closeMenu': 'إغلاق القائمة',
     'jovie.header.navigation': 'قائمة جوفي',
     'jovie.header.switchLanguage': 'English',
     'jovie.nav.shop': 'تسوّق',
