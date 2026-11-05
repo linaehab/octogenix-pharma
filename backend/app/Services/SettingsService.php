@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\AdminUser;
 use App\Models\Setting;
+use App\Rules\EmailAddress;
 use App\Support\PhoneNumber;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -137,8 +138,8 @@ class SettingsService
     {
         return match ($definition['type']) {
             'string' => ['value' => ['nullable', 'string', 'max:255']],
-            'email' => ['value' => ['nullable', 'string', 'email', 'max:255']],
-            'email_list' => ['value' => ['present', 'array', 'max:20'], 'value.*' => ['string', 'email', 'max:255']],
+            'email' => ['value' => ['nullable', 'string', 'email', new EmailAddress, 'max:255']],
+            'email_list' => ['value' => ['present', 'array', 'max:20'], 'value.*' => ['string', 'email', new EmailAddress, 'max:255']],
             'phone_list' => ['value' => ['present', 'array', 'max:10'], 'value.*' => ['string', 'regex:/^\+[1-9]\d{6,14}$/']],
             'url' => ['value' => ['nullable', 'string', 'url:https', 'max:500']],
             'boolean' => ['value' => ['required', 'boolean']],

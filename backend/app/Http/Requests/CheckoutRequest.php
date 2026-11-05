@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Enums\PaymentMethod;
 use App\Http\Requests\Customer\RegisterRequest;
 use App\Models\Customer;
+use App\Rules\EmailAddress;
 use App\Rules\PlainText;
 use App\Services\CartService;
 use Illuminate\Foundation\Http\FormRequest;
@@ -56,7 +57,7 @@ class CheckoutRequest extends FormRequest
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:999'],
             'contact.first_name' => $text(80),
             'contact.last_name' => $text(80),
-            'contact.email' => ['required', 'string', 'email', 'max:255'],
+            'contact.email' => ['required', 'string', 'email', new EmailAddress, 'max:255'],
             'contact.phone' => ['required', 'string', 'max:30', RegisterRequest::egyptianMobileRule()],
             'address.recipient_name' => $text(160),
             'address.phone' => ['required', 'string', 'max:30', RegisterRequest::egyptianMobileRule()],

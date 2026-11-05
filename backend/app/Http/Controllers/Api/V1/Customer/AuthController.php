@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Customer\RegisterRequest;
 use App\Http\Resources\CustomerResource;
 use App\Models\Customer;
+use App\Rules\EmailAddress;
 use App\Rules\PlainText;
 use App\Services\CustomerAccountService;
 use App\Support\PhoneNumber;
@@ -13,6 +14,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -48,7 +50,7 @@ class AuthController extends Controller
         }
 
         $request->validate([
-            'email' => ['required', 'string', 'email', 'max:255'],
+            'email' => ['required', 'string', 'email', new EmailAddress, 'max:255'],
             'password' => ['required', 'string', 'max:255'],
             'remember' => ['sometimes', 'boolean'],
         ]);
@@ -142,6 +144,13 @@ class AuthController extends Controller
 
     private function noSession(): JsonResponse
     {
+        // Sanctum only starts a session for requests whose Referer / Origin is in SANCTUM_STATEFUL_DOMAINS.
+        Log::warning('Customer sign-in without a session (origin not stateful)', [
+            'origin' => request()->headers->get('origin'),
+            'referer' => request()->headers->get('referer'),
+            'host' => request()->getHttpHost(),
+        ]);
+
         return response()->json(['message' => 'Sign-in is only available from the Jovie store.'], 400);
     }
 }

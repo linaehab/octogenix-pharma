@@ -4,6 +4,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { CheckoutService } from '../../store/checkout.service';
+import { CustomerAuthService } from '../../account/customer-auth.service';
 import { OrderDetails } from '../../store/order-details';
 import { Order } from '../../store/store.models';
 import { StorePageHeader } from '../../store/store-page-header';
@@ -92,6 +93,7 @@ type Outcome = 'checking' | 'paid' | 'unpaid' | 'closed' | 'noAccess' | 'error';
 })
 export class JoviePaymentResultPage {
   private readonly checkout = inject(CheckoutService);
+  protected readonly auth = inject(CustomerAuthService);
   private readonly router = inject(Router);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
@@ -110,7 +112,7 @@ export class JoviePaymentResultPage {
 
   protected check(): void {
     const number = this.orderNumber();
-    if (!number || !this.checkout.hasToken(number)) {
+    if (!number || !this.checkout.canOpen(number, this.auth.isSignedIn())) {
       this.outcome.set('noAccess');
       return;
     }

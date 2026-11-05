@@ -1,4 +1,5 @@
 import type { Language } from '../core/i18n/language.service';
+import { accountTranslations } from './account/account-translations';
 import { storeTranslations } from './store/store-translations';
 
 /**
@@ -98,8 +99,6 @@ export const jovieTranslations: Record<Language, Record<string, string>> = {
       'Choosing products based on goat milk that are easy to digest and have superior nutrient absorbability makes good sense. Goat milk serves as the ideal base for any formula as it offers numerous benefits.',
     'jovie.hero.whyCta': 'Why Jovie Goat!',
     'jovie.hero.productsCta': 'Jovie products!',
-    'jovie.hero.playVideo': 'Play video',
-    'jovie.hero.pauseVideo': 'Pause video',
     'jovie.hero.imageAlt': 'A smiling mother holding her baby at home',
 
     'jovie.shop.kicker': 'Shop',
@@ -164,6 +163,7 @@ export const jovieTranslations: Record<Language, Record<string, string>> = {
     'jovie.contact.subjectStockists': 'Pharmacies & stockists',
     'jovie.contact.subjectPartnership': 'Business partnership',
     ...storeTranslations.en,
+    ...accountTranslations.en,
   },
   ar: {
     'title.jovie': 'جوفي | تركيبة حليب الماعز العضوي',
@@ -251,8 +251,6 @@ export const jovieTranslations: Record<Language, Record<string, string>> = {
       'اختيارك لمنتج مبني على أساس من حليب الماعز هو اختيار منطقي حيث أن حليب الماعز سهل الهضم كما أن المكونات الغذائية فيه لها أفضلية في الامتصاص. لحليب الماعز فوائد عديدة، ولذلك يعتبر القاعدة المثالية لأي تركيبة حليب.',
     'jovie.hero.whyCta': 'لماذا جوفي جوت!',
     'jovie.hero.productsCta': 'منتجات جوفي!',
-    'jovie.hero.playVideo': 'تشغيل الفيديو',
-    'jovie.hero.pauseVideo': 'إيقاف الفيديو',
     'jovie.hero.imageAlt': 'أم مبتسمة تحمل طفلها في المنزل',
 
     'jovie.shop.kicker': 'تسوّق',
@@ -314,5 +312,6 @@ export const jovieTranslations: Record<Language, Record<string, string>> = {
     'jovie.contact.subjectStockists': 'الصيدليات ونقاط البيع',
     'jovie.contact.subjectPartnership': 'شراكة تجارية',
     ...storeTranslations.ar,
+    ...accountTranslations.ar,
   },
 };

@@ -1,0 +1,70 @@
+app-auth-shell {
+  display: block;
+}
+
+.auth-shell {
+  position: relative;
+  display: grid;
+  place-items: start center;
+  min-height: 70vh;
+  padding: calc(var(--jv-header-height) + 1.5rem) 1rem clamp(3.5rem, 8vw, 6rem);
+  overflow: hidden;
+  background: var(--jv-sunshine);
+}
+
+.auth-shell__shape {
+  position: absolute;
+  pointer-events: none;
+}
+
+.auth-shell__shape--a {
+  inset-inline-start: -3rem;
+  top: 38%;
+  width: clamp(7rem, 16vw, 13rem);
+}
+
+.auth-shell__shape--b {
+  inset-inline-end: 4%;
+  top: calc(var(--jv-header-height) + 1rem);
+  width: clamp(4rem, 8vw, 6.5rem);
+}
+
+.auth-shell__shape--c {
+  inset-inline-end: -2rem;
+  bottom: 8%;
+  width: clamp(6rem, 12vw, 10rem);
+}
+
+.auth-shell__card {
+  position: relative;
+  width: min(30rem, 100%);
+  padding: clamp(1.5rem, 5vw, 2.5rem);
+  border-radius: 24px;
+  background: var(--jv-white);
+  box-shadow: 0 18px 40px rgba(32, 53, 100, 0.16);
+}
+
+.auth-shell__title {
+  margin: 0 0 0.5rem;
+  font-size: clamp(2rem, 5vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.auth-shell__lead {
+  margin: 0 0 1.4rem;
+}
+
+.auth-shell__card .alt {
+  margin: 1.4rem 0 0;
+  padding-top: 1.2rem;
+  border-top: 1px solid rgba(32, 53, 100, 0.15);
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .auth-shell__shape--a,
+  .auth-shell__shape--c {
+    display: none;
+  }
+}

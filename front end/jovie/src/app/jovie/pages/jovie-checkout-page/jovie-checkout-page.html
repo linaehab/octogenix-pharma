@@ -26,7 +26,18 @@
         <!-- 1. Contact -->
         <fieldset class="step" formGroupName="contact">
           <legend><span class="num">1</span>{{ 'jovie.checkout.contact' | translate }}</legend>
-          <p class="hint">{{ 'jovie.checkout.guestNote' | translate }}</p>
+          @if (isCustomer()) {
+            @if (auth.customer(); as c) {
+              <p class="account-contact">
+                <strong dir="auto">{{ c.first_name }} {{ c.last_name }}</strong>
+                <span dir="ltr">{{ c.email }}</span>
+              </p>
+              <p class="hint">{{ 'account.checkout.signedInNote' | translate }}</p>
+            }
+          } @else {
+          <p class="hint">{{ 'jovie.checkout.guestNote' | translate }}
+            <a routerLink="/jovie/login" [queryParams]="{ returnUrl: '/jovie/checkout' }">{{ 'account.checkout.haveAccount' | translate }}</a>
+          </p>
           <div class="row two">
             <div class="field">
               <label for="co-first">{{ 'jovie.checkout.firstName' | translate }}</label>
@@ -55,12 +66,43 @@
               <p class="error" id="co-phone-error">@if (problem('contact.phone'); as p) { {{ p | translate }} }</p>
             </div>
           </div>
+          }
         </fieldset>
 
         <!-- 2. Delivery address -->
         <fieldset class="step" formGroupName="address">
           <legend><span class="num">2</span>{{ 'jovie.checkout.delivery' | translate }}</legend>
-          <div class="row two">
+          @if (isCustomer()) {
+            @if (savedAddresses() === null && !addressesError()) {
+              <p class="hint">{{ 'jovie.cart.loading' | translate }}</p>
+            } @else {
+              @if (addressesError()) {
+                <p class="hint">{{ 'account.checkout.addressesError' | translate }}
+                  <button type="button" class="link" (click)="loadAddresses()">{{ 'jovie.shop.retry' | translate }}</button>
+                </p>
+              }
+              <div class="methods saved" role="radiogroup" [attr.aria-label]="'account.checkout.chooseAddress' | translate">
+                @for (a of savedAddresses() ?? []; track a.id) {
+                  <label class="method" [class.is-selected]="addressChoice() === a.id">
+                    <input type="radio" name="saved-address" [checked]="addressChoice() === a.id" (change)="chooseAddress(a.id)" />
+                    <span>
+                      <strong dir="auto">{{ a.label || a.recipient_name }}</strong>
+                      <small dir="auto">{{ addressLine(a) }}</small>
+                    </span>
+                  </label>
+                }
+                <label class="method" [class.is-selected]="addressChoice() === 'new'">
+                  <input type="radio" name="saved-address" [checked]="addressChoice() === 'new'" (change)="chooseAddress('new')" />
+                  <span>
+                    <strong>{{ 'account.checkout.newAddress' | translate }}</strong>
+                    <small>{{ 'account.checkout.newAddressNote' | translate }}</small>
+                  </span>
+                </label>
+              </div>
+            }
+          }
+          @if (!isCustomer() || addressChoice() === 'new') {
+          <div class="row two" [class.after-saved]="isCustomer()">
             <div class="field">
               <label for="ad-name">{{ 'jovie.checkout.recipient' | translate }}</label>
               <input id="ad-name" formControlName="recipient_name" autocomplete="name"
@@ -138,6 +180,7 @@
               <p class="error" id="ad-postal-error">@if (problem('address.postal_code'); as p) { {{ p | translate }} }</p>
             </div>
           </div>
+          }
         </fieldset>
 
         <!-- 3. Shipping -->

@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\ContactSubject;
 use App\Enums\Site;
+use App\Rules\EmailAddress;
 use App\Support\PhoneNumber;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
@@ -32,7 +33,7 @@ class StoreContactMessageRequest extends FormRequest
         return [
             'first_name' => ['required', 'string', 'max:80'],
             'last_name' => ['nullable', 'string', 'max:80'],
-            'email' => ['required', 'string', 'email', 'max:255'],
+            'email' => ['required', 'string', 'email', new EmailAddress, 'max:255'],
             'phone' => ['nullable', 'string', 'max:30', function (string $attribute, mixed $value, Closure $fail) {
                 if (PhoneNumber::normalize($value) === null) {
                     $fail('The phone number format is invalid.');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Customer;
 
+use App\Rules\EmailAddress;
 use App\Rules\PlainText;
 use App\Support\PhoneNumber;
 use Closure;
@@ -25,7 +26,7 @@ class RegisterRequest extends FormRequest
             'first_name' => ['required', 'string', 'max:80', new PlainText],
             'last_name' => ['required', 'string', 'max:80', new PlainText],
             // Unique among all rows: deleted accounts are anonymised, which frees their email.
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('customers', 'email')],
+            'email' => ['required', 'string', 'email', new EmailAddress, 'max:255', Rule::unique('customers', 'email')],
             'phone' => ['required', 'string', 'max:30', self::egyptianMobileRule()],
             'password' => ['required', 'string', 'confirmed', ...self::passwordRules()],
             'locale' => ['sometimes', Rule::in(['en', 'ar'])],

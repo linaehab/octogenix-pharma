@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Customer;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Customer\RegisterRequest;
 use App\Models\Customer;
+use App\Rules\EmailAddress;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -16,7 +17,7 @@ class PasswordResetController extends Controller
     /** Same answer whether or not the email has an account, so accounts cannot be discovered. */
     public function sendLink(Request $request): JsonResponse
     {
-        $request->validate(['email' => ['required', 'string', 'email', 'max:255']]);
+        $request->validate(['email' => ['required', 'string', 'email', new EmailAddress, 'max:255']]);
 
         Password::broker('customers')->sendResetLink([
             'email' => Str::lower($request->string('email')->toString()),
@@ -32,7 +33,7 @@ class PasswordResetController extends Controller
     {
         $request->validate([
             'token' => ['required', 'string'],
-            'email' => ['required', 'string', 'email', 'max:255'],
+            'email' => ['required', 'string', 'email', new EmailAddress, 'max:255'],
             'password' => ['required', 'string', 'confirmed', ...RegisterRequest::passwordRules()],
         ]);
 

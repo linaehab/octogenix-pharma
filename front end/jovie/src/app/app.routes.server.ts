@@ -6,6 +6,18 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'jovie/cart', renderMode: RenderMode.Client },
   { path: 'jovie/checkout', renderMode: RenderMode.Client },
   { path: 'jovie/checkout/**', renderMode: RenderMode.Client },
+  // Account pages and the admin area depend on the visitor's session: rendered in the browser only.
+  { path: 'login', renderMode: RenderMode.Client },
+  { path: 'signup', renderMode: RenderMode.Client },
+  { path: 'jovie/login', renderMode: RenderMode.Client },
+  { path: 'jovie/signup', renderMode: RenderMode.Client },
+  { path: 'jovie/forgot-password', renderMode: RenderMode.Client },
+  { path: 'jovie/reset-password', renderMode: RenderMode.Client },
+  { path: 'jovie/verify-email', renderMode: RenderMode.Client },
+  { path: 'jovie/account', renderMode: RenderMode.Client },
+  { path: 'jovie/account/**', renderMode: RenderMode.Client },
+  { path: 'admin', renderMode: RenderMode.Client },
+  { path: 'admin/**', renderMode: RenderMode.Client },
   {
     path: '**',
     renderMode: RenderMode.Prerender

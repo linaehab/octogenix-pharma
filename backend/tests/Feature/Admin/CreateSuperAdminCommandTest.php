@@ -27,6 +27,22 @@ class CreateSuperAdminCommandTest extends TestCase
         $this->assertTrue(Hash::check('Strong-Password-1', $admin->password));
     }
 
+    public function test_refuses_a_second_super_admin_unless_asked_for_explicitly(): void
+    {
+        AdminUser::factory()->superAdmin()->create(['email' => 'owner@example.com']);
+
+        $this->artisan('admin:create-super-admin', ['--name' => 'Again', '--email' => 'again@example.com'])
+            ->expectsOutputToContain('A super admin already exists')
+            ->assertFailed();
+        $this->assertSame(1, AdminUser::count());
+
+        $this->artisan('admin:create-super-admin', ['--name' => 'Partner', '--email' => 'partner@example.com', '--additional' => true])
+            ->expectsQuestion(self::PASSWORD_PROMPT, 'Strong-Password-1')
+            ->expectsQuestion('Confirm password', 'Strong-Password-1')
+            ->assertSuccessful();
+        $this->assertSame(AdminRole::SuperAdmin, AdminUser::where('email', 'partner@example.com')->sole()->role);
+    }
+
     public function test_rejects_weak_or_mismatched_passwords_and_duplicate_emails(): void
     {
         AdminUser::factory()->create(['email' => 'taken@example.com']);

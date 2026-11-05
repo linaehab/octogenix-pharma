@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdminUser;
+use App\Rules\EmailAddress;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -19,7 +21,7 @@ class PasswordResetController extends Controller
      */
     public function sendLink(Request $request): JsonResponse
     {
-        $request->validate(['email' => ['required', 'string', 'email', 'max:255']]);
+        $request->validate(['email' => ['required', 'string', 'email', new EmailAddress, 'max:255']]);
 
         Password::broker('admin_users')->sendResetLink([
             'email' => Str::lower($request->string('email')->toString()),
@@ -35,7 +37,7 @@ class PasswordResetController extends Controller
     {
         $request->validate([
             'token' => ['required', 'string'],
-            'email' => ['required', 'string', 'email', 'max:255'],
+            'email' => ['required', 'string', 'email', new EmailAddress, 'max:255'],
             'password' => ['required', 'string', 'confirmed', PasswordRule::defaults()],
         ]);
 
@@ -52,6 +54,8 @@ class PasswordResetController extends Controller
                     'password' => $password,
                     'remember_token' => Str::random(60),
                 ])->save();
+
+                event(new PasswordReset($admin));
             }
         );
 

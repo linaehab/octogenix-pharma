@@ -1,0 +1,164 @@
+/* Form styles of the account pages (login, sign-up, password, account, addresses), after the checkout
+   form. Loaded unencapsulated by AuthShell and AccountShell and scoped to .jv-form. */
+
+.jv-form {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.jv-form .field {
+  display: grid;
+  align-content: start;
+  gap: 0.3rem;
+}
+
+.jv-form .row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 1rem;
+}
+
+.jv-form label {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.jv-form .optional,
+.jv-form .help {
+  font-size: 0.85rem;
+  font-weight: 400;
+  opacity: 0.85;
+}
+
+.jv-form .help {
+  margin: 0;
+}
+
+.jv-form input:not([type='checkbox']):not([type='radio']),
+.jv-form select {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid rgba(32, 53, 100, 0.4);
+  border-radius: 10px;
+  background: var(--jv-white);
+  color: var(--jv-night);
+  font: inherit;
+}
+
+.jv-form input:focus-visible,
+.jv-form select:focus-visible {
+  outline: 3px solid rgba(32, 53, 100, 0.35);
+  outline-offset: 1px;
+}
+
+.jv-form [aria-invalid='true'] {
+  border-color: var(--jv-sweetypie);
+  box-shadow: 0 0 0 1px var(--jv-sweetypie);
+}
+
+.jv-form .error {
+  min-height: 1.2rem;
+  margin: 0 0 0.35rem;
+  color: var(--jv-sweetypie);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.jv-form .check {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.jv-form .check input {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0;
+  accent-color: var(--jv-night);
+}
+
+.jv-form .between {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.jv-form .submit {
+  width: 100%;
+  margin-top: 0.4rem;
+}
+
+.jv-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--jv-night);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.jv-notice {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: var(--jv-panel);
+  border-inline-start: 5px solid var(--jv-night);
+}
+
+.jv-notice.is-error {
+  border-color: var(--jv-sweetypie);
+  background: #fff1f5;
+  color: var(--jv-sweetypie);
+  font-weight: 700;
+}
+
+.jv-notice.is-success {
+  border-color: #11795f;
+  background: #eaf7f2;
+  color: #0b5a46;
+}
+
+.jv-notice p {
+  margin: 0;
+}
+
+.jv-notice p + p,
+.jv-notice p + .jv-button {
+  margin-top: 0.6rem;
+}
+
+.jv-spinner {
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-inline-end-color: transparent;
+  border-radius: 50%;
+  animation: jv-spin 0.8s linear infinite;
+}
+
+@keyframes jv-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 560px) {
+  .jv-form .row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jv-spinner {
+    animation-duration: 2.4s;
+  }
+}

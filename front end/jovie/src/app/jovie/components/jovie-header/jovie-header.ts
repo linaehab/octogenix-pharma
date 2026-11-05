@@ -6,6 +6,7 @@ import { filter } from 'rxjs';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { CartService } from '../../store/cart.service';
+import { AccountMenu } from './account-menu';
 
 /** Jovie store pages, in navigation order (Shop first). */
 export const JOVIE_NAV = [
@@ -35,7 +36,7 @@ const toneOf = (route: ActivatedRouteSnapshot | null): HeaderTone => {
  */
 @Component({
   selector: 'app-jovie-header',
-  imports: [RouterLink, RouterLinkActive, TranslatePipe],
+  imports: [RouterLink, RouterLinkActive, TranslatePipe, AccountMenu],
   templateUrl: './jovie-header.html',
   styleUrl: './jovie-header.css',
 })

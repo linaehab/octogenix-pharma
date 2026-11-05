@@ -6,6 +6,7 @@ import { contactEmail, contactPhones } from '../../core/content/contact-details'
 import { SiteContentService } from '../../core/content/site-content.service';
 import { LanguageService } from '../../core/i18n/language.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { emailAddress } from '../../core/forms/email-address.validator';
 
 type SendStatus = 'idle' | 'sending' | 'sent' | 'error';
 
@@ -31,7 +32,7 @@ export class ContactSection {
   protected readonly contactForm = this.formBuilder.nonNullable.group({
     firstName: ['', Validators.required],
     lastName: [''],
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required, emailAddress]],
     phone: [''],
     subject: [''],
     message: ['', Validators.required],

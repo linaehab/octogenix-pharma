@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Notifications\OrderAccessLinkNotification;
+use App\Rules\EmailAddress;
 use App\Services\OrderStatusService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -49,7 +50,7 @@ class GuestOrderController extends Controller
     {
         $data = $request->validate([
             'order_number' => ['required', 'string', 'max:20'],
-            'email' => ['required', 'string', 'email', 'max:255'],
+            'email' => ['required', 'string', 'email', new EmailAddress, 'max:255'],
         ]);
 
         $order = Order::query()

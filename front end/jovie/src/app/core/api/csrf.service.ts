@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, map, of, shareReplay, tap } from 'rxjs';
+import { Observable, catchError, map, of, shareReplay, switchMap, tap, throwError } from 'rxjs';
 import { API_BASE_URL } from './api-base-url';
 
 /**
@@ -30,5 +30,17 @@ export class CsrfService {
     this.ready = false;
     this.pending = null;
     return this.ensure();
+  }
+
+  /** Sends a state-changing request with the XSRF cookie in place, once more after a 419 (expired token). */
+  send<T>(request: () => Observable<T>): Observable<T> {
+    return this.ensure().pipe(
+      switchMap(request),
+      catchError((error: unknown) =>
+        error instanceof HttpErrorResponse && error.status === 419
+          ? this.refresh().pipe(switchMap(request))
+          : throwError(() => error),
+      ),
+    );
   }
 }

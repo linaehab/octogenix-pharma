@@ -339,3 +339,12 @@ textarea {
     grid-template-columns: 1fr;
   }
 }
+
+.account-contact {
+  display: grid;
+  margin: 0 0 0.5rem;
+}
+
+.after-saved {
+  margin-top: 1rem;
+}

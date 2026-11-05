@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { CheckoutService } from '../../store/checkout.service';
+import { CustomerAuthService } from '../../account/customer-auth.service';
 import { OrderDetails } from '../../store/order-details';
 import { Order } from '../../store/store.models';
 import { StorePageHeader } from '../../store/store-page-header';
@@ -64,6 +65,7 @@ import { TestModeNotice } from '../../store/test-mode-notice';
 })
 export class JovieOrderConfirmationPage {
   private readonly checkout = inject(CheckoutService);
+  protected readonly auth = inject(CustomerAuthService);
 
   protected readonly order = signal<Order | null>(null);
   protected readonly state = signal<'loading' | 'ready' | 'noAccess' | 'error'>('loading');
@@ -73,11 +75,11 @@ export class JovieOrderConfirmationPage {
       return;
     }
     const number = inject(ActivatedRoute).snapshot.paramMap.get('orderNumber') ?? '';
-    if (!number || !this.checkout.hasToken(number)) {
+    if (!number || !this.checkout.canOpen(number, this.auth.isSignedIn())) {
       this.state.set('noAccess');
       return;
     }
-    this.checkout.order(number).subscribe({
+    this.checkout.order(number, this.auth.isSignedIn()).subscribe({
       next: (order) => {
         this.order.set(order);
         this.state.set('ready');

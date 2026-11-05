@@ -49,6 +49,19 @@ class CustomerAccountTest extends TestCase
         Notification::assertSentTo($customer, CustomerVerifyEmailNotification::class);
     }
 
+    public function test_the_phone_is_required_at_registration(): void
+    {
+        $this->fromFrontend()->postJson('/api/v1/customer/auth/register', $this->registration(['phone' => null]))
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['phone']);
+
+        $this->fromFrontend()->postJson('/api/v1/customer/auth/register', array_diff_key($this->registration(), ['phone' => true]))
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['phone']);
+
+        $this->assertSame(0, Customer::count());
+    }
+
     public function test_registration_validation(): void
     {
         Customer::factory()->create(['email' => 'taken@example.com']);

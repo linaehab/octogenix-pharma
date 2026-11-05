@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, Injector, PLATFORM_ID, afterNextRender, computed, inject, signal } from '@angular/core';
+import { Observable, map, of, switchMap } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
@@ -8,13 +9,17 @@ import { SiteContentService } from '../../../core/content/site-content.service';
 import { LocalizedText } from '../../../core/content/site-content.models';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { AccountApiService } from '../../account/account-api.service';
+import { AddressInput, CustomerAddress } from '../../account/account.models';
+import { CustomerAuthService } from '../../account/customer-auth.service';
 import { formatPrice } from '../../data/format-price';
 import { Money } from '../../data/jovie-product.models';
 import { CartService } from '../../store/cart.service';
 import { CheckoutService, TotalsChangedError } from '../../store/checkout.service';
-import { Governorate, GuestCheckoutForm, PaymentMethod } from '../../store/store.models';
+import { Governorate, GuestCheckoutForm, Order, PaymentMethod } from '../../store/store.models';
 import { StorePageHeader } from '../../store/store-page-header';
 import { TestModeNotice } from '../../store/test-mode-notice';
+import { emailAddress } from '../../../core/forms/email-address.validator';
 
 const KEY_STORAGE = 'jovie.checkout.key';
 
@@ -31,10 +36,14 @@ export function egyptianMobile(control: AbstractControl<string>): ValidationErro
 const piastres = (money: Money | null | undefined) => money?.amount_piastres ?? 0;
 
 /**
- * /jovie/checkout: guest checkout on POST /api/v1/checkout. The form sends what to buy (the
- * cart's variant IDs and quantities), where to deliver and how to pay; the totals shown are an
- * estimate from the server's published fees, and the server's own calculation decides (a change
- * comes back as 409 with the new totals for the customer to confirm).
+ * /jovie/checkout on POST /api/v1/checkout, for guests and signed-in customers.
+ *
+ * Guest: the form sends what to buy (the cart's variant IDs and quantities), the contact details,
+ * where to deliver and how to pay. Signed in: the server takes the items from the account cart and
+ * the contact details from the account; the customer picks a saved address (or adds one, saved to
+ * My Addresses first) and the payment. Either way the totals shown are an estimate from the
+ * server's published fees, and the server's own calculation decides (a change comes back as 409
+ * with the new totals for the customer to confirm).
  */
 @Component({
   selector: 'app-jovie-checkout-page',
@@ -45,6 +54,8 @@ const piastres = (money: Money | null | undefined) => money?.amount_piastres ?? 
 export class JovieCheckoutPage {
   protected readonly cart = inject(CartService);
   protected readonly checkout = inject(CheckoutService);
+  protected readonly auth = inject(CustomerAuthService);
+  private readonly account = inject(AccountApiService);
   private readonly content = inject(SiteContentService);
   private readonly language = inject(LanguageService);
   private readonly router = inject(Router);
@@ -60,7 +71,7 @@ export class JovieCheckoutPage {
     contact: this.fb.group({
       first_name: ['', this.text(80)],
       last_name: ['', this.text(80)],
-      email: ['', [Validators.required, Validators.email, Validators.maxLength(255)]],
+      email: ['', [Validators.required, emailAddress, Validators.maxLength(255)]],
       phone: ['', [Validators.required, egyptianMobile]],
     }),
     address: this.fb.group({
@@ -88,12 +99,24 @@ export class JovieCheckoutPage {
   protected readonly serverTotals = signal<TotalsChangedError['totals'] | null>(null);
   protected readonly submitted = signal(false);
 
+  /** Signed in (decided when the page opens; the route waits for the session check). */
+  protected readonly isCustomer = signal(false);
+  protected readonly savedAddresses = signal<CustomerAddress[] | null>(null);
+  protected readonly addressesError = signal(false);
+  /** The saved address to deliver to, or 'new' to type one (saved to the account before ordering). */
+  protected readonly addressChoice = signal<number | 'new'>('new');
+
   private readonly value = toSignal(this.form.valueChanges, { initialValue: this.form.getRawValue() });
 
   protected readonly deliverable = computed(() => (this.governorates() ?? []).filter((g) => g.is_deliverable));
-  protected readonly governorate = computed(
-    () => this.deliverable().find((g) => g.id === Number(this.value().address?.governorate_id)) ?? null,
-  );
+  protected readonly governorate = computed(() => {
+    const choice = this.addressChoice();
+    const id =
+      this.isCustomer() && choice !== 'new'
+        ? this.savedAddresses()?.find((a) => a.id === choice)?.governorate_id
+        : Number(this.value().address?.governorate_id);
+    return this.deliverable().find((g) => g.id === id) ?? null;
+  });
   protected readonly methods = computed(() => this.checkout.methodsFor(this.governorate()));
   protected readonly method = computed(() => this.value().payment_method ?? null);
 
@@ -146,6 +169,13 @@ export class JovieCheckoutPage {
     this.cart.refresh().subscribe({ error: () => undefined });
     this.loadGovernorates();
 
+    if (this.auth.isSignedIn()) {
+      // The account holds the contact details: only the delivery address and payment are asked for.
+      this.isCustomer.set(true);
+      this.form.controls.contact.disable();
+      this.loadAddresses();
+    }
+
     // The recipient is the customer unless changed: copy name and phone while untouched.
     const contact = this.form.controls.contact;
     const address = this.form.controls.address;
@@ -165,6 +195,49 @@ export class JovieCheckoutPage {
       }
       this.serverTotals.set(null);
     });
+  }
+
+  protected loadAddresses(): void {
+    this.addressesError.set(false);
+    this.account.addresses().subscribe({
+      next: (list) => {
+        this.savedAddresses.set(list);
+        const preferred = list.find((a) => a.is_default) ?? list[0];
+        this.chooseAddress(preferred ? preferred.id : 'new');
+      },
+      error: () => {
+        this.addressesError.set(true);
+        this.chooseAddress('new');
+      },
+    });
+  }
+
+  /** A saved address needs no typing: the address fields are only checked for a new one. */
+  protected chooseAddress(choice: number | 'new'): void {
+    this.addressChoice.set(choice);
+    const address = this.form.controls.address;
+    if (choice === 'new') {
+      address.enable();
+      const customer = this.auth.customer();
+      if (customer && !address.controls.recipient_name.value) {
+        address.patchValue({
+          recipient_name: `${customer.first_name} ${customer.last_name}`.trim(),
+          phone: customer.phone ? `0${customer.phone.slice(3)}` : '',
+        });
+      }
+    } else {
+      address.disable();
+    }
+    const chosen = this.form.controls.payment_method.value;
+    if (chosen && !this.methods().includes(chosen)) {
+      this.form.controls.payment_method.setValue(null);
+    }
+    this.serverTotals.set(null);
+  }
+
+  protected addressLine(a: CustomerAddress): string {
+    const separator = this.language.currentLanguage() === 'ar' ? '، ' : ', ';
+    return [a.street, a.building, a.area, a.city, this.pick(a.governorate.name)].filter(Boolean).join(separator);
   }
 
   protected loadGovernorates(): void {
@@ -215,9 +288,28 @@ export class JovieCheckoutPage {
     const expected = confirmed ? confirmed.total.amount_piastres : (this.total()?.amount_piastres ?? null);
     this.submitting.set(true);
 
-    this.checkout
-      .placeGuestOrder(this.form.getRawValue() as GuestCheckoutForm, this.cart.lines(), this.idempotencyKey(), expected, this.language.currentLanguage())
-      .subscribe({
+    const order$: Observable<Order> = this.isCustomer()
+      ? this.customerAddressId().pipe(
+          switchMap((addressId) =>
+            this.checkout.placeCustomerOrder(
+              addressId,
+              this.form.controls.payment_method.value!,
+              this.form.controls.customer_note.value,
+              this.idempotencyKey(),
+              expected,
+              this.language.currentLanguage(),
+            ),
+          ),
+        )
+      : this.checkout.placeGuestOrder(
+          this.form.getRawValue() as GuestCheckoutForm,
+          this.cart.lines(),
+          this.idempotencyKey(),
+          expected,
+          this.language.currentLanguage(),
+        );
+
+    order$.subscribe({
         next: (order) => {
           this.forgetIdempotencyKey();
           this.cart.clear();
@@ -229,6 +321,37 @@ export class JovieCheckoutPage {
         },
         error: (error: unknown) => this.failed(error),
       });
+  }
+
+  /** The chosen saved address, or the new one saved to the account first (it then stays chosen). */
+  private customerAddressId(): Observable<number> {
+    const choice = this.addressChoice();
+    if (choice !== 'new') {
+      return of(choice);
+    }
+    const a = this.form.controls.address.getRawValue();
+    const optional = (value: string) => (value.trim() === '' ? null : value.trim());
+    const input: AddressInput = {
+      label: null,
+      recipient_name: a.recipient_name.trim(),
+      phone: a.phone.trim(),
+      governorate_id: a.governorate_id!,
+      city: a.city.trim(),
+      area: optional(a.area),
+      street: a.street.trim(),
+      building: optional(a.building),
+      floor: optional(a.floor),
+      apartment: optional(a.apartment),
+      landmark: optional(a.landmark),
+      postal_code: optional(a.postal_code),
+    };
+    return this.account.addAddress(input).pipe(
+      map((saved) => {
+        this.savedAddresses.update((list) => [...(list ?? []), saved]);
+        this.chooseAddress(saved.id);
+        return saved.id;
+      }),
+    );
   }
 
   private startPayment(orderNumber: string): void {
@@ -261,7 +384,8 @@ export class JovieCheckoutPage {
       const errors: Record<string, string[]> = error.error?.errors ?? {};
       let fieldProblem = false;
       for (const key of Object.keys(errors)) {
-        const path = key === 'governorate_id' ? 'address.governorate_id' : key;
+        const addressFields = ['recipient_name', 'phone', 'governorate_id', 'city', 'area', 'street', 'building', 'floor', 'apartment', 'landmark', 'postal_code'];
+        const path = this.isCustomer() && this.addressChoice() === 'new' && addressFields.includes(key) ? `address.${key}` : key === 'governorate_id' ? 'address.governorate_id' : key;
         const control = this.form.get(path);
         if (control) {
           control.setErrors({ ...(control.errors ?? {}), server: errors[key][0] });
@@ -275,6 +399,10 @@ export class JovieCheckoutPage {
       }
       this.error.set({ key: itemProblem ? 'jovie.checkout.itemsChanged' : fieldProblem ? 'jovie.checkout.checkFields' : 'jovie.checkout.failed' });
       this.focusFirstProblem();
+      return;
+    }
+    if (error instanceof HttpErrorResponse && error.status === 401) {
+      this.error.set({ key: 'account.checkout.sessionEnded' });
       return;
     }
     if (error instanceof HttpErrorResponse && error.status === 503) {

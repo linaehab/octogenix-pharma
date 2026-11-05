@@ -1,10 +1,40 @@
-import { Routes } from '@angular/router';
+import { EnvironmentInjector, inject, runInInjectionContext } from '@angular/core';
+import { CanActivateFn, Routes } from '@angular/router';
+import { firstValueFrom, isObservable } from 'rxjs';
 import { CorporateLayout } from './layouts/corporate-layout/corporate-layout';
 import { AboutPage } from './pages/about-page/about-page';
 import { BrandsPage } from './pages/brands-page/brands-page';
 import { ContactPage } from './pages/contact-page/contact-page';
 import { HomePage } from './pages/home-page/home-page';
 import { ServicesPage } from './pages/services-page/services-page';
+
+type AccountGuards = typeof import('./jovie/account/account.guards');
+
+/** A store guard loaded with the Jovie code, so the corporate pages do not download the store. */
+const lazyGuard =
+  (name: 'customerOnly' | 'guestOnly' | 'sessionKnown'): CanActivateFn =>
+  (route, state) => {
+    const injector = inject(EnvironmentInjector);
+    return import('./jovie/account/account.guards').then((guards: AccountGuards) => {
+      const result = runInInjectionContext(injector, () => guards[name](route, state));
+      return isObservable(result) ? firstValueFrom(result) : result;
+    });
+  };
+type AdminGuards = typeof import('./admin/admin.guards');
+
+/** Admin guards, loaded with the admin code. */
+const lazyAdminGuard =
+  (name: 'adminOnly' | 'adminGuestOnly'): CanActivateFn =>
+  (route, state) => {
+    const injector = inject(EnvironmentInjector);
+    return import('./admin/admin.guards').then((guards: AdminGuards) => {
+      const result = runInInjectionContext(injector, () => guards[name](route, state));
+      return isObservable(result) ? firstValueFrom(result) : result;
+    });
+  };
+const customerOnly = lazyGuard('customerOnly');
+const guestOnly = lazyGuard('guestOnly');
+const sessionKnown = lazyGuard('sessionKnown');
 
 export const routes: Routes = [
   // Jovie store: loaded on demand, so the corporate pages do not download it.
@@ -96,36 +126,131 @@ export const routes: Routes = [
         path: 'cart',
         loadComponent: () => import('./jovie/pages/jovie-cart-page/jovie-cart-page').then((m) => m.JovieCartPage),
         title: 'Cart | Jovie',
+        canActivate: [sessionKnown],
       },
       {
         path: 'checkout',
+        canActivate: [sessionKnown],
         loadComponent: () => import('./jovie/pages/jovie-checkout-page/jovie-checkout-page').then((m) => m.JovieCheckoutPage),
         title: 'Checkout | Jovie',
       },
       {
         // TEST MODE only: the stand-in payment page of the mock card driver.
         path: 'checkout/mock-payment',
+        canActivate: [sessionKnown],
         loadComponent: () =>
           import('./jovie/pages/jovie-mock-payment-page/jovie-mock-payment-page').then((m) => m.JovieMockPaymentPage),
         title: 'Test payment | Jovie',
       },
       {
         path: 'checkout/payment-result',
+        canActivate: [sessionKnown],
         loadComponent: () =>
           import('./jovie/pages/jovie-payment-result-page/jovie-payment-result-page').then((m) => m.JoviePaymentResultPage),
         title: 'Payment | Jovie',
       },
       {
         path: 'checkout/confirmation/:orderNumber',
+        canActivate: [sessionKnown],
         loadComponent: () =>
           import('./jovie/pages/jovie-order-confirmation-page/jovie-order-confirmation-page').then(
             (m) => m.JovieOrderConfirmationPage,
           ),
         title: 'Order confirmed | Jovie',
       },
+      // Customer accounts (Sanctum session, customer guard). Rendered in the browser only.
+      {
+        path: 'login',
+        canActivate: [guestOnly],
+        loadComponent: () => import('./jovie/account/pages/login-page').then((m) => m.LoginPage),
+        title: 'Log in | Jovie',
+      },
+      {
+        path: 'signup',
+        canActivate: [guestOnly],
+        loadComponent: () => import('./jovie/account/pages/signup-page').then((m) => m.SignupPage),
+        title: 'Create an account | Jovie',
+      },
+      {
+        path: 'forgot-password',
+        loadComponent: () => import('./jovie/account/pages/forgot-password-page').then((m) => m.ForgotPasswordPage),
+        title: 'Forgot password | Jovie',
+      },
+      {
+        path: 'reset-password',
+        loadComponent: () => import('./jovie/account/pages/reset-password-page').then((m) => m.ResetPasswordPage),
+        title: 'Reset password | Jovie',
+      },
+      {
+        path: 'verify-email',
+        canActivate: [sessionKnown],
+        loadComponent: () => import('./jovie/account/pages/verify-email-page').then((m) => m.VerifyEmailPage),
+        title: 'Confirm your email | Jovie',
+      },
+      {
+        path: 'account',
+        canActivate: [customerOnly],
+        children: [
+          {
+            path: '',
+            pathMatch: 'full',
+            loadComponent: () => import('./jovie/account/pages/account-page').then((m) => m.AccountPage),
+            title: 'My account | Jovie',
+          },
+          {
+            path: 'orders',
+            loadComponent: () => import('./jovie/account/pages/orders-page').then((m) => m.OrdersPage),
+            title: 'My orders | Jovie',
+          },
+          {
+            path: 'orders/:orderNumber',
+            loadComponent: () => import('./jovie/account/pages/order-page').then((m) => m.OrderPage),
+            title: 'My orders | Jovie',
+          },
+          {
+            path: 'addresses',
+            loadComponent: () => import('./jovie/account/pages/addresses-page').then((m) => m.AddressesPage),
+            title: 'My addresses | Jovie',
+          },
+        ],
+      },
       { path: '**', redirectTo: '' },
     ],
   },
+  // Admin area: separate sign-in (admin guard), no sign-up. Rendered in the browser only.
+  {
+    path: 'admin',
+    loadComponent: () => import('./admin/admin-layout').then((m) => m.AdminLayout),
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        canActivate: [lazyAdminGuard('adminOnly')],
+        loadComponent: () => import('./admin/pages/admin-home-page').then((m) => m.AdminHomePage),
+        title: 'Dashboard | Octogenix',
+      },
+      {
+        path: 'login',
+        canActivate: [lazyAdminGuard('adminGuestOnly')],
+        loadComponent: () => import('./admin/pages/admin-login-page').then((m) => m.AdminLoginPage),
+        title: 'Admin log in | Octogenix',
+      },
+      {
+        path: 'forgot-password',
+        loadComponent: () => import('./admin/pages/admin-forgot-password-page').then((m) => m.AdminForgotPasswordPage),
+        title: 'Forgot password | Octogenix admin',
+      },
+      {
+        path: 'reset-password',
+        loadComponent: () => import('./admin/pages/admin-reset-password-page').then((m) => m.AdminResetPasswordPage),
+        title: 'Set your password | Octogenix admin',
+      },
+      { path: '**', redirectTo: '' },
+    ],
+  },
+  // Short addresses for the store's sign-in pages.
+  { path: 'login', redirectTo: '/jovie/login' },
+  { path: 'signup', redirectTo: '/jovie/signup' },
   {
     path: '',
     component: CorporateLayout,

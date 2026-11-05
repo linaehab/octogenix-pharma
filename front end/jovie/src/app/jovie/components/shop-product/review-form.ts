@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ReviewForm as ReviewFormValue, ReviewsService } from '../../store/reviews.service';
+import { emailAddress } from '../../../core/forms/email-address.validator';
 
 /**
  * "Write a review" dialog: name, optional email (never published), 1–5 stars, title, comment,
@@ -29,13 +30,13 @@ export class ReviewForm {
 
   protected readonly form = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(80)]],
-    email: ['', [Validators.email, Validators.maxLength(255)]],
+    email: ['', [emailAddress, Validators.maxLength(255)]],
     rating: this.fb.control<number | null>(null, Validators.required),
     title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(120)]],
     body: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(3000)]],
     recommends: this.fb.control<boolean | null>(null),
     order_number: ['', Validators.maxLength(20)],
-    order_email: ['', [Validators.email, Validators.maxLength(255)]],
+    order_email: ['', [emailAddress, Validators.maxLength(255)]],
     website: [''],
   });
 

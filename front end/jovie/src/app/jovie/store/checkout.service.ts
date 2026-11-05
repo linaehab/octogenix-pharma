@@ -34,7 +34,7 @@ export class TotalsChangedError extends Error {
 }
 
 /**
- * Guest checkout, orders and card payments of the Jovie store, on the existing Laravel API.
+ * Checkout (guests and signed-in customers), orders and card payments of the Jovie store, on the existing Laravel API.
  * The client sends what to buy, where to deliver and how to pay; every amount is computed by the
  * server. Guest order tokens are kept for this browser tab only (sessionStorage); the confirmation
  * email carries them too.
@@ -126,6 +126,36 @@ export class CheckoutService {
     );
   }
 
+  /**
+   * POST /api/v1/checkout as a signed-in customer: the server takes the items from the account cart
+   * and the contact details from the account; only the saved address and the payment are sent.
+   */
+  placeCustomerOrder(
+    addressId: number,
+    paymentMethod: PaymentMethod,
+    customerNote: string,
+    idempotencyKey: string,
+    expectedTotal: number | null,
+    locale: Language,
+  ): Observable<Order> {
+    const body = {
+      address_id: addressId,
+      payment_method: paymentMethod,
+      idempotency_key: idempotencyKey,
+      expected_total_piastres: expectedTotal,
+      customer_note: customerNote.trim() === '' ? null : customerNote.trim(),
+      locale,
+    };
+    return this.post<{ data: Order }>('/api/v1/checkout', body).pipe(
+      map((response) => response.data),
+      catchError((error: unknown) =>
+        error instanceof HttpErrorResponse && error.status === 409 && error.error?.totals
+          ? throwError(() => new TotalsChangedError(error.error.totals))
+          : throwError(() => error),
+      ),
+    );
+  }
+
   /** Starts a card payment; resolves with the provider's (or, in TEST MODE, the mock) payment page. */
   startCardPayment(orderNumber: string): Observable<{ redirect_url: string; merchant_reference: string }> {
     return this.post<{ data: { redirect_url: string; merchant_reference: string } }>(
@@ -150,16 +180,27 @@ export class CheckoutService {
     }).pipe(map((response) => response.data));
   }
 
-  order(orderNumber: string): Observable<Order> {
-    return this.http
-      .get<{ data: Order }>(`${this.baseUrl}/api/v1/orders/${encodeURIComponent(orderNumber)}`, {
-        params: { token: this.token(orderNumber) ?? '' },
-      })
-      .pipe(timeout(CheckoutService.TIMEOUT_MS), map((response) => response.data));
+  /** A guest order with its token, or (signed in, no token) the customer's own order from the account. */
+  order(orderNumber: string, signedIn = false): Observable<Order> {
+    const number = encodeURIComponent(orderNumber);
+    const token = this.token(orderNumber);
+    const request =
+      token === null && signedIn
+        ? this.http.get<{ data: Order }>(`${this.baseUrl}/api/v1/customer/orders/${number}`)
+        : this.http.get<{ data: Order }>(`${this.baseUrl}/api/v1/orders/${number}`, { params: { token: token ?? '' } });
+    return request.pipe(timeout(CheckoutService.TIMEOUT_MS), map((response) => response.data));
   }
 
   hasToken(orderNumber: string): boolean {
     return this.token(orderNumber) !== null;
+  }
+
+  /**
+   * Whether this browser can open the order: with its guest token, or through the signed-in
+   * customer's session (the server only answers for the customer's own orders).
+   */
+  canOpen(orderNumber: string, signedIn: boolean): boolean {
+    return signedIn || this.hasToken(orderNumber);
   }
 
   /** Which payment methods can be offered for a governorate, from the published switches. */

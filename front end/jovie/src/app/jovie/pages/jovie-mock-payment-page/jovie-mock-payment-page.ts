@@ -6,6 +6,7 @@ import { LanguageService } from '../../../core/i18n/language.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { formatPrice } from '../../data/format-price';
 import { CheckoutService } from '../../store/checkout.service';
+import { CustomerAuthService } from '../../account/customer-auth.service';
 import { Order } from '../../store/store.models';
 import { StorePageHeader } from '../../store/store-page-header';
 
@@ -27,7 +28,7 @@ import { StorePageHeader } from '../../store/store-page-header';
 
         @if (!checkout.config().testMode) {
           <p class="error" role="alert">{{ 'jovie.mock.unavailable' | translate }}</p>
-        } @else if (!orderNumber() || !reference() || (isBrowser && !checkout.hasToken(orderNumber()))) {
+        } @else if (!orderNumber() || !reference() || (isBrowser && !checkout.canOpen(orderNumber(), auth.isSignedIn()))) {
           <p class="error" role="alert">{{ 'jovie.result.noAccessText' | translate }}</p>
         } @else {
           <dl>
@@ -121,6 +122,7 @@ import { StorePageHeader } from '../../store/store-page-header';
 })
 export class JovieMockPaymentPage {
   protected readonly checkout = inject(CheckoutService);
+  protected readonly auth = inject(CustomerAuthService);
   private readonly router = inject(Router);
   private readonly language = inject(LanguageService);
   protected readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
@@ -138,8 +140,8 @@ export class JovieMockPaymentPage {
   });
 
   constructor() {
-    if (this.isBrowser && this.orderNumber() && this.checkout.hasToken(this.orderNumber())) {
-      this.checkout.order(this.orderNumber()).subscribe({ next: (order) => this.order.set(order), error: () => undefined });
+    if (this.isBrowser && this.orderNumber() && this.checkout.canOpen(this.orderNumber(), this.auth.isSignedIn())) {
+      this.checkout.order(this.orderNumber(), this.auth.isSignedIn()).subscribe({ next: (order) => this.order.set(order), error: () => undefined });
     }
   }
 

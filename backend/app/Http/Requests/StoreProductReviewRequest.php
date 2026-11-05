@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\EmailAddress;
 use App\Rules\PlainText;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -25,13 +26,13 @@ class StoreProductReviewRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'min:2', 'max:80', new PlainText],
-            'email' => ['nullable', 'string', 'email', 'max:255'],
+            'email' => ['nullable', 'string', 'email', new EmailAddress, 'max:255'],
             'rating' => ['required', 'integer', 'between:1,5'],
             'title' => ['required', 'string', 'min:3', 'max:120', new PlainText],
             'body' => ['required', 'string', 'min:10', 'max:3000', new PlainText],
             'recommends' => ['nullable', 'boolean'],
             'order_number' => ['nullable', 'string', 'max:20'],
-            'order_email' => ['nullable', 'required_with:order_number', 'string', 'email', 'max:255'],
+            'order_email' => ['nullable', 'required_with:order_number', 'string', 'email', new EmailAddress, 'max:255'],
             'locale' => ['sometimes', Rule::in(['en', 'ar'])],
             // Honeypot: a hidden field real visitors never fill in.
             'website' => ['nullable', 'string', 'max:255'],

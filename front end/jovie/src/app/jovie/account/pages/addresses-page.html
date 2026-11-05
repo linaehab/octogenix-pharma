@@ -1,0 +1,165 @@
+<app-account-shell [title]="'account.nav.addresses' | translate">
+  <p class="jv-notice is-success" role="status" [hidden]="!message()">{{ message() ?? '' | translate }}</p>
+  <p class="jv-notice is-error" role="alert" [hidden]="!listError()">{{ listError() ?? '' | translate }}</p>
+
+  @if (editing() !== null) {
+    <section class="account-card" aria-labelledby="ad-form-title">
+      <h2 id="ad-form-title">{{ (editing() === 'new' ? 'account.addresses.addTitle' : 'account.addresses.editTitle') | translate }}</h2>
+      <form class="jv-form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+        <p class="jv-notice is-error" role="alert" [hidden]="!formError()">{{ formError() ?? '' | translate }}</p>
+
+        <div class="row">
+          <div class="field">
+            <label for="ad-recipient">{{ 'jovie.checkout.recipient' | translate }}</label>
+            <input id="ad-recipient" formControlName="recipient_name" autocomplete="name"
+              [attr.aria-invalid]="!!problem('recipient_name')" aria-describedby="ad-recipient-error" />
+            <p class="error" id="ad-recipient-error">@if (problem('recipient_name'); as p) { {{ p | translate }} }</p>
+          </div>
+          <div class="field">
+            <label for="ad-phone">{{ 'jovie.checkout.recipientPhone' | translate }}</label>
+            <input id="ad-phone" type="tel" formControlName="phone" autocomplete="tel" inputmode="tel" dir="ltr" placeholder="01012345678"
+              [attr.aria-invalid]="!!problem('phone')" aria-describedby="ad-phone-error" />
+            <p class="error" id="ad-phone-error">@if (problem('phone'); as p) { {{ p | translate }} }</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="ad-gov">{{ 'jovie.checkout.governorate' | translate }}</label>
+            <select id="ad-gov" formControlName="governorate_id" autocomplete="address-level1"
+              [attr.aria-invalid]="!!problem('governorate_id')" aria-describedby="ad-gov-error">
+              <option [ngValue]="null" disabled>{{ (governorates() ? 'jovie.checkout.chooseGovernorate' : 'jovie.cart.loading') | translate }}</option>
+              @for (g of deliverable(); track g.id) {
+                <option [ngValue]="g.id">{{ pick(g.name) }}</option>
+              }
+            </select>
+            <p class="error" id="ad-gov-error">@if (problem('governorate_id'); as p) { {{ p | translate }} }</p>
+          </div>
+          <div class="field">
+            <label for="ad-city">{{ 'jovie.checkout.city' | translate }}</label>
+            <input id="ad-city" formControlName="city" autocomplete="address-level2"
+              [attr.aria-invalid]="!!problem('city')" aria-describedby="ad-city-error" />
+            <p class="error" id="ad-city-error">@if (problem('city'); as p) { {{ p | translate }} }</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="ad-area">{{ 'jovie.checkout.area' | translate }} <span class="optional">{{ 'jovie.form.optional' | translate }}</span></label>
+            <input id="ad-area" formControlName="area" autocomplete="address-level3"
+              [attr.aria-invalid]="!!problem('area')" aria-describedby="ad-area-error" />
+            <p class="error" id="ad-area-error">@if (problem('area'); as p) { {{ p | translate }} }</p>
+          </div>
+          <div class="field">
+            <label for="ad-street">{{ 'jovie.checkout.street' | translate }}</label>
+            <input id="ad-street" formControlName="street" autocomplete="address-line1"
+              [attr.aria-invalid]="!!problem('street')" aria-describedby="ad-street-error" />
+            <p class="error" id="ad-street-error">@if (problem('street'); as p) { {{ p | translate }} }</p>
+          </div>
+        </div>
+
+        <div class="row3">
+          <div class="field">
+            <label for="ad-building">{{ 'jovie.checkout.building' | translate }} <span class="optional">{{ 'jovie.form.optional' | translate }}</span></label>
+            <input id="ad-building" formControlName="building" />
+            <p class="error">@if (problem('building'); as p) { {{ p | translate }} }</p>
+          </div>
+          <div class="field">
+            <label for="ad-floor">{{ 'jovie.checkout.floor' | translate }} <span class="optional">{{ 'jovie.form.optional' | translate }}</span></label>
+            <input id="ad-floor" formControlName="floor" />
+            <p class="error">@if (problem('floor'); as p) { {{ p | translate }} }</p>
+          </div>
+          <div class="field">
+            <label for="ad-apartment">{{ 'jovie.checkout.apartment' | translate }} <span class="optional">{{ 'jovie.form.optional' | translate }}</span></label>
+            <input id="ad-apartment" formControlName="apartment" />
+            <p class="error">@if (problem('apartment'); as p) { {{ p | translate }} }</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="ad-landmark">{{ 'jovie.checkout.landmark' | translate }} <span class="optional">{{ 'jovie.form.optional' | translate }}</span></label>
+            <input id="ad-landmark" formControlName="landmark" />
+            <p class="error">@if (problem('landmark'); as p) { {{ p | translate }} }</p>
+          </div>
+          <div class="field">
+            <label for="ad-postal">{{ 'jovie.checkout.postalCode' | translate }} <span class="optional">{{ 'jovie.form.optional' | translate }}</span></label>
+            <input id="ad-postal" formControlName="postal_code" autocomplete="postal-code" inputmode="numeric" dir="ltr"
+              [attr.aria-invalid]="!!problem('postal_code')" aria-describedby="ad-postal-error" />
+            <p class="error" id="ad-postal-error">@if (problem('postal_code'); as p) { {{ p | translate }} }</p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="ad-label">{{ 'account.addresses.label' | translate }} <span class="optional">{{ 'jovie.form.optional' | translate }}</span></label>
+          <input id="ad-label" formControlName="label" [placeholder]="'account.addresses.labelHint' | translate" />
+          <p class="error">@if (problem('label'); as p) { {{ p | translate }} }</p>
+        </div>
+
+        <label class="check"><input type="checkbox" formControlName="is_default" /> {{ 'account.addresses.useAsDefault' | translate }}</label>
+
+        <div class="actions">
+          <button class="jv-button" type="submit" [disabled]="saving()" [attr.aria-busy]="saving()">
+            {{ (saving() ? 'account.saving' : 'account.save') | translate }}
+          </button>
+          <button class="jv-button jv-button--light" type="button" (click)="close()">{{ 'account.cancel' | translate }}</button>
+        </div>
+      </form>
+    </section>
+  } @else {
+    @switch (state()) {
+      @case ('loading') {
+        <p role="status">{{ 'jovie.cart.loading' | translate }}</p>
+      }
+      @case ('error') {
+        <div class="jv-notice is-error" role="alert">
+          <p>{{ 'account.error.server' | translate }}</p>
+          <button type="button" class="jv-link" (click)="load()">{{ 'jovie.shop.retry' | translate }}</button>
+        </div>
+      }
+      @default {
+        @if (addresses().length) {
+          <ul class="list">
+            @for (a of addresses(); track a.id) {
+              <li class="account-card address">
+                @if (a.is_default) {
+                  <span class="default">{{ 'account.addresses.default' | translate }}</span>
+                }
+                @if (a.label) {
+                  <p dir="auto"><strong>{{ a.label }}</strong></p>
+                }
+                <p dir="auto">{{ a.recipient_name }}</p>
+                <p dir="ltr" class="phone">{{ a.phone }}</p>
+                <p dir="auto">{{ streetLine(a) }}</p>
+                <p dir="auto">{{ placeLine(a) }}</p>
+                @if (a.landmark) {
+                  <p dir="auto">{{ a.landmark }}</p>
+                }
+                <div class="actions">
+                  <button type="button" class="jv-link" (click)="edit(a)">{{ 'account.addresses.edit' | translate }}</button>
+                  @if (!a.is_default) {
+                    <button type="button" class="jv-link" [disabled]="busyId() === a.id" (click)="makeDefault(a)">{{ 'account.addresses.makeDefault' | translate }}</button>
+                  }
+                  @if (confirmDelete() === a.id) {
+                    <span>{{ 'account.addresses.deleteConfirm' | translate }}</span>
+                    <button type="button" class="jv-link" [disabled]="busyId() === a.id" (click)="remove(a)">{{ 'account.addresses.deleteYes' | translate }}</button>
+                    <button type="button" class="jv-link" (click)="confirmDelete.set(null)">{{ 'account.cancel' | translate }}</button>
+                  } @else {
+                    <button type="button" class="jv-link" (click)="confirmDelete.set(a.id)">{{ 'account.addresses.delete' | translate }}</button>
+                  }
+                </div>
+              </li>
+            }
+          </ul>
+        } @else {
+          <div class="account-empty"><p>{{ 'account.addresses.empty' | translate }}</p></div>
+        }
+        @if (addresses().length < max) {
+          <p><button type="button" class="jv-button jv-button--night" (click)="add()">{{ 'account.addresses.add' | translate }}</button></p>
+        } @else {
+          <p>{{ 'account.addresses.limit' | translate }}</p>
+        }
+      }
+    }
+  }
+</app-account-shell>

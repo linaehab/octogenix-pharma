@@ -60,7 +60,8 @@
 
 .nav ul {
   display: flex;
-  gap: clamp(1rem, 2.6vw, 2.5rem);
+  /* Capped so the links stay on one line next to the cart and account buttons. */
+  gap: clamp(1rem, 2vw, 1.75rem);
   margin: 0 auto;
   padding: 0;
   list-style: none;
@@ -176,6 +177,13 @@
   font-weight: 700;
   line-height: 1.35rem;
   text-align: center;
+}
+
+.account {
+  flex: none;
+  order: 2;
+  /* Paired with the cart button rather than spaced like the other header groups. */
+  margin-inline-start: -1rem;
 }
 
 .menu-toggle {
