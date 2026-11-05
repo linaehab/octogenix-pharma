@@ -28,7 +28,8 @@ import { injectWhyContent } from './why-content';
     </section>
   `,
   styles: `
-    .different { position: relative; padding-block: clamp(5rem, 11vw, 10rem) 1.5rem; scroll-margin-top: 4rem; }
+    /* The corner decoration bleeds off the screen edge: cut it there instead of widening the page. */
+    .different { position: relative; overflow-x: clip; padding-block: clamp(5rem, 11vw, 10rem) 1.5rem; scroll-margin-top: 4rem; }
     .different::after { content: ''; position: absolute; z-index: 1; right: -20px; bottom: -30px; width: 172px; height: 159px; background: url('/assets/images/jovie/official/patterns/organic.svg') no-repeat center / contain; transform: rotate(-15deg); }
     :host-context([dir='rtl']) .different::after { right: auto; left: -20px; transform: rotate(15deg); }
     .background { position: absolute; inset: 0; background: var(--jv-panel); clip-path: url(#jv-organicBlock); }
