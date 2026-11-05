@@ -80,28 +80,6 @@ h1 {
   object-fit: cover;
 }
 
-.play {
-  position: absolute;
-  top: 50%;
-  left: 55%;
-  display: grid;
-  place-items: center;
-  width: 5rem;
-  height: 5rem;
-  margin: -2.5rem 0 0 -2.5rem;
-  border: 3px solid var(--jv-white);
-  border-radius: 50%;
-  background: rgba(32, 53, 100, 0.18);
-  color: var(--jv-white);
-  cursor: pointer;
-}
-
-.play svg {
-  width: 2.4rem;
-  height: 2.4rem;
-  fill: currentColor;
-}
-
 @media (min-width: 900px) and (max-width: 1279px) {
   .media {
     width: 47%;

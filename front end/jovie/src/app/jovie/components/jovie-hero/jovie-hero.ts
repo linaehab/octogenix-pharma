@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, ElementRef, afterNextRender, inject, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, afterNextRender, inject, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { PatternOverlay } from '../pattern-overlay/pattern-overlay';
@@ -18,7 +18,6 @@ import { HERO_MEDIA } from './hero-media';
 })
 export class JovieHero {
   protected readonly media = HERO_MEDIA;
-  protected readonly isPlaying = signal(false);
   private readonly video = viewChild<ElementRef<HTMLVideoElement>>('video');
 
   constructor() {
@@ -28,21 +27,8 @@ export class JovieHero {
       const video = this.video()?.nativeElement;
       const reduceMotion = document.defaultView?.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
       if (video && !reduceMotion) {
-        video.play().then(() => this.isPlaying.set(true)).catch(() => this.isPlaying.set(false));
+        video.play().catch(() => undefined);
       }
     });
-  }
-
-  protected togglePlayback(): void {
-    const video = this.video()?.nativeElement;
-    if (!video) {
-      return;
-    }
-    if (video.paused) {
-      video.play().then(() => this.isPlaying.set(true)).catch(() => this.isPlaying.set(false));
-    } else {
-      video.pause();
-      this.isPlaying.set(false);
-    }
   }
 }
