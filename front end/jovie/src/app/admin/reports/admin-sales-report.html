@@ -1,0 +1,165 @@
+@switch (state()) {
+  @case ('loading') {
+    <section class="adm-panel"><app-admin-state kind="loading" /></section>
+  }
+  @case ('error') {
+    <section class="adm-panel"><app-admin-state kind="error" (retry)="load()" /></section>
+  }
+  @default {
+    @if (report(); as r) {
+      <div class="rep-toolbar">
+        <p class="rep-definitions">{{ 'admin.reports.sales.definitions' | translate }}</p>
+        <app-admin-report-export [run]="exportRun" (sessionEnded)="endSession()" />
+      </div>
+
+      @if (empty()) {
+        <section class="adm-panel"><app-admin-state kind="empty" message="admin.reports.sales.empty" /></section>
+      } @else {
+        <section class="adm-panel" aria-labelledby="rep-sales-figures">
+          <h2 id="rep-sales-figures" class="adm-visually-hidden">{{ 'admin.reports.tab.sales' | translate }}</h2>
+          <div class="adm-grid rep-cards">
+            <app-admin-stat-card [label]="'admin.reports.sales.placed' | translate" [value]="money(r.orders.placed.value_piastres)"
+              [note]="'admin.reports.sales.placedNote' | translate: { count: count(r.orders.placed.count) }" />
+            <app-admin-stat-card [label]="'admin.reports.sales.paid' | translate" [value]="money(r.orders.paid.value_piastres)"
+              [note]="'admin.reports.sales.placedNote' | translate: { count: count(r.orders.paid.count) }" />
+            <app-admin-stat-card [label]="'admin.reports.sales.collected' | translate" [value]="money(r.payments.collected.amount_piastres)" tone="calm"
+              [note]="'admin.reports.sales.collectedNote' | translate: { count: count(r.payments.collected.count) }" />
+            <app-admin-stat-card [label]="'admin.reports.sales.outstanding' | translate" [value]="money(r.outstanding.total.value_piastres)"
+              [tone]="r.outstanding.total.count > 0 ? 'attention' : 'default'"
+              [note]="'admin.reports.sales.outstandingNote' | translate: { count: count(r.outstanding.total.count) }" />
+          </div>
+        </section>
+
+        @if (r.payments.refund_review.count || r.payments.possible_duplicates.orders_count || r.outstanding.card_awaiting_payment.count || r.outstanding.cod_not_collected.count || r.payments.test.count) {
+          <section class="adm-panel rep-attention" aria-labelledby="rep-attention">
+            <h2 id="rep-attention">{{ 'admin.reports.sales.attention' | translate }}</h2>
+            <ul>
+              @if (r.payments.refund_review.count) {
+                <li class="is-serious">{{ 'admin.reports.sales.refundReview' | translate: { amount: money(r.payments.refund_review.amount_piastres), count: count(r.payments.refund_review.count) } }}</li>
+              }
+              @if (r.payments.possible_duplicates.orders_count) {
+                <li class="is-serious">{{ 'admin.reports.sales.duplicates' | translate: { count: count(r.payments.possible_duplicates.orders_count), amount: money(r.payments.possible_duplicates.extra_piastres) } }}</li>
+              }
+              @if (r.outstanding.cod_not_collected.count) {
+                <li>{{ 'admin.reports.sales.codNotCollected' | translate: { count: count(r.outstanding.cod_not_collected.count), amount: money(r.outstanding.cod_not_collected.value_piastres), delivered: count(r.outstanding.cod_delivered_not_collected.count) } }}</li>
+              }
+              @if (r.outstanding.card_awaiting_payment.count) {
+                <li>{{ 'admin.reports.sales.cardAwaiting' | translate: { count: count(r.outstanding.card_awaiting_payment.count), amount: money(r.outstanding.card_awaiting_payment.value_piastres) } }}</li>
+              }
+              @if (r.payments.test.count) {
+                <li>{{ 'admin.reports.sales.testPayments' | translate: { count: count(r.payments.test.count), amount: money(r.payments.test.amount_piastres) } }}</li>
+              }
+            </ul>
+          </section>
+        }
+
+        <section class="adm-panel" aria-labelledby="rep-trend">
+          <h2 id="rep-trend">{{ 'admin.reports.sales.trend' | translate }}</h2>
+          <p class="adm-panel-lead">{{ 'admin.reports.sales.trendBy.' + r.period.grouping | translate }}</p>
+          <figure class="rep-chart">
+            <ul class="rep-legend">
+              <li><span class="rep-key is-value" aria-hidden="true"></span>{{ 'admin.reports.sales.orderValue' | translate }}</li>
+              <li><span class="rep-key is-collected" aria-hidden="true"></span>{{ 'admin.reports.sales.collectedSeries' | translate }}</li>
+            </ul>
+            <p class="rep-readout" aria-hidden="true">
+              @if (hovered() !== null && r.trend[hovered()!]; as point) {
+                {{ tip(point) }}
+              }
+            </p>
+            <div class="rep-plot">
+              <div class="rep-grid" aria-hidden="true">
+                <span style="bottom: 100%">{{ money(axisMax()) }}</span>
+                <span style="bottom: 50%">{{ money(half()) }}</span>
+                <span style="bottom: 0">{{ money(0) }}</span>
+              </div>
+              <ul class="rep-bars" [attr.aria-label]="'admin.reports.sales.chartLabel' | translate: { unit: ('admin.reports.sales.trendBy.' + r.period.grouping | translate) }">
+                @for (p of r.trend; track p.period; let i = $index) {
+                  <li class="rep-group" tabindex="0" [attr.aria-label]="tip(p)"
+                    (mouseenter)="hovered.set(i)" (mouseleave)="hovered.set(null)" (focus)="hovered.set(i)" (blur)="hovered.set(null)">
+                    <span class="rep-bars-in">
+                      <span class="rep-bar is-value" [style.height.%]="height(p.order_value_piastres)"></span>
+                      <span class="rep-bar is-collected" [style.height.%]="height(p.collected_piastres)"></span>
+                    </span>
+                    <span class="rep-tick" [class.is-hidden]="i % tickEvery() !== 0" aria-hidden="true">{{ period(p.period, true) }}</span>
+                  </li>
+                }
+              </ul>
+            </div>
+          </figure>
+          <details class="rep-details">
+            <summary>{{ 'admin.reports.sales.showTable' | translate }}</summary>
+            <table class="rep-table">
+              <thead>
+                <tr>
+                  <th scope="col">{{ 'admin.reports.period' | translate }}</th>
+                  <th scope="col">{{ 'admin.reports.sales.orders' | translate }}</th>
+                  <th scope="col">{{ 'admin.reports.sales.orderValue' | translate }}</th>
+                  <th scope="col">{{ 'admin.reports.sales.collectedSeries' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (p of r.trend; track p.period) {
+                  <tr>
+                    <th scope="row">{{ period(p.period) }}</th>
+                    <td [attr.data-label]="'admin.reports.sales.orders' | translate">{{ count(p.orders_count) }}</td>
+                    <td [attr.data-label]="'admin.reports.sales.orderValue' | translate">{{ money(p.order_value_piastres) }}</td>
+                    <td [attr.data-label]="'admin.reports.sales.collectedSeries' | translate">{{ money(p.collected_piastres) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </details>
+        </section>
+
+        <div class="rep-two">
+          <section class="adm-panel rep-panel" aria-labelledby="rep-status">
+            <h2 id="rep-status">{{ 'admin.reports.sales.byStatus' | translate }}</h2>
+            <p class="adm-panel-lead">{{ 'admin.reports.sales.byStatusNote' | translate }}</p>
+            <table class="rep-table">
+              <thead>
+                <tr>
+                  <th scope="col">{{ 'admin.reports.sales.status' | translate }}</th>
+                  <th scope="col">{{ 'admin.reports.sales.count' | translate }}</th>
+                  <th scope="col">{{ 'admin.reports.sales.value' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (s of statuses; track s) {
+                  <tr [class.is-zero]="!r.orders.by_status[s].count">
+                    <th scope="row">{{ 'admin.orders.statusName.' + s | translate }}</th>
+                    <td [attr.data-label]="'admin.reports.sales.count' | translate">{{ count(r.orders.by_status[s].count) }}</td>
+                    <td [attr.data-label]="'admin.reports.sales.value' | translate">{{ money(r.orders.by_status[s].value_piastres) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </section>
+
+          <section class="adm-panel rep-panel" aria-labelledby="rep-method">
+            <h2 id="rep-method">{{ 'admin.reports.sales.byMethod' | translate }}</h2>
+            <table class="rep-table">
+              <thead>
+                <tr>
+                  <th scope="col">{{ 'admin.reports.sales.method' | translate }}</th>
+                  <th scope="col">{{ 'admin.reports.sales.count' | translate }}</th>
+                  <th scope="col">{{ 'admin.reports.sales.value' | translate }}</th>
+                  <th scope="col">{{ 'admin.reports.sales.collectedCol' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (m of r.by_method; track m.method) {
+                  <tr>
+                    <th scope="row">{{ 'admin.orders.methodName.' + m.method | translate }}</th>
+                    <td [attr.data-label]="'admin.reports.sales.count' | translate">{{ count(m.orders_count) }}</td>
+                    <td [attr.data-label]="'admin.reports.sales.value' | translate">{{ money(m.order_value_piastres) }}</td>
+                    <td [attr.data-label]="'admin.reports.sales.collectedCol' | translate">{{ money(m.collected_piastres) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </section>
+        </div>
+      }
+    }
+  }
+}

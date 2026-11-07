@@ -1,0 +1,112 @@
+<form #form class="adm-panel rep-filters" role="search" (submit)="$event.preventDefault(); apply(form)">
+  <div class="rep-field">
+    <label for="rep-status">{{ 'admin.orders.status' | translate }}</label>
+    <select id="rep-status" name="status">
+      <option value="">{{ 'admin.orders.all' | translate }}</option>
+      @for (s of statuses; track s) {
+        <option [value]="s" [selected]="filters().status === s">{{ 'admin.orders.statusName.' + s | translate }}</option>
+      }
+    </select>
+  </div>
+  <div class="rep-field">
+    <label for="rep-payment">{{ 'admin.orders.paymentStatus' | translate }}</label>
+    <select id="rep-payment" name="payment_status">
+      <option value="">{{ 'admin.orders.all' | translate }}</option>
+      <option value="unpaid" [selected]="filters().payment_status === 'unpaid'">{{ 'admin.orders.paymentName.unpaid' | translate }}</option>
+      <option value="paid" [selected]="filters().payment_status === 'paid'">{{ 'admin.orders.paymentName.paid' | translate }}</option>
+    </select>
+  </div>
+  <div class="rep-field">
+    <label for="rep-method">{{ 'admin.orders.paymentMethod' | translate }}</label>
+    <select id="rep-method" name="payment_method">
+      <option value="">{{ 'admin.orders.all' | translate }}</option>
+      <option value="cod" [selected]="filters().payment_method === 'cod'">{{ 'admin.orders.methodName.cod' | translate }}</option>
+      <option value="card" [selected]="filters().payment_method === 'card'">{{ 'admin.orders.methodName.card' | translate }}</option>
+    </select>
+  </div>
+  <div class="rep-field">
+    <label for="rep-gov">{{ 'admin.reports.orders.governorate' | translate }}</label>
+    <select id="rep-gov" name="governorate_id">
+      <option value="">{{ 'admin.orders.all' | translate }}</option>
+      @for (g of governorates(); track g.id) {
+        <option [value]="g.id" [selected]="filters().governorate_id === '' + g.id">{{ place(g.name) }}</option>
+      }
+    </select>
+  </div>
+  <div class="rep-buttons">
+    <button type="submit" class="adm-button">{{ 'admin.orders.apply' | translate }}</button>
+    @if (filtered()) {
+      <button type="button" class="adm-link" (click)="clear(form)">{{ 'admin.reports.clear' | translate }}</button>
+    }
+  </div>
+</form>
+
+<div class="rep-toolbar">
+  <p class="rep-definitions">{{ 'admin.reports.orders.lead' | translate }}</p>
+  <app-admin-report-export [run]="exportRun" [disabled]="state() !== 'ready' || !report()?.meta?.total" (sessionEnded)="endSession()" />
+</div>
+
+@switch (state()) {
+  @case ('loading') {
+    <section class="adm-panel"><app-admin-state kind="loading" /></section>
+  }
+  @case ('error') {
+    <section class="adm-panel"><app-admin-state kind="error" (retry)="load()" /></section>
+  }
+  @default {
+    @if (report(); as r) {
+      <section class="adm-panel" aria-labelledby="rep-orders-figures">
+        <h2 id="rep-orders-figures" class="adm-visually-hidden">{{ 'admin.reports.tab.orders' | translate }}</h2>
+        <div class="adm-grid rep-cards">
+          <app-admin-stat-card [label]="'admin.reports.orders.count' | translate" [value]="count(r.meta.summary.count)" />
+          <app-admin-stat-card [label]="'admin.reports.orders.value' | translate" [value]="money(r.meta.summary.value_piastres)" />
+          <app-admin-stat-card [label]="'admin.reports.orders.paid' | translate" [value]="money(r.meta.summary.paid.value_piastres)" tone="calm"
+            [note]="'admin.reports.sales.placedNote' | translate: { count: count(r.meta.summary.paid.count) }" />
+          <app-admin-stat-card [label]="'admin.reports.orders.outstanding' | translate" [value]="money(r.meta.summary.outstanding.value_piastres)"
+            [note]="'admin.reports.sales.placedNote' | translate: { count: count(r.meta.summary.outstanding.count) }" />
+        </div>
+      </section>
+
+      <section class="adm-panel rep-panel" aria-labelledby="rep-orders-table">
+        <h2 id="rep-orders-table">{{ 'admin.reports.sales.placedNote' | translate: { count: count(r.meta.total) } }}</h2>
+        @if (!r.data.length) {
+          <app-admin-state kind="empty" message="admin.reports.orders.none" />
+        } @else {
+          <table class="rep-table rep-cards-narrow">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'admin.orders.number' | translate }}</th>
+                <th scope="col">{{ 'admin.orders.placed' | translate }}</th>
+                <th scope="col">{{ 'admin.reports.orders.customer' | translate }}</th>
+                <th scope="col">{{ 'admin.reports.orders.governorate' | translate }}</th>
+                <th scope="col">{{ 'admin.orders.status' | translate }}</th>
+                <th scope="col">{{ 'admin.orders.paymentStatus' | translate }}</th>
+                <th scope="col">{{ 'admin.orders.total' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (o of r.data; track o.order_number) {
+                <tr>
+                  <th scope="row"><a [routerLink]="['/admin/orders', o.order_number]" [attr.aria-label]="'admin.reports.orders.open' | translate: { number: o.order_number }"><bdi dir="ltr">{{ o.order_number }}</bdi></a></th>
+                  <td [attr.data-label]="'admin.orders.placed' | translate">{{ date(o.placed_at) }}</td>
+                  <td [attr.data-label]="'admin.reports.orders.customer' | translate"><bdi>{{ o.customer_name }}</bdi></td>
+                  <td [attr.data-label]="'admin.reports.orders.governorate' | translate">{{ place(o.governorate) }}</td>
+                  <td [attr.data-label]="'admin.orders.status' | translate"><span class="rep-status" [attr.data-status]="o.status">{{ 'admin.orders.statusName.' + o.status | translate }}</span></td>
+                  <td [attr.data-label]="'admin.orders.paymentStatus' | translate">{{ 'admin.orders.paymentName.' + o.payment_status | translate }} · {{ 'admin.orders.methodName.' + o.payment_method | translate }}</td>
+                  <td [attr.data-label]="'admin.orders.total' | translate" class="rep-num">{{ money(o.total_piastres) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+          @if (r.meta.last_page > 1) {
+            <nav class="rep-pages" [attr.aria-label]="'admin.reports.pages' | translate">
+              <button type="button" class="adm-button is-light is-small" [disabled]="r.meta.current_page <= 1" (click)="goTo(r.meta.current_page - 1)">{{ 'admin.reports.prev' | translate }}</button>
+              <span>{{ 'admin.reports.pageOf' | translate: { page: count(r.meta.current_page), pages: count(r.meta.last_page) } }}</span>
+              <button type="button" class="adm-button is-light is-small" [disabled]="r.meta.current_page >= r.meta.last_page" (click)="goTo(r.meta.current_page + 1)">{{ 'admin.reports.next' | translate }}</button>
+            </nav>
+          }
+        }
+      </section>
+    }
+  }
+}

@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\Admin\DashboardController as AdminDashboardContr
 use App\Http\Controllers\Api\V1\Admin\GovernorateController as AdminGovernorateController;
 use App\Http\Controllers\Api\V1\Admin\ImageUploadController as AdminImageUploadController;
 use App\Http\Controllers\Api\V1\Admin\InventoryController as AdminInventoryController;
+use App\Http\Controllers\Api\V1\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Api\V1\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\V1\Admin\PaymentWebhookEventController as AdminPaymentWebhookEventController;
 use App\Http\Controllers\Api\V1\Admin\PasswordResetController as AdminPasswordResetController;
@@ -138,6 +139,25 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             // Overview figures; each block is limited to the admin's permissions inside the service.
             Route::get('/dashboard/summary', [AdminDashboardController::class, 'summary'])
                 ->middleware('throttle:60,1,admin-dashboard')->name('dashboard.summary');
+
+            // Reports (read-only): financial figures need orders.view and payments.manage; the
+            // inventory report also needs inventory.manage. Exports are CSV streams.
+            Route::middleware(['can:orders.view', 'can:payments.manage', 'throttle:60,1,admin-reports'])
+                ->prefix('reports')->name('reports.')->group(function () {
+                    Route::get('/sales', [AdminReportController::class, 'sales'])->name('sales');
+                    Route::get('/orders', [AdminReportController::class, 'orders'])->name('orders');
+                    Route::get('/products', [AdminReportController::class, 'products'])->name('products');
+                    Route::middleware('throttle:20,1,admin-report-exports')->group(function () {
+                        Route::get('/sales/export', [AdminReportController::class, 'salesExport'])->name('sales.export');
+                        Route::get('/orders/export', [AdminReportController::class, 'ordersExport'])->name('orders.export');
+                        Route::get('/products/export', [AdminReportController::class, 'productsExport'])->name('products.export');
+                    });
+                    Route::middleware('can:inventory.manage')->group(function () {
+                        Route::get('/inventory', [AdminReportController::class, 'inventory'])->name('inventory');
+                        Route::get('/inventory/export', [AdminReportController::class, 'inventoryExport'])
+                            ->middleware('throttle:20,1,admin-report-exports')->name('inventory.export');
+                    });
+                });
 
             Route::middleware('can:admins.manage')->group(function () {
                 Route::get('/admin-users', [AdminUserController::class, 'index'])->name('admin-users.index');

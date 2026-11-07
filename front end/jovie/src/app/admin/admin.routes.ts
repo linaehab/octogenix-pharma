@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { AdminAuthFrame } from './admin-auth-frame';
 import { AdminLayout } from './admin-layout';
 import { AdminShell } from './admin-shell';
-import { ADMIN_SECTIONS, SHIPPING_ACCESS, STORE_SETTINGS_ACCESS } from './admin-sections';
+import { ADMIN_SECTIONS, INVENTORY_REPORT_ACCESS, SHIPPING_ACCESS, STORE_SETTINGS_ACCESS } from './admin-sections';
 import { adminCanActivate, adminGuestOnly, adminOnly, adminSettingsLanding } from './admin.guards';
 import { AdminAccess } from './admin-permissions';
 import { AdminSectionKey } from './admin-sections';
@@ -103,6 +103,35 @@ export const adminRoutes: Routes = [
                 path: ':number',
                 loadComponent: () => import('./orders/admin-order-page').then((m) => m.AdminOrderPage),
                 title: 'Order | Octogenix admin',
+              },
+            ],
+          },
+          {
+            path: 'reports',
+            canActivate: [adminCanActivate(sectionAccess('reports'))],
+            loadComponent: () => import('./reports/admin-reports-page').then((m) => m.AdminReportsPage),
+            children: [
+              { path: '', pathMatch: 'full', redirectTo: 'sales' },
+              {
+                path: 'sales',
+                loadComponent: () => import('./reports/admin-sales-report').then((m) => m.AdminSalesReport),
+                title: 'Sales report | Octogenix admin',
+              },
+              {
+                path: 'orders',
+                loadComponent: () => import('./reports/admin-orders-report').then((m) => m.AdminOrdersReport),
+                title: 'Orders report | Octogenix admin',
+              },
+              {
+                path: 'products',
+                loadComponent: () => import('./reports/admin-products-report').then((m) => m.AdminProductsReport),
+                title: 'Products report | Octogenix admin',
+              },
+              {
+                path: 'inventory',
+                canActivate: [adminCanActivate(INVENTORY_REPORT_ACCESS)],
+                loadComponent: () => import('./reports/admin-inventory-report').then((m) => m.AdminInventoryReport),
+                title: 'Inventory report | Octogenix admin',
               },
             ],
           },
