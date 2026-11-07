@@ -89,6 +89,23 @@ export const adminRoutes: Routes = [
               },
             ],
           },
+          {
+            path: 'orders',
+            canActivate: [adminCanActivate(sectionAccess('orders'))],
+            children: [
+              {
+                path: '',
+                pathMatch: 'full',
+                loadComponent: () => import('./orders/admin-orders-list-page').then((m) => m.AdminOrdersListPage),
+                title: 'Orders | Octogenix admin',
+              },
+              {
+                path: ':number',
+                loadComponent: () => import('./orders/admin-order-page').then((m) => m.AdminOrderPage),
+                title: 'Order | Octogenix admin',
+              },
+            ],
+          },
           // Sections of later phases: a plain "not built yet" page, behind the same permissions.
           ...ADMIN_SECTIONS.filter((section) => section.planned).map((section) => ({
             path: section.path,

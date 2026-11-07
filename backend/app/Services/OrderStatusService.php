@@ -8,6 +8,7 @@ use App\Enums\OrderPaymentStatus;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Exceptions\OrderStateChangedException;
 use App\Models\AdminUser;
 use App\Models\InventoryMovement;
 use App\Models\Order;
@@ -24,17 +25,28 @@ class OrderStatusService
 {
     public function __construct(private readonly InventoryService $inventory) {}
 
-    /** @throws ValidationException when the transition is not allowed */
+    /**
+     * @param  OrderStatus|null  $expected  the status the admin saw; when given and the order has
+     *                                      moved on meanwhile, nothing changes (409)
+     *
+     * @throws ValidationException when the transition is not allowed
+     * @throws OrderStateChangedException when $expected no longer matches
+     */
     public function transition(
         Order $order,
         OrderStatus $to,
         OrderActor $actor,
         ?AdminUser $admin = null,
         ?string $note = null,
+        ?OrderStatus $expected = null,
     ): Order {
-        DB::transaction(function () use ($order, $to, $actor, $admin, $note) {
+        DB::transaction(function () use ($order, $to, $actor, $admin, $note, $expected) {
             $locked = Order::query()->whereKey($order->id)->lockForUpdate()->firstOrFail();
             $from = $locked->status;
+
+            if ($expected !== null && $expected !== $from) {
+                throw new OrderStateChangedException($expected->value, $from->value);
+            }
 
             if (! $from->canBecome($to)) {
                 throw ValidationException::withMessages([
@@ -75,10 +87,14 @@ class OrderStatusService
     }
 
     /** Admin confirms the cash for a delivered COD order was received. */
-    public function markCodCollected(Order $order, AdminUser $admin, ?string $note = null): Order
+    public function markCodCollected(Order $order, AdminUser $admin, ?string $note = null, ?OrderPaymentStatus $expected = null): Order
     {
-        DB::transaction(function () use ($order, $admin, $note) {
+        DB::transaction(function () use ($order, $admin, $note, $expected) {
             $locked = Order::query()->whereKey($order->id)->lockForUpdate()->firstOrFail();
+
+            if ($expected !== null && $expected !== $locked->payment_status) {
+                throw new OrderStateChangedException($expected->value, $locked->payment_status->value);
+            }
 
             if ($locked->payment_method !== PaymentMethod::Cod) {
                 throw ValidationException::withMessages(['payment' => 'Only cash-on-delivery orders are collected.']);

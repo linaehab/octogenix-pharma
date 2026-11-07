@@ -120,7 +120,7 @@ class InventoryOrderIntegrationTest extends TestCase
 
         $this->postJson("/api/v1/admin/orders/{$order->order_number}/status", ['status' => 'cancelled', 'note' => 'Customer asked'])->assertOk();
         $this->assertSame(25, $this->stock(), 'Exactly the 2 reserved units come back.');
-        $this->postJson("/api/v1/admin/orders/{$order->order_number}/status", ['status' => 'cancelled'])->assertUnprocessable();
+        $this->postJson("/api/v1/admin/orders/{$order->order_number}/status", ['status' => 'cancelled', 'note' => 'Again'])->assertUnprocessable()->assertJsonValidationErrors('status');
         $this->assertSame(25, $this->stock());
         $this->assertSame(1, InventoryMovement::where('order_id', $order->id)->where('reason', 'order_released')->count());
         $this->assertLedgerMatches();

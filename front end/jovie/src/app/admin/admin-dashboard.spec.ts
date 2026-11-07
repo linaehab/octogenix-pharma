@@ -205,9 +205,10 @@ describe('Admin dashboard', () => {
   });
 
   it('opens a permitted future section as a plain "not built yet" page without actions', async () => {
-    await open('/admin/orders', adminWith('support'));
-    expect(router.url).toBe('/admin/orders');
-    expect(text('main h1')).toBe('Orders');
+    // Contact messages is still a later phase (Products, Inventory and Orders are built).
+    await open('/admin/messages', adminWith('support'));
+    expect(router.url).toBe('/admin/messages');
+    expect(text('main h1')).toBe('Contact messages');
     expect(text('main')).toContain('Not built yet');
     expect(el().querySelectorAll('main button, main a, main input, main form').length).toBe(0);
     expect(el().querySelector('.adm-side a.is-active')?.getAttribute('aria-current')).toBe('page');

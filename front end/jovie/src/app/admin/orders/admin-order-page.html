@@ -1,0 +1,214 @@
+<p class="odr-back"><a routerLink="/admin/orders">{{ 'admin.orders.back' | translate }}</a></p>
+
+@switch (state()) {
+  @case ('loading') {
+    <app-admin-state kind="loading" />
+  }
+  @case ('error') {
+    <app-admin-state kind="error" (retry)="load()" />
+  }
+  @case ('notFound') {
+    <app-admin-state kind="empty" message="admin.orders.notFound" />
+  }
+  @default {
+    @if (order(); as o) {
+      <div class="adm-page-head">
+        <div>
+          <h1><bdi dir="ltr">{{ o.order_number }}</bdi></h1>
+          <p>{{ 'admin.orders.placedOn' | translate: { date: date(o.placed_at) } }} · {{ 'admin.orders.updatedOn' | translate: { date: date(o.updated_at) } }}</p>
+        </div>
+        <span class="odr-status" [attr.data-status]="o.status">{{ ('admin.orders.statusName.' + o.status) | translate }}</span>
+      </div>
+
+      @if (notice(); as n) {
+        <div class="adm-notice odr-notice" [class.is-success]="n.kind === 'success'" [class.is-error]="n.kind === 'error'" [attr.role]="n.kind === 'error' ? 'alert' : 'status'">
+          <p>{{ n.text }}</p>
+          @for (d of n.details ?? []; track $index) {
+            <p>{{ d }}</p>
+          }
+        </div>
+      }
+
+      @for (w of o.warnings; track w) {
+        <p class="odr-warning" [attr.data-warning]="w" role="note">{{ ('admin.orders.warning.' + w) | translate }}</p>
+      }
+
+      <div class="odr-layout">
+        <div class="odr-main">
+          <!-- C. Items as ordered -->
+          <section class="adm-panel" aria-labelledby="odr-items">
+            <h2 id="odr-items">{{ 'admin.orders.secItems' | translate }}</h2>
+            <p class="adm-panel-lead">{{ 'admin.orders.itemsLead' | translate }}</p>
+            <ul class="odr-items">
+              @for (item of o.items; track item.sku) {
+                <li>
+                  @if (item.image_url) {
+                    <img [src]="item.image_url" alt="" width="56" height="56" loading="lazy" />
+                  } @else {
+                    <span class="odr-noimg" aria-hidden="true">—</span>
+                  }
+                  <div class="odr-item-text">
+                    <strong>{{ pick(item.product_name) }}</strong>
+                    <span>{{ pick(item.variant_name) }} · <bdi dir="ltr">{{ item.sku }}</bdi></span>
+                    <span>{{ 'admin.orders.qtyPrice' | translate: { count: count(item.quantity), price: money(item.unit_price) } }}</span>
+                  </div>
+                  <strong class="odr-line">{{ money(item.line_total) }}</strong>
+                </li>
+              }
+            </ul>
+          </section>
+
+          <!-- D. Money -->
+          <section class="adm-panel" aria-labelledby="odr-money">
+            <h2 id="odr-money">{{ 'admin.orders.secMoney' | translate }}</h2>
+            <dl class="odr-sums">
+              <div><dt>{{ 'admin.orders.subtotal' | translate }}</dt><dd>{{ money(o.totals.subtotal) }}</dd></div>
+              @if (o.totals.discount.amount_piastres > 0) {
+                <div><dt>{{ 'admin.orders.discount' | translate }}</dt><dd>−{{ money(o.totals.discount) }}</dd></div>
+              }
+              <div><dt>{{ 'admin.orders.shipping' | translate }}</dt><dd>{{ money(o.totals.shipping_fee) }}</dd></div>
+              @if (o.totals.cod_fee.amount_piastres > 0) {
+                <div><dt>{{ 'admin.orders.codFee' | translate }}</dt><dd>{{ money(o.totals.cod_fee) }}</dd></div>
+              }
+              <div class="is-total"><dt>{{ 'admin.orders.total' | translate }}</dt><dd>{{ money(o.totals.total) }}</dd></div>
+              <div><dt>{{ 'admin.orders.received' | translate }}</dt><dd>{{ money(o.amounts.received) }}</dd></div>
+              <div><dt>{{ 'admin.orders.outstanding' | translate }}</dt><dd>{{ money(o.amounts.outstanding) }}</dd></div>
+            </dl>
+            <p class="odr-help">{{ 'admin.orders.moneyHelp' | translate }}</p>
+          </section>
+
+          <!-- E. Timeline -->
+          <section class="adm-panel" aria-labelledby="odr-timeline">
+            <h2 id="odr-timeline">{{ 'admin.orders.secTimeline' | translate }}</h2>
+            <ol class="odr-timeline">
+              @for (e of timeline(); track $index) {
+                <li [attr.data-kind]="e.kind">
+                  <p class="odr-event">{{ e.label | translate: e.params }}
+                    @if (e.internal) {
+                      <span class="odr-internal">{{ 'admin.orders.internal' | translate }}</span>
+                    }
+                  </p>
+                  <p class="odr-meta">{{ date(e.at) }}@if (e.who) { · {{ e.who }}}</p>
+                  @if (e.note) {
+                    <p class="odr-note">{{ e.note }}</p>
+                  }
+                </li>
+              }
+            </ol>
+          </section>
+        </div>
+
+        <div class="odr-side">
+          <!-- A. Status and actions -->
+          <section class="adm-panel" aria-labelledby="odr-actions">
+            <h2 id="odr-actions">{{ 'admin.orders.secActions' | translate }}</h2>
+            @if (o.cancellation_reason) {
+              <p class="odr-reason">{{ 'admin.orders.cancelReason' | translate: { reason: o.cancellation_reason } }}</p>
+            }
+            @if (o.actions; as a) {
+              @if (a.statuses.length || a.cod_collect || a.restock_returned) {
+                <div class="odr-buttons">
+                  @for (s of a.statuses; track s) {
+                    <button type="button" class="adm-button" [class.is-light]="s === 'cancelled' || s === 'returned'" [disabled]="busy()" (click)="changeStatus(s)">
+                      {{ ('admin.orders.action.' + s) | translate }}
+                    </button>
+                  }
+                  @if (a.cod_collect) {
+                    <button type="button" class="adm-button" [disabled]="busy()" (click)="collectCod()">{{ 'admin.orders.action.cod' | translate }}</button>
+                  }
+                  @if (a.restock_returned) {
+                    <button type="button" class="adm-button is-light" [disabled]="busy()" (click)="restock()">{{ 'admin.orders.action.restock' | translate }}</button>
+                  }
+                </div>
+              } @else {
+                <p class="odr-help">{{ 'admin.orders.noActions' | translate }}</p>
+              }
+              @if (o.payment_method === 'card' && o.status === 'pending_payment') {
+                <p class="odr-help">{{ 'admin.orders.cardWaits' | translate }}</p>
+              }
+            }
+          </section>
+
+          <!-- Payment -->
+          <section class="adm-panel" aria-labelledby="odr-payment">
+            <h2 id="odr-payment">{{ 'admin.orders.secPayment' | translate }}</h2>
+            <dl class="odr-facts">
+              <div><dt>{{ 'admin.orders.paymentMethod' | translate }}</dt><dd>{{ ('admin.orders.methodName.' + o.payment_method) | translate }}</dd></div>
+              <div><dt>{{ 'admin.orders.paymentStatus' | translate }}</dt><dd>{{ ('admin.orders.paymentName.' + o.payment_status) | translate }}</dd></div>
+              @if (o.timestamps.paid_at) {
+                <div><dt>{{ 'admin.orders.paidAt' | translate }}</dt><dd>{{ date(o.timestamps.paid_at) }}</dd></div>
+              }
+            </dl>
+            @if (o.payment_method === 'cod' && o.payment_status === 'unpaid') {
+              <p class="odr-help">{{ 'admin.orders.codPending' | translate }}</p>
+            }
+            @for (p of o.payments; track p.id) {
+              <div class="odr-payment-record">
+                <p><strong>{{ ('admin.orders.attemptStatus.' + p.status) | translate }}</strong> · {{ money(p.amount) }}
+                  @if (p.is_test) {
+                    <span class="odr-internal">{{ 'admin.orders.test' | translate }}</span>
+                  }
+                </p>
+                <p class="odr-meta">{{ 'admin.orders.reference' | translate }}: <bdi dir="ltr">{{ p.merchant_reference }}</bdi></p>
+                @if (p.provider_transaction_id) {
+                  <p class="odr-meta">{{ 'admin.orders.transaction' | translate }}: <bdi dir="ltr">{{ p.provider_transaction_id }}</bdi></p>
+                }
+                @if (p.card_last4) {
+                  <p class="odr-meta">{{ 'admin.orders.card' | translate: { brand: p.card_brand ?? '', last4: p.card_last4 } }}</p>
+                }
+                @if (p.paid_at) {
+                  <p class="odr-meta">{{ 'admin.orders.paidAt' | translate }}: {{ date(p.paid_at) }}</p>
+                }
+                @if (p.collected_by) {
+                  <p class="odr-meta">{{ 'admin.orders.collectedBy' | translate: { name: p.collected_by.name } }}</p>
+                }
+                @if (p.failure_message) {
+                  <p class="odr-meta">{{ p.failure_message }}</p>
+                }
+              </div>
+            }
+          </section>
+
+          <!-- B. Customer and delivery -->
+          <section class="adm-panel" aria-labelledby="odr-customer">
+            <h2 id="odr-customer">{{ 'admin.orders.secCustomer' | translate }}</h2>
+            <dl class="odr-facts">
+              <div><dt>{{ 'admin.orders.customer' | translate }}</dt><dd>{{ o.contact.first_name }} {{ o.contact.last_name }}
+                <span class="odr-meta">{{ (o.is_guest ? 'admin.orders.guest' : 'admin.orders.account') | translate }}</span></dd></div>
+              <div><dt>{{ 'admin.orders.phone' | translate }}</dt><dd><bdi dir="ltr">{{ o.contact.phone }}</bdi></dd></div>
+              <div><dt>{{ 'admin.orders.email' | translate }}</dt><dd><bdi dir="ltr">{{ o.contact.email }}</bdi></dd></div>
+            </dl>
+            <h3>{{ 'admin.orders.deliverTo' | translate }}</h3>
+            <address class="odr-address">
+              <strong>{{ o.shipping_address.recipient_name }}</strong> · <bdi dir="ltr">{{ o.shipping_address.phone }}</bdi><br />
+              {{ o.shipping_address.street }}@if (o.shipping_address.building) {, {{ 'admin.orders.building' | translate }} {{ o.shipping_address.building }}}@if (o.shipping_address.floor) {, {{ 'admin.orders.floor' | translate }} {{ o.shipping_address.floor }}}@if (o.shipping_address.apartment) {, {{ 'admin.orders.apartment' | translate }} {{ o.shipping_address.apartment }}}<br />
+              @if (o.shipping_address.area) {{{ o.shipping_address.area }}, }{{ o.shipping_address.city }}, {{ pick(o.shipping_address.governorate) }}
+              @if (o.shipping_address.postal_code) { <bdi dir="ltr">{{ o.shipping_address.postal_code }}</bdi>}
+              @if (o.shipping_address.landmark) {<br />{{ 'admin.orders.landmark' | translate }}: {{ o.shipping_address.landmark }}}
+            </address>
+            @if (o.customer_note) {
+              <p class="odr-note"><strong>{{ 'admin.orders.customerNote' | translate }}:</strong> {{ o.customer_note }}</p>
+            }
+          </section>
+
+          <!-- Internal note -->
+          <section class="adm-panel" aria-labelledby="odr-internal-note">
+            <h2 id="odr-internal-note">{{ 'admin.orders.internalNote' | translate }}</h2>
+            @if (o.actions?.edit_note) {
+              <form (submit)="$event.preventDefault(); saveNote(noteBox.value)">
+                <label class="adm-visually-hidden" for="odr-note-box">{{ 'admin.orders.internalNote' | translate }}</label>
+                <textarea #noteBox id="odr-note-box" class="odr-note-box" rows="3" maxlength="5000" [value]="o.admin_note ?? ''"></textarea>
+                <p class="odr-help">{{ 'admin.orders.internalNoteHelp' | translate }}</p>
+                <button type="submit" class="adm-button is-light" [disabled]="busy()">{{ 'admin.orders.saveNote' | translate }}</button>
+              </form>
+            } @else {
+              <p>{{ o.admin_note || '—' }}</p>
+            }
+          </section>
+        </div>
+      </div>
+    }
+  }
+}
+
+<app-admin-note-dialog />

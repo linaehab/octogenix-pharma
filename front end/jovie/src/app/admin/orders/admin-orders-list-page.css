@@ -1,0 +1,183 @@
+.ord-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
+  align-items: end;
+  gap: 1rem;
+}
+
+.ord-search {
+  grid-column: 1 / -1;
+}
+
+.ord-field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.ord-field label {
+  font-weight: 700;
+}
+
+.ord-field input,
+.ord-field select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(32, 51, 102, 0.35);
+  border-radius: 10px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+
+.ord-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 44px;
+}
+
+.ord-results {
+  margin-bottom: 1rem;
+}
+
+.ord-panel {
+  container-type: inline-size;
+}
+
+.ord-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ord-table th,
+.ord-table td {
+  padding: 0.65rem 0.5rem;
+  border-bottom: 1px solid rgba(32, 51, 102, 0.1);
+  text-align: start;
+  vertical-align: top;
+}
+
+.ord-table th {
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.ord-number a {
+  color: var(--adm-navy);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ord-flag {
+  display: block;
+  margin-top: 0.25rem;
+  color: #a3123d;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.ord-customer strong,
+.ord-phone {
+  display: block;
+}
+
+.ord-phone,
+.ord-muted {
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+}
+
+.ord-total {
+  white-space: nowrap;
+}
+
+.ord-pay {
+  display: block;
+  color: var(--adm-muted);
+  font-size: 0.82rem;
+}
+
+.ord-pay[data-paid='paid'] {
+  color: #0b5a46;
+  font-weight: 700;
+}
+
+.ord-status {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: #eef1f7;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ord-status[data-status='delivered'] {
+  background: #e3f4ee;
+  color: #0b5a46;
+}
+
+.ord-status[data-status='pending_confirmation'],
+.ord-status[data-status='pending_payment'] {
+  background: #fff1d6;
+  color: #7a5200;
+}
+
+.ord-status[data-status='cancelled'],
+.ord-status[data-status='expired'],
+.ord-status[data-status='returned'] {
+  background: #fdecf1;
+  color: #8f0f35;
+}
+
+.adm-button.is-small {
+  min-height: 36px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.9rem;
+}
+
+.ord-pages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+@container (max-width: 960px) {
+  .ord-table thead {
+    display: none;
+  }
+
+  .ord-table,
+  .ord-table tbody,
+  .ord-table tr,
+  .ord-table td {
+    display: block;
+  }
+
+  .ord-table tr {
+    padding: 0.85rem 0;
+    border-bottom: 1px solid rgba(32, 51, 102, 0.12);
+  }
+
+  .ord-table td {
+    padding: 0.1rem 0;
+    border: 0;
+  }
+
+  .ord-table td[data-label]::before {
+    content: attr(data-label) ': ';
+    color: var(--adm-muted);
+    font-size: 0.85rem;
+  }
+
+  .ord-pay {
+    display: inline;
+    margin-inline-start: 0.35rem;
+  }
+}

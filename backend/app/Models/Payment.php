@@ -48,4 +48,10 @@ class Payment extends Model
     {
         return $this->belongsTo(Order::class);
     }
+
+    /** The admin who recorded the cash of a COD order as collected. @return BelongsTo<AdminUser, $this> */
+    public function collectedBy(): BelongsTo
+    {
+        return $this->belongsTo(AdminUser::class, 'collected_by_admin_id');
+    }
 }
