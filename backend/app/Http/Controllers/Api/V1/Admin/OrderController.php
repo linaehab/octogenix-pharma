@@ -38,6 +38,7 @@ class OrderController extends Controller
             'payment_status' => ['sometimes', Rule::enum(OrderPaymentStatus::class)],
             'payment_method' => ['sometimes', Rule::enum(PaymentMethod::class)],
             'governorate_id' => ['sometimes', 'integer'],
+            'customer_id' => ['sometimes', 'integer', 'min:1'],
             'search' => ['sometimes', 'string', 'max:100'],
             // Calendar days in Egyptian time (as on the dashboard), inclusive.
             'from' => ['sometimes', 'date_format:Y-m-d'],
@@ -53,6 +54,8 @@ class OrderController extends Controller
             ->when($filters['payment_status'] ?? null, fn (Builder $q, $v) => $q->where('payment_status', $v))
             ->when($filters['payment_method'] ?? null, fn (Builder $q, $v) => $q->where('payment_method', $v))
             ->when($filters['governorate_id'] ?? null, fn (Builder $q, $v) => $q->where('shipping_governorate_id', $v))
+            // A customer's order history (customer page); guest orders have no customer.
+            ->when($filters['customer_id'] ?? null, fn (Builder $q, $v) => $q->where('customer_id', $v))
             ->when($filters['from'] ?? null, fn (Builder $q, $v) => $q->where('placed_at', '>=', $day($v)->startOfDay()->utc()))
             ->when($filters['to'] ?? null, fn (Builder $q, $v) => $q->where('placed_at', '<=', $day($v)->endOfDay()->utc()))
             ->when($filters['search'] ?? null, fn (Builder $q, string $search) => $this->search($q, $search))

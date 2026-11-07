@@ -107,6 +107,23 @@ export const adminRoutes: Routes = [
             ],
           },
           {
+            path: 'customers',
+            canActivate: [adminCanActivate(sectionAccess('customers'))],
+            children: [
+              {
+                path: '',
+                pathMatch: 'full',
+                loadComponent: () => import('./customers/admin-customers-list-page').then((m) => m.AdminCustomersListPage),
+                title: 'Customers | Octogenix admin',
+              },
+              {
+                path: ':id',
+                loadComponent: () => import('./customers/admin-customer-page').then((m) => m.AdminCustomerPage),
+                title: 'Customer | Octogenix admin',
+              },
+            ],
+          },
+          {
             path: 'settings',
             canActivate: [adminCanActivate(sectionAccess('settings'))],
             children: [

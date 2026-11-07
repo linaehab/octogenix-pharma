@@ -1,0 +1,101 @@
+<div class="adm-page-head">
+  <div>
+    <h1>{{ 'admin.nav.customers' | translate }}</h1>
+    <p>{{ 'admin.customers.lead' | translate }}</p>
+  </div>
+</div>
+
+<form #filters class="adm-panel cus-filters" role="search" (submit)="$event.preventDefault(); apply(filters)">
+  <div class="cus-field cus-search">
+    <label for="cus-search">{{ 'admin.customers.search' | translate }}</label>
+    <input id="cus-search" name="search" type="search" maxlength="100" [value]="query().search" [placeholder]="'admin.customers.searchHint' | translate" />
+  </div>
+  <div class="cus-field">
+    <label for="cus-status">{{ 'admin.customers.status' | translate }}</label>
+    <select id="cus-status" name="status">
+      <option value="">{{ 'admin.customers.all' | translate }}</option>
+      <option value="active" [selected]="query().status === 'active'">{{ 'admin.customers.active' | translate }}</option>
+      <option value="inactive" [selected]="query().status === 'inactive'">{{ 'admin.customers.inactive' | translate }}</option>
+    </select>
+  </div>
+  <div class="cus-field">
+    <label for="cus-from">{{ 'admin.customers.registeredFrom' | translate }}</label>
+    <input id="cus-from" name="registered_from" type="date" [value]="query().registered_from" />
+  </div>
+  <div class="cus-field">
+    <label for="cus-to">{{ 'admin.customers.registeredTo' | translate }}</label>
+    <input id="cus-to" name="registered_to" type="date" [value]="query().registered_to" />
+  </div>
+  <div class="cus-buttons">
+    <button type="submit" class="adm-button">{{ 'admin.customers.apply' | translate }}</button>
+    @if (filtered()) {
+      <button type="button" class="adm-link" (click)="clear(filters)">{{ 'admin.customers.clear' | translate }}</button>
+    }
+  </div>
+</form>
+
+<section class="adm-panel cus-panel" aria-labelledby="cus-results" [attr.aria-busy]="loading()">
+  <h2 id="cus-results" class="cus-results">{{ 'admin.customers.results' | translate: { count: count(meta()?.total ?? 0) } }}</h2>
+  <p class="adm-panel-lead">{{ 'admin.customers.figuresNote' | translate }}</p>
+  @if (loading() && !rows().length) {
+    <app-admin-state kind="loading" />
+  } @else if (error()) {
+    <app-admin-state kind="error" (retry)="load()" />
+  } @else if (!rows().length) {
+    <app-admin-state kind="empty" [message]="filtered() ? 'admin.customers.noMatch' : 'admin.customers.none'" />
+  } @else {
+    <table class="cus-table">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'admin.customers.customer' | translate }}</th>
+          <th scope="col">{{ 'admin.customers.phone' | translate }}</th>
+          <th scope="col">{{ 'admin.customers.registered' | translate }}</th>
+          <th scope="col">{{ 'admin.customers.orders' | translate }}</th>
+          <th scope="col">{{ 'admin.customers.paid' | translate }}</th>
+          <th scope="col">{{ 'admin.customers.status' | translate }}</th>
+          <th scope="col"><span class="adm-visually-hidden">{{ 'admin.customers.view' | translate }}</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (c of rows(); track c.id) {
+          <tr>
+            <td class="cus-name">
+              <a [routerLink]="['/admin/customers', c.id]"><bdi>{{ name(c) }}</bdi></a>
+              <span class="cus-email"><bdi dir="ltr">{{ c.email }}</bdi></span>
+            </td>
+            <td [attr.data-label]="'admin.customers.phone' | translate">
+              @if (c.phone) {
+                <bdi dir="ltr">{{ c.phone }}</bdi>
+              } @else {
+                <span class="cus-muted">{{ 'admin.customers.noPhone' | translate }}</span>
+              }
+            </td>
+            <td [attr.data-label]="'admin.customers.registered' | translate">{{ date(c.created_at) }}</td>
+            <td [attr.data-label]="'admin.customers.orders' | translate" class="cus-num">{{ count(c.orders_count) }}</td>
+            <td [attr.data-label]="'admin.customers.paid' | translate" class="cus-num">{{ money(c.paid_total) }}</td>
+            <td [attr.data-label]="'admin.customers.status' | translate">
+              <span class="cus-badge" [class.is-off]="!c.is_active">{{ (c.is_active ? 'admin.customers.active' : 'admin.customers.inactive') | translate }}</span>
+              @if (!c.email_verified) {
+                <span class="cus-tag">{{ 'admin.customers.unverified' | translate }}</span>
+              }
+            </td>
+            <td class="cus-actions">
+              <a class="adm-button is-light is-small" [routerLink]="['/admin/customers', c.id]"
+                [attr.aria-label]="'admin.customers.viewFor' | translate: { name: name(c) }">{{ 'admin.customers.view' | translate }}</a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (meta(); as m) {
+      @if (m.last_page > 1) {
+        <nav class="cus-pages" [attr.aria-label]="'admin.customers.pages' | translate">
+          <button type="button" class="adm-button is-light is-small" [disabled]="m.current_page <= 1 || loading()" (click)="goTo(m.current_page - 1)">{{ 'admin.customers.prev' | translate }}</button>
+          <span>{{ 'admin.customers.pageOf' | translate: { page: count(m.current_page), pages: count(m.last_page) } }}</span>
+          <button type="button" class="adm-button is-light is-small" [disabled]="m.current_page >= m.last_page || loading()" (click)="goTo(m.current_page + 1)">{{ 'admin.customers.next' | translate }}</button>
+        </nav>
+      }
+    }
+  }
+</section>

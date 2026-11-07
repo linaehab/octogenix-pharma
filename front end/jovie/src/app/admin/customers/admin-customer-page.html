@@ -1,0 +1,143 @@
+<p class="cst-back"><a routerLink="/admin/customers">{{ 'admin.customers.back' | translate }}</a></p>
+
+@switch (state()) {
+  @case ('loading') {
+    <app-admin-state kind="loading" />
+  }
+  @case ('error') {
+    <app-admin-state kind="error" (retry)="load()" />
+  }
+  @case ('notFound') {
+    <app-admin-state kind="empty" message="admin.customers.notFound" />
+  }
+  @default {
+    @if (customer(); as c) {
+      <div class="adm-page-head">
+        <div>
+          <h1><bdi>{{ name(c) }}</bdi></h1>
+          <p><bdi dir="ltr">{{ c.email }}</bdi></p>
+        </div>
+        <span class="cst-badge" [class.is-off]="!c.is_active">{{ (c.is_active ? 'admin.customers.active' : 'admin.customers.inactive') | translate }}</span>
+      </div>
+
+      @if (!c.is_active) {
+        <p class="cst-warning" role="note">{{ 'admin.customers.inactiveNote' | translate }}</p>
+      }
+
+      <div class="cst-grid">
+        <section class="adm-panel" aria-labelledby="cst-details">
+          <h2 id="cst-details">{{ 'admin.customers.details' | translate }}</h2>
+          <dl class="cst-dl">
+            <div><dt>{{ 'admin.customers.email' | translate }}</dt><dd><bdi dir="ltr">{{ c.email }}</bdi></dd></div>
+            <div>
+              <dt>{{ 'admin.customers.phone' | translate }}</dt>
+              <dd>
+                @if (c.phone) {
+                  <bdi dir="ltr">{{ c.phone }}</bdi>
+                } @else {
+                  {{ 'admin.customers.noPhone' | translate }}
+                }
+              </dd>
+            </div>
+            <div><dt>{{ 'admin.customers.emailVerified' | translate }}</dt><dd>{{ (c.email_verified ? 'admin.customers.yes' : 'admin.customers.no') | translate }}</dd></div>
+            <div><dt>{{ 'admin.customers.language' | translate }}</dt><dd>{{ ('admin.customers.languageName.' + c.locale) | translate }}</dd></div>
+            <div><dt>{{ 'admin.customers.registered' | translate }}</dt><dd>{{ date(c.created_at) }}</dd></div>
+            <div><dt>{{ 'admin.customers.lastLogin' | translate }}</dt><dd>{{ c.last_login_at ? date(c.last_login_at) : ('admin.customers.never' | translate) }}</dd></div>
+            <div><dt>{{ 'admin.customers.status' | translate }}</dt><dd>{{ (c.is_active ? 'admin.customers.active' : 'admin.customers.inactive') | translate }}</dd></div>
+          </dl>
+          <p class="cst-note">{{ 'admin.customers.statusNote' | translate }}</p>
+        </section>
+
+        <section class="adm-panel" aria-labelledby="cst-figures">
+          <h2 id="cst-figures">{{ 'admin.customers.figures' | translate }}</h2>
+          <div class="adm-grid cst-figures">
+            <app-admin-stat-card [label]="'admin.customers.ordersCount' | translate" [value]="count(c.orders_count)" />
+            <app-admin-stat-card [label]="'admin.customers.paidTotal' | translate" [value]="money(c.paid_total)" tone="calm" />
+            <app-admin-stat-card [label]="'admin.customers.lastOrder' | translate" [value]="date(c.last_order_at, false)" />
+          </div>
+          <p class="cst-note">{{ 'admin.customers.figuresNote' | translate }}</p>
+        </section>
+      </div>
+
+      <section class="adm-panel" aria-labelledby="cst-addresses">
+        <h2 id="cst-addresses">{{ 'admin.customers.addresses' | translate }}</h2>
+        <p class="adm-panel-lead">{{ 'admin.customers.addressesNote' | translate }}</p>
+        @if (!c.addresses.length) {
+          <app-admin-state kind="empty" message="admin.customers.noAddresses" />
+        } @else {
+          <ul class="cst-addresses">
+            @for (a of c.addresses; track a.id) {
+              <li>
+                <p class="cst-address-head">
+                  <strong><bdi>{{ a.label || a.recipient_name }}</bdi></strong>
+                  @if (a.is_default) {
+                    <span class="cst-default">{{ 'admin.customers.default' | translate }}</span>
+                  }
+                </p>
+                <p><bdi>{{ a.recipient_name }}</bdi> · <bdi dir="ltr">{{ a.phone }}</bdi></p>
+                <p><bdi>{{ street(a) }}</bdi></p>
+                <p><bdi>{{ place(a) }}</bdi></p>
+                @if (a.landmark) {
+                  <p class="cst-muted"><bdi>{{ a.landmark }}</bdi></p>
+                }
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+      <section class="adm-panel cst-history" aria-labelledby="cst-history" [attr.aria-busy]="canViewOrders && ordersState() === 'loading'">
+        <h2 id="cst-history">{{ 'admin.customers.history' | translate }}</h2>
+        @if (!canViewOrders) {
+          <p class="adm-panel-lead">{{ 'admin.customers.ordersHidden' | translate }}</p>
+        } @else {
+          <p class="adm-panel-lead">{{ 'admin.customers.historyNote' | translate }}</p>
+          @if (ordersState() === 'loading' && !orders().length) {
+            <app-admin-state kind="loading" />
+          } @else if (ordersState() === 'error') {
+            <app-admin-state kind="error" (retry)="loadOrders()" />
+          } @else if (!orders().length) {
+            <app-admin-state kind="empty" message="admin.customers.noOrders" />
+          } @else {
+            <table class="cst-table">
+              <thead>
+                <tr>
+                  <th scope="col">{{ 'admin.orders.number' | translate }}</th>
+                  <th scope="col">{{ 'admin.orders.placed' | translate }}</th>
+                  <th scope="col">{{ 'admin.orders.status' | translate }}</th>
+                  <th scope="col">{{ 'admin.orders.paymentStatus' | translate }}</th>
+                  <th scope="col">{{ 'admin.orders.total' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (o of orders(); track o.id) {
+                  <tr>
+                    <td><a [routerLink]="['/admin/orders', o.order_number]" [attr.aria-label]="'admin.customers.orderFor' | translate: { number: o.order_number }"><bdi dir="ltr">{{ o.order_number }}</bdi></a></td>
+                    <td [attr.data-label]="'admin.orders.placed' | translate">{{ date(o.placed_at) }}</td>
+                    <td [attr.data-label]="'admin.orders.status' | translate">
+                      <span class="cst-status" [attr.data-status]="o.status">{{ ('admin.orders.statusName.' + o.status) | translate }}</span>
+                    </td>
+                    <td [attr.data-label]="'admin.orders.paymentStatus' | translate">
+                      <span class="cst-pay" [attr.data-paid]="o.payment_status">{{ ('admin.orders.paymentName.' + o.payment_status) | translate }}</span>
+                      · {{ ('admin.orders.methodName.' + o.payment_method) | translate }}
+                    </td>
+                    <td [attr.data-label]="'admin.orders.total' | translate" class="cst-num">{{ money(o.total) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+            @if (ordersMeta(); as m) {
+              @if (m.last_page > 1) {
+                <nav class="cst-pages" [attr.aria-label]="'admin.customers.pages' | translate">
+                  <button type="button" class="adm-button is-light is-small" [disabled]="m.current_page <= 1 || ordersState() === 'loading'" (click)="loadOrders(m.current_page - 1)">{{ 'admin.customers.prev' | translate }}</button>
+                  <span>{{ 'admin.customers.pageOf' | translate: { page: count(m.current_page), pages: count(m.last_page) } }}</span>
+                  <button type="button" class="adm-button is-light is-small" [disabled]="m.current_page >= m.last_page || ordersState() === 'loading'" (click)="loadOrders(m.current_page + 1)">{{ 'admin.customers.next' | translate }}</button>
+                </nav>
+              }
+            }
+          }
+        }
+      </section>
+    }
+  }
+}

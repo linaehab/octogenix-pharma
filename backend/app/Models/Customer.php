@@ -75,6 +75,12 @@ class Customer extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(CustomerAddress::class);
     }
 
+    /** @return HasMany<Order, $this> Orders placed while signed in (guest orders have no customer). */
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
     /** @return HasMany<CartItem, $this> */
     public function cartItems(): HasMany
     {
