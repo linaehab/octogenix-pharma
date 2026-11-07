@@ -101,6 +101,8 @@ describe('Admin dashboard', () => {
 
   afterEach(() => {
     language.setLanguage('en');
+    // The header bell asks for the unread count when the dashboard opens.
+    http.match((r) => r.url.endsWith('/api/v1/admin/notifications/unread-count')).forEach((r) => r.cancelled || r.flush({ data: { unread_count: 0 } }));
     http.verify();
   });
 
@@ -167,7 +169,7 @@ describe('Admin dashboard', () => {
     const expected: Record<AdminUser['role'], string[]> = {
       super_admin: [
         'Overview', 'Products', 'Inventory', 'Discounts & promo codes', 'Orders', 'Sales & reports', 'Contact messages', 'Reviews',
-        'Customers', 'Shipping & store settings', 'Admin users',
+        'Customers', 'Shipping & store settings', 'Admin users', 'Audit log',
       ],
       store_manager: ['Overview', 'Products', 'Inventory', 'Discounts & promo codes', 'Orders', 'Sales & reports', 'Reviews', 'Customers', 'Shipping & store settings'],
       support: ['Overview', 'Orders', 'Contact messages', 'Customers'],
@@ -290,7 +292,7 @@ describe('Admin dashboard', () => {
 
   it('switches to Arabic and right-to-left', async () => {
     await open('/admin/forbidden', adminWith('content_editor'));
-    (el().querySelector('.adm-head-actions button') as HTMLButtonElement).click();
+    (el().querySelector('.adm-head-actions > button.adm-head-button:not(.is-strong)') as HTMLButtonElement).click();
     await settle();
     expect(document.documentElement.dir).toBe('rtl');
     expect(document.documentElement.lang).toBe('ar');

@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -16,7 +17,15 @@ use Illuminate\Validation\ValidationException;
  */
 class CatalogService
 {
-    public function __construct(private readonly InventoryService $inventory) {}
+    public function __construct(
+        private readonly InventoryService $inventory,
+        private readonly AuditLogger $audit,
+    ) {}
+
+    /** Variant fields shown with the product in the audit log (stock is audited by the inventory service). */
+    private const AUDITED_VARIANT_FIELDS = ['sku', 'barcode', 'net_weight_grams', 'price_piastres', 'compare_at_price_piastres', 'max_per_order'];
+
+    private const PRICE_FIELDS = ['price_piastres', 'compare_at_price_piastres'];
 
     /**
      * A product and its single size (default variant) in one transaction: either both are saved or
@@ -32,6 +41,8 @@ class CatalogService
             if ($variantData !== null) {
                 $this->createVariant($product, $variantData, $admin);
             }
+            $this->audit->record('products.created', 'product', $product->id, $product->name_en,
+                AuditLogger::diff([], $this->auditSnapshot($product->refresh())), $admin);
 
             return $product;
         });
@@ -48,6 +59,7 @@ class CatalogService
     {
         return DB::transaction(function () use ($product, $productData, $variantData) {
             Product::query()->whereKey($product->id)->lockForUpdate()->first();
+            $before = $this->auditSnapshot($product);
 
             if ($variantData !== null && $variantData !== []) {
                 $variant = $product->variants()->where('is_default', true)->first();
@@ -58,6 +70,7 @@ class CatalogService
                 $product->touch();
             }
             $product->update($productData);
+            $this->auditProductChange($product, $before);
 
             return $product;
         });
@@ -71,15 +84,21 @@ class CatalogService
     public function archiveProduct(Product $product): void
     {
         DB::transaction(function () use ($product) {
+            $before = $this->auditSnapshot($product);
             $product->update(['is_active' => false, 'is_purchasable' => false, 'is_featured' => false]);
             $product->delete();
+            $this->audit->record('products.archived', 'product', $product->id, $product->name_en,
+                AuditLogger::diff($before, $this->auditSnapshot($product)));
         });
     }
 
     /** Back from the archive, still hidden: the admin reviews it before showing it again. */
     public function restoreProduct(Product $product): Product
     {
-        $product->restore();
+        DB::transaction(function () use ($product) {
+            $product->restore();
+            $this->audit->record('products.restored', 'product', $product->id, $product->name_en);
+        });
 
         return $product;
     }
@@ -135,7 +154,9 @@ class CatalogService
                 $product->variants()->whereKeyNot($variant->id)->update(['is_default' => false]);
             }
 
+            $before = $this->auditSnapshot($product, $variant);
             $variant->update($data);
+            $this->auditProductChange($product, $before, $variant);
 
             return $variant;
         });
@@ -172,11 +193,17 @@ class CatalogService
                 $product->images()->update(['is_primary' => false]);
             }
 
-            return $product->images()->create([
+            $image = $product->images()->create([
                 ...$data,
                 'is_primary' => $primary,
                 'sort_order' => ($images->max('sort_order') ?? -1) + 1,
             ]);
+            $this->audit->record('products.images_changed', 'product', $product->id, $product->name_en, [
+                'images' => ['from' => $images->count(), 'to' => $images->count() + 1],
+                'image_added' => ['from' => null, 'to' => $image->id],
+            ]);
+
+            return $image;
         });
     }
 
@@ -191,7 +218,14 @@ class CatalogService
                 ProductImage::query()->where('product_id', $image->product_id)->update(['is_primary' => false]);
             }
 
+            $before = $image->only(['alt_en', 'alt_ar', 'is_primary']);
             $image->update($data);
+            $changes = AuditLogger::diff($before, $image->only(['alt_en', 'alt_ar', 'is_primary']));
+            if ($changes !== []) {
+                $this->audit->record('products.images_changed', 'product', $image->product_id,
+                    Product::withTrashed()->whereKey($image->product_id)->value('name_en'),
+                    ['image_id' => ['from' => $image->id, 'to' => $image->id], ...$changes]);
+            }
 
             return $image;
         });
@@ -214,6 +248,10 @@ class CatalogService
             if ($image->is_primary && $others->isNotEmpty()) {
                 $others->first()->update(['is_primary' => true]);
             }
+            $this->audit->record('products.images_changed', 'product', $product->id, $product->name_en, [
+                'images' => ['from' => $others->count() + 1, 'to' => $others->count()],
+                'image_removed' => ['from' => $image->id, 'to' => null],
+            ]);
         });
     }
 
@@ -228,10 +266,64 @@ class CatalogService
                 throw ValidationException::withMessages(['ids' => 'Send every image of this product exactly once.']);
             }
 
+            $before = $product->images()->orderBy('sort_order')->orderBy('id')->pluck('id')->all();
             foreach (array_values($ids) as $position => $id) {
                 ProductImage::query()->whereKey($id)->update(['sort_order' => $position]);
             }
+            $after = array_map('intval', array_values($ids));
+            if ($before !== $after) {
+                $this->audit->record('products.images_changed', 'product', $product->id, $product->name_en, [
+                    'image_order' => ['from' => $before, 'to' => $after],
+                ]);
+            }
         });
+    }
+
+    /**
+     * The product and its size as the audit log shows them: every product field (long texts cut to
+     * 120 characters) and the size fields that matter to sales. Stock is left to the inventory log.
+     *
+     * @return array<string, mixed>
+     */
+    private function auditSnapshot(Product $product, ?ProductVariant $variant = null): array
+    {
+        $variant ??= $product->variants()->where('is_default', true)->first();
+        $fields = collect($product->attributesToArray())
+            ->except(['id', 'created_at', 'updated_at', 'deleted_at'])
+            ->map(fn ($value) => match (true) {
+                is_array($value) => Str::limit((string) json_encode($value, JSON_UNESCAPED_UNICODE), 120),
+                is_string($value) => Str::limit($value, 120),
+                default => $value,
+            })->all();
+
+        if ($variant !== null) {
+            $fields += $variant->only(self::AUDITED_VARIANT_FIELDS);
+            $fields['size_is_active'] = $variant->is_active;
+        }
+
+        return $fields;
+    }
+
+    /**
+     * One entry per save, named after what changed: activated/deactivated when only the visibility
+     * changed, price_changed when only prices changed, otherwise updated. A save that changed nothing
+     * is not recorded.
+     *
+     * @param  array<string, mixed>  $before
+     */
+    private function auditProductChange(Product $product, array $before, ?ProductVariant $variant = null): void
+    {
+        $changes = AuditLogger::diff($before, $this->auditSnapshot($product->refresh(), $variant?->refresh()));
+        if ($changes === []) {
+            return;
+        }
+        $fields = array_keys($changes);
+        $action = match (true) {
+            $fields === ['is_active'] => $changes['is_active']['to'] ? 'products.activated' : 'products.deactivated',
+            array_diff($fields, self::PRICE_FIELDS) === [] => 'products.price_changed',
+            default => 'products.updated',
+        };
+        $this->audit->record($action, 'product', $product->id, $product->name_en, $changes);
     }
 
     /** @throws ValidationException */

@@ -9,6 +9,7 @@ use App\Http\Requests\Admin\UpdateAdminUserRequest;
 use App\Http\Resources\AdminUserResource;
 use App\Models\AdminUser;
 use App\Notifications\AdminPasswordLinkNotification;
+use App\Services\AuditLogger;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Password;
@@ -18,6 +19,9 @@ use Illuminate\Validation\ValidationException;
 /** Managing dashboard accounts. Routes require the admins.manage permission. */
 class AdminUserController extends Controller
 {
+    /** Account fields shown in the audit log (never the password or remember token). */
+    private const AUDITED_FIELDS = ['name', 'email', 'role', 'is_active', 'locale'];
+
     public function index(): AnonymousResourceCollection
     {
         return AdminUserResource::collection(AdminUser::query()->orderBy('name')->paginate(25));
@@ -29,11 +33,17 @@ class AdminUserController extends Controller
      */
     public function store(StoreAdminUserRequest $request): AdminUserResource
     {
-        $admin = AdminUser::create([
-            ...$request->validated(),
-            'password' => Str::random(64),
-            'is_active' => true,
-        ]);
+        $admin = DB::transaction(function () use ($request) {
+            $admin = AdminUser::create([
+                ...$request->validated(),
+                'password' => Str::random(64),
+                'is_active' => true,
+            ]);
+            app(AuditLogger::class)->record('admin_users.created', 'admin_user', $admin->id, $admin->name,
+                AuditLogger::diff([], $admin->only(self::AUDITED_FIELDS)));
+
+            return $admin;
+        });
 
         $token = Password::broker('admin_users')->createToken($admin);
         $admin->notify(new AdminPasswordLinkNotification($token, isInvitation: true));
@@ -70,7 +80,12 @@ class AdminUserController extends Controller
                 }
             }
 
+            $before = $adminUser->only(self::AUDITED_FIELDS);
             $adminUser->update($data);
+            $changes = AuditLogger::diff($before, $adminUser->only(self::AUDITED_FIELDS));
+            if ($changes !== []) {
+                app(AuditLogger::class)->record('admin_users.updated', 'admin_user', $adminUser->id, $adminUser->name, $changes);
+            }
         });
 
         return new AdminUserResource($adminUser->refresh());

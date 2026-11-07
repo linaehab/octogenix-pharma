@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Exceptions\ShippingChangedException;
 use App\Http\Controllers\Controller;
+use App\Services\AuditLogger;
 use App\Models\Governorate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -77,7 +78,18 @@ class GovernorateController extends Controller
                 throw ValidationException::withMessages(['delivery_days_max' => 'The maximum must not be below the minimum.']);
             }
 
+            $fields = ['shipping_fee_piastres', 'is_deliverable', 'cod_available', 'delivery_days_min', 'delivery_days_max', 'sort_order'];
+            $before = $locked->only($fields);
             $locked->update($changes);
+            $diff = AuditLogger::diff($before, $locked->only($fields));
+            if ($diff !== []) {
+                $action = match (true) {
+                    array_keys($diff) === ['shipping_fee_piastres'] => 'shipping.fee_changed',
+                    array_keys($diff) === ['is_deliverable'] => $diff['is_deliverable']['to'] ? 'shipping.delivery_enabled' : 'shipping.delivery_disabled',
+                    default => 'shipping.updated',
+                };
+                app(AuditLogger::class)->record($action, 'governorate', $locked->id, $locked->name_en, $diff);
+            }
 
             return $locked;
         });

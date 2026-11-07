@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\Services\AuditLogger;
+use Illuminate\Support\Facades\DB;
 use App\Enums\InventoryReason;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StockAdjustmentRequest;
@@ -103,7 +105,15 @@ class InventoryController extends Controller
             'low_stock_threshold' => ['present', 'nullable', 'integer', 'min:0', 'max:1000000'],
         ]);
 
-        $variant->forceFill(['low_stock_threshold' => $data['low_stock_threshold']])->save();
+        DB::transaction(function () use ($variant, $data) {
+            $before = $variant->low_stock_threshold;
+            $variant->forceFill(['low_stock_threshold' => $data['low_stock_threshold']])->save();
+            if ($before !== $variant->low_stock_threshold) {
+                app(AuditLogger::class)->record('inventory.threshold_changed', 'product', $variant->product_id,
+                    $variant->product()->withTrashed()->value('name_en'),
+                    ['low_stock_threshold' => ['from' => $before, 'to' => $variant->low_stock_threshold]]);
+            }
+        });
         $variant->load(['product' => fn ($q) => $q->withTrashed()->with('primaryImage')])->loadMax('movements', 'created_at');
 
         return response()->json(['data' => $this->stockRow($variant)]);

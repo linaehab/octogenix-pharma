@@ -107,6 +107,18 @@ export const adminRoutes: Routes = [
             ],
           },
           {
+            path: 'audit-log',
+            canActivate: [adminCanActivate(sectionAccess('auditLog'))],
+            loadComponent: () => import('./audit/admin-audit-log-page').then((m) => m.AdminAuditLogPage),
+            title: 'Audit log | Octogenix admin',
+          },
+          {
+            // Every admin's own notifications (the API returns only theirs).
+            path: 'notifications',
+            loadComponent: () => import('./notifications/admin-notifications-page').then((m) => m.AdminNotificationsPage),
+            title: 'Notifications | Octogenix admin',
+          },
+          {
             path: 'reports',
             canActivate: [adminCanActivate(sectionAccess('reports'))],
             loadComponent: () => import('./reports/admin-reports-page').then((m) => m.AdminReportsPage),

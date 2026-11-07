@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\AdminPermission;
 use App\Enums\InventoryReason;
 use App\Enums\OrderActor;
 use App\Enums\OrderPaymentStatus;
@@ -252,6 +253,13 @@ class CheckoutService
             $input['customer'] ? OrderActor::Customer : OrderActor::Guest);
 
         $input['customer']?->cartItems()->whereIn('product_variant_id', array_keys($quantities))->delete();
+
+        // Dashboard notification (no customer details): sent once, after the order is committed.
+        app(AdminNotifier::class)->notify('orders.placed', AdminPermission::ViewOrders, [
+            'order_number' => $order->order_number,
+            'total_piastres' => $order->total_piastres,
+            'payment_method' => $order->payment_method->value,
+        ], '/admin/orders/'.$order->order_number, "orders.placed:{$order->id}");
 
         return $order;
     }

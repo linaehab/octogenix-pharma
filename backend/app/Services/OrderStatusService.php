@@ -14,6 +14,7 @@ use App\Models\InventoryMovement;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -23,7 +24,10 @@ use Illuminate\Validation\ValidationException;
  */
 class OrderStatusService
 {
-    public function __construct(private readonly InventoryService $inventory) {}
+    public function __construct(
+        private readonly InventoryService $inventory,
+        private readonly AuditLogger $audit,
+    ) {}
 
     /**
      * @param  OrderStatus|null  $expected  the status the admin saw; when given and the order has
@@ -80,6 +84,14 @@ class OrderStatusService
             }
 
             $this->record($locked, 'status', $from->value, $to->value, $actor, $admin, $note);
+            if ($actor === OrderActor::Admin && $admin !== null) {
+                $changes = ['status' => ['from' => $from->value, 'to' => $to->value]];
+                if ($to === OrderStatus::Cancelled && $note !== null) {
+                    $changes['reason'] = ['from' => null, 'to' => Str::limit($note, 200)];
+                }
+                $this->audit->record($to === OrderStatus::Cancelled ? 'orders.cancelled' : 'orders.status_changed',
+                    'order', $locked->id, $locked->order_number, $changes, $admin);
+            }
             $order->setRawAttributes($locked->getAttributes(), sync: true);
         });
 
@@ -116,6 +128,10 @@ class OrderStatusService
 
             $this->record($locked, 'payment_status', OrderPaymentStatus::Unpaid->value, OrderPaymentStatus::Paid->value,
                 OrderActor::Admin, $admin, $note);
+            $this->audit->record('orders.cod_collected', 'order', $locked->id, $locked->order_number, [
+                'payment_status' => ['from' => OrderPaymentStatus::Unpaid->value, 'to' => OrderPaymentStatus::Paid->value],
+                'amount_piastres' => ['from' => null, 'to' => $locked->total_piastres],
+            ], $admin);
             $order->setRawAttributes($locked->getAttributes(), sync: true);
         });
 
@@ -135,9 +151,14 @@ class OrderStatusService
                 throw ValidationException::withMessages(['order' => 'This order was already restocked.']);
             }
 
+            $units = 0;
             foreach ($locked->items()->with('variant')->get() as $item) {
                 $this->inventory->adjust($item->variant, $item->quantity, InventoryReason::ReturnRestock, $admin, $note, $locked->id);
+                $units += $item->quantity;
             }
+            $this->audit->record('orders.returned_restocked', 'order', $locked->id, $locked->order_number, [
+                'units_restocked' => ['from' => null, 'to' => $units],
+            ], $admin);
         });
     }
 

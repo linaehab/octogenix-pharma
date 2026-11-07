@@ -93,6 +93,8 @@ describe('Admin products', () => {
 
   afterEach(() => {
     language.setLanguage('en');
+    // The header bell asks for the unread count when the dashboard opens.
+    http.match((r) => r.url.endsWith('/api/v1/admin/notifications/unread-count')).forEach((r) => r.cancelled || r.flush({ data: { unread_count: 0 } }));
     http.verify();
   });
 
@@ -249,7 +251,7 @@ describe('Admin products', () => {
       expect(el().querySelector('dialog[open]')?.textContent).toContain('Hide "Product 1" from the store?');
       dialogButton(0).click();
       await settle();
-      expect(http.match(() => true).length).toBe(0);
+      expect(http.match((r) => !r.url.endsWith('/notifications/unread-count')).length).toBe(0);
 
       await click('.prd-actions button.adm-button');
       dialogButton(1).click();
@@ -323,7 +325,7 @@ describe('Admin products', () => {
       expect(text('.prf-notice')).toContain('Please correct the highlighted fields.');
       expect(el().querySelector('#prf-name-en')?.getAttribute('aria-invalid')).toBe('true');
       expect(el().querySelector('#prf-sku')?.getAttribute('aria-invalid')).toBe('true');
-      expect(http.match(() => true).length).toBe(0);
+      expect(http.match((r) => !r.url.endsWith('/notifications/unread-count')).length).toBe(0);
     });
 
     it('checks prices: format, above zero, and the original price above the price', async () => {
@@ -451,7 +453,7 @@ describe('Admin products', () => {
       dialogButton(1).click();
       await settle();
       expect(items().length).toBe(2);
-      expect(http.match(() => true).length).toBe(0);
+      expect(http.match((r) => !r.url.endsWith('/notifications/unread-count')).length).toBe(0);
 
       await click('button[type="submit"]');
       await csrf();

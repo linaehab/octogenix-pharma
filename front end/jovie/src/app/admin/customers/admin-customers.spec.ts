@@ -73,6 +73,8 @@ describe('Admin customers', () => {
 
   afterEach(() => {
     language.setLanguage('en');
+    // The header bell asks for the unread count when the dashboard opens.
+    http.match((r) => r.url.endsWith('/api/v1/admin/notifications/unread-count')).forEach((r) => r.cancelled || r.flush({ data: { unread_count: 0 } }));
     http.verify();
   });
 

@@ -1,0 +1,167 @@
+.aud-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem 1rem;
+}
+
+.aud-field {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 9.5rem;
+}
+
+.aud-search {
+  flex: 1 1 15rem;
+}
+
+.aud-field label {
+  font-weight: 700;
+}
+
+.aud-field input,
+.aud-field select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(32, 51, 102, 0.35);
+  border-radius: 10px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+
+.aud-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 44px;
+}
+
+.aud-results {
+  margin-bottom: 1rem;
+}
+
+.aud-panel {
+  container-type: inline-size;
+}
+
+.aud-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.aud-table > thead th,
+.aud-table > tbody > tr > td {
+  padding: 0.65rem 0.55rem;
+  border-bottom: 1px solid rgba(32, 51, 102, 0.1);
+  text-align: start;
+  vertical-align: top;
+}
+
+.aud-table > thead th {
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.aud-when {
+  color: var(--adm-muted);
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.aud-cat,
+.aud-sub {
+  display: block;
+  color: var(--adm-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.aud-cat {
+  text-transform: uppercase;
+}
+
+.aud-actions {
+  white-space: nowrap;
+}
+
+.aud-details > td {
+  background: #f6f8fc;
+}
+
+.aud-changes {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.aud-changes th,
+.aud-changes td {
+  padding: 0.45rem 0.6rem;
+  border: 1px solid rgba(32, 51, 102, 0.1);
+  text-align: start;
+  overflow-wrap: anywhere;
+}
+
+.aud-changes thead th {
+  color: var(--adm-muted);
+  font-size: 0.82rem;
+}
+
+.aud-note {
+  margin: 0.5rem 0 0;
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+}
+
+.aud-pages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.adm-button.is-small {
+  min-height: 36px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.9rem;
+}
+
+/* Narrow panels: one card per entry. */
+@container (max-width: 720px) {
+  .aud-table > thead {
+    display: none;
+  }
+
+  .aud-table,
+  .aud-table > tbody,
+  .aud-table > tbody > tr,
+  .aud-table > tbody > tr > td {
+    display: block;
+  }
+
+  .aud-table > tbody {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(32, 51, 102, 0.12);
+  }
+
+  .aud-table > tbody > tr > td {
+    padding: 0.15rem 0;
+    border: 0;
+  }
+
+  .aud-table > tbody > tr > td[data-label]::before {
+    content: attr(data-label) ': ';
+    color: var(--adm-muted);
+    font-size: 0.85rem;
+  }
+
+  .aud-details > td {
+    margin-top: 0.5rem;
+    padding: 0.5rem !important;
+  }
+}

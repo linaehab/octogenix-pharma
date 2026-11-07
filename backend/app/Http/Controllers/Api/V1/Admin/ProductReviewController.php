@@ -7,9 +7,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\ProductReviewResource;
 use App\Models\ProductReview;
 use App\Rules\PlainText;
+use App\Services\AuditLogger;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 /**
@@ -75,23 +77,55 @@ class ProductReviewController extends Controller
             'recommends' => ['sometimes', 'nullable', 'boolean'],
         ]);
 
-        $review->fill(collect($data)->except('status')->all());
-        if (isset($data['status']) && $data['status'] !== $review->status->value) {
-            $review->forceFill([
-                'status' => ReviewStatus::from($data['status']),
-                'moderated_by_admin_id' => $request->user('admin')->id,
-                'moderated_at' => now(),
-            ]);
-        }
-        $review->save();
+        DB::transaction(function () use ($review, $data, $request) {
+            $fields = ['status', 'rating', 'title', 'body', 'author_name', 'recommends'];
+            $before = $review->only($fields);
+            $review->fill(collect($data)->except('status')->all());
+            if (isset($data['status']) && $data['status'] !== $review->status->value) {
+                $review->forceFill([
+                    'status' => ReviewStatus::from($data['status']),
+                    'moderated_by_admin_id' => $request->user('admin')->id,
+                    'moderated_at' => now(),
+                ]);
+            }
+            $review->save();
+
+            // Moderation is recorded without the author's name or the review text.
+            $diff = AuditLogger::diff($before, $review->only($fields));
+            $edited = array_values(array_diff(array_keys($diff), ['status']));
+            $changes = isset($diff['status']) ? ['status' => $diff['status']] : [];
+            if ($edited !== []) {
+                $changes['edited_fields'] = ['from' => null, 'to' => $edited];
+            }
+            if ($changes !== []) {
+                $action = match ($diff['status']['to'] ?? null) {
+                    ReviewStatus::Approved->value => 'reviews.approved',
+                    ReviewStatus::Rejected->value => 'reviews.rejected',
+                    default => 'reviews.updated',
+                };
+                app(AuditLogger::class)->record($action, 'review', $review->id, $this->auditLabel($review), $changes);
+            }
+        });
 
         return new ProductReviewResource($review->load(self::RELATIONS));
     }
 
     public function destroy(ProductReview $review): Response
     {
-        $review->delete();
+        DB::transaction(function () use ($review) {
+            $review->delete();
+            app(AuditLogger::class)->record('reviews.deleted', 'review', $review->id, $this->auditLabel($review),
+                ['status' => ['from' => $review->status->value, 'to' => null]]);
+        });
 
         return response()->noContent();
+    }
+
+    /** "<product> · 4★": identifies the review without the author's name or text. */
+    private function auditLabel(ProductReview $review): string
+    {
+        $product = $review->product()->withTrashed()->value('name_en');
+
+        return trim(($product ?? 'Product').' · '.$review->rating.'★');
     }
 }

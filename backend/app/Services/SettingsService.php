@@ -97,8 +97,14 @@ class SettingsService
             throw ValidationException::withMessages($errors);
         }
 
-        DB::transaction(function () use ($values, $registry, $admin) {
+        $previous = $this->all();
+
+        DB::transaction(function () use ($values, $registry, $admin, $previous) {
+            $changes = [];
             foreach ($values as $key => $value) {
+                if ($previous[$key] !== $value) {
+                    $changes[$key] = ['from' => $previous[$key], 'to' => $value];
+                }
                 Setting::query()->updateOrCreate(['key' => $key], [
                     'group' => $registry[$key]['group'],
                     'type' => $registry[$key]['type'],
@@ -106,6 +112,9 @@ class SettingsService
                     'value' => $value,
                     'updated_by_admin_id' => $admin?->id,
                 ]);
+            }
+            if ($changes !== []) {
+                app(AuditLogger::class)->record('settings.updated', 'settings', null, implode(', ', array_keys($changes)), $changes, $admin);
             }
         });
 

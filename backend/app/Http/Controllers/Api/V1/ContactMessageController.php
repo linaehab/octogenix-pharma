@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Enums\AdminPermission;
+use App\Services\AdminNotifier;
 use App\Enums\Site;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreContactMessageRequest;
@@ -34,6 +36,12 @@ class ContactMessageController extends Controller
             'ip_address' => $request->ip(),
             'user_agent' => Str::limit((string) $request->userAgent(), 252),
         ]);
+
+        // Dashboard notification: the subject only, never the sender's details.
+        app(AdminNotifier::class)->notify('messages.received', AdminPermission::ViewMessages, [
+            'subject' => $message->subject?->value ?? (string) $message->subject,
+            'site' => $message->site?->value ?? (string) $message->site,
+        ], null, "messages.received:{$message->id}");
 
         try {
             SendContactMessageNotification::dispatch($message);

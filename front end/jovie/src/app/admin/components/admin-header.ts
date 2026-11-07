@@ -3,11 +3,12 @@ import { Router } from '@angular/router';
 import { LanguageService } from '../../core/i18n/language.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { AdminAuthService } from '../admin-auth.service';
+import { AdminNotificationBell } from './admin-notification-bell';
 
 /** Dashboard header: menu button (phones and tablets), language switch, the signed-in admin and log out. */
 @Component({
   selector: 'app-admin-header',
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, AdminNotificationBell],
   template: `
     <header class="adm-head">
       <button type="button" class="adm-menu-toggle" aria-controls="admin-sidebar" [attr.aria-expanded]="menuOpen()"
@@ -22,6 +23,7 @@ import { AdminAuthService } from '../admin-auth.service';
       </button>
       <p class="adm-head-title">{{ 'admin.header.title' | translate }}</p>
       <div class="adm-head-actions">
+        <app-admin-notification-bell />
         <button type="button" class="adm-head-button" (click)="language.toggleLanguage()"
           [attr.lang]="language.currentLanguage() === 'en' ? 'ar' : 'en'">{{ 'admin.switchLanguage' | translate }}</button>
         @if (auth.admin(); as a) {

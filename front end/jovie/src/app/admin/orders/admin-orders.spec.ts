@@ -71,6 +71,8 @@ describe('Admin orders', () => {
 
   afterEach(() => {
     language.setLanguage('en');
+    // The header bell asks for the unread count when the dashboard opens.
+    http.match((r) => r.url.endsWith('/api/v1/admin/notifications/unread-count')).forEach((r) => r.cancelled || r.flush({ data: { unread_count: 0 } }));
     http.verify();
   });
 
@@ -264,7 +266,7 @@ describe('Admin orders', () => {
       expect(text('dialog[open] .adm-note-error')).toBe('Please give a reason.');
       (el().querySelector('dialog[open] .adm-note-actions .is-light') as HTMLButtonElement).click();
       await settle();
-      expect(http.match(() => true).length).toBe(0);
+      expect(http.match((r) => !r.url.endsWith('/notifications/unread-count')).length).toBe(0);
 
       buttonNamed('Cancel order').click();
       await settle();

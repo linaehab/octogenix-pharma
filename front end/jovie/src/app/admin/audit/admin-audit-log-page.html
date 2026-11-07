@@ -1,0 +1,145 @@
+<div class="adm-page-head">
+  <div>
+    <h1>{{ 'admin.nav.auditLog' | translate }}</h1>
+    <p>{{ 'admin.audit.lead' | translate }}</p>
+  </div>
+</div>
+
+<form #filters class="adm-panel aud-filters" role="search" (submit)="$event.preventDefault(); apply(filters)">
+  <div class="aud-field aud-search">
+    <label for="aud-search">{{ 'admin.audit.search' | translate }}</label>
+    <input id="aud-search" name="search" type="search" maxlength="100" [value]="query().search" [placeholder]="'admin.audit.searchHint' | translate" />
+  </div>
+  <div class="aud-field">
+    <label for="aud-admin">{{ 'admin.audit.admin' | translate }}</label>
+    <select id="aud-admin" name="admin_id">
+      <option value="">{{ 'admin.audit.all' | translate }}</option>
+      @for (a of page()?.meta?.options?.admins ?? []; track a.id) {
+        <option [value]="a.id" [selected]="query().admin_id === '' + a.id">{{ a.name }}</option>
+      }
+    </select>
+  </div>
+  <div class="aud-field">
+    <label for="aud-category">{{ 'admin.audit.category' | translate }}</label>
+    <select id="aud-category" name="category">
+      <option value="">{{ 'admin.audit.all' | translate }}</option>
+      @for (c of page()?.meta?.options?.categories ?? []; track c) {
+        <option [value]="c" [selected]="query().category === c">{{ 'admin.audit.categoryName.' + c | translate }}</option>
+      }
+    </select>
+  </div>
+  <div class="aud-field">
+    <label for="aud-type">{{ 'admin.audit.subjectType' | translate }}</label>
+    <select id="aud-type" name="subject_type">
+      <option value="">{{ 'admin.audit.all' | translate }}</option>
+      @for (t of page()?.meta?.options?.subject_types ?? []; track t) {
+        <option [value]="t" [selected]="query().subject_type === t">{{ typeLabel(t) }}</option>
+      }
+    </select>
+  </div>
+  <div class="aud-field">
+    <label for="aud-from">{{ 'admin.audit.from' | translate }}</label>
+    <input id="aud-from" name="from" type="date" [value]="query().from" />
+  </div>
+  <div class="aud-field">
+    <label for="aud-to">{{ 'admin.audit.to' | translate }}</label>
+    <input id="aud-to" name="to" type="date" [value]="query().to" />
+  </div>
+  <div class="aud-buttons">
+    <button type="submit" class="adm-button">{{ 'admin.audit.apply' | translate }}</button>
+    @if (filtered()) {
+      <button type="button" class="adm-link" (click)="clear(filters)">{{ 'admin.audit.clear' | translate }}</button>
+    }
+  </div>
+</form>
+
+<section class="adm-panel aud-panel" aria-labelledby="aud-results" [attr.aria-busy]="state() === 'loading'">
+  <h2 id="aud-results" class="aud-results">{{ 'admin.audit.results' | translate: { count: page()?.meta?.total ?? 0 } }}</h2>
+  @switch (state()) {
+    @case ('loading') {
+      <app-admin-state kind="loading" />
+    }
+    @case ('error') {
+      <app-admin-state kind="error" (retry)="load()" />
+    }
+    @default {
+      @if (!page()?.data?.length) {
+        <app-admin-state kind="empty" [message]="filtered() ? 'admin.audit.noMatch' : 'admin.audit.none'" />
+      } @else {
+        <table class="aud-table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'admin.audit.when' | translate }}</th>
+              <th scope="col">{{ 'admin.audit.admin' | translate }}</th>
+              <th scope="col">{{ 'admin.audit.action' | translate }}</th>
+              <th scope="col">{{ 'admin.audit.record' | translate }}</th>
+              <th scope="col"><span class="adm-visually-hidden">{{ 'admin.audit.details' | translate }}</span></th>
+            </tr>
+          </thead>
+          @for (e of page()!.data; track e.id) {
+            <tbody>
+              <tr>
+                <td class="aud-when" [attr.data-label]="'admin.audit.when' | translate">{{ date(e.created_at) }}</td>
+                <td [attr.data-label]="'admin.audit.admin' | translate">
+                  <bdi>{{ e.admin.name }}</bdi>
+                  @if (e.admin.id === null) {
+                    <span class="aud-sub">{{ 'admin.audit.removedAdmin' | translate }}</span>
+                  }
+                </td>
+                <td [attr.data-label]="'admin.audit.action' | translate">
+                  <span class="aud-cat">{{ 'admin.audit.categoryName.' + e.category | translate }}</span>
+                  <strong>{{ actionLabel(e.action) }}</strong>
+                </td>
+                <td [attr.data-label]="'admin.audit.record' | translate">
+                  {{ typeLabel(e.subject.type) }}@if (e.subject.label) {: <bdi>{{ e.subject.label }}</bdi>}
+                </td>
+                <td class="aud-actions">
+                  <button type="button" class="adm-link" [attr.aria-expanded]="expanded() === e.id" [attr.aria-controls]="'aud-details-' + e.id"
+                    [attr.aria-label]="'admin.audit.detailsFor' | translate: { id: e.id }" (click)="toggle(e)">
+                    {{ (expanded() === e.id ? 'admin.audit.hide' : 'admin.audit.details') | translate }}
+                  </button>
+                </td>
+              </tr>
+              @if (expanded() === e.id) {
+                <tr class="aud-details" [id]="'aud-details-' + e.id">
+                  <td colspan="5">
+                    @if (changes(e).length) {
+                      <table class="aud-changes">
+                        <thead>
+                          <tr>
+                            <th scope="col">{{ 'admin.audit.field' | translate }}</th>
+                            <th scope="col">{{ 'admin.audit.before' | translate }}</th>
+                            <th scope="col">{{ 'admin.audit.after' | translate }}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (c of changes(e); track c.field) {
+                            <tr>
+                              <th scope="row"><bdi dir="ltr">{{ c.field }}</bdi></th>
+                              <td><bdi>{{ c.from }}</bdi></td>
+                              <td><bdi>{{ c.to }}</bdi></td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                      <p class="aud-note">{{ 'admin.audit.moneyNote' | translate }}</p>
+                    } @else {
+                      <p class="aud-note">{{ 'admin.audit.noChanges' | translate }}</p>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          }
+        </table>
+        @if (page()!.meta.last_page > 1) {
+          <nav class="aud-pages" [attr.aria-label]="'admin.audit.pages' | translate">
+            <button type="button" class="adm-button is-light is-small" [disabled]="page()!.meta.current_page <= 1" (click)="goTo(page()!.meta.current_page - 1)">{{ 'admin.audit.prev' | translate }}</button>
+            <span>{{ 'admin.audit.pageOf' | translate: { page: page()!.meta.current_page, pages: page()!.meta.last_page } }}</span>
+            <button type="button" class="adm-button is-light is-small" [disabled]="page()!.meta.current_page >= page()!.meta.last_page" (click)="goTo(page()!.meta.current_page + 1)">{{ 'admin.audit.next' | translate }}</button>
+          </nav>
+        }
+      }
+    }
+  }
+</section>

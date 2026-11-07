@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\AdminPermission;
 use App\Enums\InventoryReason;
 use App\Exceptions\InsufficientStockException;
 use App\Exceptions\StockChangedException;
@@ -21,6 +22,11 @@ use InvalidArgumentException;
  */
 class InventoryService
 {
+    public function __construct(
+        private readonly AuditLogger $audit,
+        private readonly AdminNotifier $notifier,
+    ) {}
+
     /**
      * @param  int|null  $expectedStock  the stock the admin saw; when given, the change is refused
      *                                   if the stock is different by the time the row is locked
@@ -46,7 +52,9 @@ class InventoryService
         }
 
         $movement = DB::transaction(function () use ($variant, $change, $reason, $admin, $note, $orderId, $expectedStock) {
-            $current = ProductVariant::withTrashed()->whereKey($variant->getKey())->lockForUpdate()->value('stock_quantity');
+            $row = ProductVariant::withTrashed()->whereKey($variant->getKey())->lockForUpdate()
+                ->first(['id', 'product_id', 'sku', 'stock_quantity', 'low_stock_threshold']);
+            $current = $row->stock_quantity;
 
             if ($expectedStock !== null && $expectedStock !== (int) $current) {
                 throw new StockChangedException($expectedStock, (int) $current);
@@ -64,7 +72,7 @@ class InventoryService
                 throw new InsufficientStockException($variant, requested: -$change, available: (int) $current);
             }
 
-            return InventoryMovement::create([
+            $movement = InventoryMovement::create([
                 'product_variant_id' => $variant->getKey(),
                 'quantity_change' => $change,
                 'stock_after' => (int) $current + $change,
@@ -73,11 +81,56 @@ class InventoryService
                 'admin_user_id' => $admin?->getKey(),
                 'note' => $note,
             ]);
+            $this->auditAndNotify($row, $movement, (int) $current, $admin);
+
+            return $movement;
         });
 
         $variant->setRawAttributes(['stock_quantity' => $movement->stock_after] + $variant->getAttributes(), sync: true);
 
         return $movement;
+    }
+
+    /**
+     * Inside the stock transaction: an audit entry for stock an admin changed by hand (order
+     * reservations and releases are part of the order's own history), and a notification when this
+     * movement takes the product down to its low-stock level or out of stock. The notification is
+     * keyed by the movement, so it is sent once, after the change is committed.
+     */
+    private function auditAndNotify(ProductVariant $row, InventoryMovement $movement, int $before, ?AdminUser $admin): void
+    {
+        $product = $row->product()->withTrashed()->first(['id', 'name_en', 'name_ar']);
+        $reason = $movement->reason;
+
+        if ($admin !== null && (in_array($reason, InventoryReason::manual(), true) || $reason === InventoryReason::InitialStock)) {
+            $action = match (true) {
+                $reason === InventoryReason::StockCountCorrection => 'inventory.stock_counted',
+                $movement->quantity_change > 0 => 'inventory.stock_increased',
+                default => 'inventory.stock_decreased',
+            };
+            $this->audit->record($action, 'product', $row->product_id, $product?->name_en, [
+                'stock' => ['from' => $before, 'to' => $movement->stock_after],
+                'reason' => ['from' => null, 'to' => $reason->value],
+                'movement_id' => ['from' => null, 'to' => $movement->id],
+            ], $admin);
+        }
+
+        $after = $movement->stock_after;
+        $threshold = $row->low_stock_threshold;
+        $type = match (true) {
+            $before > 0 && $after <= 0 => 'inventory.out_of_stock',
+            $threshold !== null && $before > $threshold && $after <= $threshold => 'inventory.low_stock',
+            default => null,
+        };
+        if ($type !== null) {
+            $this->notifier->notify($type, AdminPermission::ManageInventory, [
+                'sku' => $row->sku,
+                'name_en' => $product?->name_en,
+                'name_ar' => $product?->name_ar,
+                'stock' => $after,
+                'threshold' => $threshold,
+            ], '/admin/inventory', "{$type}:movement:{$movement->id}");
+        }
     }
 
     /**

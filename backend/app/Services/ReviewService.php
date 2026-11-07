@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\AdminPermission;
 use App\Enums\OrderStatus;
 use App\Enums\ReviewStatus;
 use App\Models\Order;
@@ -67,6 +68,12 @@ class ReviewService
 
         try {
             $review->save();
+            // Dashboard notification: product and rating only, never the author's details.
+            app(AdminNotifier::class)->notify('reviews.pending', AdminPermission::ManageReviews, [
+                'name_en' => $product->name_en,
+                'name_ar' => $product->name_ar,
+                'rating' => (int) $review->rating,
+            ], null, "reviews.pending:{$review->id}");
         } catch (UniqueConstraintViolationException) {
             throw ValidationException::withMessages(['order_number' => 'A review for this product has already been sent with this order.']);
         }

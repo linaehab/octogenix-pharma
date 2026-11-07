@@ -74,6 +74,8 @@ describe('Admin shipping & store settings', () => {
 
   afterEach(() => {
     language.setLanguage('en');
+    // The header bell asks for the unread count when the dashboard opens.
+    http.match((r) => r.url.endsWith('/api/v1/admin/notifications/unread-count')).forEach((r) => r.cancelled || r.flush({ data: { unread_count: 0 } }));
     http.verify();
   });
 
@@ -292,7 +294,7 @@ describe('Admin shipping & store settings', () => {
       await type('#set-fee', '50.00');
       await submitDialog();
       expect(text('dialog[open] .adm-notice')).toBe('Nothing was changed.');
-      http.expectNone(() => true);
+      http.expectNone((r) => !r.url.endsWith('/notifications/unread-count'));
     });
 
     it('reviews the change, then saves the fee in piastres with the values the admin saw', async () => {

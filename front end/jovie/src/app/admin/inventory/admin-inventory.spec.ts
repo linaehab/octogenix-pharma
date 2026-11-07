@@ -64,6 +64,8 @@ describe('Admin inventory', () => {
 
   afterEach(() => {
     language.setLanguage('en');
+    // The header bell asks for the unread count when the dashboard opens.
+    http.match((r) => r.url.endsWith('/api/v1/admin/notifications/unread-count')).forEach((r) => r.cancelled || r.flush({ data: { unread_count: 0 } }));
     http.verify();
   });
 
@@ -233,7 +235,7 @@ describe('Admin inventory', () => {
       await click('.inv-direction input[value="count"]');
       await type('#inv-quantity', '5');
       expect(text('#inv-quantity-err')).toBe('The stock already matches this count.');
-      expect(http.match(() => true).length).toBe(0);
+      expect(http.match((r) => !r.url.endsWith('/notifications/unread-count')).length).toBe(0);
     });
 
     it('asks for confirmation, then records a new shipment with the stock the admin saw', async () => {
@@ -245,7 +247,7 @@ describe('Admin inventory', () => {
 
       confirmButton(0).click();
       await settle();
-      expect(http.match(() => true).length).toBe(0);
+      expect(http.match((r) => !r.url.endsWith('/notifications/unread-count')).length).toBe(0);
 
       await click('.inv-dialog button[type="submit"]');
       confirmButton(1).click();

@@ -11,6 +11,8 @@ use App\Http\Controllers\Api\V1\Admin\GovernorateController as AdminGovernorateC
 use App\Http\Controllers\Api\V1\Admin\ImageUploadController as AdminImageUploadController;
 use App\Http\Controllers\Api\V1\Admin\InventoryController as AdminInventoryController;
 use App\Http\Controllers\Api\V1\Admin\ReportController as AdminReportController;
+use App\Http\Controllers\Api\V1\Admin\AuditLogController as AdminAuditLogController;
+use App\Http\Controllers\Api\V1\Admin\NotificationController as AdminNotificationController;
 use App\Http\Controllers\Api\V1\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\V1\Admin\PaymentWebhookEventController as AdminPaymentWebhookEventController;
 use App\Http\Controllers\Api\V1\Admin\PasswordResetController as AdminPasswordResetController;
@@ -139,6 +141,18 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             // Overview figures; each block is limited to the admin's permissions inside the service.
             Route::get('/dashboard/summary', [AdminDashboardController::class, 'summary'])
                 ->middleware('throttle:60,1,admin-dashboard')->name('dashboard.summary');
+
+            // The signed-in admin's own notifications (no permission needed: each admin sees only theirs).
+            Route::middleware('throttle:120,1,admin-notifications')->prefix('notifications')->name('notifications.')->group(function () {
+                Route::get('/', [AdminNotificationController::class, 'index'])->name('index');
+                Route::get('/unread-count', [AdminNotificationController::class, 'unreadCount'])->name('unread-count');
+                Route::post('/read-all', [AdminNotificationController::class, 'markAllRead'])->name('read-all');
+                Route::post('/{notification}/read', [AdminNotificationController::class, 'markRead'])->whereNumber('notification')->name('read');
+            });
+
+            // Admin activity history, read-only.
+            Route::get('/audit-logs', [AdminAuditLogController::class, 'index'])
+                ->middleware(['can:admins.manage', 'throttle:60,1,admin-audit'])->name('audit-logs.index');
 
             // Reports (read-only): financial figures need orders.view and payments.manage; the
             // inventory report also needs inventory.manage. Exports are CSV streams.
