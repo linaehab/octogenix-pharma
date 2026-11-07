@@ -116,21 +116,25 @@ class AdminCatalogTest extends TestCase
         $this->postJson($url, ['sku' => 'A-1', 'name_en' => 'a', 'name_ar' => 'ب', 'price_piastres' => 1000, 'compare_at_price_piastres' => 900])
             ->assertUnprocessable()->assertJsonValidationErrors('compare_at_price_piastres');
 
-        $first = $this->postJson($url, ['sku' => 'A-1', 'name_en' => '400 g', 'name_ar' => '400 جم'])->assertCreated()->json('data.id');
-        $second = $this->postJson($url, ['sku' => 'A-2', 'name_en' => '800 g', 'name_ar' => '800 جم', 'is_default' => true])
-            ->assertCreated()->json('data.id');
+        $first = $this->postJson($url, ['sku' => 'A-1', 'name_en' => '400 g', 'name_ar' => '400 جم'])
+            ->assertCreated()->assertJsonPath('data.is_default', true)->json('data.id');
 
-        $this->assertFalse(ProductVariant::find($first)->is_default);
-        $this->assertTrue(ProductVariant::find($second)->is_default);
+        // Business rule: one size per product. A second one is refused and nothing is created.
+        $this->postJson($url, ['sku' => 'A-2', 'name_en' => '800 g', 'name_ar' => '800 جم', 'is_default' => true])
+            ->assertUnprocessable()->assertJsonValidationErrors('variant');
+        $this->assertSame([$first], $product->variants()->pluck('id')->all());
+        $this->assertDatabaseMissing('product_variants', ['sku' => 'A-2']);
 
         $this->patchJson("/api/v1/admin/product-variants/{$first}", ['stock_quantity' => 999])
             ->assertUnprocessable()->assertJsonValidationErrors('stock_quantity');
-        $this->patchJson("/api/v1/admin/product-variants/{$second}", ['is_default' => false])
+        $this->patchJson("/api/v1/admin/product-variants/{$first}", ['is_default' => false])
             ->assertUnprocessable()->assertJsonValidationErrors('is_default');
 
-        $this->deleteJson("/api/v1/admin/product-variants/{$second}")->assertNoContent();
-        $this->assertTrue(ProductVariant::find($first)->is_default, 'The remaining variant becomes the default.');
-        $this->assertSoftDeleted('product_variants', ['id' => $second]);
+        // A removed size (soft-deleted, kept for order history) no longer counts: a new one may be added.
+        $this->deleteJson("/api/v1/admin/product-variants/{$first}")->assertNoContent();
+        $this->assertSoftDeleted('product_variants', ['id' => $first]);
+        $this->postJson($url, ['sku' => 'A-3', 'name_en' => '800 g', 'name_ar' => '800 جم'])
+            ->assertCreated()->assertJsonPath('data.is_default', true);
     }
 
     public function test_an_active_product_keeps_an_active_variant_and_an_image(): void

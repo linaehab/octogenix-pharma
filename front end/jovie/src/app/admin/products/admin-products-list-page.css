@@ -1,0 +1,215 @@
+.prd-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.prd-field {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 10rem;
+}
+
+.prd-search {
+  flex: 1 1 18rem;
+}
+
+.prd-field label {
+  font-weight: 700;
+}
+
+.prd-search-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.prd-field input,
+.prd-field select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(32, 51, 102, 0.35);
+  border-radius: 10px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+
+.prd-clear {
+  min-height: 44px;
+}
+
+.prd-notice {
+  margin-bottom: 1.5rem;
+}
+
+.prd-results {
+  margin-bottom: 1rem;
+}
+
+.prd-table-wrap {
+  overflow-x: auto;
+}
+
+.prd-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.prd-table th,
+.prd-table td {
+  padding: 0.7rem 0.6rem;
+  border-bottom: 1px solid rgba(32, 51, 102, 0.1);
+  text-align: start;
+  vertical-align: middle;
+}
+
+.prd-table th {
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.prd-table tr.is-busy {
+  opacity: 0.55;
+}
+
+.prd-img img,
+.prd-noimg {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  border-radius: 10px;
+  background: #f3f6fb;
+  object-fit: contain;
+}
+
+.prd-name strong,
+.prd-other {
+  display: block;
+}
+
+.prd-other,
+.prd-date,
+.prd-was {
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+}
+
+.prd-price {
+  display: block;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.prd-low {
+  color: #a3123d;
+  font-weight: 700;
+}
+
+.prd-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.prd-badge {
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: #eef1f7;
+  color: var(--adm-muted);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.prd-badge.is-on {
+  background: #e3f4ee;
+  color: #0b5a46;
+}
+
+.prd-badge.is-archived {
+  background: #fdecf1;
+  color: #8f0f35;
+}
+
+.prd-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.adm-button.is-small {
+  min-height: 36px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.9rem;
+}
+
+.prd-archive {
+  min-height: 36px;
+  color: #a3123d;
+}
+
+.prd-pages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+/* When the list is narrower than the full table (phones, tablets, narrow desktop windows), each
+   product becomes a card with labelled values. Based on the panel's width, not the window's. */
+.prd-table-panel {
+  container-type: inline-size;
+}
+
+@container (max-width: 880px) {
+  .prd-table thead {
+    display: none;
+  }
+
+  .prd-table,
+  .prd-table tbody,
+  .prd-table tr,
+  .prd-table td {
+    display: block;
+  }
+
+  .prd-table tr {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 0.25rem 0.85rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid rgba(32, 51, 102, 0.12);
+  }
+
+  .prd-table td {
+    grid-column: 2;
+    padding: 0;
+    border: 0;
+  }
+
+  .prd-table td.prd-img {
+    grid-row: 1 / span 3;
+    grid-column: 1;
+  }
+
+  .prd-table td[data-label]:not(.prd-name)::before {
+    content: attr(data-label) ': ';
+    color: var(--adm-muted);
+    font-size: 0.85rem;
+  }
+
+  .prd-price {
+    display: inline;
+  }
+
+  .prd-table td.prd-actions {
+    display: flex;
+    margin-top: 0.4rem;
+  }
+}

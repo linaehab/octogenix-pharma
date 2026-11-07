@@ -170,6 +170,9 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
             Route::middleware('can:catalog.manage')->group(function () {
                 Route::apiResource('products', AdminProductController::class);
+                // Archived (soft-deleted) products come back hidden; the binding must include them.
+                Route::post('/products/{product}/restore', [AdminProductController::class, 'restore'])
+                    ->withTrashed()->name('products.restore');
                 Route::post('/products/{product}/variants', [AdminProductVariantController::class, 'store'])
                     ->name('products.variants.store');
                 Route::patch('/product-variants/{variant}', [AdminProductVariantController::class, 'update'])

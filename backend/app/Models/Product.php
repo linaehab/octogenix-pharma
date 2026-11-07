@@ -81,6 +81,12 @@ class Product extends Model
     }
 
     /** @return HasMany<ProductReview, $this> */
+    /** Order lines that sold this product (kept forever; the product is archived, never deleted). */
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
     public function reviews(): HasMany
     {
         return $this->hasMany(ProductReview::class);

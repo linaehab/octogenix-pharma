@@ -1,0 +1,145 @@
+<div class="adm-page-head">
+  <div>
+    <h1>{{ 'admin.nav.products' | translate }}</h1>
+    <p>{{ 'admin.products.lead' | translate }}</p>
+  </div>
+  <a class="adm-button" routerLink="/admin/products/new">{{ 'admin.products.add' | translate }}</a>
+</div>
+
+<form class="adm-panel prd-filters" role="search" (submit)="$event.preventDefault(); search(searchBox.value)">
+  <div class="prd-field prd-search">
+    <label for="prd-search">{{ 'admin.products.search' | translate }}</label>
+    <div class="prd-search-row">
+      <input #searchBox id="prd-search" type="search" name="search" [value]="query().search" maxlength="100"
+        [placeholder]="'admin.products.searchHint' | translate" />
+      <button type="submit" class="adm-button is-light">{{ 'admin.products.searchButton' | translate }}</button>
+    </div>
+  </div>
+  <div class="prd-field">
+    <label for="prd-status">{{ 'admin.products.status' | translate }}</label>
+    <select #status id="prd-status" name="status" (change)="setStatus(status.value)">
+      <option value="" [selected]="query().status === ''">{{ 'admin.products.statusAll' | translate }}</option>
+      <option value="active" [selected]="query().status === 'active'">{{ 'admin.products.statusActive' | translate }}</option>
+      <option value="inactive" [selected]="query().status === 'inactive'">{{ 'admin.products.statusInactive' | translate }}</option>
+      <option value="archived" [selected]="query().status === 'archived'">{{ 'admin.products.statusArchived' | translate }}</option>
+    </select>
+  </div>
+  <div class="prd-field">
+    <label for="prd-featured">{{ 'admin.products.featured' | translate }}</label>
+    <select #featured id="prd-featured" name="featured" (change)="setFeatured(featured.value)">
+      <option value="" [selected]="query().featured === ''">{{ 'admin.products.featuredAll' | translate }}</option>
+      <option value="1" [selected]="query().featured === '1'">{{ 'admin.products.featuredYes' | translate }}</option>
+      <option value="0" [selected]="query().featured === '0'">{{ 'admin.products.featuredNo' | translate }}</option>
+    </select>
+  </div>
+  @if (filtered()) {
+    <button type="button" class="adm-link prd-clear" (click)="clearFilters(searchBox)">{{ 'admin.products.clear' | translate }}</button>
+  }
+</form>
+
+@if (notice(); as n) {
+  <p class="adm-notice prd-notice" [class.is-success]="n.kind === 'success'" [class.is-error]="n.kind === 'error'"
+    [attr.role]="n.kind === 'error' ? 'alert' : 'status'">{{ n.text }}</p>
+}
+
+<section class="adm-panel prd-table-panel" aria-labelledby="prd-results" [attr.aria-busy]="loading()">
+  <h2 id="prd-results" class="prd-results">
+    @if (meta(); as m) {
+      {{ 'admin.products.total' | translate: { count: count(m.total) } }}
+    } @else {
+      {{ 'admin.nav.products' | translate }}
+    }
+  </h2>
+
+  @if (loading() && !products().length) {
+    <app-admin-state kind="loading" />
+  } @else if (error()) {
+    <app-admin-state kind="error" (retry)="load()" />
+  } @else if (!products().length) {
+    <app-admin-state kind="empty" [message]="filtered() ? 'admin.products.noMatch' : 'admin.products.none'" />
+  } @else {
+    <div class="prd-table-wrap">
+      <table class="prd-table">
+        <thead>
+          <tr>
+            <th scope="col"><span class="adm-visually-hidden">{{ 'admin.products.image' | translate }}</span></th>
+            <th scope="col">{{ 'admin.products.name' | translate }}</th>
+            <th scope="col">{{ 'admin.products.sku' | translate }}</th>
+            <th scope="col">{{ 'admin.products.price' | translate }}</th>
+            <th scope="col">{{ 'admin.products.stock' | translate }}</th>
+            <th scope="col">{{ 'admin.products.status' | translate }}</th>
+            <th scope="col">{{ 'admin.products.featured' | translate }}</th>
+            <th scope="col">{{ 'admin.products.updated' | translate }}</th>
+            <th scope="col">{{ 'admin.products.actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of products(); track p.id) {
+            @let v = size(p);
+            @let img = image(p);
+            <tr [class.is-busy]="busyId() === p.id">
+              <td class="prd-img">
+                @if (img?.url) {
+                  <img [src]="img!.url" alt="" width="56" height="56" loading="lazy" />
+                } @else {
+                  <span class="prd-noimg" [attr.aria-label]="'admin.products.noImage' | translate">—</span>
+                }
+              </td>
+              <td class="prd-name" [attr.data-label]="'admin.products.name' | translate">
+                <strong>{{ name(p) }}</strong>
+                <span class="prd-other" [attr.lang]="language.currentLanguage() === 'ar' ? 'en' : 'ar'">{{ otherName(p) }}</span>
+              </td>
+              <td [attr.data-label]="'admin.products.sku' | translate" class="prd-sku"><bdi dir="ltr">{{ v?.sku ?? '—' }}</bdi></td>
+              <td [attr.data-label]="'admin.products.price' | translate">
+                <span class="prd-price">{{ money(v?.price_piastres) }}</span>
+                @if (v?.compare_at_price_piastres) {
+                  <s class="prd-was" [attr.aria-label]="'admin.products.compareAtLabel' | translate: { price: money(v!.compare_at_price_piastres) }">{{ money(v!.compare_at_price_piastres) }}</s>
+                }
+              </td>
+              <td [attr.data-label]="'admin.products.stock' | translate">
+                <span [class.prd-low]="v?.is_low_on_stock || v?.stock_quantity === 0">{{ v ? count(v.stock_quantity) : '—' }}</span>
+              </td>
+              <td [attr.data-label]="'admin.products.status' | translate">
+                <span class="prd-badges">
+                  @if (p.archived_at) {
+                    <span class="prd-badge is-archived">{{ 'admin.products.badgeArchived' | translate }}</span>
+                  } @else {
+                    <span class="prd-badge" [class.is-on]="p.is_active">{{ (p.is_active ? 'admin.products.badgeActive' : 'admin.products.badgeHidden') | translate }}</span>
+                    <span class="prd-badge" [class.is-on]="p.is_purchasable">{{ (p.is_purchasable ? 'admin.products.badgeSellable' : 'admin.products.badgeNotSellable') | translate }}</span>
+                  }
+                </span>
+              </td>
+              <td [attr.data-label]="'admin.products.featured' | translate">{{ (p.is_featured ? 'admin.products.yes' : 'admin.products.no') | translate }}</td>
+              <td [attr.data-label]="'admin.products.updated' | translate" class="prd-date">{{ date(p.updated_at) }}</td>
+              <td class="prd-actions">
+                @if (p.archived_at) {
+                  <button type="button" class="adm-button is-light is-small" [disabled]="busyId() !== null" (click)="restore(p)">{{ 'admin.products.restore' | translate }}</button>
+                } @else {
+                  <a class="adm-button is-small" [routerLink]="['/admin/products', p.id]" [attr.aria-label]="'admin.products.editNamed' | translate: { name: name(p) }">{{ 'admin.products.edit' | translate }}</a>
+                  @if (p.is_active) {
+                    <button type="button" class="adm-button is-light is-small" [disabled]="busyId() !== null" (click)="hide(p)">{{ 'admin.products.hide' | translate }}</button>
+                  } @else {
+                    <button type="button" class="adm-button is-light is-small" [disabled]="busyId() !== null" (click)="show(p)">{{ 'admin.products.show' | translate }}</button>
+                  }
+                  <button type="button" class="adm-link prd-archive" [disabled]="busyId() !== null" (click)="archive(p)">{{ 'admin.products.archive' | translate }}</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (meta(); as m) {
+      @if (m.last_page > 1) {
+        <nav class="prd-pages" [attr.aria-label]="'admin.products.pages' | translate">
+          <button type="button" class="adm-button is-light is-small" [disabled]="m.current_page <= 1 || loading()" (click)="goTo(m.current_page - 1)">{{ 'admin.products.prev' | translate }}</button>
+          <span>{{ 'admin.products.pageOf' | translate: { page: count(m.current_page), pages: count(m.last_page) } }}</span>
+          <button type="button" class="adm-button is-light is-small" [disabled]="m.current_page >= m.last_page || loading()" (click)="goTo(m.current_page + 1)">{{ 'admin.products.next' | translate }}</button>
+        </nav>
+      }
+    }
+  }
+</section>
+
+<app-admin-confirm-dialog />

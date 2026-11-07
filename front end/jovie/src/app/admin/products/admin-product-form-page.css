@@ -1,0 +1,139 @@
+.prf-back {
+  margin: 0 0 1rem;
+}
+
+.prf-back a {
+  color: var(--adm-navy);
+  font-weight: 700;
+}
+
+.prf-unsaved {
+  margin: 0;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  background: #fff7e0;
+  color: #7a5200;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.prf-notice {
+  margin-bottom: 1.5rem;
+}
+
+.prf-notice p,
+.prf-notice ul {
+  margin: 0;
+}
+
+.prf-notice ul {
+  margin-top: 0.4rem;
+  padding-inline-start: 1.2rem;
+}
+
+.prf-pair,
+.prf-trio {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 0 1.25rem;
+}
+
+.prf-trio {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+}
+
+.prf-field {
+  display: grid;
+  align-content: start;
+  gap: 0.3rem;
+}
+
+.prf-narrow {
+  max-width: 16rem;
+}
+
+.prf-field label {
+  font-weight: 700;
+}
+
+.prf-req {
+  color: #a3123d;
+}
+
+.prf-field input,
+.prf-field textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(32, 51, 102, 0.35);
+  border-radius: 10px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+
+.prf-field textarea {
+  resize: vertical;
+}
+
+.prf-field [aria-invalid='true'] {
+  border-color: #a3123d;
+  box-shadow: 0 0 0 1px #a3123d;
+}
+
+.prf-help {
+  margin: 0;
+  color: var(--adm-muted);
+  font-size: 0.88rem;
+}
+
+.prf-error {
+  min-height: 1.2rem;
+  margin: 0 0 0.6rem;
+  color: #a3123d;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.prf-stock-value {
+  margin: 0 0 0.3rem;
+  color: var(--adm-navy);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.prf-switch {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(32, 51, 102, 0.1);
+  cursor: pointer;
+}
+
+.prf-switch input {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin-top: 0.1rem;
+  accent-color: var(--adm-navy);
+}
+
+.prf-switch small {
+  display: block;
+  color: var(--adm-muted);
+  font-size: 0.88rem;
+}
+
+.prf-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 0.85rem 0;
+  background: linear-gradient(to top, #f3f5f9 75%, rgba(243, 245, 249, 0));
+}

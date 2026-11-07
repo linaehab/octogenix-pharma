@@ -4,6 +4,12 @@ import { AdminLayout } from './admin-layout';
 import { AdminShell } from './admin-shell';
 import { ADMIN_SECTIONS } from './admin-sections';
 import { adminCanActivate, adminGuestOnly, adminOnly } from './admin.guards';
+import { AdminAccess } from './admin-permissions';
+import { AdminSectionKey } from './admin-sections';
+import { unsavedChanges } from './unsaved-changes.guard';
+
+/** The access rule of a section, from the list the sidebar is built from. */
+const sectionAccess = (key: AdminSectionKey): AdminAccess => ADMIN_SECTIONS.find((s) => s.key === key)!.access;
 
 /** Titles before the translations load (the translated ones are 'title.admin/<path>'). */
 const TITLES: Record<string, string> = {
@@ -41,6 +47,30 @@ export const adminRoutes: Routes = [
             pathMatch: 'full',
             loadComponent: () => import('./pages/admin-overview-page').then((m) => m.AdminOverviewPage),
             title: 'Dashboard | Octogenix',
+          },
+          {
+            path: 'products',
+            canActivate: [adminCanActivate(sectionAccess('products'))],
+            children: [
+              {
+                path: '',
+                pathMatch: 'full',
+                loadComponent: () => import('./products/admin-products-list-page').then((m) => m.AdminProductsListPage),
+                title: 'Products | Octogenix admin',
+              },
+              {
+                path: 'new',
+                canDeactivate: [unsavedChanges],
+                loadComponent: () => import('./products/admin-product-form-page').then((m) => m.AdminProductFormPage),
+                title: 'New product | Octogenix admin',
+              },
+              {
+                path: ':id',
+                canDeactivate: [unsavedChanges],
+                loadComponent: () => import('./products/admin-product-form-page').then((m) => m.AdminProductFormPage),
+                title: 'Edit product | Octogenix admin',
+              },
+            ],
           },
           // Sections of later phases: a plain "not built yet" page, behind the same permissions.
           ...ADMIN_SECTIONS.filter((section) => section.planned).map((section) => ({

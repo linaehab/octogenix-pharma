@@ -18,6 +18,72 @@ class CatalogService
 {
     public function __construct(private readonly InventoryService $inventory) {}
 
+    /**
+     * A product and its single size (default variant) in one transaction: either both are saved or
+     * neither. New products start hidden; opening stock goes through the inventory service.
+     *
+     * @param  array<string, mixed>  $productData  validated product fields
+     * @param  array<string, mixed>|null  $variantData  validated size fields, optionally with initial_stock
+     */
+    public function createProduct(array $productData, ?array $variantData, ?AdminUser $admin): Product
+    {
+        return DB::transaction(function () use ($productData, $variantData, $admin) {
+            $product = Product::create($productData);
+            if ($variantData !== null) {
+                $this->createVariant($product, $variantData, $admin);
+            }
+
+            return $product;
+        });
+    }
+
+    /**
+     * Product fields and the fields of its single size together. Only the default variant is ever
+     * edited here, so a request cannot reach another product's variant.
+     *
+     * @param  array<string, mixed>  $productData
+     * @param  array<string, mixed>|null  $variantData
+     */
+    public function updateProduct(Product $product, array $productData, ?array $variantData): Product
+    {
+        return DB::transaction(function () use ($product, $productData, $variantData) {
+            Product::query()->whereKey($product->id)->lockForUpdate()->first();
+
+            if ($variantData !== null && $variantData !== []) {
+                $variant = $product->variants()->where('is_default', true)->first();
+                if ($variant === null) {
+                    throw ValidationException::withMessages(['variant' => 'This product has no size yet.']);
+                }
+                $variant->update($variantData);
+                $product->touch();
+            }
+            $product->update($productData);
+
+            return $product;
+        });
+    }
+
+    /**
+     * Archive (soft delete): hidden from the store and the dashboard list, never removed. Order
+     * lines keep pointing at the product and its SKU. It is hidden first, so restoring it never
+     * puts it back on sale by surprise.
+     */
+    public function archiveProduct(Product $product): void
+    {
+        DB::transaction(function () use ($product) {
+            $product->update(['is_active' => false, 'is_purchasable' => false, 'is_featured' => false]);
+            $product->delete();
+        });
+    }
+
+    /** Back from the archive, still hidden: the admin reviews it before showing it again. */
+    public function restoreProduct(Product $product): Product
+    {
+        $product->restore();
+
+        return $product;
+    }
+
     /** @param array<string, mixed> $data validated variant fields, optionally with initial_stock */
     public function createVariant(Product $product, array $data, ?AdminUser $admin): ProductVariant
     {
@@ -26,7 +92,15 @@ class CatalogService
 
         return DB::transaction(function () use ($product, $data, $initialStock, $admin) {
             Product::query()->whereKey($product->id)->lockForUpdate()->first();
-            $isFirst = ! $product->variants()->exists();
+
+            // Business rule: every product has exactly one size. A removed (soft-deleted) size does
+            // not count, so a product whose only size was removed can be given a new one.
+            if ($product->variants()->exists()) {
+                throw ValidationException::withMessages([
+                    'variant' => 'Each product has a single size. Edit its existing size instead of adding another.',
+                ]);
+            }
+            $isFirst = true;
 
             if ($isFirst || ! empty($data['is_default'])) {
                 $product->variants()->update(['is_default' => false]);

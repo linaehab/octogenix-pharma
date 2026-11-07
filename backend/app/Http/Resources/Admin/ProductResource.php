@@ -27,6 +27,9 @@ class ProductResource extends JsonResource
             ]),
             'variants' => ProductVariantResource::collection($this->whenLoaded('variants')),
             'images' => ProductImageResource::collection($this->whenLoaded('images')),
+            // Order lines referring to this product (why it is archived rather than deleted).
+            'order_items_count' => $this->whenCounted('orderItems'),
+            'archived_at' => $this->deleted_at?->toIso8601String(),
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];

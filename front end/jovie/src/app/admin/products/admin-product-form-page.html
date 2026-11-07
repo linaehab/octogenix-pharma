@@ -1,0 +1,262 @@
+<p class="prf-back"><a routerLink="/admin/products">{{ 'admin.products.back' | translate }}</a></p>
+
+@switch (loadState()) {
+  @case ('loading') {
+    <app-admin-state kind="loading" />
+  }
+  @case ('error') {
+    <app-admin-state kind="error" (retry)="load()" />
+  }
+  @case ('notFound') {
+    <app-admin-state kind="empty" message="admin.products.notFound" />
+  }
+  @default {
+    <div class="adm-page-head">
+      <div>
+        <h1>{{ (isNew() ? 'admin.products.newTitle' : 'admin.products.editTitle') | translate }}</h1>
+        @if (product(); as p) {
+          <p>{{ language.currentLanguage() === 'ar' ? p.name_ar : p.name_en }}</p>
+        }
+      </div>
+      @if (dirty()) {
+        <p class="prf-unsaved" role="status">{{ 'admin.products.unsaved' | translate }}</p>
+      }
+    </div>
+
+    @if (notice(); as n) {
+      <div class="adm-notice prf-notice" [class.is-success]="n.kind === 'success'" [class.is-error]="n.kind === 'error'"
+        [attr.role]="n.kind === 'error' ? 'alert' : 'status'">
+        <p>{{ n.text }}</p>
+        @if (n.details?.length) {
+          <ul>
+            @for (d of n.details; track $index) {
+              <li>{{ d }}</li>
+            }
+          </ul>
+        }
+      </div>
+    }
+
+    <form class="prf" [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <!-- Information -->
+      <section class="adm-panel" aria-labelledby="prf-info">
+        <h2 id="prf-info">{{ 'admin.products.secInfo' | translate }}</h2>
+        <div class="prf-pair">
+          <div class="prf-field">
+            <label for="prf-name-en">{{ 'admin.products.nameEn' | translate }} <span class="prf-req">*</span></label>
+            <input id="prf-name-en" formControlName="name_en" dir="ltr" lang="en" maxlength="200" [attr.aria-invalid]="!!problem('name_en')" aria-describedby="prf-name-en-err" />
+            <p class="prf-error" id="prf-name-en-err">{{ problem('name_en') }}</p>
+          </div>
+          <div class="prf-field">
+            <label for="prf-name-ar">{{ 'admin.products.nameAr' | translate }} <span class="prf-req">*</span></label>
+            <input id="prf-name-ar" formControlName="name_ar" dir="rtl" lang="ar" maxlength="200" [attr.aria-invalid]="!!problem('name_ar')" aria-describedby="prf-name-ar-err" />
+            <p class="prf-error" id="prf-name-ar-err">{{ problem('name_ar') }}</p>
+          </div>
+        </div>
+        <div class="prf-field">
+          <label for="prf-slug">{{ 'admin.products.slug' | translate }} <span class="prf-req">*</span></label>
+          <input id="prf-slug" formControlName="slug" dir="ltr" maxlength="160" (input)="slugEdited()" [attr.aria-invalid]="!!problem('slug')" aria-describedby="prf-slug-help prf-slug-err" />
+          <p class="prf-help" id="prf-slug-help">{{ 'admin.products.slugHelp' | translate: { slug: form.controls.slug.value || '…' } }}</p>
+          <p class="prf-error" id="prf-slug-err">{{ problem('slug') }}</p>
+        </div>
+        <div class="prf-pair">
+          <div class="prf-field">
+            <label for="prf-sub-en">{{ 'admin.products.subtitleEn' | translate }}</label>
+            <input id="prf-sub-en" formControlName="subtitle_en" dir="ltr" lang="en" maxlength="255" [attr.aria-invalid]="!!problem('subtitle_en')" />
+            <p class="prf-error">{{ problem('subtitle_en') }}</p>
+          </div>
+          <div class="prf-field">
+            <label for="prf-sub-ar">{{ 'admin.products.subtitleAr' | translate }}</label>
+            <input id="prf-sub-ar" formControlName="subtitle_ar" dir="rtl" lang="ar" maxlength="255" [attr.aria-invalid]="!!problem('subtitle_ar')" />
+            <p class="prf-error">{{ problem('subtitle_ar') }}</p>
+          </div>
+        </div>
+        <p class="prf-help">{{ 'admin.products.shortHelp' | translate }}</p>
+        <div class="prf-pair">
+          <div class="prf-field">
+            <label for="prf-short-en">{{ 'admin.products.shortEn' | translate }}</label>
+            <textarea id="prf-short-en" formControlName="short_description_en" dir="ltr" lang="en" rows="3" maxlength="500" [attr.aria-invalid]="!!problem('short_description_en')"></textarea>
+            <p class="prf-error">{{ problem('short_description_en') }}</p>
+          </div>
+          <div class="prf-field">
+            <label for="prf-short-ar">{{ 'admin.products.shortAr' | translate }}</label>
+            <textarea id="prf-short-ar" formControlName="short_description_ar" dir="rtl" lang="ar" rows="3" maxlength="500" [attr.aria-invalid]="!!problem('short_description_ar')"></textarea>
+            <p class="prf-error">{{ problem('short_description_ar') }}</p>
+          </div>
+        </div>
+        <p class="prf-help">{{ 'admin.products.descHelp' | translate }}</p>
+        <div class="prf-pair">
+          <div class="prf-field">
+            <label for="prf-desc-en">{{ 'admin.products.descEn' | translate }}</label>
+            <textarea id="prf-desc-en" formControlName="description_en" dir="ltr" lang="en" rows="6" maxlength="5000" [attr.aria-invalid]="!!problem('description_en')"></textarea>
+            <p class="prf-error">{{ problem('description_en') }}</p>
+          </div>
+          <div class="prf-field">
+            <label for="prf-desc-ar">{{ 'admin.products.descAr' | translate }}</label>
+            <textarea id="prf-desc-ar" formControlName="description_ar" dir="rtl" lang="ar" rows="6" maxlength="5000" [attr.aria-invalid]="!!problem('description_ar')"></textarea>
+            <p class="prf-error">{{ problem('description_ar') }}</p>
+          </div>
+        </div>
+        <div class="prf-trio">
+          <div class="prf-field">
+            <label for="prf-stage">{{ 'admin.products.stage' | translate }}</label>
+            <input id="prf-stage" formControlName="stage" inputmode="numeric" dir="ltr" [attr.aria-invalid]="!!problem('stage')" aria-describedby="prf-stage-help" />
+            <p class="prf-help" id="prf-stage-help">{{ 'admin.products.stageHelp' | translate }}</p>
+            <p class="prf-error">{{ problem('stage') }}</p>
+          </div>
+          <div class="prf-field">
+            <label for="prf-age-from">{{ 'admin.products.ageFrom' | translate }}</label>
+            <input id="prf-age-from" formControlName="age_from" inputmode="numeric" dir="ltr" [attr.aria-invalid]="!!problem('age_from')" />
+            <p class="prf-error">{{ problem('age_from') }}</p>
+          </div>
+          <div class="prf-field">
+            <label for="prf-age-to">{{ 'admin.products.ageTo' | translate }}</label>
+            <input id="prf-age-to" formControlName="age_to" inputmode="numeric" dir="ltr" [attr.aria-invalid]="!!(problem('age_to') || ageProblem())" />
+            <p class="prf-error">{{ problem('age_to') || ageProblem() }}</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Size, SKU and price -->
+      <section class="adm-panel" aria-labelledby="prf-price">
+        <h2 id="prf-price">{{ 'admin.products.secPrice' | translate }}</h2>
+        <p class="adm-panel-lead">{{ 'admin.products.secPriceLead' | translate }}</p>
+        <div class="prf-trio">
+          <div class="prf-field">
+            <label for="prf-sku">{{ 'admin.products.sku' | translate }} <span class="prf-req">*</span></label>
+            <input id="prf-sku" formControlName="sku" dir="ltr" maxlength="64" autocapitalize="characters" [attr.aria-invalid]="!!problem('sku')" />
+            <p class="prf-error">{{ problem('sku') }}</p>
+          </div>
+          <div class="prf-field">
+            <label for="prf-size-en">{{ 'admin.products.sizeEn' | translate }} <span class="prf-req">*</span></label>
+            <input id="prf-size-en" formControlName="size_en" dir="ltr" lang="en" maxlength="100" placeholder="400 g" [attr.aria-invalid]="!!problem('size_en')" />
+            <p class="prf-error">{{ problem('size_en') }}</p>
+          </div>
+          <div class="prf-field">
+            <label for="prf-size-ar">{{ 'admin.products.sizeAr' | translate }} <span class="prf-req">*</span></label>
+            <input id="prf-size-ar" formControlName="size_ar" dir="rtl" lang="ar" maxlength="100" placeholder="400 جم" [attr.aria-invalid]="!!problem('size_ar')" />
+            <p class="prf-error">{{ problem('size_ar') }}</p>
+          </div>
+        </div>
+        <div class="prf-trio">
+          <div class="prf-field">
+            <label for="prf-price-input">{{ 'admin.products.priceEgp' | translate }}</label>
+            <input id="prf-price-input" formControlName="price" inputmode="decimal" dir="ltr" placeholder="0.00" [attr.aria-invalid]="!!problem('price')" aria-describedby="prf-price-help" />
+            <p class="prf-help" id="prf-price-help">{{ pricePreview() ?? ('admin.products.priceHelp' | translate) }}</p>
+            <p class="prf-error">{{ problem('price') }}</p>
+          </div>
+          <div class="prf-field">
+            <label for="prf-compare">{{ 'admin.products.compareAt' | translate }}</label>
+            <input id="prf-compare" formControlName="compare_at" inputmode="decimal" dir="ltr" placeholder="0.00" [attr.aria-invalid]="!!(problem('compare_at') || compareProblem())" aria-describedby="prf-compare-help" />
+            <p class="prf-help" id="prf-compare-help">{{ comparePreview() ?? ('admin.products.compareHelp' | translate) }}</p>
+            <p class="prf-error">{{ problem('compare_at') || compareProblem() }}</p>
+          </div>
+          <div class="prf-field">
+            <label for="prf-weight">{{ 'admin.products.netWeight' | translate }}</label>
+            <input id="prf-weight" formControlName="net_weight" inputmode="numeric" dir="ltr" [attr.aria-invalid]="!!problem('net_weight')" />
+            <p class="prf-error">{{ problem('net_weight') }}</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stock (read-only) -->
+      <section class="adm-panel" aria-labelledby="prf-stock">
+        <h2 id="prf-stock">{{ 'admin.products.secStock' | translate }}</h2>
+        @if (!isNew()) {
+          <p class="prf-stock-value">{{ 'admin.products.currentStock' | translate: { count: count(stock() ?? 0) } }}</p>
+          <p class="prf-help">{{ 'admin.products.stockReadOnly' | translate }}</p>
+        } @else if (canSetStock()) {
+          <div class="prf-field prf-narrow">
+            <label for="prf-initial">{{ 'admin.products.initialStock' | translate }}</label>
+            <input id="prf-initial" formControlName="initial_stock" inputmode="numeric" dir="ltr" [attr.aria-invalid]="!!problem('initial_stock')" aria-describedby="prf-initial-help" />
+            <p class="prf-help" id="prf-initial-help">{{ 'admin.products.initialStockHelp' | translate }}</p>
+            <p class="prf-error">{{ problem('initial_stock') }}</p>
+          </div>
+        } @else {
+          <p class="prf-help">{{ 'admin.products.initialStockNoPermission' | translate }}</p>
+        }
+      </section>
+
+      <!-- Images -->
+      <section class="adm-panel" aria-labelledby="prf-images">
+        <h2 id="prf-images">{{ 'admin.products.secImages' | translate }}</h2>
+        <p class="adm-panel-lead">{{ 'admin.products.imagesLead' | translate }}</p>
+        @if (images().length) {
+          <ol class="prf-images">
+            @for (image of images(); track image.key; let i = $index, first = $first, last = $last) {
+              <li [class.is-primary]="primaryKey() === image.key">
+                <img [src]="image.url" [alt]="'admin.products.imageAlt' | translate: { n: i + 1 }" width="160" height="160" />
+                <p class="prf-image-tags">
+                  @if (primaryKey() === image.key) {
+                    <span class="prf-tag is-main">{{ 'admin.products.mainImage' | translate }}</span>
+                  }
+                  @if (!image.id) {
+                    <span class="prf-tag">{{ 'admin.products.notUploaded' | translate }}</span>
+                  }
+                </p>
+                <div class="prf-image-actions">
+                  @if (primaryKey() !== image.key) {
+                    <button type="button" class="adm-link" (click)="makePrimary(image)">{{ 'admin.products.makeMain' | translate }}</button>
+                  }
+                  <button type="button" class="prf-icon" [disabled]="first" (click)="move(i, -1)" [attr.aria-label]="'admin.products.moveEarlier' | translate: { n: i + 1 }">↑</button>
+                  <button type="button" class="prf-icon" [disabled]="last" (click)="move(i, 1)" [attr.aria-label]="'admin.products.moveLater' | translate: { n: i + 1 }">↓</button>
+                  <button type="button" class="adm-link prf-remove" (click)="remove(image)" [attr.aria-label]="'admin.products.removeImageN' | translate: { n: i + 1 }">{{ 'admin.products.removeImage' | translate }}</button>
+                </div>
+              </li>
+            }
+          </ol>
+        } @else {
+          <p class="prf-help">{{ 'admin.products.noImages' | translate }}</p>
+        }
+        <label class="adm-button is-light prf-upload">
+          {{ 'admin.products.addImages' | translate }}
+          <input #files type="file" multiple [accept]="imageTypes" (change)="addFiles(files)" />
+        </label>
+        <p class="prf-help">{{ 'admin.products.imageRules' | translate }}</p>
+        @if (fileErrors().length) {
+          <ul class="prf-file-errors" role="alert">
+            @for (e of fileErrors(); track $index) {
+              <li>{{ e }}</li>
+            }
+          </ul>
+        }
+      </section>
+
+      <!-- Visibility -->
+      <section class="adm-panel" aria-labelledby="prf-visibility">
+        <h2 id="prf-visibility">{{ 'admin.products.secVisibility' | translate }}</h2>
+        <label class="prf-switch">
+          <input type="checkbox" formControlName="is_active" aria-describedby="prf-active-help" />
+          <span><strong>{{ 'admin.products.active' | translate }}</strong>
+            <small id="prf-active-help">{{ 'admin.products.activeHelp' | translate }}</small></span>
+        </label>
+        <label class="prf-switch">
+          <input type="checkbox" formControlName="is_purchasable" aria-describedby="prf-sell-help" />
+          <span><strong>{{ 'admin.products.purchasable' | translate }}</strong>
+            <small id="prf-sell-help">{{ 'admin.products.purchasableHelp' | translate }}</small></span>
+        </label>
+        <label class="prf-switch">
+          <input type="checkbox" formControlName="is_featured" aria-describedby="prf-feat-help" />
+          <span><strong>{{ 'admin.products.featuredLabel' | translate }}</strong>
+            <small id="prf-feat-help">{{ 'admin.products.featuredHelp' | translate }}</small></span>
+        </label>
+      </section>
+
+      <div class="prf-bar">
+        @if (dirty()) {
+          <span class="prf-unsaved">{{ 'admin.products.unsaved' | translate }}</span>
+        }
+        <a class="adm-button is-light" routerLink="/admin/products">{{ 'admin.dialog.cancel' | translate }}</a>
+        <button type="submit" class="adm-button" [disabled]="saving()" [attr.aria-busy]="saving()">
+          @if (saving()) {
+            <span class="adm-spinner" aria-hidden="true"></span>{{ 'admin.products.saving' | translate }}
+          } @else {
+            {{ (isNew() ? 'admin.products.create' : 'admin.products.save') | translate }}
+          }
+        </button>
+      </div>
+    </form>
+  }
+}
+
+<app-admin-confirm-dialog />

@@ -144,3 +144,12 @@
 .adm-notes li + li {
   margin-top: 0.3rem;
 }
+
+.adm-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
