@@ -1,0 +1,122 @@
+.sto-notice {
+  margin-bottom: 1.5rem;
+}
+
+.sto-test {
+  margin: 0 0 1.5rem;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  border-inline-start: 5px solid #c27c00;
+  background: #fff7e0;
+  color: #5c3d00;
+  font-weight: 700;
+}
+
+.adm-panel {
+  container-type: inline-size;
+}
+
+.sto-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sto-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 12rem auto;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(32, 51, 102, 0.1);
+}
+
+.sto-item:first-child {
+  padding-top: 0;
+}
+
+.sto-item:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.sto-text h3 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.6rem;
+  margin: 0 0 0.25rem;
+  color: var(--adm-navy);
+  font-size: 1.05rem;
+}
+
+.sto-text p {
+  margin: 0;
+  color: var(--adm-muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.sto-badge {
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  background: #fff1d6;
+  color: #7a5200;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.sto-value {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.sto-label {
+  color: var(--adm-muted);
+  font-size: 0.8rem;
+}
+
+.sto-value strong {
+  color: #0b5a46;
+  font-size: 1.05rem;
+}
+
+.sto-value strong[data-kind='money'],
+.sto-value strong[data-kind='minutes'] {
+  color: var(--adm-navy);
+}
+
+.sto-value strong.is-off {
+  color: #8f0f35;
+}
+
+.sto-fixed {
+  display: grid;
+  gap: 0.9rem;
+  margin: 0;
+}
+
+.sto-fixed dt {
+  font-weight: 700;
+}
+
+.sto-fixed dd {
+  margin: 0.15rem 0 0;
+}
+
+.sto-fixed dd span {
+  display: block;
+  color: var(--adm-muted);
+  font-size: 0.9rem;
+}
+
+/* Narrow panels: the value and the button go under the explanation. */
+@container (max-width: 640px) {
+  .sto-item {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .sto-text {
+    grid-column: 1 / -1;
+  }
+}

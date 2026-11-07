@@ -215,8 +215,10 @@ describe('Admin dashboard', () => {
   });
 
   it('opens the shipping and settings section with either of its permissions', async () => {
+    // Its pages are covered in settings/admin-settings.spec.ts; here only the section entry.
     await open('/admin/settings', adminWith('store_manager'));
-    expect(router.url).toBe('/admin/settings');
+    expect(router.url).toBe('/admin/settings/shipping');
+    await answer('/api/v1/admin/governorates', (r) => r.flush({ data: [] }));
   });
 
   it('shows the header with the admin name and role', async () => {

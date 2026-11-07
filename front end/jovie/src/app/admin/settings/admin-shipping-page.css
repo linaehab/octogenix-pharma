@@ -1,0 +1,158 @@
+.shp-note {
+  margin: 0 0 1rem;
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  border-inline-start: 5px solid var(--adm-sky);
+  background: #f1f6fc;
+}
+
+.shp-summary {
+  margin: 0 0 0.5rem;
+  font-weight: 700;
+}
+
+.shp-warning {
+  margin: 0 0 1rem;
+  color: #7a5200;
+  font-size: 0.9rem;
+}
+
+.shp-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.shp-filter {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 11rem;
+}
+
+.shp-search {
+  flex: 1 1 18rem;
+}
+
+.shp-filter label {
+  font-weight: 700;
+}
+
+.shp-filter input,
+.shp-filter select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(32, 51, 102, 0.35);
+  border-radius: 10px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+
+.shp-clear {
+  min-height: 44px;
+}
+
+.shp-notice {
+  margin-bottom: 1.5rem;
+}
+
+.shp-results {
+  margin-bottom: 1rem;
+}
+
+.shp-panel {
+  container-type: inline-size;
+}
+
+.shp-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.shp-table th,
+.shp-table td {
+  padding: 0.65rem 0.55rem;
+  border-bottom: 1px solid rgba(32, 51, 102, 0.1);
+  text-align: start;
+  vertical-align: middle;
+}
+
+.shp-table th {
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.shp-name {
+  font-weight: 700;
+}
+
+.shp-fee {
+  color: var(--adm-navy);
+  white-space: nowrap;
+}
+
+.shp-nofee,
+.shp-date {
+  color: var(--adm-muted);
+  font-size: 0.88rem;
+}
+
+.shp-badge {
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: #e3f4ee;
+  color: #0b5a46;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.shp-badge.is-off {
+  background: #eef1f7;
+  color: #3d4867;
+}
+
+.adm-button.is-small {
+  min-height: 36px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.9rem;
+}
+
+/* Narrower than the full table: one card per governorate. */
+@container (max-width: 720px) {
+  .shp-table thead {
+    display: none;
+  }
+
+  .shp-table,
+  .shp-table tbody,
+  .shp-table td {
+    display: block;
+  }
+
+  .shp-table tr {
+    display: grid;
+    gap: 0.3rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid rgba(32, 51, 102, 0.12);
+  }
+
+  .shp-table td {
+    padding: 0;
+    border: 0;
+  }
+
+  .shp-table td[data-label]::before {
+    content: attr(data-label) ': ';
+    color: var(--adm-muted);
+    font-size: 0.85rem;
+    font-weight: 400;
+  }
+
+  .shp-table td.shp-actions {
+    margin-top: 0.4rem;
+  }
+}

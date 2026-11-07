@@ -1,0 +1,89 @@
+<app-admin-settings-nav current="shipping" />
+
+<div class="adm-page-head">
+  <div>
+    <h1>{{ 'admin.settings.tabShipping' | translate }}</h1>
+    <p>{{ 'admin.shipping.lead' | translate }}</p>
+  </div>
+</div>
+
+<p class="shp-note">{{ 'admin.shipping.newOrdersOnly' | translate }}</p>
+
+@if (!loading() && !error() && rows().length) {
+  <p class="shp-summary">{{ 'admin.shipping.summary' | translate: { total: count(counts().total), on: count(counts().on), off: count(counts().off) } }}</p>
+  @if (counts().noFee > 0) {
+    <p class="shp-warning">{{ 'admin.shipping.noFeeWarning' | translate: { count: count(counts().noFee) } }}</p>
+  }
+}
+
+<form class="adm-panel shp-filters" role="search" (submit)="$event.preventDefault()">
+  <div class="shp-filter shp-search">
+    <label for="shp-search">{{ 'admin.shipping.search' | translate }}</label>
+    <input #searchBox id="shp-search" type="search" maxlength="60" [value]="search()" (input)="search.set(searchBox.value)"
+      [placeholder]="'admin.shipping.searchHint' | translate" />
+  </div>
+  <div class="shp-filter">
+    <label for="shp-status">{{ 'admin.shipping.filter' | translate }}</label>
+    <select #status id="shp-status" (change)="setFilter(status.value)">
+      <option value="" [selected]="filter() === ''">{{ 'admin.shipping.filterAll' | translate }}</option>
+      <option value="enabled" [selected]="filter() === 'enabled'">{{ 'admin.shipping.filterEnabled' | translate }}</option>
+      <option value="disabled" [selected]="filter() === 'disabled'">{{ 'admin.shipping.filterDisabled' | translate }}</option>
+    </select>
+  </div>
+  @if (filtered()) {
+    <button type="button" class="adm-link shp-clear" (click)="clear(searchBox)">{{ 'admin.shipping.clear' | translate }}</button>
+  }
+</form>
+
+@if (notice(); as n) {
+  <p class="adm-notice is-success shp-notice" role="status">{{ n }}</p>
+}
+
+<section class="adm-panel shp-panel" aria-labelledby="shp-results" [attr.aria-busy]="loading()">
+  <h2 id="shp-results" class="shp-results" aria-live="polite">{{ 'admin.shipping.results' | translate: { count: count(visible().length) } }}</h2>
+  @if (loading() && !rows().length) {
+    <app-admin-state kind="loading" />
+  } @else if (error()) {
+    <app-admin-state kind="error" (retry)="load()" />
+  } @else if (!visible().length) {
+    <app-admin-state kind="empty" [message]="filtered() ? 'admin.shipping.noMatch' : 'admin.shipping.none'" />
+  } @else {
+    <table class="shp-table">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'admin.shipping.nameEn' | translate }}</th>
+          <th scope="col">{{ 'admin.shipping.nameAr' | translate }}</th>
+          <th scope="col">{{ 'admin.shipping.fee' | translate }}</th>
+          <th scope="col">{{ 'admin.shipping.delivery' | translate }}</th>
+          <th scope="col">{{ 'admin.shipping.updated' | translate }}</th>
+          <th scope="col">{{ 'admin.shipping.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of visible(); track r.id) {
+          <tr>
+            <td class="shp-name" [attr.data-label]="'admin.shipping.nameEn' | translate"><span lang="en" dir="ltr">{{ r.name_en }}</span></td>
+            <td class="shp-name" [attr.data-label]="'admin.shipping.nameAr' | translate"><span lang="ar" dir="rtl">{{ r.name_ar }}</span></td>
+            <td [attr.data-label]="'admin.shipping.fee' | translate">
+              @if (money(r.shipping_fee_piastres); as fee) {
+                <strong class="shp-fee">{{ fee }}</strong>
+              } @else {
+                <span class="shp-nofee">{{ 'admin.shipping.noFee' | translate }}</span>
+              }
+            </td>
+            <td [attr.data-label]="'admin.shipping.delivery' | translate">
+              <span class="shp-badge" [class.is-off]="!r.is_deliverable">{{ (r.is_deliverable ? 'admin.shipping.statusOn' : 'admin.shipping.statusOff') | translate }}</span>
+            </td>
+            <td class="shp-date" [attr.data-label]="'admin.shipping.updated' | translate">{{ date(r.updated_at) }}</td>
+            <td class="shp-actions">
+              <button type="button" class="adm-button is-small" (click)="edit(r)"
+                [attr.aria-label]="'admin.shipping.editFor' | translate: { name: name(r) }">{{ 'admin.shipping.edit' | translate }}</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>
+
+<app-admin-shipping-fee-dialog (saved)="saved($event)" (changed)="replace($event)" (sessionEnded)="endSession()" />

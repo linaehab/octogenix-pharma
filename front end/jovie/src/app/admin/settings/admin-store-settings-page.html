@@ -1,0 +1,69 @@
+<app-admin-settings-nav current="store" />
+
+<div class="adm-page-head">
+  <div>
+    <h1>{{ 'admin.settings.tabStore' | translate }}</h1>
+    <p>{{ 'admin.store.lead' | translate }}</p>
+  </div>
+</div>
+
+@if (notice(); as n) {
+  <p class="adm-notice is-success sto-notice" role="status">{{ n }}</p>
+}
+
+@if (loading() && !rows().length) {
+  <section class="adm-panel"><app-admin-state kind="loading" /></section>
+} @else if (error()) {
+  <section class="adm-panel"><app-admin-state kind="error" (retry)="load()" /></section>
+} @else {
+  @if (meta()?.test_mode) {
+    <p class="sto-test" role="note">{{ 'admin.store.testMode' | translate }}</p>
+  }
+
+  <section class="adm-panel" aria-labelledby="sto-title">
+    <h2 id="sto-title" class="adm-visually-hidden">{{ 'admin.settings.tabStore' | translate }}</h2>
+    @if (!rows().length) {
+      <app-admin-state kind="empty" />
+    }
+    <ul class="sto-list">
+      @for (row of rows(); track row.definition.key) {
+        <li class="sto-item">
+          <div class="sto-text">
+            <h3 [id]="'sto-' + $index">
+              {{ 'admin.store.name.' + row.definition.key | translate }}
+              @if (row.definition.sensitive) {
+                <span class="sto-badge">{{ 'admin.store.sensitiveBadge' | translate }}</span>
+              }
+            </h3>
+            <p>{{ 'admin.store.help.' + row.definition.key | translate }}</p>
+          </div>
+          <div class="sto-value">
+            <span class="sto-label">{{ 'admin.store.current' | translate }}</span>
+            <strong [class.is-off]="row.value === false" [attr.data-kind]="row.definition.kind">{{ text(row.definition, row.value) }}</strong>
+          </div>
+          <div class="sto-action">
+            <button type="button" class="adm-button is-light" (click)="change(row.definition)"
+              [attr.aria-label]="'admin.store.changeFor' | translate: { name: ('admin.store.name.' + row.definition.key | translate) }">{{ 'admin.store.change' | translate }}</button>
+          </div>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <section class="adm-panel" aria-labelledby="sto-fixed">
+    <h2 id="sto-fixed">{{ 'admin.store.fixedTitle' | translate }}</h2>
+    <p class="adm-panel-lead">{{ 'admin.store.fixedLead' | translate }}</p>
+    <dl class="sto-fixed">
+      <div>
+        <dt>{{ 'admin.store.currency' | translate }}</dt>
+        <dd><strong>{{ 'admin.store.currencyValue' | translate }}</strong> <span>{{ 'admin.store.currencyHelp' | translate }}</span></dd>
+      </div>
+      <div>
+        <dt>{{ 'admin.store.cardProvider' | translate }}</dt>
+        <dd><strong>{{ provider() }}</strong> <span>{{ 'admin.store.cardProviderHelp' | translate }}</span></dd>
+      </div>
+    </dl>
+  </section>
+}
+
+<app-admin-store-setting-dialog (saved)="saved($event)" (changed)="changed($event)" (sessionEnded)="endSession()" />

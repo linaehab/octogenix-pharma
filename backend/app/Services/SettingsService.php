@@ -144,9 +144,9 @@ class SettingsService
             'url' => ['value' => ['nullable', 'string', 'url:https', 'max:500']],
             'boolean' => ['value' => ['required', 'boolean']],
             'integer' => ['value' => [
-                'required', 'integer', 'min:'.($definition['min'] ?? 0), 'max:'.($definition['max'] ?? PHP_INT_MAX),
+                'required', 'integer:strict', 'min:'.($definition['min'] ?? 0), 'max:'.($definition['max'] ?? PHP_INT_MAX),
             ]],
-            'money' => ['value' => ['nullable', 'integer', 'min:0', 'max:4294967295']],
+            'money' => ['value' => ['nullable', 'integer:strict', 'min:0', 'max:4294967295']],
         };
     }
 

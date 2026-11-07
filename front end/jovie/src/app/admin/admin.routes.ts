@@ -2,8 +2,8 @@ import { Routes } from '@angular/router';
 import { AdminAuthFrame } from './admin-auth-frame';
 import { AdminLayout } from './admin-layout';
 import { AdminShell } from './admin-shell';
-import { ADMIN_SECTIONS } from './admin-sections';
-import { adminCanActivate, adminGuestOnly, adminOnly } from './admin.guards';
+import { ADMIN_SECTIONS, SHIPPING_ACCESS, STORE_SETTINGS_ACCESS } from './admin-sections';
+import { adminCanActivate, adminGuestOnly, adminOnly, adminSettingsLanding } from './admin.guards';
 import { AdminAccess } from './admin-permissions';
 import { AdminSectionKey } from './admin-sections';
 import { unsavedChanges } from './unsaved-changes.guard';
@@ -103,6 +103,25 @@ export const adminRoutes: Routes = [
                 path: ':number',
                 loadComponent: () => import('./orders/admin-order-page').then((m) => m.AdminOrderPage),
                 title: 'Order | Octogenix admin',
+              },
+            ],
+          },
+          {
+            path: 'settings',
+            canActivate: [adminCanActivate(sectionAccess('settings'))],
+            children: [
+              { path: '', pathMatch: 'full', canActivate: [adminSettingsLanding], children: [] },
+              {
+                path: 'shipping',
+                canActivate: [adminCanActivate(SHIPPING_ACCESS)],
+                loadComponent: () => import('./settings/admin-shipping-page').then((m) => m.AdminShippingPage),
+                title: 'Shipping fees | Octogenix admin',
+              },
+              {
+                path: 'store',
+                canActivate: [adminCanActivate(STORE_SETTINGS_ACCESS)],
+                loadComponent: () => import('./settings/admin-store-settings-page').then((m) => m.AdminStoreSettingsPage),
+                title: 'Store settings | Octogenix admin',
               },
             ],
           },
