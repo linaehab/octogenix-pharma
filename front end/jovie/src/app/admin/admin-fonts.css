@@ -1,0 +1,29 @@
+/* Jovie fonts for the dashboard: Foco (English) and Tajawal (Arabic), the files the store already serves. */
+
+@font-face {
+  font-family: "Foco";
+  src: url("/fonts/jovie/foco-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Foco";
+  src: url("/fonts/jovie/foco-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Tajawal";
+  src: url("/fonts/jovie/tajawal-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Tajawal";
+  src: url("/fonts/jovie/tajawal-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}

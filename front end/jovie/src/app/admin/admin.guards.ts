@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { CanActivateFn, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { AdminAuthService } from './admin-auth.service';
+import { AdminAccess, adminCan } from './admin-permissions';
 
 /** Dashboard pages: signed-in admins only. The API checks the admin guard and permissions on every request. */
 export const adminOnly: CanActivateFn = () => {
@@ -25,3 +26,26 @@ export const adminGuestOnly: CanActivateFn = () => {
     .restore()
     .pipe(map((admin) => (admin ? router.parseUrl('/admin') : true)));
 };
+
+/**
+ * A dashboard section: signed-out visitors go to the admin login, admins without the section's
+ * permissions to the 403 page. Typed addresses are covered too, not only the hidden links.
+ */
+export const adminCanActivate =
+  (access: AdminAccess): CanActivateFn =>
+  () => {
+    const router = inject(Router);
+    if (!isPlatformBrowser(inject(PLATFORM_ID))) {
+      return true;
+    }
+    return inject(AdminAuthService)
+      .restore()
+      .pipe(
+        map((admin) => {
+          if (!admin) {
+            return router.parseUrl('/admin/login');
+          }
+          return adminCan(admin, access) ? true : router.parseUrl('/admin/forbidden');
+        }),
+      );
+  };

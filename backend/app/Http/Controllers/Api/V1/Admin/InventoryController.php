@@ -59,9 +59,7 @@ class InventoryController extends Controller
     {
         return ProductVariantResource::collection(
             ProductVariant::query()
-                ->where('is_active', true)
-                ->whereNotNull('low_stock_threshold')
-                ->whereColumn('stock_quantity', '<=', 'low_stock_threshold')
+                ->lowOnStock()
                 ->orderBy('stock_quantity')
                 ->get()
         );

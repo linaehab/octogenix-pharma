@@ -20,18 +20,6 @@ const lazyGuard =
       return isObservable(result) ? firstValueFrom(result) : result;
     });
   };
-type AdminGuards = typeof import('./admin/admin.guards');
-
-/** Admin guards, loaded with the admin code. */
-const lazyAdminGuard =
-  (name: 'adminOnly' | 'adminGuestOnly'): CanActivateFn =>
-  (route, state) => {
-    const injector = inject(EnvironmentInjector);
-    return import('./admin/admin.guards').then((guards: AdminGuards) => {
-      const result = runInInjectionContext(injector, () => guards[name](route, state));
-      return isObservable(result) ? firstValueFrom(result) : result;
-    });
-  };
 const customerOnly = lazyGuard('customerOnly');
 const guestOnly = lazyGuard('guestOnly');
 const sessionKnown = lazyGuard('sessionKnown');
@@ -217,36 +205,11 @@ export const routes: Routes = [
       { path: '**', redirectTo: '' },
     ],
   },
-  // Admin area: separate sign-in (admin guard), no sign-up. Rendered in the browser only.
+  // Admin area: separate sign-in (admin guard), no sign-up. Rendered in the browser only and loaded
+  // on demand (routes, guards and pages), so the storefront never downloads it.
   {
     path: 'admin',
-    loadComponent: () => import('./admin/admin-layout').then((m) => m.AdminLayout),
-    children: [
-      {
-        path: '',
-        pathMatch: 'full',
-        canActivate: [lazyAdminGuard('adminOnly')],
-        loadComponent: () => import('./admin/pages/admin-home-page').then((m) => m.AdminHomePage),
-        title: 'Dashboard | Octogenix',
-      },
-      {
-        path: 'login',
-        canActivate: [lazyAdminGuard('adminGuestOnly')],
-        loadComponent: () => import('./admin/pages/admin-login-page').then((m) => m.AdminLoginPage),
-        title: 'Admin log in | Octogenix',
-      },
-      {
-        path: 'forgot-password',
-        loadComponent: () => import('./admin/pages/admin-forgot-password-page').then((m) => m.AdminForgotPasswordPage),
-        title: 'Forgot password | Octogenix admin',
-      },
-      {
-        path: 'reset-password',
-        loadComponent: () => import('./admin/pages/admin-reset-password-page').then((m) => m.AdminResetPasswordPage),
-        title: 'Set your password | Octogenix admin',
-      },
-      { path: '**', redirectTo: '' },
-    ],
+    loadChildren: () => import('./admin/admin.routes').then((m) => m.adminRoutes),
   },
   // Short addresses for the store's sign-in pages.
   { path: 'login', redirectTo: '/jovie/login' },

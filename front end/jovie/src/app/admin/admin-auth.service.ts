@@ -4,6 +4,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { Observable, catchError, finalize, map, of, shareReplay, tap, throwError, timeout } from 'rxjs';
 import { API_BASE_URL } from '../core/api/api-base-url';
 import { CsrfService } from '../core/api/csrf.service';
+import { AdminAccess, AdminPermission, adminCan } from './admin-permissions';
 
 /** AdminUserResource (GET /api/v1/admin/auth/me). Permissions only shape the screens; the API enforces them. */
 export interface AdminUser {
@@ -13,7 +14,7 @@ export interface AdminUser {
   role: 'super_admin' | 'content_editor' | 'store_manager' | 'support';
   is_active: boolean;
   locale: string | null;
-  permissions: string[];
+  permissions: AdminPermission[];
   last_login_at: string | null;
   created_at: string | null;
 }
@@ -39,6 +40,17 @@ export class AdminAuthService {
 
   readonly admin = this.current.asReadonly();
   readonly isSignedIn = computed(() => this.current() !== null);
+
+  /** Whether the signed-in admin holds the given permissions (shapes the screens; the API enforces them). */
+  can(access: AdminAccess | null | undefined): boolean {
+    return adminCan(this.current(), access);
+  }
+
+  /** The API answered 401 (session expired or ended elsewhere): forget the admin locally. */
+  sessionEnded(): void {
+    this.current.set(null);
+    this.checked.set(true);
+  }
 
   restore(): Observable<AdminUser | null> {
     if (!this.isBrowser) {

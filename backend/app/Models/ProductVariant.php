@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\ProductVariantFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -100,5 +101,16 @@ class ProductVariant extends Model
     public function isLowOnStock(): bool
     {
         return $this->low_stock_threshold !== null && $this->stock_quantity <= $this->low_stock_threshold;
+    }
+
+    /**
+     * Active variants at or below their low-stock threshold (the same rule as isLowOnStock()).
+     * Used by the admin low-stock list and the dashboard count.
+     */
+    public function scopeLowOnStock(Builder $query): void
+    {
+        $query->where('is_active', true)
+            ->whereNotNull('low_stock_threshold')
+            ->whereColumn('stock_quantity', '<=', 'low_stock_threshold');
     }
 }

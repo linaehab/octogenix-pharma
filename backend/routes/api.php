@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Admin\BrandController as AdminBrandController;
 use App\Http\Controllers\Api\V1\Admin\ContactMessageController as AdminContactMessageController;
 use App\Http\Controllers\Api\V1\Admin\ContentController as AdminContentController;
 use App\Http\Controllers\Api\V1\Admin\CustomerController as AdminCustomerController;
+use App\Http\Controllers\Api\V1\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Api\V1\Admin\GovernorateController as AdminGovernorateController;
 use App\Http\Controllers\Api\V1\Admin\ImageUploadController as AdminImageUploadController;
 use App\Http\Controllers\Api\V1\Admin\InventoryController as AdminInventoryController;
@@ -133,6 +134,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::middleware(['auth:admin', EnsureAccountIsActive::class.':admin'])->group(function () {
             Route::get('/auth/me', [AdminAuthController::class, 'me'])->name('auth.me');
             Route::post('/auth/logout', [AdminAuthController::class, 'logout'])->name('auth.logout');
+
+            // Overview figures; each block is limited to the admin's permissions inside the service.
+            Route::get('/dashboard/summary', [AdminDashboardController::class, 'summary'])
+                ->middleware('throttle:60,1,admin-dashboard')->name('dashboard.summary');
 
             Route::middleware('can:admins.manage')->group(function () {
                 Route::get('/admin-users', [AdminUserController::class, 'index'])->name('admin-users.index');

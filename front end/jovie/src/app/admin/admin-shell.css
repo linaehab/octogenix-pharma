@@ -1,0 +1,293 @@
+/* Signed-in dashboard frame in the Jovie colours (navy #203366, red #ed225a) and fonts
+   (Foco; Tajawal in Arabic, the files the store already serves). Logical properties mirror it in RTL. */
+
+.adm-shell {
+  --adm-navy: #203366;
+  --adm-red: #ed225a;
+  --adm-sky: #a4dadc;
+  --adm-text: #1d2a4d;
+  --adm-muted: #56627e;
+  --adm-side-w: 264px;
+  display: grid;
+  grid-template-columns: var(--adm-side-w) minmax(0, 1fr);
+  min-height: 100vh;
+  color: var(--adm-text);
+  font-family: "Foco", "Segoe UI", sans-serif;
+}
+
+[dir='rtl'] .adm-shell {
+  font-family: "Tajawal", "Segoe UI", sans-serif;
+}
+
+.adm-shell :is(button, input, select, textarea) {
+  font-family: inherit;
+}
+
+.adm-skip {
+  position: absolute;
+  inset-inline-start: 1rem;
+  top: -4rem;
+  z-index: 50;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--adm-navy);
+  font-weight: 700;
+}
+
+.adm-skip:focus {
+  top: 1rem;
+}
+
+/* The <nav> itself is the grid item; an empty host element would add a row that min-height stretches. */
+app-admin-sidebar {
+  display: contents;
+}
+
+.adm-side {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 1.25rem 0.85rem 2rem;
+  background: var(--adm-navy);
+  color: #fff;
+}
+
+.adm-side-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 0.5rem 1.25rem;
+}
+
+.adm-side-brand p {
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.adm-side-brand span {
+  display: block;
+  color: var(--adm-sky);
+  font-weight: 400;
+}
+
+.adm-side-user {
+  display: none;
+  margin: 0 0.5rem 1rem;
+  font-weight: 700;
+}
+
+.adm-side-user span {
+  display: block;
+  color: var(--adm-sky);
+  font-weight: 400;
+}
+
+.adm-side ul {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-side a {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  border-inline-start: 4px solid transparent;
+  color: #fff;
+  text-decoration: none;
+}
+
+.adm-side a:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.adm-side a.is-active {
+  border-inline-start-color: var(--adm-red);
+  background: rgba(255, 255, 255, 0.16);
+  font-weight: 700;
+}
+
+.adm-side svg,
+.adm-head svg {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.adm-soon {
+  margin-inline-start: auto;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--adm-sky);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.adm-shell a:focus-visible,
+.adm-shell button:focus-visible {
+  outline: 3px solid var(--adm-red);
+  outline-offset: 2px;
+}
+
+.adm-body {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.adm-head {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 64px;
+  padding: 0.5rem clamp(1rem, 3vw, 2rem);
+  border-bottom: 1px solid rgba(32, 51, 102, 0.12);
+  background: #fff;
+}
+
+.adm-menu-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid rgba(32, 51, 102, 0.25);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--adm-navy);
+  cursor: pointer;
+}
+
+.adm-head-title {
+  margin: 0;
+  color: var(--adm-navy);
+  font-weight: 700;
+}
+
+.adm-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-inline-start: auto;
+}
+
+.adm-head-button {
+  min-height: 40px;
+  padding: 0.35rem 0.85rem;
+  border: 1px solid rgba(32, 51, 102, 0.3);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--adm-navy);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.adm-head-button.is-strong {
+  border-color: var(--adm-navy);
+  background: var(--adm-navy);
+  color: #fff;
+}
+
+.adm-head-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.adm-user {
+  display: grid;
+  margin: 0;
+  line-height: 1.25;
+  text-align: end;
+}
+
+.adm-user-name {
+  max-width: 14rem;
+  overflow: hidden;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adm-user-role {
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+}
+
+.adm-content {
+  flex: 1;
+  padding: clamp(1.25rem, 3vw, 2.25rem) clamp(1rem, 3vw, 2.25rem) 3rem;
+  outline: none;
+}
+
+@media (max-width: 1023px) {
+  .adm-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .adm-menu-toggle {
+    display: grid;
+  }
+
+  .adm-side {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    z-index: 40;
+    width: min(var(--adm-side-w), 86vw);
+    height: auto;
+    /* Closed, it stays in place and fades out (as the store's own mobile menu does). Moving it off
+       screen would widen the page in Arabic: content pushed past the right edge is scrollable in RTL. */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s;
+  }
+
+  .adm-side.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .adm-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    background: rgba(14, 22, 46, 0.45);
+  }
+
+  body.adm-menu-open {
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 599px) {
+  .adm-user,
+  .adm-head-title {
+    display: none;
+  }
+
+  .adm-side-user {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adm-side {
+    transition: none;
+  }
+}
