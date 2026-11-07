@@ -203,6 +203,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
                     ->name('product-variants.stock-movements.index');
                 Route::get('/inventory/low-stock', [AdminInventoryController::class, 'lowStock'])
                     ->name('inventory.low-stock');
+                Route::get('/inventory', [AdminInventoryController::class, 'index'])->name('inventory.index');
+                Route::get('/inventory/movements', [AdminInventoryController::class, 'history'])->name('inventory.movements');
+                Route::put('/product-variants/{variant}/low-stock-threshold', [AdminInventoryController::class, 'updateThreshold'])
+                    ->name('product-variants.low-stock-threshold');
             });
 
             Route::middleware('can:shipping.manage')->group(function () {

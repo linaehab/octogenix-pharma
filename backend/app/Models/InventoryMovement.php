@@ -49,6 +49,18 @@ class InventoryMovement extends Model
         return $this->belongsTo(ProductVariant::class, 'product_variant_id');
     }
 
+    /** @return BelongsTo<Order, $this> */
+    public function order(): BelongsTo
+    {
+        return $this->belongsTo(Order::class);
+    }
+
+    /** The balance just before this movement (the table stores the change and the balance after). */
+    public function stockBefore(): int
+    {
+        return $this->stock_after - $this->quantity_change;
+    }
+
     /** @return BelongsTo<AdminUser, $this> */
     public function admin(): BelongsTo
     {

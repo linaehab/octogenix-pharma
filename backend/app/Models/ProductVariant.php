@@ -98,19 +98,55 @@ class ProductVariant extends Model
             && $this->product->isSellable();
     }
 
+    /**
+     * Stock status (Phase 3 rules):
+     * - out_of_stock: nothing left;
+     * - low_stock: some left, at or below the admin's threshold;
+     * - in_stock: above the threshold, or no threshold set.
+     */
+    public const STOCK_OUT = 'out_of_stock';
+
+    public const STOCK_LOW = 'low_stock';
+
+    public const STOCK_IN = 'in_stock';
+
+    public function stockStatus(): string
+    {
+        return match (true) {
+            $this->stock_quantity <= 0 => self::STOCK_OUT,
+            $this->isLowOnStock() => self::STOCK_LOW,
+            default => self::STOCK_IN,
+        };
+    }
+
+    /** Some stock left, at or below the threshold. An empty variant is out of stock, not low. */
     public function isLowOnStock(): bool
     {
-        return $this->low_stock_threshold !== null && $this->stock_quantity <= $this->low_stock_threshold;
+        return $this->low_stock_threshold !== null
+            && $this->stock_quantity > 0
+            && $this->stock_quantity <= $this->low_stock_threshold;
     }
 
     /**
-     * Active variants at or below their low-stock threshold (the same rule as isLowOnStock()).
-     * Used by the admin low-stock list and the dashboard count.
+     * Active variants with some stock left, at or below their threshold (the same rule as
+     * isLowOnStock()). Used by the low-stock list, the dashboard and the inventory page.
      */
     public function scopeLowOnStock(Builder $query): void
     {
-        $query->where('is_active', true)
-            ->whereNotNull('low_stock_threshold')
-            ->whereColumn('stock_quantity', '<=', 'low_stock_threshold');
+        $query->where('is_active', true)->stockStatus(self::STOCK_LOW);
+    }
+
+    /** Variants in one stock status (see stockStatus()), in SQL. */
+    public function scopeStockStatus(Builder $query, string $status): void
+    {
+        match ($status) {
+            self::STOCK_OUT => $query->where('stock_quantity', '<=', 0),
+            self::STOCK_LOW => $query->where('stock_quantity', '>', 0)
+                ->whereNotNull('low_stock_threshold')
+                ->whereColumn('stock_quantity', '<=', 'low_stock_threshold'),
+            self::STOCK_IN => $query->where('stock_quantity', '>', 0)
+                ->where(fn (Builder $q) => $q->whereNull('low_stock_threshold')
+                    ->orWhereColumn('stock_quantity', '>', 'low_stock_threshold')),
+        };
     }
 }

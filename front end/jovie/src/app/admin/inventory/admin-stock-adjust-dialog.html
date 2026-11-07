@@ -1,0 +1,66 @@
+<dialog #dialog class="inv-dialog" aria-labelledby="inv-adjust-title" (cancel)="close()">
+  @if (row(); as r) {
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <h2 id="inv-adjust-title">{{ 'admin.inventory.adjustTitle' | translate }}</h2>
+      <p class="inv-dialog-product">{{ name(r) }} · <bdi dir="ltr">{{ r.sku }}</bdi></p>
+      <p class="inv-dialog-stock">{{ 'admin.inventory.currentStock' | translate: { count: count(r.stock_quantity) } }}</p>
+
+      @if (error(); as e) {
+        <div class="adm-notice is-error" role="alert">
+          <p>{{ e.text }}</p>
+          @for (d of e.details; track $index) {
+            <p>{{ d }}</p>
+          }
+        </div>
+      }
+
+      <fieldset class="inv-direction">
+        <legend>{{ 'admin.inventory.direction' | translate }}</legend>
+        <label><input type="radio" formControlName="direction" value="increase" /> {{ 'admin.inventory.increase' | translate }}</label>
+        <label><input type="radio" formControlName="direction" value="decrease" /> {{ 'admin.inventory.decrease' | translate }}</label>
+        <label><input type="radio" formControlName="direction" value="count" /> {{ 'admin.inventory.count' | translate }}</label>
+      </fieldset>
+
+      <div class="inv-field">
+        <label for="inv-reason">{{ 'admin.inventory.reason' | translate }}</label>
+        <select id="inv-reason" formControlName="reason">
+          @for (reason of reasons(); track reason) {
+            <option [value]="reason">{{ ('admin.inventory.reasonOption.' + reason) | translate }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="inv-field">
+        <label for="inv-quantity">{{ (isCount() ? 'admin.inventory.countedQuantity' : 'admin.inventory.quantity') | translate }}</label>
+        <input id="inv-quantity" formControlName="quantity" inputmode="numeric" dir="ltr" autocomplete="off"
+          [attr.aria-invalid]="!!problem('quantity')" aria-describedby="inv-quantity-help inv-quantity-err" />
+        <p class="inv-help" id="inv-quantity-help">
+          @if (result() !== null) {
+            {{ 'admin.inventory.preview' | translate: { before: count(r.stock_quantity), after: count(result()!) } }}
+          }
+        </p>
+        <p class="inv-error" id="inv-quantity-err">{{ problem('quantity') }}</p>
+      </div>
+
+      <div class="inv-field">
+        <label for="inv-note">{{ 'admin.inventory.note' | translate }} @if (noteRequired()) {<span class="inv-req">*</span>}</label>
+        <textarea id="inv-note" formControlName="note" rows="3" maxlength="500" [attr.aria-invalid]="!!problem('note')"
+          aria-describedby="inv-note-help inv-note-err"></textarea>
+        <p class="inv-help" id="inv-note-help">{{ (noteRequired() ? 'admin.inventory.noteRequiredHelp' : 'admin.inventory.noteOptionalHelp') | translate }}</p>
+        <p class="inv-error" id="inv-note-err">{{ problem('note') }}</p>
+      </div>
+
+      <div class="inv-dialog-actions">
+        <button type="button" class="adm-button is-light" (click)="close()">{{ 'admin.dialog.cancel' | translate }}</button>
+        <button type="submit" class="adm-button" [disabled]="saving()" [attr.aria-busy]="saving()">
+          @if (saving()) {
+            <span class="adm-spinner" aria-hidden="true"></span>
+          }
+          {{ 'admin.inventory.review' | translate }}
+        </button>
+      </div>
+    </form>
+  }
+</dialog>
+
+<app-admin-confirm-dialog />

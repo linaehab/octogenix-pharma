@@ -72,6 +72,23 @@ export const adminRoutes: Routes = [
               },
             ],
           },
+          {
+            path: 'inventory',
+            canActivate: [adminCanActivate(sectionAccess('inventory'))],
+            children: [
+              {
+                path: '',
+                pathMatch: 'full',
+                loadComponent: () => import('./inventory/admin-inventory-page').then((m) => m.AdminInventoryPage),
+                title: 'Inventory | Octogenix admin',
+              },
+              {
+                path: 'movements',
+                loadComponent: () => import('./inventory/admin-inventory-history-page').then((m) => m.AdminInventoryHistoryPage),
+                title: 'Stock history | Octogenix admin',
+              },
+            ],
+          },
           // Sections of later phases: a plain "not built yet" page, behind the same permissions.
           ...ADMIN_SECTIONS.filter((section) => section.planned).map((section) => ({
             path: section.path,

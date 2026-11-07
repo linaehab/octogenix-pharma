@@ -1,0 +1,143 @@
+.his-back {
+  margin: 0 0 1rem;
+}
+
+.his-back a {
+  color: var(--adm-navy);
+  font-weight: 700;
+}
+
+.his-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  align-items: end;
+  gap: 1rem;
+}
+
+.his-field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.his-field label {
+  font-weight: 700;
+}
+
+.his-field input,
+.his-field select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(32, 51, 102, 0.35);
+  border-radius: 10px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+
+.his-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 44px;
+}
+
+.his-results {
+  margin-bottom: 1rem;
+}
+
+.his-panel {
+  container-type: inline-size;
+}
+
+.his-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.his-table th,
+.his-table td {
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid rgba(32, 51, 102, 0.1);
+  text-align: start;
+  vertical-align: top;
+}
+
+.his-table th {
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.his-date,
+.his-sku {
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+}
+
+.his-product strong,
+.his-sku {
+  display: block;
+}
+
+.his-change.is-in {
+  color: #0b5a46;
+}
+
+.his-change.is-out {
+  color: #a3123d;
+}
+
+.his-note {
+  max-width: 16rem;
+  overflow-wrap: anywhere;
+}
+
+.adm-button.is-small {
+  min-height: 36px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.9rem;
+}
+
+.his-pages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+@container (max-width: 900px) {
+  .his-table thead {
+    display: none;
+  }
+
+  .his-table,
+  .his-table tbody,
+  .his-table tr,
+  .his-table td {
+    display: block;
+  }
+
+  .his-table tr {
+    padding: 0.85rem 0;
+    border-bottom: 1px solid rgba(32, 51, 102, 0.12);
+  }
+
+  .his-table td {
+    padding: 0.1rem 0;
+    border: 0;
+  }
+
+  .his-table td[data-label]::before {
+    content: attr(data-label) ': ';
+    color: var(--adm-muted);
+    font-size: 0.85rem;
+  }
+
+  .his-note {
+    max-width: none;
+  }
+}

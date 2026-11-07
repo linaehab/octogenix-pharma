@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\InventoryReason;
 use App\Exceptions\InsufficientStockException;
+use App\Exceptions\StockChangedException;
 use App\Models\AdminUser;
 use App\Models\InventoryMovement;
 use App\Models\ProductVariant;
@@ -20,7 +21,14 @@ use InvalidArgumentException;
  */
 class InventoryService
 {
-    /** @throws InsufficientStockException when a decrease exceeds the available stock */
+    /**
+     * @param  int|null  $expectedStock  the stock the admin saw; when given, the change is refused
+     *                                   if the stock is different by the time the row is locked
+     *                                   (a double submission, another admin or an order)
+     *
+     * @throws InsufficientStockException when a decrease exceeds the available stock
+     * @throws StockChangedException when $expectedStock no longer matches
+     */
     public function adjust(
         ProductVariant $variant,
         int $change,
@@ -28,6 +36,7 @@ class InventoryService
         ?AdminUser $admin = null,
         ?string $note = null,
         ?int $orderId = null,
+        ?int $expectedStock = null,
     ): InventoryMovement {
         if ($change === 0) {
             throw new InvalidArgumentException('A stock change cannot be zero.');
@@ -36,8 +45,12 @@ class InventoryService
             throw new InvalidArgumentException("Reason [{$reason->value}] requires an order.");
         }
 
-        $movement = DB::transaction(function () use ($variant, $change, $reason, $admin, $note, $orderId) {
+        $movement = DB::transaction(function () use ($variant, $change, $reason, $admin, $note, $orderId, $expectedStock) {
             $current = ProductVariant::withTrashed()->whereKey($variant->getKey())->lockForUpdate()->value('stock_quantity');
+
+            if ($expectedStock !== null && $expectedStock !== (int) $current) {
+                throw new StockChangedException($expectedStock, (int) $current);
+            }
 
             $updated = DB::table('product_variants')
                 ->where('id', $variant->getKey())
@@ -71,14 +84,18 @@ class InventoryService
      * Records a physical stock count: moves the stock to the counted quantity.
      * Returns null when the count already matches (nothing to record).
      */
-    public function recordCount(ProductVariant $variant, int $counted, ?AdminUser $admin, ?string $note): ?InventoryMovement
+    public function recordCount(ProductVariant $variant, int $counted, ?AdminUser $admin, ?string $note, ?int $expectedStock = null): ?InventoryMovement
     {
         if ($counted < 0) {
             throw new InvalidArgumentException('A counted quantity cannot be negative.');
         }
 
-        return DB::transaction(function () use ($variant, $counted, $admin, $note) {
+        return DB::transaction(function () use ($variant, $counted, $admin, $note, $expectedStock) {
             $current = (int) ProductVariant::withTrashed()->whereKey($variant->getKey())->lockForUpdate()->value('stock_quantity');
+
+            if ($expectedStock !== null && $expectedStock !== $current) {
+                throw new StockChangedException($expectedStock, $current);
+            }
 
             return $counted === $current
                 ? null

@@ -242,10 +242,11 @@ class AdminDashboardSummaryTest extends TestCase
 
         $this->assertSame(['pending' => 2], $data['reviews']);
         $this->assertSame(['new' => 2], $data['messages']);
-        $this->assertSame(['low_stock' => 2, 'out_of_stock' => 2, 'without_threshold' => 1], $data['inventory']);
+        // Phase 3 rule: an empty product is out of stock, not low (low = some left, at or below the level).
+        $this->assertSame(['low_stock' => 1, 'out_of_stock' => 2, 'without_threshold' => 1], $data['inventory']);
 
         // The dashboard count and the low-stock list use the same rule.
-        $this->getJson('/api/v1/admin/inventory/low-stock')->assertOk()->assertJsonCount(2, 'data');
+        $this->getJson('/api/v1/admin/inventory/low-stock')->assertOk()->assertJsonCount(1, 'data');
     }
 
     public function test_the_summary_changes_nothing(): void

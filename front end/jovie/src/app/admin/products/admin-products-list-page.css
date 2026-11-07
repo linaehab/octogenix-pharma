@@ -134,7 +134,7 @@
   color: #8f0f35;
 }
 
-.prd-actions {
+.prd-actions-in {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -209,7 +209,6 @@
   }
 
   .prd-table td.prd-actions {
-    display: flex;
     margin-top: 0.4rem;
   }
 }

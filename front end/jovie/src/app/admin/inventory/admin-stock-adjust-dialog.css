@@ -1,0 +1,115 @@
+.inv-dialog {
+  width: min(32rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
+  padding: 1.5rem;
+  border: 0;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(14, 22, 46, 0.3);
+  color: var(--adm-text, #1d2a4d);
+}
+
+.inv-dialog::backdrop {
+  background: rgba(14, 22, 46, 0.5);
+}
+
+h2 {
+  margin: 0 0 0.3rem;
+  color: var(--adm-navy, #203366);
+  font-size: 1.3rem;
+}
+
+.inv-dialog-product {
+  margin: 0;
+  font-weight: 700;
+}
+
+.inv-dialog-stock {
+  margin: 0.2rem 0 1rem;
+  color: var(--adm-muted, #56627e);
+}
+
+.adm-notice p {
+  margin: 0;
+}
+
+.inv-direction {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  border: 0;
+}
+
+.inv-direction legend {
+  margin-bottom: 0.4rem;
+  font-weight: 700;
+}
+
+.inv-direction label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 36px;
+  cursor: pointer;
+}
+
+.inv-direction input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--adm-navy, #203366);
+}
+
+.inv-field {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.inv-field label {
+  font-weight: 700;
+}
+
+.inv-field input,
+.inv-field select,
+.inv-field textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(32, 51, 102, 0.35);
+  border-radius: 10px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+
+.inv-field [aria-invalid='true'] {
+  border-color: #a3123d;
+  box-shadow: 0 0 0 1px #a3123d;
+}
+
+.inv-help {
+  min-height: 1.2rem;
+  margin: 0;
+  color: var(--adm-muted, #56627e);
+  font-size: 0.88rem;
+}
+
+.inv-error {
+  min-height: 1.2rem;
+  margin: 0 0 0.5rem;
+  color: #a3123d;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.inv-req {
+  color: #a3123d;
+}
+
+.inv-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}

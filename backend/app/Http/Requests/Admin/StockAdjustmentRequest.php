@@ -11,6 +11,7 @@ use Illuminate\Validation\Rule;
  * - write_off:              quantity > 0 removed, e.g. damaged (note required)
  * - manual_adjustment:      quantity ≠ 0, signed (note required)
  * - stock_count_correction: counted_quantity ≥ 0 from a physical count (note required)
+ * - expected_stock (optional): the stock shown to the admin; see InventoryService::adjust()
  */
 class StockAdjustmentRequest extends FormRequest
 {
@@ -29,6 +30,9 @@ class StockAdjustmentRequest extends FormRequest
                 ? ['required', 'integer', 'min:0', 'max:1000000']
                 : ['prohibited'],
             'note' => [$reason === InventoryReason::Restock ? 'nullable' : 'required', 'string', 'max:500'],
+            // The stock the admin saw. When sent (the dashboard always sends it), the adjustment is
+            // refused with 409 if the stock changed meanwhile: no duplicate or blind adjustment.
+            'expected_stock' => ['sometimes', 'integer', 'min:0', 'max:100000000'],
         ];
     }
 }

@@ -11,7 +11,7 @@ use App\Models\ProductVariant;
 use App\Services\CatalogService;
 use Illuminate\Http\JsonResponse;
 
-/** Routes require catalog.manage; opening stock additionally requires inventory.manage. */
+/** Routes require catalog.manage; opening stock and the low-stock level additionally require inventory.manage. */
 class ProductVariantController extends Controller
 {
     public function __construct(private readonly CatalogService $catalog) {}
@@ -26,11 +26,26 @@ class ProductVariantController extends Controller
             'Setting opening stock requires permission to manage inventory.'
         );
 
+        $this->authorizeThreshold($request);
+
         return new ProductVariantResource($this->catalog->createVariant($product, $request->validated(), $admin));
+    }
+
+    /** The low-stock level belongs to inventory management, so it needs inventory.manage too. */
+    private function authorizeThreshold(ProductVariantRequest $request): void
+    {
+        abort_if(
+            array_key_exists('low_stock_threshold', $request->validated())
+                && ! $request->user('admin')->hasPermission(AdminPermission::ManageInventory),
+            403,
+            'Changing the low-stock level requires permission to manage inventory.'
+        );
     }
 
     public function update(ProductVariantRequest $request, ProductVariant $variant): ProductVariantResource
     {
+        $this->authorizeThreshold($request);
+
         return new ProductVariantResource($this->catalog->updateVariant($variant, $request->validated()));
     }
 

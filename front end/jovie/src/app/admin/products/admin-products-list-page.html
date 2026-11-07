@@ -111,7 +111,7 @@
               </td>
               <td [attr.data-label]="'admin.products.featured' | translate">{{ (p.is_featured ? 'admin.products.yes' : 'admin.products.no') | translate }}</td>
               <td [attr.data-label]="'admin.products.updated' | translate" class="prd-date">{{ date(p.updated_at) }}</td>
-              <td class="prd-actions">
+              <td class="prd-actions"><div class="prd-actions-in">
                 @if (p.archived_at) {
                   <button type="button" class="adm-button is-light is-small" [disabled]="busyId() !== null" (click)="restore(p)">{{ 'admin.products.restore' | translate }}</button>
                 } @else {
@@ -123,7 +123,7 @@
                   }
                   <button type="button" class="adm-link prd-archive" [disabled]="busyId() !== null" (click)="archive(p)">{{ 'admin.products.archive' | translate }}</button>
                 }
-              </td>
+              </div></td>
             </tr>
           }
         </tbody>

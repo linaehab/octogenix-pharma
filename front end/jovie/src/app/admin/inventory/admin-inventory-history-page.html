@@ -1,0 +1,109 @@
+<p class="his-back"><a routerLink="/admin/inventory">{{ 'admin.inventory.back' | translate }}</a></p>
+<div class="adm-page-head">
+  <div>
+    <h1>{{ 'admin.inventory.historyTitle' | translate }}</h1>
+    <p>{{ 'admin.inventory.historyLead' | translate }}</p>
+  </div>
+</div>
+
+<form #filterForm class="adm-panel his-filters" (submit)="$event.preventDefault(); apply(filterForm)">
+  <div class="his-field">
+    <label for="his-product">{{ 'admin.products.name' | translate }}</label>
+    <select id="his-product" name="variant_id">
+      <option value="">{{ 'admin.inventory.allProducts' | translate }}</option>
+      @for (p of meta()?.options?.products ?? []; track p.variant_id) {
+        <option [value]="p.variant_id" [selected]="filters().variant_id === '' + p.variant_id">{{ name(p) }} ({{ p.sku }})</option>
+      }
+    </select>
+  </div>
+  <div class="his-field">
+    <label for="his-reason">{{ 'admin.inventory.type' | translate }}</label>
+    <select id="his-reason" name="reason">
+      <option value="">{{ 'admin.inventory.allTypes' | translate }}</option>
+      @for (r of meta()?.options?.reasons ?? []; track r) {
+        <option [value]="r" [selected]="filters().reason === r">{{ ('admin.inventory.reasonName.' + r) | translate }}</option>
+      }
+    </select>
+  </div>
+  <div class="his-field">
+    <label for="his-admin">{{ 'admin.inventory.admin' | translate }}</label>
+    <select id="his-admin" name="admin_id">
+      <option value="">{{ 'admin.inventory.allAdmins' | translate }}</option>
+      @for (a of meta()?.options?.admins ?? []; track a.id) {
+        <option [value]="a.id" [selected]="filters().admin_id === '' + a.id">{{ a.name }}</option>
+      }
+    </select>
+  </div>
+  <div class="his-field">
+    <label for="his-order">{{ 'admin.inventory.order' | translate }}</label>
+    <input id="his-order" name="order" dir="ltr" maxlength="30" [value]="filters().order" placeholder="JV-…" />
+  </div>
+  <div class="his-field">
+    <label for="his-from">{{ 'admin.inventory.from' | translate }}</label>
+    <input id="his-from" name="from" type="date" [value]="filters().from" />
+  </div>
+  <div class="his-field">
+    <label for="his-to">{{ 'admin.inventory.to' | translate }}</label>
+    <input id="his-to" name="to" type="date" [value]="filters().to" />
+  </div>
+  <div class="his-buttons">
+    <button type="submit" class="adm-button is-light">{{ 'admin.inventory.applyFilters' | translate }}</button>
+    @if (filtered()) {
+      <button type="button" class="adm-link" (click)="clear(filterForm)">{{ 'admin.products.clear' | translate }}</button>
+    }
+  </div>
+</form>
+
+<section class="adm-panel his-panel" aria-labelledby="his-results" [attr.aria-busy]="loading()">
+  <h2 id="his-results" class="his-results">{{ 'admin.inventory.movementsCount' | translate: { count: count(meta()?.total ?? 0) } }}</h2>
+  @if (loading() && !rows().length) {
+    <app-admin-state kind="loading" />
+  } @else if (error()) {
+    <app-admin-state kind="error" [message]="'admin.inventory.historyError'" (retry)="load()" />
+  } @else if (!rows().length) {
+    <app-admin-state kind="empty" [message]="filtered() ? 'admin.inventory.noMovementsMatch' : 'admin.inventory.noMovements'" />
+  } @else {
+    <table class="his-table">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'admin.inventory.date' | translate }}</th>
+          <th scope="col">{{ 'admin.products.name' | translate }}</th>
+          <th scope="col">{{ 'admin.inventory.type' | translate }}</th>
+          <th scope="col">{{ 'admin.inventory.change' | translate }}</th>
+          <th scope="col">{{ 'admin.inventory.beforeAfter' | translate }}</th>
+          <th scope="col">{{ 'admin.inventory.note' | translate }}</th>
+          <th scope="col">{{ 'admin.inventory.order' | translate }}</th>
+          <th scope="col">{{ 'admin.inventory.admin' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (m of rows(); track m.id) {
+          <tr>
+            <td class="his-date" [attr.data-label]="'admin.inventory.date' | translate">{{ date(m.created_at) }}</td>
+            <td class="his-product">
+              <strong>{{ name(m) }}</strong>
+              <span class="his-sku"><bdi dir="ltr">{{ m.sku }}</bdi></span>
+            </td>
+            <td [attr.data-label]="'admin.inventory.type' | translate">{{ ('admin.inventory.reasonName.' + m.reason) | translate }}</td>
+            <td [attr.data-label]="'admin.inventory.change' | translate">
+              <strong class="his-change" [class.is-in]="m.quantity_change > 0" [class.is-out]="m.quantity_change < 0"><bdi dir="ltr">{{ change(m.quantity_change) }}</bdi></strong>
+            </td>
+            <td [attr.data-label]="'admin.inventory.beforeAfter' | translate"><bdi dir="ltr">{{ count(m.stock_before) }} → {{ count(m.stock_after) }}</bdi></td>
+            <td [attr.data-label]="'admin.inventory.note' | translate" class="his-note">{{ m.note || '—' }}</td>
+            <td [attr.data-label]="'admin.inventory.order' | translate"><bdi dir="ltr">{{ m.order?.order_number ?? '—' }}</bdi></td>
+            <td [attr.data-label]="'admin.inventory.admin' | translate">{{ m.admin?.name ?? ('admin.inventory.system' | translate) }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    @if (meta(); as mt) {
+      @if (mt.last_page > 1) {
+        <nav class="his-pages" [attr.aria-label]="'admin.products.pages' | translate">
+          <button type="button" class="adm-button is-light is-small" [disabled]="mt.current_page <= 1 || loading()" (click)="goTo(mt.current_page - 1)">{{ 'admin.products.prev' | translate }}</button>
+          <span>{{ 'admin.products.pageOf' | translate: { page: count(mt.current_page), pages: count(mt.last_page) } }}</span>
+          <button type="button" class="adm-button is-light is-small" [disabled]="mt.current_page >= mt.last_page || loading()" (click)="goTo(mt.current_page + 1)">{{ 'admin.products.next' | translate }}</button>
+        </nav>
+      }
+    }
+  }
+</section>

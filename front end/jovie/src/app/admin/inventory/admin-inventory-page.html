@@ -1,0 +1,136 @@
+<div class="adm-page-head">
+  <div>
+    <h1>{{ 'admin.nav.inventory' | translate }}</h1>
+    <p>{{ 'admin.inventory.lead' | translate }}</p>
+  </div>
+  <a class="adm-button is-light" routerLink="/admin/inventory/movements">{{ 'admin.inventory.historyLink' | translate }}</a>
+</div>
+
+@if (summary(); as s) {
+  <section class="adm-panel" aria-labelledby="inv-summary">
+    <h2 id="inv-summary" class="adm-visually-hidden">{{ 'admin.inventory.summary' | translate }}</h2>
+    <div class="adm-grid">
+      <app-admin-stat-card [label]="'admin.inventory.tracked' | translate" [value]="count(s.tracked)" />
+      <app-admin-stat-card [label]="'admin.inventory.inStock' | translate" [value]="count(s.in_stock)" tone="calm" />
+      <app-admin-stat-card [label]="'admin.inventory.lowStock' | translate" [value]="count(s.low_stock)" [tone]="s.low_stock > 0 ? 'attention' : 'default'" />
+      <app-admin-stat-card [label]="'admin.inventory.outOfStock' | translate" [value]="count(s.out_of_stock)" [tone]="s.out_of_stock > 0 ? 'attention' : 'default'" />
+    </div>
+    @if (s.out_of_stock > 0 || s.low_stock > 0) {
+      <div class="inv-alert" role="status">
+        <p>{{ 'admin.inventory.alert' | translate: { out: count(s.out_of_stock), low: count(s.low_stock) } }}</p>
+        <div>
+          @if (s.out_of_stock > 0) {
+            <button type="button" class="adm-link" (click)="setStatus('out_of_stock')">{{ 'admin.inventory.showOut' | translate }}</button>
+          }
+          @if (s.low_stock > 0) {
+            <button type="button" class="adm-link" (click)="setStatus('low_stock')">{{ 'admin.inventory.showLow' | translate }}</button>
+          }
+        </div>
+      </div>
+    }
+    @if (s.without_threshold > 0) {
+      <p class="inv-warning">{{ 'admin.inventory.withoutThreshold' | translate: { count: count(s.without_threshold) } }}</p>
+    }
+  </section>
+}
+
+<form class="adm-panel inv-filters" role="search" (submit)="$event.preventDefault(); setQuery({ search: searchBox.value, page: 1 })">
+  <div class="inv-filter inv-search">
+    <label for="inv-search">{{ 'admin.products.search' | translate }}</label>
+    <div class="inv-row">
+      <input #searchBox id="inv-search" type="search" [value]="query().search" maxlength="100" [placeholder]="'admin.products.searchHint' | translate" />
+      <button type="submit" class="adm-button is-light">{{ 'admin.products.searchButton' | translate }}</button>
+    </div>
+  </div>
+  <div class="inv-filter">
+    <label for="inv-status">{{ 'admin.inventory.status' | translate }}</label>
+    <select #status id="inv-status" (change)="setStatus(status.value)">
+      <option value="" [selected]="query().status === ''">{{ 'admin.inventory.statusAll' | translate }}</option>
+      <option value="in_stock" [selected]="query().status === 'in_stock'">{{ 'admin.inventory.statusOption.in_stock' | translate }}</option>
+      <option value="low_stock" [selected]="query().status === 'low_stock'">{{ 'admin.inventory.statusOption.low_stock' | translate }}</option>
+      <option value="out_of_stock" [selected]="query().status === 'out_of_stock'">{{ 'admin.inventory.statusOption.out_of_stock' | translate }}</option>
+    </select>
+  </div>
+  @if (filtered()) {
+    <button type="button" class="adm-link inv-clear" (click)="clear(searchBox)">{{ 'admin.products.clear' | translate }}</button>
+  }
+</form>
+
+@if (notice(); as n) {
+  <p class="adm-notice is-success inv-notice" role="status">{{ n }}</p>
+}
+
+<section class="adm-panel inv-panel" aria-labelledby="inv-results" [attr.aria-busy]="loading()">
+  <h2 id="inv-results" class="inv-results">{{ 'admin.inventory.results' | translate: { count: count(meta()?.total ?? 0) } }}</h2>
+  @if (loading() && !rows().length) {
+    <app-admin-state kind="loading" />
+  } @else if (error()) {
+    <app-admin-state kind="error" (retry)="load()" />
+  } @else if (!rows().length) {
+    <app-admin-state kind="empty" [message]="filtered() ? 'admin.inventory.noMatch' : 'admin.inventory.none'" />
+  } @else {
+    <table class="inv-table">
+      <thead>
+        <tr>
+          <th scope="col"><span class="adm-visually-hidden">{{ 'admin.products.image' | translate }}</span></th>
+          <th scope="col">{{ 'admin.products.name' | translate }}</th>
+          <th scope="col">{{ 'admin.products.sku' | translate }}</th>
+          <th scope="col">{{ 'admin.inventory.stock' | translate }}</th>
+          <th scope="col">{{ 'admin.inventory.threshold' | translate }}</th>
+          <th scope="col">{{ 'admin.inventory.status' | translate }}</th>
+          <th scope="col">{{ 'admin.inventory.lastMovement' | translate }}</th>
+          <th scope="col">{{ 'admin.products.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of rows(); track r.variant_id) {
+          <tr>
+            <td class="inv-img">
+              @if (r.image_url) {
+                <img [src]="r.image_url" alt="" width="48" height="48" loading="lazy" />
+              } @else {
+                <span class="inv-noimg" aria-hidden="true">—</span>
+              }
+            </td>
+            <td class="inv-name">
+              <strong>{{ name(r) }}</strong>
+              <span class="inv-other">{{ otherName(r) }}</span>
+              @if (!r.is_active) {
+                <span class="inv-hidden">{{ 'admin.products.badgeHidden' | translate }}</span>
+              }
+            </td>
+            <td [attr.data-label]="'admin.products.sku' | translate"><bdi dir="ltr">{{ r.sku }}</bdi></td>
+            <td [attr.data-label]="'admin.inventory.stock' | translate"><strong class="inv-qty">{{ count(r.stock_quantity) }}</strong></td>
+            <td [attr.data-label]="'admin.inventory.threshold' | translate">
+              {{ r.low_stock_threshold === null ? ('admin.inventory.notSet' | translate) : count(r.low_stock_threshold) }}
+              <button type="button" class="adm-link inv-edit" (click)="editThreshold(r)"
+                [attr.aria-label]="'admin.inventory.editThresholdFor' | translate: { name: name(r) }">{{ 'admin.inventory.editThreshold' | translate }}</button>
+            </td>
+            <td [attr.data-label]="'admin.inventory.status' | translate">
+              <span class="inv-badge" [attr.data-status]="r.stock_status">{{ ('admin.inventory.statusOption.' + r.stock_status) | translate }}</span>
+            </td>
+            <td [attr.data-label]="'admin.inventory.lastMovement' | translate" class="inv-date">{{ date(r.last_movement_at) }}</td>
+            <td class="inv-actions"><div class="inv-actions-in">
+              <button type="button" class="adm-button is-small" (click)="adjust(r)" [attr.aria-label]="'admin.inventory.adjustFor' | translate: { name: name(r) }">{{ 'admin.inventory.adjust' | translate }}</button>
+              <a class="adm-link" routerLink="/admin/inventory/movements" [queryParams]="{ variant_id: r.variant_id }"
+                [attr.aria-label]="'admin.inventory.historyFor' | translate: { name: name(r) }">{{ 'admin.inventory.history' | translate }}</a>
+            </div></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (meta(); as m) {
+      @if (m.last_page > 1) {
+        <nav class="inv-pages" [attr.aria-label]="'admin.products.pages' | translate">
+          <button type="button" class="adm-button is-light is-small" [disabled]="m.current_page <= 1 || loading()" (click)="setQuery({ page: m.current_page - 1 })">{{ 'admin.products.prev' | translate }}</button>
+          <span>{{ 'admin.products.pageOf' | translate: { page: count(m.current_page), pages: count(m.last_page) } }}</span>
+          <button type="button" class="adm-button is-light is-small" [disabled]="m.current_page >= m.last_page || loading()" (click)="setQuery({ page: m.current_page + 1 })">{{ 'admin.products.next' | translate }}</button>
+        </nav>
+      }
+    }
+  }
+</section>
+
+<app-admin-stock-adjust-dialog (saved)="adjusted($event)" (sessionEnded)="endSession()" />
+<app-admin-threshold-dialog (saved)="thresholdSaved($event)" (sessionEnded)="endSession()" />

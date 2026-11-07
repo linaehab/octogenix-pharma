@@ -165,6 +165,9 @@
         @if (!isNew()) {
           <p class="prf-stock-value">{{ 'admin.products.currentStock' | translate: { count: count(stock() ?? 0) } }}</p>
           <p class="prf-help">{{ 'admin.products.stockReadOnly' | translate }}</p>
+          @if (canSetStock()) {
+            <p><a class="adm-link" routerLink="/admin/inventory">{{ 'admin.products.stockLink' | translate }}</a></p>
+          }
         } @else if (canSetStock()) {
           <div class="prf-field prf-narrow">
             <label for="prf-initial">{{ 'admin.products.initialStock' | translate }}</label>

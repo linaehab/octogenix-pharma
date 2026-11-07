@@ -1,0 +1,227 @@
+.inv-alert {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  border-inline-start: 5px solid var(--adm-red);
+  background: #fdecf1;
+}
+
+.inv-alert p {
+  margin: 0;
+  color: #8f0f35;
+  font-weight: 700;
+}
+
+.inv-alert div {
+  display: flex;
+  gap: 1rem;
+}
+
+.inv-warning {
+  margin: 0.8rem 0 0;
+  color: #7a5200;
+  font-size: 0.9rem;
+}
+
+.inv-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.inv-filter {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 11rem;
+}
+
+.inv-search {
+  flex: 1 1 18rem;
+}
+
+.inv-filter label {
+  font-weight: 700;
+}
+
+.inv-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.inv-filter input,
+.inv-filter select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(32, 51, 102, 0.35);
+  border-radius: 10px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+
+.inv-clear {
+  min-height: 44px;
+}
+
+.inv-notice {
+  margin-bottom: 1.5rem;
+}
+
+.inv-results {
+  margin-bottom: 1rem;
+}
+
+.inv-panel {
+  container-type: inline-size;
+}
+
+.inv-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.inv-table th,
+.inv-table td {
+  padding: 0.65rem 0.55rem;
+  border-bottom: 1px solid rgba(32, 51, 102, 0.1);
+  text-align: start;
+  vertical-align: middle;
+}
+
+.inv-table th {
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.inv-img img,
+.inv-noimg {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 10px;
+  background: #f3f6fb;
+  object-fit: contain;
+}
+
+.inv-name strong,
+.inv-other {
+  display: block;
+}
+
+.inv-other,
+.inv-date {
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+}
+
+.inv-hidden {
+  display: inline-block;
+  margin-top: 0.2rem;
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  background: #eef1f7;
+  font-size: 0.78rem;
+}
+
+.inv-qty {
+  color: var(--adm-navy);
+  font-size: 1.1rem;
+}
+
+.inv-edit {
+  margin-inline-start: 0.4rem;
+  font-size: 0.88rem;
+}
+
+.inv-badge {
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: #e3f4ee;
+  color: #0b5a46;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.inv-badge[data-status='low_stock'] {
+  background: #fff1d6;
+  color: #7a5200;
+}
+
+.inv-badge[data-status='out_of_stock'] {
+  background: #fdecf1;
+  color: #8f0f35;
+}
+
+.inv-actions-in {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.adm-button.is-small {
+  min-height: 36px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.9rem;
+}
+
+.inv-pages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+/* Narrower than the full table: one card per product. */
+@container (max-width: 860px) {
+  .inv-table thead {
+    display: none;
+  }
+
+  .inv-table,
+  .inv-table tbody,
+  .inv-table td {
+    display: block;
+  }
+
+  .inv-table tr {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 0.25rem 0.85rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid rgba(32, 51, 102, 0.12);
+  }
+
+  .inv-table td {
+    grid-column: 2;
+    padding: 0;
+    border: 0;
+  }
+
+  .inv-table td.inv-img {
+    grid-row: 1 / span 3;
+    grid-column: 1;
+  }
+
+  .inv-table td[data-label]::before {
+    content: attr(data-label) ': ';
+    color: var(--adm-muted);
+    font-size: 0.85rem;
+  }
+
+  .inv-table td.inv-actions {
+    margin-top: 0.4rem;
+  }
+}
