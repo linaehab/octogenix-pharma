@@ -22,10 +22,15 @@ export interface CartAdjustment {
 }
 
 const STORAGE_KEY = 'jovie.cart';
+const PROMO_KEY = 'jovie.promo';
+const MAX_PROMO_LENGTH = 32;
 
 const emptySummary = (): CartSummary => ({
   items: [],
   subtotal: { amount_piastres: 0, currency: 'EGP' },
+  discount: { amount_piastres: 0, currency: 'EGP' },
+  items_total: { amount_piastres: 0, currency: 'EGP' },
+  promo: null,
   item_count: 0,
   has_unavailable_items: false,
 });
@@ -46,6 +51,9 @@ export type CartMode = 'guest' | 'customer';
  * merged into it (POST /customer/cart/merge: the server adds quantities and caps them at what can be
  * bought); the browser copy is only emptied after the server confirmed the merge, so a failed merge
  * never loses items: it is tried again on the next refresh.
+ *
+ * Promo code: the browser keeps only the code the customer typed; every pricing request sends it
+ * and the server says whether it applies and how much it takes off (checkout checks it again).
  */
 @Injectable({ providedIn: 'root' })
 export class CartService {
@@ -60,6 +68,7 @@ export class CartService {
   private readonly priced = signal<CartSummary | null>(null);
   private readonly state = signal<CartStatus>('idle');
   private readonly cartMode = signal<CartMode>('guest');
+  private readonly promo = signal<string | null>(this.readPromo());
   /** The merge being sent: a second refresh meanwhile waits for it instead of merging the same items twice. */
   private merging: Observable<{ summary: CartSummary; adjustments: CartAdjustment[] }> | null = null;
   /** Called when the account session has ended (401); set by CustomerAuthService. */
@@ -69,6 +78,13 @@ export class CartService {
   readonly summary = this.priced.asReadonly();
   readonly status = this.state.asReadonly();
   readonly mode = this.cartMode.asReadonly();
+  /** The promo code the customer entered (applied or not: see summary().promo). */
+  readonly promoCode = this.promo.asReadonly();
+  /** The code to send with an order: only one the server applied to the current cart. */
+  readonly appliedPromoCode = computed(() => {
+    const promo = this.priced()?.promo;
+    return promo?.applied ? promo.code : null;
+  });
   /** Number of tins in the cart, shown in the header as soon as something is added. */
   readonly count = computed(() => {
     const local = this.stored().reduce((total, line) => total + line.quantity, 0);
@@ -155,11 +171,24 @@ export class CartService {
     return this.refresh();
   }
 
+  /** Prices the cart with a promo code (the server decides whether it applies). */
+  applyPromo(code: string): Observable<{ summary: CartSummary; adjustments: CartAdjustment[] }> {
+    const clean = code.trim().slice(0, MAX_PROMO_LENGTH);
+    this.writePromo(clean === '' ? null : clean);
+    return this.refresh();
+  }
+
+  removePromo(): Observable<{ summary: CartSummary; adjustments: CartAdjustment[] }> {
+    this.writePromo(null);
+    return this.refresh();
+  }
+
   /** After an order is placed: the order holds the items now (the server empties an account cart itself). */
   clear(): void {
     if (this.cartMode() === 'guest') {
       this.write([]);
     }
+    this.writePromo(null);
     this.priced.set(emptySummary());
   }
 
@@ -244,7 +273,7 @@ export class CartService {
     return this.csrf
       .send(() =>
         this.http
-          .post<Merged>(`${this.baseUrl}/api/v1/customer/cart/merge`, { items: lines })
+          .post<Merged>(`${this.baseUrl}/api/v1/customer/cart/merge`, { items: lines }, { params: this.promoParams() })
           .pipe(timeout(CartService.TIMEOUT_MS)),
       )
       .pipe(
@@ -271,7 +300,7 @@ export class CartService {
   private account(method: 'GET' | 'PUT' | 'DELETE', path: string, body?: unknown): Observable<CartSummary> {
     const url = `${this.baseUrl}/api/v1/customer/cart${path}`;
     const request = () =>
-      this.http.request<{ data: CartSummary }>(method, url, { body }).pipe(timeout(CartService.TIMEOUT_MS));
+      this.http.request<{ data: CartSummary }>(method, url, { body, params: this.promoParams() }).pipe(timeout(CartService.TIMEOUT_MS));
     this.state.set('loading');
     return (method === 'GET' ? request() : this.csrf.send(request)).pipe(
       map((response) => response.data),
@@ -302,7 +331,7 @@ export class CartService {
     }
     const post = () =>
       this.http
-        .post<{ data: CartSummary }>(`${this.baseUrl}/api/v1/cart/preview`, { items: lines })
+        .post<{ data: CartSummary }>(`${this.baseUrl}/api/v1/cart/preview`, this.promo() ? { items: lines, promo_code: this.promo() } : { items: lines })
         .pipe(timeout(CartService.TIMEOUT_MS), map((response) => response.data));
 
     return this.csrf.ensure().pipe(
@@ -314,6 +343,34 @@ export class CartService {
           : throwError(() => error),
       ),
     );
+  }
+
+  private promoParams(): Record<string, string> {
+    const code = this.promo();
+    return code ? { promo_code: code } : {};
+  }
+
+  private readPromo(): string | null {
+    if (!this.isBrowser) {
+      return null;
+    }
+    try {
+      const code = localStorage.getItem(PROMO_KEY);
+      return code && code.length <= MAX_PROMO_LENGTH ? code : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private writePromo(code: string | null): void {
+    this.promo.set(code);
+    if (this.isBrowser) {
+      try {
+        code === null ? localStorage.removeItem(PROMO_KEY) : localStorage.setItem(PROMO_KEY, code);
+      } catch {
+        // Storage unavailable: the code still works for this page view.
+      }
+    }
   }
 
   private upsert(variantId: number, quantity: number): StoredCartLine[] {

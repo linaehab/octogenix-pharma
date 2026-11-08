@@ -42,7 +42,12 @@
         }
 
         <h1 id="pdp-title">{{ name() }}</h1>
-        <p class="price">{{ unitPrice() ? price(unitPrice()) : ('jovie.shop.pricePending' | translate) }}</p>
+        <p class="price">
+          @if (unitPrice() && variant()?.compare_at_price; as was) {
+            <s class="was" style="opacity: 0.6" [attr.aria-label]="'jovie.cart.wasPrice' | translate: { price: price(was) }">{{ price(was) }}</s>
+          }
+          {{ unitPrice() ? price(unitPrice()) : ('jovie.shop.pricePending' | translate) }}
+        </p>
         @if (pick(p.short_description)) {
           <p class="short">{{ pick(p.short_description) }}</p>
         }

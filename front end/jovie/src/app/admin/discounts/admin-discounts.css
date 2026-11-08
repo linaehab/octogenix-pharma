@@ -1,0 +1,217 @@
+.dsc-note {
+  margin: 0 0 1rem;
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  border-inline-start: 5px solid var(--adm-sky);
+  background: #f1f6fc;
+}
+
+.dsc-summary {
+  margin: 0 0 0.5rem;
+  font-weight: 700;
+}
+
+.dsc-warning {
+  margin: 0 0 1rem;
+  color: #7a5200;
+  font-size: 0.9rem;
+}
+
+.dsc-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.dsc-filter {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 11rem;
+}
+
+.dsc-search {
+  flex: 1 1 18rem;
+}
+
+.dsc-filter label {
+  font-weight: 700;
+}
+
+.dsc-filter input,
+.dsc-filter select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(32, 51, 102, 0.35);
+  border-radius: 10px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+
+.dsc-clear {
+  min-height: 44px;
+}
+
+.dsc-notice {
+  margin-bottom: 1.5rem;
+}
+
+.dsc-results {
+  margin-bottom: 1rem;
+}
+
+.dsc-panel {
+  container-type: inline-size;
+}
+
+.dsc-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dsc-table th,
+.dsc-table td {
+  padding: 0.65rem 0.55rem;
+  border-bottom: 1px solid rgba(32, 51, 102, 0.1);
+  text-align: start;
+  vertical-align: middle;
+}
+
+.dsc-table th {
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.dsc-name {
+  font-weight: 700;
+}
+
+.dsc-fee {
+  color: var(--adm-navy);
+  white-space: nowrap;
+}
+
+.dsc-nofee,
+.dsc-date {
+  color: var(--adm-muted);
+  font-size: 0.88rem;
+}
+
+.dsc-badge {
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: #e3f4ee;
+  color: #0b5a46;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.dsc-badge.is-off {
+  background: #eef1f7;
+  color: #3d4867;
+}
+
+.adm-button.is-small {
+  min-height: 36px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.9rem;
+}
+
+/* Narrower than the full table: one card per governorate. */
+@container (max-width: 720px) {
+  .dsc-table thead {
+    display: none;
+  }
+
+  .dsc-table,
+  .dsc-table tbody,
+  .dsc-table td {
+    display: block;
+  }
+
+  .dsc-table tr {
+    display: grid;
+    gap: 0.3rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid rgba(32, 51, 102, 0.12);
+  }
+
+  .dsc-table td {
+    padding: 0;
+    border: 0;
+  }
+
+  .dsc-table td[data-label]::before {
+    content: attr(data-label) ': ';
+    color: var(--adm-muted);
+    font-size: 0.85rem;
+    font-weight: 400;
+  }
+
+  .dsc-table td.dsc-actions {
+    margin-top: 0.4rem;
+  }
+}
+
+.dsc-head-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.dsc-was {
+  margin-inline-end: 0.4rem;
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+}
+
+.dsc-badge.is-active {
+  background: #e3f4ee;
+  color: #0b5a46;
+}
+
+.dsc-badge.is-scheduled {
+  background: #e8f0fc;
+  color: #1f4a8a;
+}
+
+.dsc-badge.is-inactive,
+.dsc-badge.is-none {
+  background: #eef1f7;
+  color: #3d4867;
+}
+
+.dsc-badge.is-expired {
+  background: #fdecef;
+  color: #8a1033;
+}
+
+.dsc-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.dsc-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.dsc-blocked {
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+}
+
+.dsc-pages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}

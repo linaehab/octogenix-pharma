@@ -51,8 +51,14 @@
                     <strong>{{ pick(item.product_name) }}</strong>
                     <span>{{ pick(item.variant_name) }} · <bdi dir="ltr">{{ item.sku }}</bdi></span>
                     <span>{{ 'admin.orders.qtyPrice' | translate: { count: count(item.quantity), price: money(item.unit_price) } }}</span>
+                    @if (item.regular_unit_price; as regular) {
+                      <span>{{ 'admin.orders.productDiscount' | translate: { price: money(regular) } }}</span>
+                    }
+                    @if (item.promo_discount && item.promo_discount.amount_piastres > 0) {
+                      <span>{{ 'admin.orders.linePromo' | translate: { amount: money(item.promo_discount) } }}</span>
+                    }
                   </div>
-                  <strong class="odr-line">{{ money(item.line_total) }}</strong>
+                  <strong class="odr-line">{{ money(lineAmount(item.unit_price, item.quantity)) }}</strong>
                 </li>
               }
             </ul>
@@ -64,7 +70,7 @@
             <dl class="odr-sums">
               <div><dt>{{ 'admin.orders.subtotal' | translate }}</dt><dd>{{ money(o.totals.subtotal) }}</dd></div>
               @if (o.totals.discount.amount_piastres > 0) {
-                <div><dt>{{ 'admin.orders.discount' | translate }}</dt><dd>−{{ money(o.totals.discount) }}</dd></div>
+                <div><dt>{{ (o.promo ? 'admin.orders.promoDiscount' : 'admin.orders.discount') | translate: { code: o.promo?.code ?? '' } }}</dt><dd><bdi dir="ltr">−{{ money(o.totals.discount) }}</bdi></dd></div>
               }
               <div><dt>{{ 'admin.orders.shipping' | translate }}</dt><dd>{{ money(o.totals.shipping_fee) }}</dd></div>
               @if (o.totals.cod_fee.amount_piastres > 0) {

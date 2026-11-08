@@ -17,6 +17,8 @@ use App\Http\Controllers\Api\V1\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\V1\Admin\PaymentWebhookEventController as AdminPaymentWebhookEventController;
 use App\Http\Controllers\Api\V1\Admin\PasswordResetController as AdminPasswordResetController;
 use App\Http\Controllers\Api\V1\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Api\V1\Admin\ProductDiscountController as AdminProductDiscountController;
+use App\Http\Controllers\Api\V1\Admin\PromoCodeController as AdminPromoCodeController;
 use App\Http\Controllers\Api\V1\Admin\ProductImageController as AdminProductImageController;
 use App\Http\Controllers\Api\V1\Admin\ProductReviewController as AdminProductReviewController;
 use App\Http\Controllers\Api\V1\Admin\ProductVariantController as AdminProductVariantController;
@@ -221,6 +223,17 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
                     ->name('product-images.update');
                 Route::delete('/product-images/{image}', [AdminProductImageController::class, 'destroy'])
                     ->name('product-images.destroy');
+
+                // Discounts & promo codes (prices belong to the catalogue).
+                Route::get('/discounts/products', [AdminProductDiscountController::class, 'index'])->name('discounts.products.index');
+                Route::put('/product-variants/{variant}/discount', [AdminProductDiscountController::class, 'update'])
+                    ->name('product-variants.discount.update');
+                Route::delete('/product-variants/{variant}/discount', [AdminProductDiscountController::class, 'destroy'])
+                    ->name('product-variants.discount.destroy');
+                Route::get('/promo-codes', [AdminPromoCodeController::class, 'index'])->name('promo-codes.index');
+                Route::post('/promo-codes', [AdminPromoCodeController::class, 'store'])->name('promo-codes.store');
+                Route::get('/promo-codes/{promoCode}', [AdminPromoCodeController::class, 'show'])->whereNumber('promoCode')->name('promo-codes.show');
+                Route::patch('/promo-codes/{promoCode}', [AdminPromoCodeController::class, 'update'])->whereNumber('promoCode')->name('promo-codes.update');
             });
 
             Route::middleware('can:reviews.manage')->group(function () {

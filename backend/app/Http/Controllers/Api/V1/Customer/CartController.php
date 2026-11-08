@@ -8,7 +8,10 @@ use App\Services\CartService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-/** The signed-in customer's cart. Responses always contain the full, freshly priced cart. */
+/**
+ * The signed-in customer's cart. Responses always contain the full, freshly priced cart. Any of
+ * these calls may carry ?promo_code=... to price the cart with that code (nothing is stored).
+ */
 class CartController extends Controller
 {
     public function __construct(private readonly CartService $cart) {}
@@ -61,6 +64,12 @@ class CartController extends Controller
 
     private function cartResponse(Request $request, array $meta = []): JsonResponse
     {
-        return response()->json(['data' => $this->cart->summarizeFor($request->user('customer')), ...($meta ? ['meta' => $meta] : [])]);
+        $request->validate(['promo_code' => ['sometimes', 'nullable', 'string', 'max:32']]);
+        $code = $request->query('promo_code');
+
+        return response()->json([
+            'data' => $this->cart->summarizeFor($request->user('customer'), is_string($code) ? $code : null),
+            ...($meta ? ['meta' => $meta] : []),
+        ]);
     }
 }

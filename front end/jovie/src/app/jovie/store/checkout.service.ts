@@ -28,7 +28,7 @@ const money = (piastres: unknown): Money | null =>
 
 /** 409 from checkout: the server's totals differ from the ones the customer saw. */
 export class TotalsChangedError extends Error {
-  constructor(readonly totals: { subtotal: Money; shipping_fee: Money; cod_fee: Money; total: Money }) {
+  constructor(readonly totals: { subtotal: Money; discount?: Money; shipping_fee: Money; cod_fee: Money; total: Money }) {
     super('totals-changed');
   }
 }
@@ -80,6 +80,7 @@ export class CheckoutService {
     idempotencyKey: string,
     expectedTotal: number | null,
     locale: Language,
+    promoCode: string | null = null,
   ): Observable<Order> {
     const optional = (value: string) => (value.trim() === '' ? null : value.trim());
     const address = form.address;
@@ -87,6 +88,7 @@ export class CheckoutService {
       payment_method: form.payment_method,
       idempotency_key: idempotencyKey,
       expected_total_piastres: expectedTotal,
+      promo_code: promoCode,
       customer_note: optional(form.customer_note),
       locale,
       items,
@@ -137,9 +139,11 @@ export class CheckoutService {
     idempotencyKey: string,
     expectedTotal: number | null,
     locale: Language,
+    promoCode: string | null = null,
   ): Observable<Order> {
     const body = {
       address_id: addressId,
+      promo_code: promoCode,
       payment_method: paymentMethod,
       idempotency_key: idempotencyKey,
       expected_total_piastres: expectedTotal,

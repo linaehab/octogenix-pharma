@@ -6,6 +6,7 @@ use App\Models\Brand;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Rules\PlainText;
+use App\Support\DiscountRules;
 use App\Support\Localized;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
@@ -134,6 +135,9 @@ class ProductRequest extends FormRequest
                     $validator->errors()->add('variant.compare_at_price_piastres', 'Set the price before the original (compare-at) price.');
                 } elseif ($compareAt !== null && $compareAt <= $price) {
                     $validator->errors()->add('variant.compare_at_price_piastres', 'The original price must be higher than the price.');
+                }
+                foreach (DiscountRules::priceProblems($variant, $price, $compareAt) as $field => $message) {
+                    $validator->errors()->add($field === 'price' ? 'variant.price_piastres' : 'variant.compare_at_price_piastres', $message);
                 }
             }
 

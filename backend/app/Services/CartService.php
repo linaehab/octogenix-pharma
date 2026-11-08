@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\CartItem;
 use App\Models\Customer;
+use App\Models\PromoCode;
 use App\Models\ProductVariant;
 use App\Support\ImagePath;
 use App\Support\Localized;
@@ -24,14 +25,21 @@ class CartService
 
     public const MAX_LINES = 50;
 
+    public function __construct(private readonly PromoCodeService $promos) {}
+
     /**
+     * Prices a cart. Unit prices include the direct product discount; regular_unit_price is the
+     * price before it (null without one). With a promo code, "promo" says whether it applies and
+     * "discount" is its amount. Informational: checkout recalculates everything with locks.
+     *
      * @param  array<int, int>  $quantities  variant ID => quantity
-     * @return array{items: list<array<string, mixed>>, subtotal: array{amount_piastres: int, currency: string}, item_count: int, has_unavailable_items: bool}
+     * @return array<string, mixed>
      */
-    public function summarize(array $quantities): array
+    public function summarize(array $quantities, ?string $promoCode = null, ?Customer $customer = null): array
     {
         $variants = $this->variants(array_keys($quantities));
         $lines = [];
+        $priced = [];
         $subtotal = 0;
         $count = 0;
         $hasUnavailable = false;
@@ -44,12 +52,15 @@ class CartService
 
             $available = $this->isAvailable($variant);
             $max = $available ? $this->maxQuantity($variant) : 0;
-            $lineTotal = $available ? $variant->price_piastres * $quantity : 0;
+            $unitPrice = $available ? $variant->effectivePricePiastres() : null;
+            $unitDiscount = $available ? $variant->unitDiscountPiastres() : 0;
+            $lineTotal = $available ? $unitPrice * $quantity : 0;
             $exceedsStock = $available && $quantity > $max;
 
             if ($available && ! $exceedsStock) {
                 $subtotal += $lineTotal;
                 $count += $quantity;
+                $priced[$variant->id] = ['amount' => $lineTotal, 'eligible' => self::promoEligible($variant)];
             } else {
                 $hasUnavailable = true;
             }
@@ -64,7 +75,8 @@ class CartService
                     'image_url' => ImagePath::url($product->images->first()?->path),
                 ] : null,
                 'variant_name' => Localized::pair($variant, 'name'),
-                'unit_price' => Money::of($available ? $variant->price_piastres : null),
+                'unit_price' => Money::of($unitPrice),
+                'regular_unit_price' => Money::of($unitDiscount > 0 ? $variant->price_piastres : null),
                 'quantity' => $quantity,
                 'line_total' => Money::of($available ? $lineTotal : null),
                 'is_available' => $available,
@@ -73,20 +85,49 @@ class CartService
             ];
         }
 
+        $promo = null;
+        $discount = 0;
+        $code = $promoCode !== null ? PromoCode::normalize($promoCode) : '';
+        if ($code !== '') {
+            $result = $this->promos->evaluate($code, $priced, $customer, $customer?->email);
+            $discount = $result['ok'] ? $result['discount'] : 0;
+            $promo = [
+                'code' => $code,
+                'applied' => $result['ok'],
+                'reason' => $result['ok'] ? null : $result['reason'],
+                'discount' => Money::of($discount),
+                'min_order' => Money::of($result['promo']?->min_order_piastres),
+            ];
+        }
+
         return [
             'items' => $lines,
             'subtotal' => Money::of($subtotal),
+            'discount' => Money::of($discount),
+            'items_total' => Money::of($subtotal - $discount),
+            'promo' => $promo,
             'item_count' => $count,
             'has_unavailable_items' => $hasUnavailable,
         ];
     }
 
     /** @return array<string, mixed> */
-    public function summarizeFor(Customer $customer): array
+    public function summarizeFor(Customer $customer, ?string $promoCode = null): array
     {
         return $this->summarize(
-            $customer->cartItems()->orderBy('id')->pluck('quantity', 'product_variant_id')->map(fn ($q) => (int) $q)->all()
+            $customer->cartItems()->orderBy('id')->pluck('quantity', 'product_variant_id')->map(fn ($q) => (int) $q)->all(),
+            $promoCode,
+            $customer,
         );
+    }
+
+    /**
+     * No stacking: a promo code applies only to items without their own discount (a direct
+     * discount right now, or a compare-at "was" price).
+     */
+    public static function promoEligible(ProductVariant $variant): bool
+    {
+        return $variant->unitDiscountPiastres() === 0 && $variant->compare_at_price_piastres === null;
     }
 
     /** @throws ValidationException when the variant cannot be bought or the quantity is too high */

@@ -30,7 +30,7 @@ class ProductResource extends JsonResource
     public function toArray(Request $request): array
     {
         $variants = $this->variants->where('is_active', true)->values();
-        $prices = $variants->pluck('price_piastres')->filter();
+        $prices = $variants->map(fn (ProductVariant $v) => $v->effectivePricePiastres())->filter();
 
         $data = [
             'slug' => $this->slug,
@@ -54,8 +54,16 @@ class ProductResource extends JsonResource
                 'sku' => $variant->sku,
                 'name' => Localized::pair($variant, 'name'),
                 'net_weight_grams' => $variant->net_weight_grams,
-                'price' => Money::of($variant->price_piastres),
-                'compare_at_price' => Money::of($variant->compare_at_price_piastres),
+                // What is charged now (after the product's own discount) and the "was" price shown
+                // struck through: the regular price during a discount, otherwise the compare-at price.
+                'price' => Money::of($variant->effectivePricePiastres()),
+                'compare_at_price' => Money::of($variant->unitDiscountPiastres() > 0
+                    ? $variant->price_piastres : $variant->compare_at_price_piastres),
+                'discount' => $variant->unitDiscountPiastres() > 0 ? [
+                    'type' => $variant->discount_type->value,
+                    'value' => $variant->discount_value,
+                    'ends_at' => $variant->discount_ends_at?->toIso8601String(),
+                ] : null,
                 'is_default' => $variant->is_default,
                 'is_available' => $variant->isAvailable(),
                 'max_per_order' => $variant->max_per_order,

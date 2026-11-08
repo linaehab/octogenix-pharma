@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $image_path
  * @property int $unit_price_piastres
  * @property int|null $compare_at_price_piastres
+ * @property int $product_discount_piastres direct product discount of the line (before any promo code)
  * @property int $quantity
  * @property int $discount_piastres
  * @property int $line_total_piastres
@@ -33,6 +34,7 @@ class OrderItem extends Model
         return [
             'unit_price_piastres' => 'integer',
             'compare_at_price_piastres' => 'integer',
+            'product_discount_piastres' => 'integer',
             'quantity' => 'integer',
             'discount_piastres' => 'integer',
             'line_total_piastres' => 'integer',

@@ -28,6 +28,12 @@ class OrderResource extends JsonResource
                 'cod_fee' => Money::of($this->cod_fee_piastres),
                 'total' => Money::of($this->total_piastres),
             ],
+            // The promo code used, as it was at checkout (totals.discount is its amount).
+            'promo' => $this->promo_code === null ? null : [
+                'code' => $this->promo_code,
+                'type' => $this->promo_discount_type?->value,
+                'value' => $this->promo_discount_value,
+            ],
             'contact' => [
                 'first_name' => $this->customer_first_name,
                 'last_name' => $this->customer_last_name,
@@ -54,7 +60,11 @@ class OrderResource extends JsonResource
                 'variant_name' => ['en' => $item->variant_name_en, 'ar' => $item->variant_name_ar],
                 'image_url' => ImagePath::url($item->image_path),
                 'unit_price' => Money::of($item->unit_price_piastres),
+                // The price before the product's own discount (null when it had none).
+                'regular_unit_price' => Money::of($item->product_discount_piastres > 0
+                    ? $item->unit_price_piastres + intdiv($item->product_discount_piastres, $item->quantity) : null),
                 'quantity' => $item->quantity,
+                'promo_discount' => Money::of($item->discount_piastres),
                 'line_total' => Money::of($item->line_total_piastres),
             ])->all(),
             'timeline' => $this->whenLoaded('histories', fn () => $this->histories

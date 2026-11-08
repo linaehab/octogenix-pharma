@@ -107,6 +107,23 @@ export const adminRoutes: Routes = [
             ],
           },
           {
+            path: 'discounts',
+            canActivate: [adminCanActivate(sectionAccess('discounts'))],
+            children: [
+              { path: '', pathMatch: 'full', redirectTo: 'products' },
+              {
+                path: 'products',
+                loadComponent: () => import('./discounts/admin-product-discounts-page').then((m) => m.AdminProductDiscountsPage),
+                title: 'Product discounts | Octogenix admin',
+              },
+              {
+                path: 'promo-codes',
+                loadComponent: () => import('./discounts/admin-promo-codes-page').then((m) => m.AdminPromoCodesPage),
+                title: 'Promo codes | Octogenix admin',
+              },
+            ],
+          },
+          {
             path: 'audit-log',
             canActivate: [adminCanActivate(sectionAccess('auditLog'))],
             loadComponent: () => import('./audit/admin-audit-log-page').then((m) => m.AdminAuditLogPage),

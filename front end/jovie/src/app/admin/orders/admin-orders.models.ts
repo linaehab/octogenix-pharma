@@ -122,9 +122,15 @@ export interface AdminOrder {
     variant_name: { en: string; ar: string };
     image_url: string | null;
     unit_price: Money;
+    /** Price before the product's own discount (null when it had none). */
+    regular_unit_price?: Money | null;
     quantity: number;
+    /** This line's share of the promo code discount. */
+    promo_discount?: Money;
     line_total: Money;
   }[];
+  /** The promo code used, as it was at checkout. */
+  promo?: { code: string; type: 'percent' | 'fixed'; value: number } | null;
   placed_at: string;
   updated_at: string | null;
   payment_expires_at: string | null;

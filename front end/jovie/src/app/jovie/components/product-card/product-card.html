@@ -29,7 +29,12 @@
     <h3 [id]="'product-' + product().slug">{{ name() }}</h3>
 
     @if (price(); as price) {
-      <p class="price">{{ 'jovie.shop.priceFrom' | translate: { price: price } }}</p>
+      <p class="price">
+        @if (wasPrice(); as was) {
+          <s class="was" [attr.aria-label]="'jovie.cart.wasPrice' | translate: { price: was }">{{ was }}</s>
+        }
+        {{ 'jovie.shop.priceFrom' | translate: { price: price } }}
+      </p>
       @if (isPreview()) {
         <p class="preview-note">
           {{ (rating() ? 'jovie.shop.previewPriceRating' : 'jovie.shop.previewPrice') | translate }}

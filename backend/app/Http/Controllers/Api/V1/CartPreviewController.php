@@ -8,8 +8,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * Prices a guest's browser cart: { items: [{ variant_id, quantity }] } → the same shape as the
- * signed-in cart. Nothing is stored. Checkout recalculates everything again.
+ * Prices a guest's browser cart: { items: [{ variant_id, quantity }], promo_code? } → the same shape
+ * as the signed-in cart. Nothing is stored. Checkout recalculates everything again (including the
+ * per-customer promo limit, which needs the email address given at checkout).
  */
 class CartPreviewController extends Controller
 {
@@ -19,10 +20,12 @@ class CartPreviewController extends Controller
             'items' => ['present', 'array', 'max:'.CartService::MAX_LINES],
             'items.*.variant_id' => ['required', 'integer', 'distinct'],
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:999'],
+            'promo_code' => ['sometimes', 'nullable', 'string', 'max:32'],
         ]);
 
         return response()->json(['data' => $cart->summarize(
-            collect($request->input('items'))->mapWithKeys(fn ($i) => [(int) $i['variant_id'] => (int) $i['quantity']])->all()
+            collect($request->input('items'))->mapWithKeys(fn ($i) => [(int) $i['variant_id'] => (int) $i['quantity']])->all(),
+            $request->input('promo_code'),
         )]);
     }
 }

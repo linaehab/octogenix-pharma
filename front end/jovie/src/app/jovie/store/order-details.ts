@@ -26,12 +26,20 @@ import { Order } from './store.models';
                 {{ pick(item.product_name) }}
                 <small>{{ pick(item.variant_name) }} · × {{ item.quantity }}</small>
               </span>
-              <span class="amount">{{ price(item.line_total) }}</span>
+              <span class="amount">
+                @if (item.regular_unit_price; as regular) {
+                  <s class="was" [attr.aria-label]="'jovie.cart.wasPrice' | translate: { price: price(lineAmount(regular, item.quantity)) }">{{ price(lineAmount(regular, item.quantity)) }}</s>
+                }
+                {{ price(lineAmount(item.unit_price, item.quantity)) }}
+              </span>
             </li>
           }
         </ul>
         <dl class="totals">
           <div><dt>{{ 'jovie.cart.subtotal' | translate }}</dt><dd>{{ price(o.totals.subtotal) }}</dd></div>
+          @if (o.totals.discount.amount_piastres > 0) {
+            <div><dt>{{ 'jovie.cart.promoDiscount' | translate: { code: o.promo?.code ?? '' } }}</dt><dd><bdi dir="ltr">−{{ price(o.totals.discount) }}</bdi></dd></div>
+          }
           <div><dt>{{ 'jovie.checkout.shipping' | translate }}</dt><dd>{{ price(o.totals.shipping_fee) }}</dd></div>
           @if (o.payment_method === 'cod') {
             <div><dt>{{ 'jovie.checkout.codFee' | translate }}</dt><dd>{{ price(o.totals.cod_fee) }}</dd></div>
@@ -56,6 +64,12 @@ import { Order } from './store.models';
     </div>
   `,
   styles: `
+    .was {
+      margin-inline-end: 0.35rem;
+      font-weight: 400;
+      opacity: 0.6;
+    }
+
     :host {
       display: block;
     }
@@ -160,6 +174,11 @@ export class OrderDetails {
 
   protected pick(text: LocalizedText | null | undefined): string {
     return this.content.pick(text);
+  }
+
+  /** A line before the promo code: unit price × quantity (the totals show the promo separately). */
+  protected lineAmount(unit: Money, quantity: number): Money {
+    return { ...unit, amount_piastres: unit.amount_piastres * quantity };
   }
 
   protected price(money: Money): string {

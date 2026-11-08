@@ -7,8 +7,10 @@ export interface CartLine {
   sku: string;
   product: { slug: string; name: LocalizedText; image_url: string | null } | null;
   variant_name: LocalizedText;
-  /** null when the variant cannot be bought (inactive, no price, no stock). */
+  /** What is paid per unit (after the product's own discount); null when it cannot be bought. */
   unit_price: Money | null;
+  /** The regular price when the product has its own discount, otherwise null. */
+  regular_unit_price?: Money | null;
   quantity: number;
   line_total: Money | null;
   is_available: boolean;
@@ -16,10 +18,36 @@ export interface CartLine {
   exceeds_available_quantity: boolean;
 }
 
+/** Why the server did not apply a promo code. */
+export type PromoReason =
+  | 'not_found'
+  | 'inactive'
+  | 'not_started'
+  | 'expired'
+  | 'min_order'
+  | 'not_eligible'
+  | 'usage_limit'
+  | 'customer_limit';
+
+/** The promo code result of a priced cart (decided by the server). */
+export interface CartPromo {
+  code: string;
+  applied: boolean;
+  reason: PromoReason | null;
+  discount: Money;
+  min_order: Money | null;
+}
+
 /** POST /api/v1/cart/preview: the browser cart priced by the server. Nothing is stored. */
 export interface CartSummary {
   items: CartLine[];
+  /** Items total after product discounts, before the promo code. */
   subtotal: Money;
+  /** Promo code discount (0 without a code). */
+  discount?: Money;
+  /** subtotal - discount: what the items cost. */
+  items_total?: Money;
+  promo?: CartPromo | null;
   item_count: number;
   has_unavailable_items: boolean;
 }
@@ -43,7 +71,11 @@ export interface OrderItem {
   variant_name: LocalizedText;
   image_url: string | null;
   unit_price: Money;
+  /** The price before the product's own discount (null when it had none). */
+  regular_unit_price?: Money | null;
   quantity: number;
+  /** This line's share of the promo code discount. */
+  promo_discount?: Money;
   line_total: Money;
 }
 
@@ -55,6 +87,8 @@ export interface Order {
   payment_method: PaymentMethod;
   can_cancel: boolean;
   totals: { subtotal: Money; discount: Money; shipping_fee: Money; cod_fee: Money; total: Money };
+  /** The promo code used, as it was at checkout. */
+  promo?: { code: string; type: 'percent' | 'fixed'; value: number } | null;
   contact: { first_name: string; last_name: string; email: string; phone: string };
   shipping_address: {
     recipient_name: string;

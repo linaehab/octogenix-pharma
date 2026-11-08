@@ -36,6 +36,9 @@ export class JovieCartPage {
   protected readonly message = signal<{ key: string; params?: Record<string, string | number> } | null>(null);
 
   protected readonly lines = computed(() => this.cart.summary()?.items ?? []);
+  /** The server's answer about the entered promo code (null without one). */
+  protected readonly promo = computed(() => this.cart.summary()?.promo ?? null);
+  protected readonly promoBusy = signal(false);
 
   /** Why Check out is off, or null when the cart can go to checkout. */
   protected readonly checkoutBlocked = computed(() => {
@@ -64,6 +67,31 @@ export class JovieCartPage {
 
   protected price(money: Money | null): string {
     return money ? formatPrice(money, this.language.currentLanguage()) : '';
+  }
+
+  protected applyPromo(code: string): void {
+    if (code.trim() === '' || this.promoBusy()) {
+      return;
+    }
+    this.promoRequest(() => this.cart.applyPromo(code));
+  }
+
+  protected removePromo(): void {
+    if (!this.promoBusy()) {
+      this.promoRequest(() => this.cart.removePromo());
+    }
+  }
+
+  private promoRequest(request: () => ReturnType<CartService['refresh']>): void {
+    this.promoBusy.set(true);
+    this.message.set(null);
+    request().subscribe({
+      next: () => this.promoBusy.set(false),
+      error: () => {
+        this.promoBusy.set(false);
+        this.message.set({ key: 'jovie.cart.updateError' });
+      },
+    });
   }
 
   protected retry(): void {

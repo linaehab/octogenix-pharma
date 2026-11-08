@@ -260,6 +260,12 @@
         </ul>
         <dl class="totals">
           <div><dt>{{ 'jovie.cart.subtotal' | translate }}</dt><dd>{{ price(serverTotals()?.subtotal ?? subtotal()) }}</dd></div>
+          @if (shownDiscount(); as d) {
+            <div class="discount">
+              <dt>{{ 'jovie.cart.promoDiscount' | translate: { code: cart.appliedPromoCode() ?? '' } }}</dt>
+              <dd><bdi dir="ltr">−{{ price(d) }}</bdi></dd>
+            </div>
+          }
           <div><dt>{{ 'jovie.checkout.shipping' | translate }}</dt><dd>{{ governorate() ? price(serverTotals()?.shipping_fee ?? shippingFee()) : ('jovie.checkout.chooseGovernorateShort' | translate) }}</dd></div>
           @if (method() === 'cod') {
             <div><dt>{{ 'jovie.checkout.codFee' | translate }}</dt><dd>{{ price(serverTotals()?.cod_fee ?? codFee()) }}</dd></div>

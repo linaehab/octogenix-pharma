@@ -121,13 +121,25 @@ export class JovieCheckoutPage {
   protected readonly method = computed(() => this.value().payment_method ?? null);
 
   protected readonly subtotal = computed(() => this.cart.summary()?.subtotal ?? null);
+  /** Promo code discount the server applied to the cart (null without one). */
+  protected readonly discount = computed<Money | null>(() => {
+    const summary = this.cart.summary();
+    return summary?.promo?.applied && summary.discount ? summary.discount : null;
+  });
+  /** The discount shown in the summary: the server's latest figure after a 409, else the cart's. */
+  protected readonly shownDiscount = computed<Money | null>(() => {
+    const confirmed = this.serverTotals()?.discount;
+    return confirmed ? (confirmed.amount_piastres > 0 ? confirmed : null) : this.discount();
+  });
+  /** What the items cost after the promo code: free shipping is judged on this (as the server does). */
+  private readonly itemsTotal = computed(() => piastres(this.subtotal()) - piastres(this.discount()));
   protected readonly shippingFee = computed<Money | null>(() => {
     const governorate = this.governorate();
     if (!governorate?.shipping_fee) {
       return null;
     }
     const threshold = this.checkout.config().freeShippingFrom;
-    return threshold && piastres(this.subtotal()) >= threshold.amount_piastres
+    return threshold && this.itemsTotal() >= threshold.amount_piastres
       ? { ...governorate.shipping_fee, amount_piastres: 0 }
       : governorate.shipping_fee;
   });
@@ -138,7 +150,7 @@ export class JovieCheckoutPage {
     if (!subtotal || !shipping || !this.method()) {
       return null;
     }
-    return { ...subtotal, amount_piastres: subtotal.amount_piastres + shipping.amount_piastres + piastres(this.codFee()) };
+    return { ...subtotal, amount_piastres: this.itemsTotal() + shipping.amount_piastres + piastres(this.codFee()) };
   });
 
   /** Why the order cannot be placed now (store, cart or configuration), or null. */
@@ -298,6 +310,7 @@ export class JovieCheckoutPage {
               this.idempotencyKey(),
               expected,
               this.language.currentLanguage(),
+              this.cart.appliedPromoCode(),
             ),
           ),
         )
@@ -307,6 +320,7 @@ export class JovieCheckoutPage {
           this.idempotencyKey(),
           expected,
           this.language.currentLanguage(),
+          this.cart.appliedPromoCode(),
         );
 
     order$.subscribe({
@@ -392,6 +406,13 @@ export class JovieCheckoutPage {
           control.markAsTouched();
           fieldProblem = true;
         }
+      }
+      if (errors['promo_code']) {
+        // The code stopped applying (ended, used up, already used by this customer…): the cart
+        // shows why, and the order can be placed without it.
+        this.cart.refresh().subscribe({ error: () => undefined });
+        this.error.set({ key: 'jovie.checkout.promoChanged' });
+        return;
       }
       const itemProblem = Object.keys(errors).some((key) => key.startsWith('items'));
       if (itemProblem) {

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\DiscountType;
 use App\Enums\OrderPaymentStatus;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
@@ -24,6 +25,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $shipping_fee_piastres
  * @property int $cod_fee_piastres
  * @property int $total_piastres
+ * @property int|null $promo_code_id
+ * @property string|null $promo_code
+ * @property DiscountType|null $promo_discount_type
+ * @property int|null $promo_discount_value
  * @property string $customer_first_name
  * @property string $customer_last_name
  * @property string $customer_email
@@ -52,6 +57,9 @@ class Order extends Model
             'shipping_fee_piastres' => 'integer',
             'cod_fee_piastres' => 'integer',
             'total_piastres' => 'integer',
+            'promo_code_id' => 'integer',
+            'promo_discount_type' => DiscountType::class,
+            'promo_discount_value' => 'integer',
             'payment_expires_at' => 'datetime',
             'placed_at' => 'datetime',
             'confirmed_at' => 'datetime',
@@ -67,6 +75,12 @@ class Order extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class)->withTrashed();
+    }
+
+    /** @return BelongsTo<PromoCode, $this> */
+    public function promoCode(): BelongsTo
+    {
+        return $this->belongsTo(PromoCode::class);
     }
 
     /** @return HasMany<OrderItem, $this> */

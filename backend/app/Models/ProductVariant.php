@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\DiscountType;
 use Database\Factories\ProductVariantFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,6 +23,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $net_weight_grams
  * @property int|null $price_piastres
  * @property int|null $compare_at_price_piastres
+ * @property DiscountType|null $discount_type
+ * @property int|null $discount_value
+ * @property bool $discount_is_active
+ * @property \Illuminate\Support\Carbon|null $discount_starts_at
+ * @property \Illuminate\Support\Carbon|null $discount_ends_at
  * @property int $stock_quantity
  * @property int|null $low_stock_threshold
  * @property int|null $max_per_order
@@ -44,6 +50,11 @@ class ProductVariant extends Model
         'net_weight_grams',
         'price_piastres',
         'compare_at_price_piastres',
+        'discount_type',
+        'discount_value',
+        'discount_is_active',
+        'discount_starts_at',
+        'discount_ends_at',
         'low_stock_threshold',
         'max_per_order',
         'is_default',
@@ -56,6 +67,7 @@ class ProductVariant extends Model
         'is_default' => false,
         'is_active' => true,
         'sort_order' => 0,
+        'discount_is_active' => false,
     ];
 
     protected function casts(): array
@@ -64,6 +76,11 @@ class ProductVariant extends Model
             'net_weight_grams' => 'integer',
             'price_piastres' => 'integer',
             'compare_at_price_piastres' => 'integer',
+            'discount_type' => DiscountType::class,
+            'discount_value' => 'integer',
+            'discount_is_active' => 'boolean',
+            'discount_starts_at' => 'datetime',
+            'discount_ends_at' => 'datetime',
             'stock_quantity' => 'integer',
             'low_stock_threshold' => 'integer',
             'max_per_order' => 'integer',
@@ -83,6 +100,40 @@ class ProductVariant extends Model
     public function movements(): HasMany
     {
         return $this->hasMany(InventoryMovement::class);
+    }
+
+    /**
+     * The direct discount's state: none (no discount set), inactive (switched off), scheduled
+     * (on, starts later), expired (end date passed) or active.
+     */
+    public function discountState(?\DateTimeInterface $at = null): string
+    {
+        $at ??= now();
+
+        return match (true) {
+            $this->discount_type === null || $this->discount_value === null => 'none',
+            $this->discount_ends_at !== null && $this->discount_ends_at <= $at => 'expired',
+            ! $this->discount_is_active => 'inactive',
+            $this->discount_starts_at !== null && $this->discount_starts_at > $at => 'scheduled',
+            default => 'active',
+        };
+    }
+
+    /** Discount per unit right now, in piastres (0 without an active discount or a price). */
+    public function unitDiscountPiastres(?\DateTimeInterface $at = null): int
+    {
+        if ($this->price_piastres === null || $this->discountState($at) !== 'active') {
+            return 0;
+        }
+
+        // Never the whole price: at least one piastre is always paid.
+        return min($this->discount_type->apply($this->discount_value, $this->price_piastres), $this->price_piastres - 1);
+    }
+
+    /** The price a customer pays per unit right now (before any promo code), or null without a price. */
+    public function effectivePricePiastres(?\DateTimeInterface $at = null): ?int
+    {
+        return $this->price_piastres === null ? null : $this->price_piastres - $this->unitDiscountPiastres($at);
     }
 
     /**

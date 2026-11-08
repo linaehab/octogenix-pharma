@@ -6,10 +6,10 @@ use App\Support\Money;
 use Illuminate\Http\JsonResponse;
 use RuntimeException;
 
-/** The total the customer saw differs from the current one (price or shipping changed). Nothing was ordered. */
+/** The total the customer saw differs from the current one (price, discount or shipping changed). Nothing was ordered. */
 class TotalsChangedException extends RuntimeException
 {
-    /** @param array{subtotal: int, shipping_fee: int, cod_fee: int, total: int} $totals */
+    /** @param array{subtotal: int, discount?: int, shipping_fee: int, cod_fee: int, total: int} $totals */
     public function __construct(public readonly array $totals)
     {
         parent::__construct('The order total has changed.');

@@ -4,6 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use App\Models\ProductVariant;
 use App\Rules\PlainText;
+use App\Support\DiscountRules;
 use App\Support\Localized;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
@@ -78,6 +79,9 @@ class ProductVariantRequest extends FormRequest
                 $validator->errors()->add('compare_at_price_piastres', 'Set the price before the original (compare-at) price.');
             } elseif ($compareAt !== null && $compareAt <= $state['price_piastres']) {
                 $validator->errors()->add('compare_at_price_piastres', 'The original price must be higher than the price.');
+            }
+            foreach (DiscountRules::priceProblems($this->variant(), $state['price_piastres'] ?? null, $compareAt) as $field => $message) {
+                $validator->errors()->add($field === 'price' ? 'price_piastres' : 'compare_at_price_piastres', $message);
             }
         }];
     }

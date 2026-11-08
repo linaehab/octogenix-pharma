@@ -224,6 +224,11 @@ export class AdminOrderPage {
     return (this.language.currentLanguage() === 'ar' ? text.ar || text.en : text.en || text.ar) ?? '';
   }
 
+  /** A line before the promo code (unit price × quantity); the money section shows the promo. */
+  protected lineAmount(unit: Money, quantity: number): Money {
+    return { ...unit, amount_piastres: unit.amount_piastres * quantity };
+  }
+
   protected money(value: Money): string {
     return formatPrice(value, this.language.currentLanguage());
   }

@@ -1,0 +1,105 @@
+<app-admin-discounts-nav current="promo" />
+
+<div class="adm-page-head">
+  <div>
+    <h1>{{ 'admin.discounts.tabPromo' | translate }}</h1>
+    <p>{{ 'admin.promo.lead' | translate }}</p>
+  </div>
+  <div class="dsc-head-actions">
+    <button type="button" class="adm-button" (click)="create()">{{ 'admin.promo.create' | translate }}</button>
+  </div>
+</div>
+
+<p class="dsc-note">{{ 'admin.discounts.noStacking' | translate }} {{ 'admin.discounts.newOrdersOnly' | translate }}</p>
+
+<form class="adm-panel dsc-filters" role="search" (submit)="$event.preventDefault(); apply(searchBox.value, stateBox.value)">
+  <div class="dsc-filter dsc-search">
+    <label for="dsc-pc-search">{{ 'admin.discounts.search' | translate }}</label>
+    <input #searchBox id="dsc-pc-search" type="search" maxlength="32" dir="ltr" [value]="search()" [placeholder]="'admin.promo.searchHint' | translate" />
+  </div>
+  <div class="dsc-filter">
+    <label for="dsc-pc-state">{{ 'admin.discounts.filter' | translate }}</label>
+    <select #stateBox id="dsc-pc-state" (change)="apply(searchBox.value, stateBox.value)">
+      <option value="" [selected]="state() === ''">{{ 'admin.discounts.filterAll' | translate }}</option>
+      @for (s of states; track s) {
+        <option [value]="s" [selected]="state() === s">{{ 'admin.discounts.state.' + s | translate }}</option>
+      }
+    </select>
+  </div>
+  <button type="submit" class="adm-button">{{ 'admin.discounts.apply' | translate }}</button>
+  @if (filtered()) {
+    <button type="button" class="adm-link dsc-clear" (click)="clear(searchBox, stateBox)">{{ 'admin.discounts.clear' | translate }}</button>
+  }
+</form>
+
+@if (notice(); as n) {
+  <p class="adm-notice dsc-notice" [class.is-success]="n.tone === 'success'" [class.is-error]="n.tone === 'error'"
+    [attr.role]="n.tone === 'error' ? 'alert' : 'status'">{{ n.text }}</p>
+}
+
+<section class="adm-panel dsc-panel" aria-labelledby="dsc-pc-results" [attr.aria-busy]="loading()">
+  <h2 id="dsc-pc-results" class="dsc-results" aria-live="polite">{{ 'admin.promo.results' | translate: { count: count(meta()?.total ?? 0) } }}</h2>
+  @if (loading() && !rows().length) {
+    <app-admin-state kind="loading" />
+  } @else if (error()) {
+    <app-admin-state kind="error" (retry)="load()" />
+  } @else if (!rows().length) {
+    <app-admin-state kind="empty" [message]="filtered() ? 'admin.promo.noMatch' : 'admin.promo.none'" />
+  } @else {
+    <table class="dsc-table">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'admin.promo.code' | translate }}</th>
+          <th scope="col">{{ 'admin.promo.discount' | translate }}</th>
+          <th scope="col">{{ 'admin.promo.minOrder' | translate }}</th>
+          <th scope="col">{{ 'admin.promo.validity' | translate }}</th>
+          <th scope="col">{{ 'admin.promo.uses' | translate }}</th>
+          <th scope="col">{{ 'admin.discounts.status' | translate }}</th>
+          <th scope="col">{{ 'admin.discounts.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of rows(); track r.id) {
+          <tr>
+            <td [attr.data-label]="'admin.promo.code' | translate">
+              <bdi class="dsc-code" dir="ltr">{{ r.code }}</bdi>
+              @if (r.description) {
+                <br /><small class="dsc-date">{{ r.description }}</small>
+              }
+            </td>
+            <td [attr.data-label]="'admin.promo.discount' | translate"><bdi dir="ltr">{{ amount(r) }}</bdi></td>
+            <td [attr.data-label]="'admin.promo.minOrder' | translate"><bdi dir="ltr">{{ minimum(r) }}</bdi></td>
+            <td class="dsc-date" [attr.data-label]="'admin.promo.validity' | translate">{{ validity(r) }}</td>
+            <td [attr.data-label]="'admin.promo.uses' | translate">{{ uses(r) }}</td>
+            <td [attr.data-label]="'admin.discounts.status' | translate">
+              <span [class]="'dsc-badge is-' + r.state">{{ 'admin.discounts.state.' + r.state | translate }}</span>
+            </td>
+            <td class="dsc-actions">
+              <div class="dsc-row-actions">
+                <button type="button" class="adm-button is-small" [disabled]="busy() !== null" [attr.aria-busy]="busy() === r.id" (click)="edit(r)"
+                  [attr.aria-label]="'admin.promo.editFor' | translate: { code: r.code }">{{ 'admin.promo.edit' | translate }}</button>
+                @if (r.state !== 'expired') {
+                  <button type="button" class="adm-button is-light is-small" [disabled]="busy() !== null" (click)="toggle(r)">
+                    {{ (r.is_active ? 'admin.promo.deactivate' : 'admin.promo.activate') | translate }}
+                  </button>
+                }
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (meta(); as m) {
+      @if (m.last_page > 1) {
+        <nav class="dsc-pages" [attr.aria-label]="'admin.discounts.pages' | translate">
+          <button type="button" class="adm-button is-light is-small" [disabled]="m.current_page <= 1 || loading()" (click)="load(m.current_page - 1)">{{ 'admin.discounts.prev' | translate }}</button>
+          <span>{{ 'admin.discounts.pageOf' | translate: { page: count(m.current_page), pages: count(m.last_page) } }}</span>
+          <button type="button" class="adm-button is-light is-small" [disabled]="m.current_page >= m.last_page || loading()" (click)="load(m.current_page + 1)">{{ 'admin.discounts.next' | translate }}</button>
+        </nav>
+      }
+    }
+  }
+</section>
+
+<app-admin-promo-code-dialog (saved)="saved($event)" (changed)="replace($event)" (sessionEnded)="endSession()" />

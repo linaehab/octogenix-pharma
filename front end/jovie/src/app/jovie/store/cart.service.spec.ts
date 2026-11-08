@@ -32,6 +32,7 @@ describe('CartService', () => {
 
   beforeEach(() => {
     localStorage.removeItem('jovie.cart');
+    localStorage.removeItem('jovie.promo');
     TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
     http = TestBed.inject(HttpTestingController);
     cart = TestBed.inject(CartService);
@@ -40,6 +41,7 @@ describe('CartService', () => {
   afterEach(() => {
     http.verify();
     localStorage.removeItem('jovie.cart');
+    localStorage.removeItem('jovie.promo');
   });
 
   const answer = (body: CartSummary) => http.expectOne('/api/v1/cart/preview').flush({ data: body });
@@ -87,6 +89,87 @@ describe('CartService', () => {
     cart.clear();
     expect(cart.isEmpty()).toBeTrue();
     expect(localStorage.getItem('jovie.cart')).toBe('[]');
+  });
+});
+
+describe('CartService promo codes', () => {
+  let http: HttpTestingController;
+  let cart: CartService;
+
+  beforeEach(() => {
+    localStorage.setItem('jovie.cart', JSON.stringify([{ variant_id: 1, quantity: 2 }]));
+    localStorage.removeItem('jovie.promo');
+    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
+    http = TestBed.inject(HttpTestingController);
+    cart = TestBed.inject(CartService);
+  });
+
+  afterEach(() => {
+    http.verify();
+    localStorage.removeItem('jovie.cart');
+    localStorage.removeItem('jovie.promo');
+  });
+
+  const priced = (promo: CartSummary['promo'], discount = 0): CartSummary => ({
+    ...summary([{ variant_id: 1, quantity: 2 }]),
+    subtotal: money(100000),
+    discount: money(discount),
+    items_total: money(100000 - discount),
+    promo,
+  });
+
+  it('sends only the typed code; the amount comes from the server and only an applied code goes to checkout', () => {
+    cart.applyPromo('  save10 ').subscribe();
+    http.expectOne('/sanctum/csrf-cookie').flush(null);
+    const request = http.expectOne('/api/v1/cart/preview');
+    expect(request.request.body).toEqual({ items: [{ variant_id: 1, quantity: 2 }], promo_code: 'save10' });
+    request.flush({ data: priced({ code: 'SAVE10', applied: true, reason: null, discount: money(10000), min_order: null }, 10000) });
+
+    expect(localStorage.getItem('jovie.promo')).toBe('save10');
+    expect(cart.summary()?.items_total).toEqual(money(90000));
+    expect(cart.appliedPromoCode()).toBe('SAVE10');
+  });
+
+  it('keeps a refused code visible with its reason, but never sends it to checkout', () => {
+    cart.applyPromo('OLD').subscribe();
+    http.expectOne('/sanctum/csrf-cookie').flush(null);
+    http.expectOne('/api/v1/cart/preview').flush({ data: priced({ code: 'OLD', applied: false, reason: 'expired', discount: money(0), min_order: null }) });
+
+    expect(cart.promoCode()).toBe('OLD');
+    expect(cart.summary()?.promo?.reason).toBe('expired');
+    expect(cart.appliedPromoCode()).toBeNull();
+  });
+
+  it('removing the code, or placing the order, forgets it', () => {
+    cart.applyPromo('SAVE10').subscribe();
+    http.expectOne('/sanctum/csrf-cookie').flush(null);
+    http.expectOne('/api/v1/cart/preview').flush({ data: priced({ code: 'SAVE10', applied: true, reason: null, discount: money(10000), min_order: null }, 10000) });
+
+    cart.removePromo().subscribe();
+    const request = http.expectOne('/api/v1/cart/preview');
+    expect(request.request.body).toEqual({ items: [{ variant_id: 1, quantity: 2 }] });
+    request.flush({ data: priced(null) });
+    expect(localStorage.getItem('jovie.promo')).toBeNull();
+    expect(cart.appliedPromoCode()).toBeNull();
+
+    cart.applyPromo('SAVE10').subscribe();
+    http.expectOne('/api/v1/cart/preview').flush({ data: priced({ code: 'SAVE10', applied: true, reason: null, discount: money(10000), min_order: null }, 10000) });
+    cart.clear();
+    expect(cart.promoCode()).toBeNull();
+    expect(localStorage.getItem('jovie.promo')).toBeNull();
+  });
+
+  it('prices a signed-in cart with the code as a query parameter', () => {
+    localStorage.setItem('jovie.cart', '[]');
+    localStorage.setItem('jovie.promo', 'MINE');
+    cart = TestBed.runInInjectionContext(() => new CartService());
+    cart.useCustomerCart(() => undefined).subscribe();
+
+    const request = http.expectOne((r) => r.url === '/api/v1/customer/cart');
+    expect(request.request.method).toBe('GET');
+    expect(request.request.params.get('promo_code')).toBe('MINE');
+    request.flush({ data: priced({ code: 'MINE', applied: false, reason: 'customer_limit', discount: money(0), min_order: null }) });
+    expect(cart.appliedPromoCode()).toBeNull();
   });
 });
 

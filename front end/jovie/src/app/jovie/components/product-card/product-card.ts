@@ -58,6 +58,11 @@ export class ProductCard {
     const price = this.product().price_from;
     return price ? formatPrice(price, this.language.currentLanguage()) : null;
   });
+  /** The struck-through "was" price of the size shown (from the server), or null. */
+  protected readonly wasPrice = computed(() => {
+    const was = this.variant()?.compare_at_price;
+    return was ? formatPrice(was, this.language.currentLanguage()) : null;
+  });
 
   /**
    * The rating line. The API has no reviews yet, so the card shows the stage's placeholder rating

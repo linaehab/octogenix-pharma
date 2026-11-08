@@ -229,6 +229,74 @@
   margin: 0;
 }
 
+.summary dl div + div {
+  margin-top: 0.5rem;
+}
+
+.summary dl .discount {
+  color: var(--jv-night);
+  font-size: 1rem;
+}
+
+.was {
+  margin-inline-end: 0.35rem;
+  opacity: 0.6;
+  font-weight: 400;
+}
+
+.promo {
+  display: grid;
+  font-weight: 700;
+  gap: 0.4rem;
+  margin: 0 0 1.2rem;
+}
+
+.promo-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.promo-row input {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid currentColor;
+  border-radius: 10px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+  text-transform: uppercase;
+}
+
+.promo-button {
+  min-height: 44px;
+  padding: 0 1rem;
+  border: 2px solid var(--jv-night);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--jv-night);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.promo-button:disabled {
+  opacity: 0.6;
+}
+
+.promo-status {
+  min-height: 1.2em;
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+.promo-status.is-error {
+  color: var(--jv-sweetypie);
+  font-weight: 700;
+}
+
 .note,
 .blocked {
   margin: 0.6rem 0 1.2rem;

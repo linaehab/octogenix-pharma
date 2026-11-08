@@ -19,8 +19,12 @@ export interface ApiProductVariant {
   sku: string;
   name: LocalizedText;
   net_weight_grams: number | null;
+  /** What is charged now (after the product's own discount, if any). */
   price: Money | null;
+  /** The "was" price shown struck through (the regular price during a discount), or null. */
   compare_at_price: Money | null;
+  /** The product's own discount while it applies (decided by the server). */
+  discount?: { type: 'percent' | 'fixed'; value: number; ends_at: string | null } | null;
   is_default: boolean;
   is_available: boolean;
   max_per_order: number | null;

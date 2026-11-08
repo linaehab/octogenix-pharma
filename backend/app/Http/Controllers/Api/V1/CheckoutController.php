@@ -65,6 +65,7 @@ class CheckoutController extends Controller
             'payment_method' => PaymentMethod::from($request->validated('payment_method')),
             'idempotency_key' => $request->validated('idempotency_key'),
             'expected_total_piastres' => $request->validated('expected_total_piastres'),
+            'promo_code' => $request->validated('promo_code'),
             'customer_note' => $request->validated('customer_note'),
             'locale' => $request->validated('locale') ?? $customer?->locale ?? $request->getPreferredLanguage(['en', 'ar']) ?? 'en',
             'ip_address' => $request->ip(),

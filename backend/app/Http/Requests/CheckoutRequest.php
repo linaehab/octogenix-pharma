@@ -40,6 +40,7 @@ class CheckoutRequest extends FormRequest
             'payment_method' => ['required', Rule::enum(PaymentMethod::class)],
             'idempotency_key' => ['required', 'uuid'],
             'expected_total_piastres' => ['sometimes', 'nullable', 'integer', 'min:0'],
+            'promo_code' => ['sometimes', 'nullable', 'string', 'max:32'],
             'customer_note' => ['sometimes', 'nullable', 'string', 'max:1000', new PlainText],
             'locale' => ['sometimes', Rule::in(['en', 'ar'])],
         ];

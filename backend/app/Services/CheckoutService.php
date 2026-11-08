@@ -14,6 +14,7 @@ use App\Models\Customer;
 use App\Models\Governorate;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\PromoCode;
 use App\Models\ProductVariant;
 use App\Notifications\OrderPlacedNotification;
 use App\Notifications\OrderPlacedStaffNotification;
@@ -38,6 +39,7 @@ class CheckoutService
         private readonly InventoryService $inventory,
         private readonly OrderStatusService $statuses,
         private readonly CartService $cart,
+        private readonly PromoCodeService $promos,
     ) {}
 
     /**
@@ -51,6 +53,7 @@ class CheckoutService
      *     payment_method: PaymentMethod,
      *     idempotency_key: string,
      *     expected_total_piastres: ?int,
+     *     promo_code?: ?string,
      *     customer_note: ?string,
      *     locale: string,
      *     ip_address: ?string,
@@ -146,6 +149,8 @@ class CheckoutService
 
         $errors = [];
         $subtotal = 0;
+        $now = now();
+        $lines = [];
         foreach ($quantities as $variantId => $quantity) {
             $variant = $variants->get($variantId);
 
@@ -154,20 +159,40 @@ class CheckoutService
             } elseif ($quantity > $this->cart->maxQuantity($variant)) {
                 $errors["items.{$variantId}"][] = 'Only '.$this->cart->maxQuantity($variant).' can be ordered.';
             } else {
-                $subtotal += $variant->price_piastres * $quantity;
+                // Unit price after the direct product discount, fixed for the whole order.
+                $unitDiscount = $variant->unitDiscountPiastres($now);
+                $unitPrice = $variant->price_piastres - $unitDiscount;
+                $lines[$variantId] = [
+                    'unit_price' => $unitPrice,
+                    'product_discount' => $unitDiscount * $quantity,
+                    'amount' => $unitPrice * $quantity,
+                    'eligible' => $unitDiscount === 0 && $variant->compare_at_price_piastres === null,
+                ];
+                $subtotal += $unitPrice * $quantity;
             }
         }
         if ($errors !== []) {
             throw ValidationException::withMessages($errors);
         }
 
+        // Promo code: checked here with its row locked, so usage limits hold under concurrent orders.
+        $promo = null;
+        $discount = 0;
+        $allocation = [];
+        $code = PromoCode::normalize((string) ($input['promo_code'] ?? ''));
+        if ($code !== '') {
+            $applied = $this->promos->apply($code, $lines, $input['customer'], $input['contact']['email'], lock: true);
+            ['promo' => $promo, 'discount' => $discount, 'allocation' => $allocation] = $applied;
+        }
+
+        // Free shipping is judged on what is paid for the items, after the promo code.
         $threshold = $this->settings->get('store.free_shipping_threshold_piastres');
-        $shippingFee = $threshold !== null && $subtotal >= $threshold ? 0 : (int) $governorate->shipping_fee_piastres;
+        $shippingFee = $threshold !== null && $subtotal - $discount >= $threshold ? 0 : (int) $governorate->shipping_fee_piastres;
         $codFee = $input['payment_method'] === PaymentMethod::Cod ? (int) $this->settings->get('store.cod_fee_piastres') : 0;
-        $total = $subtotal + $shippingFee + $codFee;
+        $total = $subtotal - $discount + $shippingFee + $codFee;
 
         if ($input['expected_total_piastres'] !== null && $input['expected_total_piastres'] !== $total) {
-            throw new TotalsChangedException(['subtotal' => $subtotal, 'shipping_fee' => $shippingFee, 'cod_fee' => $codFee, 'total' => $total]);
+            throw new TotalsChangedException(['subtotal' => $subtotal, 'discount' => $discount, 'shipping_fee' => $shippingFee, 'cod_fee' => $codFee, 'total' => $total]);
         }
 
         $isCard = $input['payment_method'] === PaymentMethod::Card;
@@ -181,7 +206,11 @@ class CheckoutService
             'payment_status' => OrderPaymentStatus::Unpaid,
             'payment_method' => $input['payment_method'],
             'subtotal_piastres' => $subtotal,
-            'discount_piastres' => 0,
+            'discount_piastres' => $discount,
+            'promo_code_id' => $promo?->id,
+            'promo_code' => $promo?->code,
+            'promo_discount_type' => $promo?->discount_type,
+            'promo_discount_value' => $promo?->discount_value,
             'shipping_fee_piastres' => $shippingFee,
             'cod_fee_piastres' => $codFee,
             'total_piastres' => $total,
@@ -219,6 +248,8 @@ class CheckoutService
 
         foreach ($quantities as $variantId => $quantity) {
             $variant = $variants->get($variantId);
+            $line = $lines[$variantId];
+            $promoShare = $allocation[$variantId] ?? 0;
             $order->items()->create([
                 'product_id' => $variant->product_id,
                 'product_variant_id' => $variant->id,
@@ -228,11 +259,12 @@ class CheckoutService
                 'variant_name_en' => $variant->name_en,
                 'variant_name_ar' => $variant->name_ar,
                 'image_path' => $variant->product->images->first()?->path,
-                'unit_price_piastres' => $variant->price_piastres,
+                'unit_price_piastres' => $line['unit_price'],
                 'compare_at_price_piastres' => $variant->compare_at_price_piastres,
+                'product_discount_piastres' => $line['product_discount'],
                 'quantity' => $quantity,
-                'discount_piastres' => 0,
-                'line_total_piastres' => $variant->price_piastres * $quantity,
+                'discount_piastres' => $promoShare,
+                'line_total_piastres' => $line['amount'] - $promoShare,
             ]);
 
             // Guarded decrement: fails (and rolls everything back) if stock ran out meanwhile.

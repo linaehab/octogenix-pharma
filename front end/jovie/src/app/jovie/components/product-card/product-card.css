@@ -253,3 +253,9 @@ h3 {
     animation-duration: 2s;
   }
 }
+
+.price .was {
+  margin-inline-end: 0.35rem;
+  font-weight: 400;
+  opacity: 0.6;
+}

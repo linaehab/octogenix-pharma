@@ -49,7 +49,12 @@
                   <div>
                     <p class="name">{{ pick(line.product?.name) }}</p>
                     @if (line.unit_price) {
-                      <p class="unit">{{ price(line.unit_price) }}</p>
+                      <p class="unit">
+                        @if (line.regular_unit_price; as regular) {
+                          <s class="was" [attr.aria-label]="'jovie.cart.wasPrice' | translate: { price: price(regular) }">{{ price(regular) }}</s>
+                        }
+                        {{ price(line.unit_price) }}
+                      </p>
                     }
                     <p class="variant">{{ 'jovie.cart.sizeValue' | translate: { size: pick(line.variant_name) } }}</p>
                     @if (!line.is_available) {
@@ -86,11 +91,42 @@
       </table>
 
       <aside class="summary" [attr.aria-label]="'jovie.cart.summary' | translate">
+        <form class="promo" (submit)="$event.preventDefault(); applyPromo(promoInput.value)" novalidate>
+          <label for="cart-promo">{{ 'jovie.cart.promoLabel' | translate }}</label>
+          <div class="promo-row">
+            <input #promoInput id="cart-promo" type="text" dir="ltr" autocomplete="off" autocapitalize="characters" spellcheck="false"
+              maxlength="32" [value]="cart.promoCode() ?? ''" [disabled]="promoBusy()" aria-describedby="cart-promo-status" />
+            @if (cart.promoCode()) {
+              <button class="promo-button" type="button" [disabled]="promoBusy()" (click)="removePromo()">{{ 'jovie.cart.promoRemove' | translate }}</button>
+            } @else {
+              <button class="promo-button" type="submit" [disabled]="promoBusy()">{{ 'jovie.cart.promoApply' | translate }}</button>
+            }
+          </div>
+          <p id="cart-promo-status" class="promo-status" [class.is-error]="promo() && !promo()!.applied" aria-live="polite">
+            @if (promo(); as p) {
+              @if (p.applied) {
+                {{ 'jovie.cart.promoApplied' | translate: { code: p.code } }}
+              } @else {
+                {{ 'jovie.cart.promoReason.' + p.reason | translate: { amount: price(p.min_order) } }}
+              }
+            }
+          </p>
+        </form>
         <dl>
           <div>
             <dt>{{ 'jovie.cart.subtotal' | translate }}</dt>
             <dd>{{ price(cart.summary()?.subtotal ?? null) }}</dd>
           </div>
+          @if (promo()?.applied && promo()!.discount.amount_piastres > 0) {
+            <div class="discount">
+              <dt>{{ 'jovie.cart.promoDiscount' | translate: { code: promo()!.code } }}</dt>
+              <dd><bdi dir="ltr">−{{ price(promo()!.discount) }}</bdi></dd>
+            </div>
+            <div class="items-total">
+              <dt>{{ 'jovie.cart.itemsTotal' | translate }}</dt>
+              <dd>{{ price(cart.summary()?.items_total ?? null) }}</dd>
+            </div>
+          }
         </dl>
         <p class="note">{{ 'jovie.cart.feesNote' | translate }}</p>
         @if (checkoutBlocked(); as reason) {
