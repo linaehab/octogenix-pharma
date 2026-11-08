@@ -15,6 +15,8 @@ class UpdateContactMessageRequest extends FormRequest
     {
         return [
             'status' => ['sometimes', Rule::enum(ContactMessageStatus::class)],
+            // The status the admin saw: if it changed meanwhile, nothing is saved (409).
+            'expected_status' => ['sometimes', Rule::enum(ContactMessageStatus::class)],
             'admin_notes' => ['sometimes', 'nullable', 'string', 'max:5000'],
             'assigned_admin_id' => ['sometimes', 'nullable', 'integer', function (string $attribute, mixed $value, Closure $fail) {
                 $assignee = AdminUser::query()->whereKey($value)->where('is_active', true)->first();

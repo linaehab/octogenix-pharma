@@ -37,11 +37,13 @@ class ContactMessageController extends Controller
             'user_agent' => Str::limit((string) $request->userAgent(), 252),
         ]);
 
-        // Dashboard notification: the subject only, never the sender's details.
+        // Dashboard notification: the message number and subject only, never the sender's details
+        // or the message text. The link opens the message in the dashboard.
         app(AdminNotifier::class)->notify('messages.received', AdminPermission::ViewMessages, [
+            'message_id' => $message->id,
             'subject' => $message->subject?->value ?? (string) $message->subject,
             'site' => $message->site?->value ?? (string) $message->site,
-        ], null, "messages.received:{$message->id}");
+        ], "/admin/contact-messages/{$message->id}", "messages.received:{$message->id}");
 
         try {
             SendContactMessageNotification::dispatch($message);

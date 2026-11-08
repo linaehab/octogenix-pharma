@@ -46,7 +46,7 @@ export const ADMIN_SECTIONS: readonly AdminSection[] = [
   { key: 'discounts', path: 'discounts', access: { permissions: ['catalog.manage'] }, planned: false, icon: 'M3 12V4h8l10 10-8 8zM7.5 7.5h.01' },
   { key: 'orders', path: 'orders', access: { permissions: ['orders.view'] }, planned: false, icon: 'M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6M9 16h3' },
   { key: 'reports', path: 'reports', access: { permissions: ['orders.view', 'payments.manage'] }, planned: false, icon: 'M4 20V4M4 20h16M8 16v-5M12 16V8M16 16v-3' },
-  { key: 'messages', path: 'messages', access: { permissions: ['messages.view'] }, planned: true, icon: 'M3 5h18v14H3zM3 5l9 8 9-8' },
+  { key: 'messages', path: 'contact-messages', access: { permissions: ['messages.view'] }, planned: false, icon: 'M3 5h18v14H3zM3 5l9 8 9-8' },
   { key: 'reviews', path: 'reviews', access: { permissions: ['reviews.manage'] }, planned: true, icon: 'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z' },
   { key: 'customers', path: 'customers', access: { permissions: ['customers.view'] }, planned: false, icon: 'M16 20v-1a4 4 0 0 0-8 0v1M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z' },
   { key: 'settings', path: 'settings', access: { permissions: ['shipping.manage', 'settings.manage'], mode: 'any' }, planned: false, icon: 'M3 7h11v9H3zM14 10h4l3 3v3h-7zM7 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM17 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4z' },

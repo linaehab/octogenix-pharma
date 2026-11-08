@@ -124,6 +124,25 @@ export const adminRoutes: Routes = [
             ],
           },
           {
+            path: 'contact-messages',
+            canActivate: [adminCanActivate(sectionAccess('messages'))],
+            children: [
+              {
+                path: '',
+                pathMatch: 'full',
+                loadComponent: () => import('./messages/admin-messages-list-page').then((m) => m.AdminMessagesListPage),
+                title: 'Contact messages | Octogenix admin',
+              },
+              {
+                path: ':id',
+                loadComponent: () => import('./messages/admin-message-page').then((m) => m.AdminMessagePage),
+                title: 'Contact message | Octogenix admin',
+              },
+            ],
+          },
+          // The section's earlier address (shown as "coming soon" before this page existed).
+          { path: 'messages', pathMatch: 'full', redirectTo: 'contact-messages' },
+          {
             path: 'audit-log',
             canActivate: [adminCanActivate(sectionAccess('auditLog'))],
             loadComponent: () => import('./audit/admin-audit-log-page').then((m) => m.AdminAuditLogPage),

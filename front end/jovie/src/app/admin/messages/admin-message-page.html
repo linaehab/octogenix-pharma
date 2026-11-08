@@ -1,0 +1,88 @@
+<p class="msd-back"><a routerLink="/admin/contact-messages">{{ 'admin.messages.back' | translate }}</a></p>
+
+@switch (state()) {
+  @case ('loading') {
+    <app-admin-state kind="loading" />
+  }
+  @case ('error') {
+    <app-admin-state kind="error" (retry)="load()" />
+  }
+  @case ('notFound') {
+    <app-admin-state kind="empty" message="admin.messages.notFound" />
+  }
+  @default {
+    @if (message(); as m) {
+      <div class="adm-page-head">
+        <div>
+          <h1>{{ subject(m.subject) }}</h1>
+          <p><bdi>{{ name(m) }}</bdi> · {{ date(m.created_at) }}</p>
+        </div>
+        <span [class]="'msd-badge is-' + m.status">{{ 'admin.messages.state.' + m.status | translate }}</span>
+      </div>
+
+      @if (notice(); as n) {
+        <p class="adm-notice msd-notice" [class.is-success]="n.tone === 'success'" [class.is-error]="n.tone === 'error'"
+          [attr.role]="n.tone === 'error' ? 'alert' : 'status'">{{ n.text }}</p>
+      }
+
+      <div class="msd-grid">
+        <section class="adm-panel msd-body" aria-labelledby="msd-content">
+          <h2 id="msd-content">{{ 'admin.messages.content' | translate }}</h2>
+          <!-- Plain text only: the sender's words are interpolated, never rendered as HTML. -->
+          <p class="msd-text" dir="auto">{{ m.message }}</p>
+          @if (m.admin_notes) {
+            <h3>{{ 'admin.messages.notes' | translate }}</h3>
+            <p class="msd-text" dir="auto">{{ m.admin_notes }}</p>
+          }
+        </section>
+
+        <section class="adm-panel" aria-labelledby="msd-sender">
+          <h2 id="msd-sender">{{ 'admin.messages.details' | translate }}</h2>
+          <dl class="msd-dl">
+            <div><dt>{{ 'admin.messages.name' | translate }}</dt><dd><bdi>{{ name(m) }}</bdi></dd></div>
+            <div><dt>{{ 'admin.messages.email' | translate }}</dt><dd><bdi dir="ltr">{{ m.email }}</bdi></dd></div>
+            <div>
+              <dt>{{ 'admin.messages.phone' | translate }}</dt>
+              <dd>
+                @if (m.phone) {
+                  <bdi dir="ltr">{{ m.phone }}</bdi>
+                } @else {
+                  {{ 'admin.messages.noPhone' | translate }}
+                }
+              </dd>
+            </div>
+            <div><dt>{{ 'admin.messages.subject' | translate }}</dt><dd>{{ subject(m.subject) }}</dd></div>
+            <div><dt>{{ 'admin.messages.site' | translate }}</dt><dd>{{ 'admin.messages.siteName.' + m.site | translate }}</dd></div>
+            <div><dt>{{ 'admin.messages.language' | translate }}</dt><dd>{{ 'admin.messages.languageName.' + m.locale | translate }}</dd></div>
+            <div><dt>{{ 'admin.messages.receivedAt' | translate }}</dt><dd>{{ date(m.created_at) }}</dd></div>
+            <div><dt>{{ 'admin.messages.readAt' | translate }}</dt><dd>{{ date(m.read_at) }}</dd></div>
+            <div><dt>{{ 'admin.messages.status' | translate }}</dt><dd>{{ 'admin.messages.state.' + m.status | translate }}</dd></div>
+          </dl>
+
+          <h3 class="msd-actions-title">{{ 'admin.messages.actions' | translate }}</h3>
+          @if (canManage()) {
+            <div class="msd-actions">
+              @if (replyLink(); as href) {
+                <a class="adm-button is-light" [href]="href">{{ 'admin.messages.replyByEmail' | translate }}</a>
+              }
+              @if (m.status === 'replied') {
+                <button type="button" class="adm-button is-light" [disabled]="saving()" [attr.aria-busy]="saving()" (click)="markNotReplied()">
+                  {{ 'admin.messages.markNotReplied' | translate }}
+                </button>
+              } @else if (m.status !== 'new') {
+                <button type="button" class="adm-button" [disabled]="saving()" [attr.aria-busy]="saving()" (click)="markReplied()">
+                  {{ 'admin.messages.markReplied' | translate }}
+                </button>
+              }
+            </div>
+            <p class="msd-note">{{ 'admin.messages.replyNote' | translate }}</p>
+          } @else {
+            <p class="msd-note">{{ 'admin.messages.viewOnly' | translate }}</p>
+          }
+        </section>
+      </div>
+    }
+  }
+}
+
+<app-admin-confirm-dialog />

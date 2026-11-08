@@ -1,0 +1,202 @@
+.msg-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.msg-field {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 10rem;
+}
+
+.msg-search {
+  flex: 1 1 16rem;
+}
+
+.msg-field label {
+  font-weight: 700;
+}
+
+.msg-field input,
+.msg-field select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(32, 51, 102, 0.35);
+  border-radius: 10px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+
+.msg-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 44px;
+}
+
+.msg-results {
+  margin-bottom: 0.25rem;
+}
+
+.msg-panel {
+  container-type: inline-size;
+}
+
+.msg-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.msg-table th,
+.msg-table td {
+  padding: 0.65rem 0.55rem;
+  border-bottom: 1px solid rgba(32, 51, 102, 0.1);
+  text-align: start;
+  vertical-align: middle;
+}
+
+.msg-table th {
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.msg-name a {
+  color: var(--adm-navy);
+  font-weight: 700;
+}
+
+.msg-email {
+  display: block;
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.msg-muted {
+  color: var(--adm-muted);
+  font-size: 0.88rem;
+}
+
+.msg-num {
+  white-space: nowrap;
+}
+
+.msg-badge {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: #e3f4ee;
+  color: #0b5a46;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.msg-badge.is-off {
+  background: #fdecf1;
+  color: #8f0f35;
+}
+
+.msg-tag {
+  display: inline-block;
+  margin-inline-start: 0.35rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: #fff1d6;
+  color: #7a5200;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.adm-button.is-small {
+  min-height: 36px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.9rem;
+}
+
+.msg-pages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+/* Narrower than the full table: one card per customer. */
+@container (max-width: 820px) {
+  .msg-table thead {
+    display: none;
+  }
+
+  .msg-table,
+  .msg-table tbody,
+  .msg-table td {
+    display: block;
+  }
+
+  .msg-table tr {
+    display: grid;
+    gap: 0.3rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid rgba(32, 51, 102, 0.12);
+  }
+
+  .msg-table td {
+    padding: 0;
+    border: 0;
+  }
+
+  .msg-table td[data-label]::before {
+    content: attr(data-label) ': ';
+    color: var(--adm-muted);
+    font-size: 0.85rem;
+  }
+
+  .msg-table td.msg-actions {
+    margin-top: 0.4rem;
+  }
+}
+
+.msg-table tr.is-unread .msg-name a {
+  font-weight: 800;
+}
+
+.msg-dot {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  margin-inline-end: 0.4rem;
+  border-radius: 50%;
+  background: #1f4a8a;
+  vertical-align: middle;
+}
+
+.msg-preview {
+  max-width: 22rem;
+  color: var(--adm-muted);
+  font-size: 0.88rem;
+}
+
+.msg-badge.is-new {
+  background: #e8f0fc;
+  color: #1f4a8a;
+}
+
+.msg-badge.is-read,
+.msg-badge.is-in_progress,
+.msg-badge.is-archived {
+  background: #eef1f7;
+  color: #3d4867;
+}
+
+.msg-badge.is-spam {
+  background: #fdecf1;
+  color: #8f0f35;
+}

@@ -18,7 +18,7 @@ use Illuminate\Support\Str;
  */
 class AuditLogger
 {
-    public const CATEGORIES = ['products', 'inventory', 'orders', 'shipping', 'settings', 'reviews', 'admin_users', 'discounts'];
+    public const CATEGORIES = ['products', 'inventory', 'orders', 'shipping', 'settings', 'reviews', 'admin_users', 'discounts', 'messages'];
 
     /** Field names that are never stored, whatever the caller passes. */
     private const SENSITIVE = '/password|token|secret|card_|cvv|credential|api_key|session/i';

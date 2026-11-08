@@ -1,0 +1,101 @@
+<div class="adm-page-head">
+  <div>
+    <h1>{{ 'admin.nav.messages' | translate }}</h1>
+    <p>{{ 'admin.messages.lead' | translate }}</p>
+  </div>
+</div>
+
+<form #filters class="adm-panel msg-filters" role="search" (submit)="$event.preventDefault(); apply(filters)">
+  <div class="msg-field msg-search">
+    <label for="msg-search">{{ 'admin.messages.search' | translate }}</label>
+    <input id="msg-search" name="search" type="search" maxlength="100" [value]="query().search" [placeholder]="'admin.messages.searchHint' | translate" />
+  </div>
+  <div class="msg-field">
+    <label for="msg-status">{{ 'admin.messages.status' | translate }}</label>
+    <select id="msg-status" name="status">
+      <option value="">{{ 'admin.messages.all' | translate }}</option>
+      @for (s of statuses; track s) {
+        <option [value]="s" [selected]="query().status === s">{{ 'admin.messages.state.' + s | translate }}</option>
+      }
+    </select>
+  </div>
+  <div class="msg-field">
+    <label for="msg-from">{{ 'admin.messages.from' | translate }}</label>
+    <input id="msg-from" name="from" type="date" [value]="query().from" />
+  </div>
+  <div class="msg-field">
+    <label for="msg-to">{{ 'admin.messages.to' | translate }}</label>
+    <input id="msg-to" name="to" type="date" [value]="query().to" />
+  </div>
+  <div class="msg-field">
+    <label for="msg-sort">{{ 'admin.messages.sort' | translate }}</label>
+    <select id="msg-sort" name="sort">
+      <option value="newest" [selected]="query().sort === 'newest'">{{ 'admin.messages.newest' | translate }}</option>
+      <option value="oldest" [selected]="query().sort === 'oldest'">{{ 'admin.messages.oldest' | translate }}</option>
+    </select>
+  </div>
+  <div class="msg-buttons">
+    <button type="submit" class="adm-button">{{ 'admin.messages.apply' | translate }}</button>
+    @if (filtered() || query().sort !== 'newest') {
+      <button type="button" class="adm-link" (click)="clear(filters)">{{ 'admin.messages.clear' | translate }}</button>
+    }
+  </div>
+</form>
+
+<section class="adm-panel msg-panel" aria-labelledby="msg-results" [attr.aria-busy]="loading()">
+  <h2 id="msg-results" class="msg-results">{{ 'admin.messages.results' | translate: { count: count(meta()?.total ?? 0) } }}</h2>
+  @if (loading() && !rows().length) {
+    <app-admin-state kind="loading" />
+  } @else if (error()) {
+    <app-admin-state kind="error" (retry)="load()" />
+  } @else if (!rows().length) {
+    <app-admin-state kind="empty" [message]="filtered() ? 'admin.messages.noMatch' : 'admin.messages.none'" />
+  } @else {
+    <table class="msg-table">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'admin.messages.sender' | translate }}</th>
+          <th scope="col">{{ 'admin.messages.subject' | translate }}</th>
+          <th scope="col">{{ 'admin.messages.preview' | translate }}</th>
+          <th scope="col">{{ 'admin.messages.received' | translate }}</th>
+          <th scope="col">{{ 'admin.messages.status' | translate }}</th>
+          <th scope="col"><span class="adm-visually-hidden">{{ 'admin.messages.open' | translate }}</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (m of rows(); track m.id) {
+          <tr [class.is-unread]="m.status === 'new'">
+            <td class="msg-name">
+              @if (m.status === 'new') {
+                <span class="msg-dot" [attr.title]="'admin.messages.unread' | translate"></span>
+                <span class="adm-visually-hidden">{{ 'admin.messages.unread' | translate }}</span>
+              }
+              <a [routerLink]="['/admin/contact-messages', m.id]"><bdi>{{ name(m) }}</bdi></a>
+              <span class="msg-email"><bdi dir="ltr">{{ m.email }}</bdi></span>
+            </td>
+            <td [attr.data-label]="'admin.messages.subject' | translate">{{ subject(m.subject) }}</td>
+            <td class="msg-preview" [attr.data-label]="'admin.messages.preview' | translate"><bdi dir="auto">{{ m.preview }}</bdi></td>
+            <td [attr.data-label]="'admin.messages.received' | translate">{{ date(m.created_at) }}</td>
+            <td [attr.data-label]="'admin.messages.status' | translate">
+              <span [class]="'msg-badge is-' + m.status">{{ 'admin.messages.state.' + m.status | translate }}</span>
+            </td>
+            <td class="msg-actions">
+              <a class="adm-button is-light is-small" [routerLink]="['/admin/contact-messages', m.id]"
+                [attr.aria-label]="'admin.messages.openFor' | translate: { name: name(m) }">{{ 'admin.messages.open' | translate }}</a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (meta(); as m) {
+      @if (m.last_page > 1) {
+        <nav class="msg-pages" [attr.aria-label]="'admin.messages.pages' | translate">
+          <button type="button" class="adm-button is-light is-small" [disabled]="m.current_page <= 1 || loading()" (click)="goTo(m.current_page - 1)">{{ 'admin.messages.prev' | translate }}</button>
+          <span>{{ 'admin.messages.pageOf' | translate: { page: count(m.current_page), pages: count(m.last_page) } }}</span>
+          <button type="button" class="adm-button is-light is-small" [disabled]="m.current_page >= m.last_page || loading()" (click)="goTo(m.current_page + 1)">{{ 'admin.messages.next' | translate }}</button>
+        </nav>
+      }
+    }
+  }
+</section>
