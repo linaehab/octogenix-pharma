@@ -169,7 +169,7 @@ class AdminAuditAndNotificationsTest extends TestCase
         $review->forceFill(['product_id' => $variant->product_id, 'status' => ReviewStatus::Pending, 'locale' => 'en', 'author_email' => 'author@example.com'])->save();
         $this->patchJson("/api/v1/admin/reviews/{$review->id}", ['status' => 'approved'])->assertOk();
         $entry = $this->lastLog();
-        $this->assertEquals(['reviews.approved', ['status' => ['from' => 'pending', 'to' => 'approved']]], [$entry->action, $entry->changes]);
+        $this->assertEquals(['reviews.approved', ['status' => ['from' => 'pending', 'to' => 'approved'], 'product_id' => ['from' => null, 'to' => $variant->product_id]]], [$entry->action, $entry->changes]);
         $this->assertStringNotContainsString('Secret Author', json_encode($entry->getAttributes()));
         $this->assertStringNotContainsString('author@example.com', json_encode($entry->getAttributes()));
 

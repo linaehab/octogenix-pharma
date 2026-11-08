@@ -1,0 +1,277 @@
+.rvd-back {
+  margin: 0 0 1rem;
+}
+
+.rvd-back a {
+  color: var(--adm-navy);
+  font-weight: 700;
+}
+
+.rvd-badge {
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  background: #e3f4ee;
+  color: #0b5a46;
+  font-weight: 700;
+}
+
+.rvd-badge.is-off {
+  background: #fdecf1;
+  color: #8f0f35;
+}
+
+.rvd-warning {
+  margin: 0 0 1.5rem;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  border-inline-start: 5px solid var(--adm-red);
+  background: #fdecf1;
+  color: #8f0f35;
+  font-weight: 700;
+}
+
+.rvd-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: 0 1.5rem;
+}
+
+.rvd-dl {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0.75rem 0 0;
+}
+
+.rvd-dl div {
+  display: grid;
+  grid-template-columns: minmax(8rem, 40%) minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+.rvd-dl dt {
+  color: var(--adm-muted);
+}
+
+.rvd-dl dd {
+  margin: 0;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.rvd-figures {
+  margin-top: 0.75rem;
+}
+
+.rvd-note {
+  margin: 1rem 0 0;
+  color: var(--adm-muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.rvd-addresses {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rvd-addresses li {
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(32, 51, 102, 0.14);
+  border-radius: 12px;
+}
+
+.rvd-addresses p {
+  margin: 0 0 0.25rem;
+  line-height: 1.45;
+}
+
+.rvd-address-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rvd-default {
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  background: #e8f1fb;
+  color: var(--adm-navy);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.rvd-muted {
+  color: var(--adm-muted);
+  font-size: 0.88rem;
+}
+
+.rvd-history {
+  container-type: inline-size;
+}
+
+.rvd-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.rvd-table th,
+.rvd-table td {
+  padding: 0.65rem 0.55rem;
+  border-bottom: 1px solid rgba(32, 51, 102, 0.1);
+  text-align: start;
+  vertical-align: middle;
+}
+
+.rvd-table th {
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.rvd-table a {
+  color: var(--adm-navy);
+  font-weight: 700;
+}
+
+.rvd-num {
+  white-space: nowrap;
+}
+
+.rvd-status {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: #eef1f7;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.rvd-status[data-status='delivered'] {
+  background: #e3f4ee;
+  color: #0b5a46;
+}
+
+.rvd-status[data-status='pending_confirmation'],
+.rvd-status[data-status='pending_payment'] {
+  background: #fff1d6;
+  color: #7a5200;
+}
+
+.rvd-status[data-status='cancelled'],
+.rvd-status[data-status='expired'],
+.rvd-status[data-status='returned'] {
+  background: #fdecf1;
+  color: #8f0f35;
+}
+
+.rvd-pay[data-paid='paid'] {
+  color: #0b5a46;
+  font-weight: 700;
+}
+
+.adm-button.is-small {
+  min-height: 36px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.9rem;
+}
+
+.rvd-pages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+@container (max-width: 640px) {
+  .rvd-table thead {
+    display: none;
+  }
+
+  .rvd-table,
+  .rvd-table tbody,
+  .rvd-table td {
+    display: block;
+  }
+
+  .rvd-table tr {
+    display: grid;
+    gap: 0.3rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid rgba(32, 51, 102, 0.12);
+  }
+
+  .rvd-table td {
+    padding: 0;
+    border: 0;
+  }
+
+  .rvd-table td[data-label]::before {
+    content: attr(data-label) ': ';
+    color: var(--adm-muted);
+    font-size: 0.85rem;
+  }
+}
+
+.rvd-text {
+  margin: 0 0 1rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+
+.rvd-actions-title {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 1rem;
+}
+
+.rvd-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.rvd-notice {
+  margin-bottom: 1rem;
+}
+
+.rvd-badge.is-new {
+  background: #e8f0fc;
+  color: #1f4a8a;
+}
+
+.rvd-badge.is-read,
+.rvd-badge.is-in_progress,
+.rvd-badge.is-archived {
+  background: #eef1f7;
+  color: #3d4867;
+}
+
+.rvd-badge.is-spam {
+  background: #fdecf1;
+  color: #8f0f35;
+}
+
+.rvd-badge.is-pending {
+  background: #fff4dc;
+  color: #6b4500;
+}
+
+.rvd-badge.is-hidden,
+.rvd-badge.is-rejected {
+  background: #fdecf1;
+  color: #8f0f35;
+}
+
+.rvd-stars {
+  color: #c27c00;
+  font-size: 1.2rem;
+  letter-spacing: 0.08em;
+}

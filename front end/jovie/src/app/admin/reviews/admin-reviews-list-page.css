@@ -1,0 +1,229 @@
+.rvw-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.rvw-field {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 10rem;
+}
+
+.rvw-search {
+  flex: 1 1 16rem;
+}
+
+.rvw-field label {
+  font-weight: 700;
+}
+
+.rvw-field input,
+.rvw-field select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(32, 51, 102, 0.35);
+  border-radius: 10px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+
+.rvw-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 44px;
+}
+
+.rvw-results {
+  margin-bottom: 0.25rem;
+}
+
+.rvw-panel {
+  container-type: inline-size;
+}
+
+.rvw-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.rvw-table th,
+.rvw-table td {
+  padding: 0.65rem 0.55rem;
+  border-bottom: 1px solid rgba(32, 51, 102, 0.1);
+  text-align: start;
+  vertical-align: middle;
+}
+
+.rvw-table th {
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.rvw-name a {
+  color: var(--adm-navy);
+  font-weight: 700;
+}
+
+.rvw-email {
+  display: block;
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.rvw-muted {
+  color: var(--adm-muted);
+  font-size: 0.88rem;
+}
+
+.rvw-num {
+  white-space: nowrap;
+}
+
+.rvw-badge {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: #e3f4ee;
+  color: #0b5a46;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.rvw-badge.is-off {
+  background: #fdecf1;
+  color: #8f0f35;
+}
+
+.rvw-tag {
+  display: inline-block;
+  margin-inline-start: 0.35rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: #fff1d6;
+  color: #7a5200;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.adm-button.is-small {
+  min-height: 36px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.9rem;
+}
+
+.rvw-pages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+/* Narrower than the full table: one card per customer. */
+@container (max-width: 820px) {
+  .rvw-table thead {
+    display: none;
+  }
+
+  .rvw-table,
+  .rvw-table tbody,
+  .rvw-table td {
+    display: block;
+  }
+
+  .rvw-table tr {
+    display: grid;
+    gap: 0.3rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid rgba(32, 51, 102, 0.12);
+  }
+
+  .rvw-table td {
+    padding: 0;
+    border: 0;
+  }
+
+  .rvw-table td[data-label]::before {
+    content: attr(data-label) ': ';
+    color: var(--adm-muted);
+    font-size: 0.85rem;
+  }
+
+  .rvw-table td.rvw-actions {
+    margin-top: 0.4rem;
+  }
+}
+
+.rvw-table tr.is-unread .rvw-name a {
+  font-weight: 800;
+}
+
+.rvw-dot {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  margin-inline-end: 0.4rem;
+  border-radius: 50%;
+  background: #1f4a8a;
+  vertical-align: middle;
+}
+
+.rvw-preview {
+  max-width: 22rem;
+  color: var(--adm-muted);
+  font-size: 0.88rem;
+}
+
+.rvw-badge.is-new {
+  background: #e8f0fc;
+  color: #1f4a8a;
+}
+
+.rvw-badge.is-read,
+.rvw-badge.is-in_progress,
+.rvw-badge.is-archived {
+  background: #eef1f7;
+  color: #3d4867;
+}
+
+.rvw-badge.is-spam {
+  background: #fdecf1;
+  color: #8f0f35;
+}
+
+.rvw-badge.is-pending {
+  background: #fff4dc;
+  color: #6b4500;
+}
+
+.rvw-badge.is-hidden,
+.rvw-badge.is-rejected {
+  background: #fdecf1;
+  color: #8f0f35;
+}
+
+.rvw-stars {
+  color: #c27c00;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.rvw-title {
+  display: block;
+  font-weight: 700;
+}
+
+.rvw-summary {
+  margin: 0 0 1rem;
+  font-weight: 700;
+}

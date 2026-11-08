@@ -213,7 +213,7 @@ class ProductReviewTest extends TestCase
             ->assertJsonCount(1, 'data')->assertJsonPath('data.0.title', 'Gentle on her tummy!')
             ->assertJsonPath('meta.summary.count', 1)->assertJsonPath('meta.summary.average', 5);
         $this->getJson('/api/v1/admin/reviews')->assertJsonPath('meta.totals', [
-            'all' => 2, 'pending' => 0, 'approved' => 1, 'rejected' => 1, 'approved_average' => 5,
+            'all' => 2, 'pending' => 0, 'approved' => 1, 'rejected' => 1, 'hidden' => 0, 'approved_average' => 5,
         ]);
         $this->getJson('/api/v1/admin/reviews?search=Ahmed')->assertJsonCount(1, 'data');
         $this->getJson("/api/v1/admin/reviews/{$mona->id}")->assertOk()->assertJsonPath('data.author_name', 'Mona');

@@ -140,6 +140,23 @@ export const adminRoutes: Routes = [
               },
             ],
           },
+          {
+            path: 'reviews',
+            canActivate: [adminCanActivate(sectionAccess('reviews'))],
+            children: [
+              {
+                path: '',
+                pathMatch: 'full',
+                loadComponent: () => import('./reviews/admin-reviews-list-page').then((m) => m.AdminReviewsListPage),
+                title: 'Reviews | Octogenix admin',
+              },
+              {
+                path: ':id',
+                loadComponent: () => import('./reviews/admin-review-page').then((m) => m.AdminReviewPage),
+                title: 'Review | Octogenix admin',
+              },
+            ],
+          },
           // The section's earlier address (shown as "coming soon" before this page existed).
           { path: 'messages', pathMatch: 'full', redirectTo: 'contact-messages' },
           {

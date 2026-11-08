@@ -207,10 +207,10 @@ describe('Admin dashboard', () => {
   });
 
   it('opens a permitted future section as a plain "not built yet" page without actions', async () => {
-    // Reviews is still a later phase (Contact messages, Products, Inventory and Orders are built).
-    await open('/admin/reviews', adminWith('content_editor'));
-    expect(router.url).toBe('/admin/reviews');
-    expect(text('main h1')).toBe('Reviews');
+    // Admin users is still a later phase (Reviews, Contact messages, Products and the rest are built).
+    await open('/admin/admin-users', adminWith('super_admin'));
+    expect(router.url).toBe('/admin/admin-users');
+    expect(text('main h1')).toBe('Admin users');
     expect(text('main')).toContain('Not built yet');
     expect(el().querySelectorAll('main button, main a, main input, main form').length).toBe(0);
     expect(el().querySelector('.adm-side a.is-active')?.getAttribute('aria-current')).toBe('page');

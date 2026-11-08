@@ -68,12 +68,14 @@ class ReviewService
 
         try {
             $review->save();
-            // Dashboard notification: product and rating only, never the author's details.
+            // Dashboard notification: the review number, product and rating only, never the
+            // author's details or the review text. The link opens the review in the dashboard.
             app(AdminNotifier::class)->notify('reviews.pending', AdminPermission::ManageReviews, [
+                'review_id' => $review->id,
                 'name_en' => $product->name_en,
                 'name_ar' => $product->name_ar,
                 'rating' => (int) $review->rating,
-            ], null, "reviews.pending:{$review->id}");
+            ], "/admin/reviews/{$review->id}", "reviews.pending:{$review->id}");
         } catch (UniqueConstraintViolationException) {
             throw ValidationException::withMessages(['order_number' => 'A review for this product has already been sent with this order.']);
         }

@@ -1,0 +1,130 @@
+<div class="adm-page-head">
+  <div>
+    <h1>{{ 'admin.nav.reviews' | translate }}</h1>
+    <p>{{ 'admin.reviews.lead' | translate }}</p>
+  </div>
+</div>
+
+@if (meta()?.totals; as t) {
+  <p class="rvw-summary">
+    {{ 'admin.reviews.summary' | translate: { pending: count(t.pending), approved: count(t.approved), hidden: count(t.hidden), rejected: count(t.rejected), average: average() } }}
+  </p>
+}
+
+<form #filters class="adm-panel rvw-filters" role="search" (submit)="$event.preventDefault(); apply(filters)">
+  <div class="rvw-field rvw-search">
+    <label for="rvw-search">{{ 'admin.reviews.search' | translate }}</label>
+    <input id="rvw-search" name="search" type="search" maxlength="100" [value]="query().search" [placeholder]="'admin.reviews.searchHint' | translate" />
+  </div>
+  <div class="rvw-field">
+    <label for="rvw-status">{{ 'admin.reviews.status' | translate }}</label>
+    <select id="rvw-status" name="status">
+      <option value="">{{ 'admin.reviews.all' | translate }}</option>
+      @for (s of statuses; track s) {
+        <option [value]="s" [selected]="query().status === s">{{ 'admin.reviews.state.' + s | translate }}</option>
+      }
+    </select>
+  </div>
+  <div class="rvw-field">
+    <label for="rvw-product">{{ 'admin.reviews.product' | translate }}</label>
+    <select id="rvw-product" name="product_id">
+      <option value="">{{ 'admin.reviews.all' | translate }}</option>
+      @for (p of meta()?.products ?? []; track p.id) {
+        <option [value]="p.id" [selected]="query().product_id === '' + p.id">{{ productName(p) }}</option>
+      }
+    </select>
+  </div>
+  <div class="rvw-field">
+    <label for="rvw-rating">{{ 'admin.reviews.rating' | translate }}</label>
+    <select id="rvw-rating" name="rating">
+      <option value="">{{ 'admin.reviews.all' | translate }}</option>
+      @for (r of ratings; track r) {
+        <option [value]="r" [selected]="query().rating === '' + r">{{ 'admin.reviews.ratingStars' | translate: { rating: r } }}</option>
+      }
+    </select>
+  </div>
+  <div class="rvw-field">
+    <label for="rvw-from">{{ 'admin.reviews.from' | translate }}</label>
+    <input id="rvw-from" name="from" type="date" [value]="query().from" />
+  </div>
+  <div class="rvw-field">
+    <label for="rvw-to">{{ 'admin.reviews.to' | translate }}</label>
+    <input id="rvw-to" name="to" type="date" [value]="query().to" />
+  </div>
+  <div class="rvw-field">
+    <label for="rvw-sort">{{ 'admin.reviews.sort' | translate }}</label>
+    <select id="rvw-sort" name="sort">
+      <option value="newest" [selected]="query().sort === 'newest'">{{ 'admin.reviews.newest' | translate }}</option>
+      <option value="oldest" [selected]="query().sort === 'oldest'">{{ 'admin.reviews.oldest' | translate }}</option>
+    </select>
+  </div>
+  <div class="rvw-buttons">
+    <button type="submit" class="adm-button">{{ 'admin.reviews.apply' | translate }}</button>
+    @if (filtered() || query().sort !== 'newest') {
+      <button type="button" class="adm-link" (click)="clear(filters)">{{ 'admin.reviews.clear' | translate }}</button>
+    }
+  </div>
+</form>
+
+<section class="adm-panel rvw-panel" aria-labelledby="rvw-results" [attr.aria-busy]="loading()">
+  <h2 id="rvw-results" class="rvw-results">{{ 'admin.reviews.results' | translate: { count: count(meta()?.total ?? 0) } }}</h2>
+  @if (loading() && !rows().length) {
+    <app-admin-state kind="loading" />
+  } @else if (error()) {
+    <app-admin-state kind="error" (retry)="load()" />
+  } @else if (!rows().length) {
+    <app-admin-state kind="empty" [message]="filtered() ? 'admin.reviews.noMatch' : 'admin.reviews.none'" />
+  } @else {
+    <table class="rvw-table">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'admin.reviews.reviewer' | translate }}</th>
+          <th scope="col">{{ 'admin.reviews.product' | translate }}</th>
+          <th scope="col">{{ 'admin.reviews.rating' | translate }}</th>
+          <th scope="col">{{ 'admin.reviews.review' | translate }}</th>
+          <th scope="col">{{ 'admin.reviews.submitted' | translate }}</th>
+          <th scope="col">{{ 'admin.reviews.status' | translate }}</th>
+          <th scope="col"><span class="adm-visually-hidden">{{ 'admin.reviews.open' | translate }}</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of rows(); track r.id) {
+          <tr>
+            <td class="rvw-name">
+              <a [routerLink]="['/admin/reviews', r.id]"><bdi>{{ r.author_name }}</bdi></a>
+              @if (r.is_verified_purchase) {
+                <span class="rvw-tag">{{ 'admin.reviews.verified' | translate }}</span>
+              }
+            </td>
+            <td [attr.data-label]="'admin.reviews.product' | translate">{{ productName(r.product) }}</td>
+            <td [attr.data-label]="'admin.reviews.rating' | translate">
+              <span class="rvw-stars" role="img" [attr.aria-label]="'admin.reviews.starsLabel' | translate: { rating: r.rating }">{{ stars(r.rating) }}</span>
+            </td>
+            <td class="rvw-preview" [attr.data-label]="'admin.reviews.review' | translate">
+              <bdi class="rvw-title" dir="auto">{{ r.title }}</bdi>
+              <bdi dir="auto">{{ r.preview }}</bdi>
+            </td>
+            <td [attr.data-label]="'admin.reviews.submitted' | translate">{{ date(r.created_at) }}</td>
+            <td [attr.data-label]="'admin.reviews.status' | translate">
+              <span [class]="'rvw-badge is-' + r.status">{{ 'admin.reviews.state.' + r.status | translate }}</span>
+            </td>
+            <td class="rvw-actions">
+              <a class="adm-button is-light is-small" [routerLink]="['/admin/reviews', r.id]"
+                [attr.aria-label]="'admin.reviews.openFor' | translate: { name: r.author_name }">{{ 'admin.reviews.open' | translate }}</a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (meta(); as m) {
+      @if (m.last_page > 1) {
+        <nav class="rvw-pages" [attr.aria-label]="'admin.reviews.pages' | translate">
+          <button type="button" class="adm-button is-light is-small" [disabled]="m.current_page <= 1 || loading()" (click)="goTo(m.current_page - 1)">{{ 'admin.reviews.prev' | translate }}</button>
+          <span>{{ 'admin.reviews.pageOf' | translate: { page: count(m.current_page), pages: count(m.last_page) } }}</span>
+          <button type="button" class="adm-button is-light is-small" [disabled]="m.current_page >= m.last_page || loading()" (click)="goTo(m.current_page + 1)">{{ 'admin.reviews.next' | translate }}</button>
+        </nav>
+      }
+    }
+  }
+</section>

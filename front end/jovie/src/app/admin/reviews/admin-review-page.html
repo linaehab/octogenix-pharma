@@ -1,0 +1,118 @@
+<p class="rvd-back"><a routerLink="/admin/reviews">{{ 'admin.reviews.back' | translate }}</a></p>
+
+@switch (state()) {
+  @case ('loading') {
+    <app-admin-state kind="loading" />
+  }
+  @case ('error') {
+    <app-admin-state kind="error" (retry)="load()" />
+  }
+  @case ('notFound') {
+    <app-admin-state kind="empty" message="admin.reviews.notFound" />
+  }
+  @default {
+    @if (review(); as r) {
+      <div class="adm-page-head">
+        <div>
+          <h1><bdi dir="auto">{{ r.title }}</bdi></h1>
+          <p>
+            <span class="rvd-stars" role="img" [attr.aria-label]="'admin.reviews.starsLabel' | translate: { rating: r.rating }">{{ stars(r.rating) }}</span>
+            · {{ productName(r) }} · {{ date(r.created_at) }}
+          </p>
+        </div>
+        <span [class]="'rvd-badge is-' + r.status">{{ 'admin.reviews.state.' + r.status | translate }}</span>
+      </div>
+
+      @if (notice(); as n) {
+        <p class="adm-notice rvd-notice" [class.is-success]="n.tone === 'success'" [class.is-error]="n.tone === 'error'"
+          [attr.role]="n.tone === 'error' ? 'alert' : 'status'">{{ n.text }}</p>
+      }
+
+      <div class="rvd-grid">
+        <section class="adm-panel" aria-labelledby="rvd-content">
+          <h2 id="rvd-content">{{ 'admin.reviews.content' | translate }}</h2>
+          <!-- Plain text only: the reviewer's words are interpolated, never rendered as HTML. -->
+          <p class="rvd-text" dir="auto">{{ r.body }}</p>
+          <dl class="rvd-dl">
+            <div>
+              <dt>{{ 'admin.reviews.recommends' | translate }}</dt>
+              <dd>{{ (r.recommends === null ? 'admin.reviews.recommendsUnknown' : r.recommends ? 'admin.reviews.recommendsYes' : 'admin.reviews.recommendsNo') | translate }}</dd>
+            </div>
+            <div><dt>{{ 'admin.reviews.helpful' | translate }}</dt><dd>{{ 'admin.reviews.helpfulValue' | translate: { yes: count(r.helpful_count), no: count(r.not_helpful_count) } }}</dd></div>
+          </dl>
+        </section>
+
+        <section class="adm-panel" aria-labelledby="rvd-details">
+          <h2 id="rvd-details">{{ 'admin.reviews.details' | translate }}</h2>
+          <dl class="rvd-dl">
+            <div>
+              <dt>{{ 'admin.reviews.product' | translate }}</dt>
+              <dd><a [routerLink]="['/admin/products', r.product.id]">{{ productName(r) }}</a></dd>
+            </div>
+            <div>
+              <dt>{{ 'admin.reviews.reviewerName' | translate }}</dt>
+              <dd>
+                <bdi>{{ r.author_name }}</bdi>
+                @if (r.is_verified_purchase) {
+                  · {{ 'admin.reviews.verified' | translate }}
+                }
+              </dd>
+            </div>
+            <div>
+              <dt>{{ 'admin.reviews.email' | translate }}</dt>
+              <dd>
+                @if (r.author_email) {
+                  <bdi dir="ltr">{{ r.author_email }}</bdi>
+                } @else {
+                  {{ 'admin.reviews.noEmail' | translate }}
+                }
+              </dd>
+            </div>
+            <div>
+              <dt>{{ 'admin.reviews.order' | translate }}</dt>
+              <dd>
+                @if (r.order_number) {
+                  <bdi dir="ltr">{{ r.order_number }}</bdi>
+                } @else {
+                  {{ 'admin.reviews.noOrder' | translate }}
+                }
+              </dd>
+            </div>
+            <div><dt>{{ 'admin.reviews.language' | translate }}</dt><dd>{{ 'admin.reviews.languageName.' + r.locale | translate }}</dd></div>
+            <div><dt>{{ 'admin.reviews.submitted' | translate }}</dt><dd>{{ date(r.created_at) }}</dd></div>
+            <div><dt>{{ 'admin.reviews.status' | translate }}</dt><dd>{{ 'admin.reviews.state.' + r.status | translate }}</dd></div>
+            <div>
+              <dt>{{ 'admin.reviews.lastModeration' | translate }}</dt>
+              <dd>
+                @if (r.moderated_at) {
+                  {{ 'admin.reviews.moderatedBy' | translate: { name: r.moderated_by ?? '—', date: date(r.moderated_at) } }}
+                } @else {
+                  {{ 'admin.reviews.notModerated' | translate }}
+                }
+              </dd>
+            </div>
+          </dl>
+
+          @if (canModerate()) {
+            <h3 class="rvd-actions-title">{{ 'admin.reviews.actions' | translate }}</h3>
+            @if (actions().length) {
+              <div class="rvd-actions">
+                @for (a of actions(); track a.action) {
+                  <button type="button" class="adm-button" [class.is-light]="a.action === 'reject' || a.action === 'hide'"
+                    [attr.data-action]="a.action" [disabled]="saving()" [attr.aria-busy]="saving()" (click)="run(a)">
+                    {{ 'admin.reviews.action.' + a.action | translate }}
+                  </button>
+                }
+              </div>
+            } @else {
+              <p class="rvd-note">{{ 'admin.reviews.rejectedFinal' | translate }}</p>
+            }
+          }
+          <p class="rvd-note">{{ 'admin.reviews.publicNote' | translate }}</p>
+        </section>
+      </div>
+    }
+  }
+}
+
+<app-admin-confirm-dialog />
