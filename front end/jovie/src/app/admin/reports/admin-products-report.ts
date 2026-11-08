@@ -6,7 +6,7 @@ import { LanguageService } from '../../core/i18n/language.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { AdminAuthService } from '../admin-auth.service';
 import { AdminState } from '../components/admin-state';
-import { AdminReportExport } from './admin-report-export';
+import { AdminReportExport, ExportFormat } from './admin-report-export';
 import { ProductReportRow, ReportPeriod } from './admin-reports.models';
 import { AdminReportsService } from './admin-reports.service';
 import { count, egp } from './report-format';
@@ -86,7 +86,7 @@ export class AdminProductsReport {
   protected readonly state = signal<'loading' | 'ready' | 'error'>('loading');
   private request: Subscription | null = null;
 
-  protected readonly exportRun = () => this.reports.export('products', this.reports.period(), this.language.currentLanguage());
+  protected readonly exportRun = (format: ExportFormat) => this.reports.export('products', this.reports.period(), this.language.currentLanguage(), undefined, format);
 
   constructor() {
     inject(DestroyRef).onDestroy(() => this.request?.unsubscribe());

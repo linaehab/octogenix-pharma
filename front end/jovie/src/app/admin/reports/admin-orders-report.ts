@@ -8,7 +8,7 @@ import { AdminAuthService } from '../admin-auth.service';
 import { AdminStatCard } from '../components/admin-stat-card';
 import { AdminState } from '../components/admin-state';
 import { adminOrdersTranslations } from '../orders/admin-orders-translations';
-import { AdminReportExport } from './admin-report-export';
+import { AdminReportExport, ExportFormat } from './admin-report-export';
 import { OrdersReport, OrdersReportFilters, ReportPeriod } from './admin-reports.models';
 import { AdminReportsService } from './admin-reports.service';
 import { count, dateTime, egp } from './report-format';
@@ -37,7 +37,8 @@ export class AdminOrdersReport {
   private request: Subscription | null = null;
   private governorateRequest: Subscription | null = null;
 
-  protected readonly exportRun = () => this.reports.export('orders', this.reports.period(), this.language.currentLanguage(), this.filters());
+  protected readonly exportRun = (format: ExportFormat) =>
+    this.reports.export('orders', this.reports.period(), this.language.currentLanguage(), this.filters(), format);
 
   constructor() {
     this.language.addTranslations(adminOrdersTranslations);

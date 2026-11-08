@@ -8,7 +8,7 @@ import { AdminAuthService } from '../admin-auth.service';
 import { AdminStatCard } from '../components/admin-stat-card';
 import { AdminState } from '../components/admin-state';
 import { adminOrdersTranslations } from '../orders/admin-orders-translations';
-import { AdminReportExport } from './admin-report-export';
+import { AdminReportExport, ExportFormat } from './admin-report-export';
 import { ReportPeriod, SalesReport, TrendPoint } from './admin-reports.models';
 import { AdminReportsService } from './admin-reports.service';
 import { count, egp, periodLabel } from './report-format';
@@ -54,7 +54,7 @@ export class AdminSalesReport {
     return !!r && r.orders.placed.count === 0 && r.payments.collected.count === 0 && r.payments.test.count === 0;
   });
 
-  protected readonly exportRun = () => this.reports.export('sales', this.reports.period(), this.language.currentLanguage());
+  protected readonly exportRun = (format: ExportFormat) => this.reports.export('sales', this.reports.period(), this.language.currentLanguage(), undefined, format);
 
   constructor() {
     inject(DestroyRef).onDestroy(() => this.request?.unsubscribe());

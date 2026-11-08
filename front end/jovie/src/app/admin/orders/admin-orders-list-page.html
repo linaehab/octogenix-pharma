@@ -3,6 +3,22 @@
     <h1>{{ 'admin.nav.orders' | translate }}</h1>
     <p>{{ 'admin.orders.lead' | translate }}</p>
   </div>
+  @if (canExport()) {
+    <div class="ord-export">
+      <button type="button" class="adm-button is-light" [disabled]="exporting() || loading() || !meta()?.total" [attr.aria-busy]="exporting()" (click)="exportExcel()">
+        {{ (exporting() ? 'admin.orders.exporting' : 'admin.orders.exportExcel') | translate }}
+      </button>
+      <p class="ord-export-msg" role="status" aria-live="polite">
+        @if (exported(); as name) {
+          <span class="is-ok">{{ 'admin.orders.exported' | translate: { name } }}</span>
+        } @else if (exportFailed()) {
+          <span class="is-error">{{ 'admin.orders.exportFailed' | translate }}</span>
+        } @else {
+          {{ 'admin.orders.exportHint' | translate }}
+        }
+      </p>
+    </div>
+  }
 </div>
 
 <form #filters class="adm-panel ord-filters" role="search" (submit)="$event.preventDefault(); apply(filters)">

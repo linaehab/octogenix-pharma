@@ -16,6 +16,8 @@ use App\Payments\FakeCardGateway;
 use App\Services\InventoryService;
 use App\Services\SettingsService;
 use App\Support\CsvExport;
+use App\Support\XlsxWorkbook;
+use OpenSpout\Reader\XLSX\Reader as XlsxReader;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Notification;
@@ -456,5 +458,203 @@ class AdminReportsTest extends TestCase
         $this->assertSame(-3, CsvExport::cell(-3));
         $this->assertSame('القاهرة', CsvExport::cell('القاهرة'));
         $this->assertSame(['0.00', '0.05', '520.10', '1000000.00'], array_map(CsvExport::egp(...), [0, 5, 52010, 100000000]));
+    }
+
+    // --- Excel (.xlsx) exports --------------------------------------------------------------------
+
+    /**
+     * Reads a downloaded workbook: sheet name => rows (cell values as OpenSpout reads them), plus
+     * the raw XML of its worksheets for checks on formulas and right-to-left.
+     *
+     * @return array{sheets: array<string, list<list<mixed>>>, xml: string}
+     */
+    private function xlsx(TestResponse $response): array
+    {
+        $response->assertOk()->assertHeader('Content-Type', XlsxWorkbook::MIME);
+        $path = $response->baseResponse->getFile()->getPathname();
+        $this->assertSame('PK', substr((string) file_get_contents($path), 0, 2), 'A real .xlsx file is a zip package.');
+
+        $sheets = [];
+        $reader = new XlsxReader;
+        $reader->open($path);
+        foreach ($reader->getSheetIterator() as $sheet) {
+            foreach ($sheet->getRowIterator() as $row) {
+                $sheets[$sheet->getName()][] = $row->toArray();
+            }
+        }
+        $reader->close();
+
+        $zip = new \ZipArchive;
+        $zip->open($path);
+        $xml = '';
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            if (str_starts_with($zip->getNameIndex($i), 'xl/worksheets/')) {
+                $xml .= $zip->getFromIndex($i);
+            }
+        }
+        $zip->close();
+        @unlink($path);
+
+        return ['sheets' => $sheets, 'xml' => $xml];
+    }
+
+    /** @param  list<list<mixed>>  $rows */
+    private function valueOf(array $rows, string $label): mixed
+    {
+        foreach ($rows as $row) {
+            if (($row[0] ?? null) === $label) {
+                return $row[1];
+            }
+        }
+        $this->fail("No row labelled \"{$label}\".");
+    }
+
+    public function test_sales_excel_has_the_report_figures_in_numbers_and_keeps_test_money_apart(): void
+    {
+        $this->buildTimeline();
+        $this->asAdmin();
+        $api = $this->getJson('/api/v1/admin/reports/sales?'.self::PERIOD)->json('data');
+
+        $response = $this->get('/api/v1/admin/reports/sales/export?'.self::PERIOD.'&format=xlsx');
+        $this->assertStringContainsString('jovie-sales-report_2026-11-03_to_2026-11-04.xlsx', $response->headers->get('Content-Disposition'));
+        $book = $this->xlsx($response);
+
+        $this->assertSame(['Summary', 'By status', 'By payment method', 'Daily trend'], array_keys($book['sheets']));
+        $summary = $book['sheets']['Summary'];
+        $this->assertSame('Sales & revenue report', $summary[0][0]);
+        $this->assertSame(['Period', '2026-11-03 to 2026-11-04 (Africa/Cairo)'], $summary[1]);
+        $this->assertSame(7, $this->valueOf($summary, 'Orders placed'));
+        $this->assertEquals(3530, $this->valueOf($summary, 'Order value (EGP) — what orders are worth, not money received'));
+        $this->assertEquals($api['payments']['collected']['amount_piastres'] / 100, $this->valueOf($summary, 'Collected payments (EGP, real money)'));
+        $this->assertEquals(2010, $this->valueOf($summary, 'Collected payments (EGP, real money)'));
+        $this->assertEquals(1010, $this->valueOf($summary, 'Outstanding (EGP)'));
+        $this->assertEquals(500, $this->valueOf($summary, 'TEST payments — simulated, not real money (EGP)'));
+        $this->assertSame(1, $this->valueOf($summary, 'Possible duplicate payments (orders)'));
+
+        $byStatus = array_column(array_slice($book['sheets']['By status'], 1), null, 0);
+        $this->assertSame(1, $byStatus['Cancelled'][1]);
+        $this->assertSame(1, $byStatus['Returned'][1]);
+        $this->assertContains(['2026-11-04', 0, 0, 510], array_map(fn ($r) => array_map(fn ($v) => is_float($v) && floor($v) === $v ? (int) $v : $v, $r), $book['sheets']['Daily trend']));
+        $this->assertStringContainsString('rightToLeft="false"', $book['xml']);
+    }
+
+    public function test_orders_excel_matches_the_filters_and_is_arabic_right_to_left_and_formula_safe(): void
+    {
+        $this->buildTimeline();
+        $this->orders['G']->forceFill(['customer_first_name' => '=HYPERLINK("http://x")', 'customer_last_name' => '+1'])->save();
+        $this->asAdmin();
+
+        $book = $this->xlsx($this->get('/api/v1/admin/reports/orders/export?'.self::PERIOD.'&payment_method=cod&format=xlsx'));
+        $rows = $book['sheets']['Orders'];
+        $this->assertSame(['Payment method', 'Cash on delivery'], $rows[3]);
+        $headingAt = array_search('Order number', array_column($rows, 0), true);
+        $this->assertSame(['Order number', 'Order date (Cairo)', 'Customer name', 'Governorate', 'Order status', 'Payment status', 'Payment method', 'Total (EGP)'], $rows[$headingAt]);
+        $data = array_slice($rows, $headingAt + 1);
+        $this->assertCount(3, $data); // B, C, G — the same orders as the CSV and the report
+        $this->assertSame($this->orders['B']->order_number, $data[0][0]);
+        $this->assertSame('2026-11-03 00:00', $data[0][1]->format('Y-m-d H:i'), 'Cairo time, as a real date');
+        $this->assertSame(['Mona Hassan', 'Cairo', 'Delivered', 'Paid', 'Cash on delivery'], array_slice($data[0], 2, 5));
+        $this->assertEquals(510, $data[0][7]);
+        $this->assertSame('=HYPERLINK("http://x") +1', $data[2][2], 'Shown as text…');
+        $this->assertStringNotContainsString('<f>', $book['xml'], '…and never stored as a formula.');
+        $this->assertStringNotContainsString('mona@example.com', $book['xml']);
+        $this->assertStringNotContainsString('01012345678', $book['xml']);
+
+        $arabic = $this->xlsx($this->get('/api/v1/admin/reports/orders/export?'.self::PERIOD.'&payment_method=cod&format=xlsx&lang=ar'));
+        $this->assertSame(['الطلبات'], array_keys($arabic['sheets']));
+        $rows = $arabic['sheets']['الطلبات'];
+        $this->assertSame('تقرير الطلبات', $rows[0][0]);
+        $headingAt = array_search('رقم الطلب', array_column($rows, 0), true);
+        $this->assertSame(['القاهرة', 'تم التسليم', 'مدفوع', 'الدفع عند الاستلام'], array_slice($rows[$headingAt + 1], 3, 4));
+        $this->assertStringContainsString('rightToLeft="true"', $arabic['xml']);
+    }
+
+    public function test_products_and_inventory_excel_keep_snapshots_and_never_guess_history(): void
+    {
+        $this->buildTimeline();
+        $this->asAdmin(AdminRole::SuperAdmin);
+
+        $products = $this->xlsx($this->get('/api/v1/admin/reports/products/export?'.self::PERIOD.'&format=xlsx'))['sheets']['Products'];
+        $headingAt = array_search('Product', array_column($products, 0), true);
+        $this->assertSame('Gross sales value (EGP, prices at order time)', $products[$headingAt][4]);
+        $this->assertContains(['Note', 'Gross sales value uses the prices saved on each order; it is not profit.'], $products);
+        $row = $products[$headingAt + 1];
+        $api = collect($this->getJson('/api/v1/admin/reports/products?'.self::PERIOD)->json('data'))->firstWhere('sku', $row[1]);
+        $this->assertSame([$api['units_ordered'], $api['orders_count']], [$row[2], $row[3]]);
+        $this->assertEquals($api['gross_value_piastres'] / 100, $row[4]);
+        $this->assertSame([$api['returned_units'], $api['cancelled_units']], [$row[5], $row[6]]);
+        $this->assertEquals(450, $row[7]);
+
+        $inventory = $this->xlsx($this->get('/api/v1/admin/reports/inventory/export?'.self::PERIOD.'&format=xlsx&lang=ar'));
+        $this->assertSame(['المخزون', 'الحركات حسب السبب'], array_keys($inventory['sheets']));
+        $rows = $inventory['sheets']['المخزون'];
+        $headingAt = array_search('المنتج', array_column($rows, 0), true);
+        // The test product's stock was set without movements: opening/closing are not guessed.
+        $this->assertSame(['السجل غير مكتمل', 'السجل غير مكتمل'], [$rows[$headingAt + 1][5], $rows[$headingAt + 1][8]]);
+    }
+
+    public function test_excel_exports_use_the_report_permissions_and_validate_their_filters(): void
+    {
+        $this->get('/api/v1/admin/reports/sales/export?'.self::PERIOD.'&format=xlsx', ['Accept' => 'application/json'])->assertUnauthorized();
+
+        $this->asAdmin(AdminRole::Support);
+        $this->getJson('/api/v1/admin/reports/orders/export?'.self::PERIOD.'&format=xlsx')->assertForbidden();
+        $this->getJson('/api/v1/admin/orders/export')->assertForbidden();
+
+        $manager = AdminUser::factory()->role(AdminRole::StoreManager)->create();
+        $this->actingAs($manager, 'admin');
+        $this->getJson('/api/v1/admin/reports/sales/export?'.self::PERIOD.'&format=pdf')->assertUnprocessable()->assertJsonValidationErrors('format');
+        $this->getJson('/api/v1/admin/reports/sales/export?from=2026-11-04&to=2026-11-03&format=xlsx')->assertUnprocessable();
+        $this->getJson('/api/v1/admin/reports/orders/export?'.self::PERIOD.'&format=xlsx&status=lost')->assertUnprocessable();
+
+        // CSV stays the default and is unchanged.
+        $this->get('/api/v1/admin/reports/sales/export?'.self::PERIOD)->assertOk()->assertHeader('Content-Type', 'text/csv; charset=UTF-8');
+    }
+
+    public function test_an_empty_period_still_gives_a_valid_workbook(): void
+    {
+        $this->asAdmin();
+
+        $book = $this->xlsx($this->get('/api/v1/admin/reports/orders/export?from=2020-01-01&to=2020-01-31&format=xlsx'));
+        $rows = $book['sheets']['Orders'];
+        $this->assertSame('Order number', end($rows)[0], 'Only the headings, no data rows.');
+
+        $sales = $this->xlsx($this->get('/api/v1/admin/reports/sales/export?from=2020-01-01&to=2020-01-31&format=xlsx'));
+        $this->assertSame(0, $this->valueOf($sales['sheets']['Summary'], 'Orders placed'));
+        $this->assertCount(32, $sales['sheets']['Daily trend'], 'Heading + one row per day.');
+    }
+
+    public function test_orders_management_export_has_every_matching_order_not_one_page(): void
+    {
+        $this->at('2026-11-03 10:00:00');
+        for ($i = 0; $i < 27; $i++) {
+            if ($i % 9 === 8) {
+                // Checkout allows 10 orders a minute per address.
+                $this->at('2026-11-03 10:0'.(intdiv($i, 9) + 1).':00');
+            }
+            $this->order('cod');
+        }
+        [$card] = $this->order('card');
+        $this->at('2026-11-06 12:00:00');
+        $this->asAdmin();
+
+        $this->getJson('/api/v1/admin/orders?per_page=25')->assertJsonPath('meta.total', 28)->assertJsonCount(25, 'data');
+
+        $response = $this->get('/api/v1/admin/orders/export?payment_method=cod&from=2026-11-01&to=2026-11-05');
+        $this->assertStringContainsString('jovie-orders_2026-11-01_to_2026-11-05.xlsx', $response->headers->get('Content-Disposition'));
+        $rows = $this->xlsx($response)['sheets']['Orders'];
+        $headingAt = array_search('Order number', array_column($rows, 0), true);
+        $this->assertSame(['Order number', 'Order date (Cairo)', 'Customer name', 'Governorate', 'Order status', 'Payment status', 'Payment method',
+            'Lines', 'Units', 'Subtotal (EGP)', 'Discount (EGP)', 'Shipping (EGP)', 'Cash on delivery fee (EGP)', 'Total (EGP)', 'Promo code'], $rows[$headingAt]);
+        $this->assertContains(['Payment method', 'Cash on delivery'], $rows);
+        $this->assertContains(['From (Cairo date)', '2026-11-01'], $rows);
+        $data = array_slice($rows, $headingAt + 1);
+        $this->assertCount(27, $data, 'All matching orders, beyond the 25 of one page; the card order is filtered out.');
+        $this->assertNotContains($card->order_number, array_column($data, 0));
+        $this->assertSame([1, 1], [$data[0][7], $data[0][8]]);
+        $this->assertEquals([450, 0, 50, 10, 510], array_slice($data[0], 9, 5));
+
+        $this->getJson('/api/v1/admin/orders/export?status=lost')->assertUnprocessable();
+        $this->assertSame(28, Order::count(), 'Exports change nothing.');
     }
 }

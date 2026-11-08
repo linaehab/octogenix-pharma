@@ -262,6 +262,11 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
                     ->name('governorates.update');
             });
 
+            // Excel export of the orders list (all matching orders): totals need payments.manage too,
+            // like the report exports. Registered before /orders/{order} so "export" is not an order number.
+            Route::get('/orders/export', [AdminOrderController::class, 'export'])
+                ->middleware(['can:orders.view', 'can:payments.manage', 'throttle:20,1,admin-order-exports'])->name('orders.export');
+
             Route::middleware('can:orders.view')->group(function () {
                 Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
                 Route::get('/orders/{order:order_number}', [AdminOrderController::class, 'show'])->name('orders.show');

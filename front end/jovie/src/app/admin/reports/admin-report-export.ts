@@ -3,17 +3,23 @@ import { Component, DestroyRef, inject, input, output, signal } from '@angular/c
 import { Observable, Subscription } from 'rxjs';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
+export type ExportFormat = 'csv' | 'xlsx';
+
 /**
- * The "Export CSV" button of a report: one download at a time, a busy state while the server
- * prepares the file, then a success or error message.
+ * The export buttons of a report (CSV and Excel): one download at a time (both buttons wait while
+ * the server prepares a file), then a success or error message. The server builds both files with
+ * the report's own filters and calculations.
  */
 @Component({
   selector: 'app-admin-report-export',
   imports: [TranslatePipe],
   template: `
     <div class="rep-export">
-      <button type="button" class="adm-button is-light" [disabled]="busy() || disabled()" [attr.aria-busy]="busy()" (click)="start()">
-        {{ (busy() ? 'admin.reports.exporting' : 'admin.reports.export') | translate }}
+      <button type="button" class="adm-button is-light rep-export-csv" [disabled]="!!busy() || disabled()" [attr.aria-busy]="busy() === 'csv'" (click)="start('csv')">
+        {{ (busy() === 'csv' ? 'admin.reports.exporting' : 'admin.reports.export') | translate }}
+      </button>
+      <button type="button" class="adm-button is-light rep-export-xlsx" [disabled]="!!busy() || disabled()" [attr.aria-busy]="busy() === 'xlsx'" (click)="start('xlsx')">
+        {{ (busy() === 'xlsx' ? 'admin.reports.exporting' : 'admin.reports.exportExcel') | translate }}
       </button>
       <p class="rep-export-msg" role="status" aria-live="polite">
         @if (done(); as name) {
@@ -49,12 +55,13 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
   `,
 })
 export class AdminReportExport {
-  /** Starts the download; emits the saved file name. */
-  readonly run = input.required<() => Observable<string>>();
+  /** Starts the download in the given format; emits the saved file name. */
+  readonly run = input.required<(format: ExportFormat) => Observable<string>>();
   readonly disabled = input(false);
   readonly sessionEnded = output<void>();
 
-  protected readonly busy = signal(false);
+  /** The format being prepared, or null. */
+  protected readonly busy = signal<ExportFormat | null>(null);
   protected readonly done = signal<string | null>(null);
   protected readonly failed = signal(false);
   private request: Subscription | null = null;
@@ -63,20 +70,20 @@ export class AdminReportExport {
     inject(DestroyRef).onDestroy(() => this.request?.unsubscribe());
   }
 
-  protected start(): void {
+  protected start(format: ExportFormat): void {
     if (this.busy()) {
       return;
     }
-    this.busy.set(true);
+    this.busy.set(format);
     this.done.set(null);
     this.failed.set(false);
-    this.request = this.run()().subscribe({
+    this.request = this.run()(format).subscribe({
       next: (name) => {
-        this.busy.set(false);
+        this.busy.set(null);
         this.done.set(name);
       },
       error: (error: unknown) => {
-        this.busy.set(false);
+        this.busy.set(null);
         if (error instanceof HttpErrorResponse && error.status === 401) {
           this.sessionEnded.emit();
           return;

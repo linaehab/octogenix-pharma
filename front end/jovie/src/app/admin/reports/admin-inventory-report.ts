@@ -7,7 +7,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { AdminAuthService } from '../admin-auth.service';
 import { AdminStatCard } from '../components/admin-stat-card';
 import { AdminState } from '../components/admin-state';
-import { AdminReportExport } from './admin-report-export';
+import { AdminReportExport, ExportFormat } from './admin-report-export';
 import { InventoryReport, InventoryReportRow, ReportPeriod } from './admin-reports.models';
 import { AdminReportsService } from './admin-reports.service';
 import { count } from './report-format';
@@ -140,7 +140,7 @@ export class AdminInventoryReport {
   );
   protected readonly anyIncomplete = computed(() => (this.report()?.rows ?? []).some((r) => !r.history_complete));
 
-  protected readonly exportRun = () => this.reports.export('inventory', this.reports.period(), this.language.currentLanguage());
+  protected readonly exportRun = (format: ExportFormat) => this.reports.export('inventory', this.reports.period(), this.language.currentLanguage(), undefined, format);
 
   constructor() {
     inject(DestroyRef).onDestroy(() => this.request?.unsubscribe());

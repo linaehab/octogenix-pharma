@@ -306,6 +306,39 @@ describe('Admin reports', () => {
       await click('app-admin-report-export button');
       const file = await answer(is('GET', `${R}/sales/export`), (r) => r.flush(new Blob(['x'])));
       expect(file.request.params.get('lang')).toBe('ar');
+      expect(text('.rep-export-xlsx')).toBe('تصدير Excel');
+    });
+
+    it('exports Excel next to CSV: format=xlsx, one download at a time, then success or failure', async () => {
+      await openSales();
+      expect(texts('app-admin-report-export button')).toEqual(['Export CSV', 'Export Excel']);
+
+      await click('.rep-export-xlsx');
+      expect(text('.rep-export-xlsx')).toBe('Preparing the file…');
+      expect((el().querySelector('.rep-export-csv') as HTMLButtonElement).disabled).toBeTrue();
+      expect((el().querySelector('.rep-export-xlsx') as HTMLButtonElement).disabled).toBeTrue();
+      await click('.rep-export-xlsx'); // a second click while busy sends nothing more
+      const file = await answer(is('GET', `${R}/sales/export`), (r) =>
+        r.flush(new Blob(['PK'], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), {
+          headers: new HttpHeaders({ 'Content-Disposition': 'attachment; filename=jovie-sales-report_2026-11-03_to_2026-11-04.xlsx' }),
+        }),
+      );
+      expect(file.request.params.get('format')).toBe('xlsx');
+      expect(file.request.params.get('lang')).toBe('en');
+      expect(file.request.params.get('from')).toBe(presetPeriod('last_30_days').from);
+      expect(file.request.responseType).toBe('blob');
+      expect(downloads).toHaveBeenCalledTimes(1);
+      expect(text('.rep-export-msg')).toBe('Downloaded jovie-sales-report_2026-11-03_to_2026-11-04.xlsx.');
+      expect(text('.rep-export-xlsx')).toBe('Export Excel');
+
+      await click('.rep-export-xlsx');
+      await answer(is('GET', `${R}/sales/export`), (r) => r.flush(new Blob(['{}']), { status: 429, statusText: 'Too Many Requests' }));
+      expect(text('.rep-export-msg')).toBe('The export could not be prepared. Please try again.');
+
+      // CSV is unchanged: no format parameter.
+      await click('.rep-export-csv');
+      const csv = await answer(is('GET', `${R}/sales/export`), (r) => r.flush(new Blob(['x'])));
+      expect(csv.request.params.has('format')).toBeFalse();
     });
   });
 
@@ -341,6 +374,15 @@ describe('Admin reports', () => {
       const file = await answer(is('GET', `${R}/orders/export`), (r) => r.flush(new Blob(['x'])));
       expect(file.request.params.has('status')).toBeFalse();
       expect(file.request.params.get('lang')).toBe('en');
+
+      // Excel uses the same filters as the report.
+      (el().querySelector('#rep-status') as HTMLSelectElement).value = 'delivered';
+      (el().querySelector('form.rep-filters') as HTMLFormElement).dispatchEvent(new Event('submit'));
+      await settle();
+      await answer(is('GET', `${R}/orders`), (r) => r.flush(ordersReport(2, 1, 1)));
+      await click('.rep-export-xlsx');
+      const excel = await answer(is('GET', `${R}/orders/export`), (r) => r.flush(new Blob(['PK'])));
+      expect(['status', 'format', 'lang'].map((k) => excel.request.params.get(k))).toEqual(['delivered', 'xlsx', 'en']);
     });
   });
 

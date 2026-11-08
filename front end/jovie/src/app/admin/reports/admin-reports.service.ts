@@ -49,20 +49,23 @@ export class AdminReportsService {
   }
 
   /**
-   * Downloads the CSV the API builds with the same filters and calculations as the report, and
-   * saves it under the API's file name. Emits the file name once saved.
+   * Downloads the CSV or Excel (.xlsx) file the API builds with the same filters and calculations
+   * as the report, and saves it under the API's file name. Emits the file name once saved.
    */
-  export(report: ReportName, period: ReportPeriod, language: string, filters?: OrdersReportFilters): Observable<string> {
+  export(report: ReportName, period: ReportPeriod, language: string, filters?: OrdersReportFilters, format: 'csv' | 'xlsx' = 'csv'): Observable<string> {
     let params = this.params(period).set('lang', language === 'ar' ? 'ar' : 'en');
     if (filters) {
       params = this.filterParams(params, filters);
+    }
+    if (format === 'xlsx') {
+      params = params.set('format', 'xlsx');
     }
     return this.http
       .get(`${this.base}/${report}/export`, { params, responseType: 'blob', observe: 'response' })
       .pipe(
         timeout(AdminReportsService.EXPORT_TIMEOUT_MS),
         map((response: HttpResponse<Blob>) => {
-          const name = /filename="?([^";]+)"?/.exec(response.headers.get('Content-Disposition') ?? '')?.[1] ?? `jovie-${report}-report.csv`;
+          const name = /filename="?([^";]+)"?/.exec(response.headers.get('Content-Disposition') ?? '')?.[1] ?? `jovie-${report}-report.${format}`;
           this.save(response.body ?? new Blob([]), name);
           return name;
         }),

@@ -13,12 +13,15 @@ use App\Models\Order;
 use App\Services\DashboardSummaryService;
 use App\Services\OrderStatusService;
 use App\Support\OrderActions;
+use App\Support\ReportPeriod;
+use App\Support\XlsxWorkbook;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 /**
  * index/show need orders.view; status and note changes need orders.manage; recording COD cash
@@ -31,9 +34,88 @@ class OrderController extends Controller
 
     public function __construct(private readonly OrderStatusService $statuses) {}
 
-    public function index(Request $request): JsonResponse
+    /**
+     * GET /admin/orders/export — the orders list as an Excel workbook, with the list's filters and
+     * every matching order (not only the page on screen). Needs orders.view and payments.manage
+     * (totals, like the report exports). No email, phone, address or notes are exported.
+     */
+    public function export(Request $request): BinaryFileResponse
     {
-        $filters = $request->validate([
+        $filters = $this->listFilters($request);
+        $ar = ($request->validate(['lang' => ['sometimes', 'in:en,ar']])['lang'] ?? 'en') === 'ar';
+        $t = fn (string $en, string $arabic) => $ar ? $arabic : $en;
+        $label = fn (string $kind, string $value) => $this->exportLabel($kind, $value, $ar);
+
+        $book = (new XlsxWorkbook(rightToLeft: $ar))
+            ->sheet($t('Orders', 'الطلبات'), [20, 18, 26, 18, 24, 14, 20, 10, 10, 16, 14, 14, 14, 16, 16])
+            ->title($t('Orders', 'الطلبات'))
+            ->meta($t('Exported', 'وقت التصدير'), now(ReportPeriod::TIMEZONE)->format('Y-m-d H:i').' (Africa/Cairo)');
+        $applied = [
+            'from' => $t('From (Cairo date)', 'من (تاريخ القاهرة)'), 'to' => $t('To (Cairo date)', 'إلى (تاريخ القاهرة)'),
+            'search' => $t('Search', 'البحث'), 'status' => $t('Order status', 'حالة الطلب'),
+            'payment_status' => $t('Payment status', 'حالة الدفع'), 'payment_method' => $t('Payment method', 'طريقة الدفع'),
+            'governorate_id' => $t('Governorate', 'المحافظة'), 'customer_id' => $t('Customer number', 'رقم العميل'),
+        ];
+        foreach ($applied as $key => $name) {
+            if (isset($filters[$key]) && $filters[$key] !== '') {
+                $value = (string) $filters[$key];
+                $value = match ($key) {
+                    'status' => $label('status', $value),
+                    'payment_status' => $label('payment', $value),
+                    'payment_method' => $label('method', $value),
+                    'governorate_id' => (string) (Order::query()->where('shipping_governorate_id', $value)
+                        ->value($ar ? 'shipping_governorate_name_ar' : 'shipping_governorate_name_en') ?? $value),
+                    default => $value,
+                };
+                $book->meta($name, $value);
+            }
+        }
+        if (array_diff_key($filters, ['per_page' => true]) === []) {
+            $book->meta($t('Filters', 'عوامل التصفية'), $t('None (all orders)', 'لا يوجد (كل الطلبات)'));
+        }
+        $book->blank()->heading($ar
+            ? ['رقم الطلب', 'تاريخ الطلب (القاهرة)', 'اسم العميل', 'المحافظة', 'حالة الطلب', 'حالة الدفع', 'طريقة الدفع', 'عدد الأصناف', 'عدد القطع',
+                'المجموع الفرعي (جنيه)', 'الخصم (جنيه)', 'الشحن (جنيه)', 'رسوم الدفع عند الاستلام (جنيه)', 'الإجمالي (جنيه)', 'كود الخصم']
+            : ['Order number', 'Order date (Cairo)', 'Customer name', 'Governorate', 'Order status', 'Payment status', 'Payment method', 'Lines', 'Units',
+                'Subtotal (EGP)', 'Discount (EGP)', 'Shipping (EGP)', 'Cash on delivery fee (EGP)', 'Total (EGP)', 'Promo code']);
+
+        $this->listQuery($filters)
+            ->select(['id', 'order_number', 'placed_at', 'customer_first_name', 'customer_last_name', 'shipping_governorate_name_en',
+                'shipping_governorate_name_ar', 'status', 'payment_status', 'payment_method', 'subtotal_piastres', 'discount_piastres',
+                'shipping_fee_piastres', 'cod_fee_piastres', 'total_piastres', 'promo_code'])
+            ->withCount('items')
+            ->withSum('items', 'quantity')
+            ->orderBy('placed_at')->orderBy('id')
+            ->lazyById(500)
+            ->each(fn (Order $o) => $book->row([
+                $o->order_number,
+                $book->date($o->placed_at),
+                trim($o->customer_first_name.' '.$o->customer_last_name),
+                $ar ? $o->shipping_governorate_name_ar : $o->shipping_governorate_name_en,
+                $label('status', $o->status->value),
+                $label('payment', $o->payment_status->value),
+                $label('method', $o->payment_method->value),
+                (int) $o->items_count,
+                (int) $o->items_sum_quantity,
+                $book->money($o->subtotal_piastres),
+                $book->money($o->discount_piastres),
+                $book->money($o->shipping_fee_piastres),
+                $book->money($o->cod_fee_piastres),
+                $book->money($o->total_piastres),
+                $o->promo_code,
+            ]));
+
+        $suffix = isset($filters['from']) || isset($filters['to'])
+            ? '_'.($filters['from'] ?? 'start').'_to_'.($filters['to'] ?? now(ReportPeriod::TIMEZONE)->format('Y-m-d'))
+            : '_'.now(ReportPeriod::TIMEZONE)->format('Y-m-d');
+
+        return $book->download("jovie-orders{$suffix}.xlsx");
+    }
+
+    /** @return array<string, mixed> */
+    private function listFilters(Request $request): array
+    {
+        return $request->validate([
             'status' => ['sometimes', Rule::enum(OrderStatus::class)],
             'payment_status' => ['sometimes', Rule::enum(OrderPaymentStatus::class)],
             'payment_method' => ['sometimes', Rule::enum(PaymentMethod::class)],
@@ -45,11 +127,19 @@ class OrderController extends Controller
             'to' => ['sometimes', 'date_format:Y-m-d', 'after_or_equal:from'],
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
         ]);
+    }
+
+    /**
+     * The orders list's filters (shared by the list and its export).
+     *
+     * @param  array<string, mixed>  $filters
+     * @return Builder<Order>
+     */
+    private function listQuery(array $filters): Builder
+    {
         $day = fn (string $date) => CarbonImmutable::createFromFormat('Y-m-d', $date, DashboardSummaryService::TIMEZONE);
 
-        $page = Order::query()
-            ->withCount('items')
-            ->withSum('items', 'quantity')
+        return Order::query()
             ->when($filters['status'] ?? null, fn (Builder $q, $v) => $q->where('status', $v))
             ->when($filters['payment_status'] ?? null, fn (Builder $q, $v) => $q->where('payment_status', $v))
             ->when($filters['payment_method'] ?? null, fn (Builder $q, $v) => $q->where('payment_method', $v))
@@ -58,7 +148,32 @@ class OrderController extends Controller
             ->when($filters['customer_id'] ?? null, fn (Builder $q, $v) => $q->where('customer_id', $v))
             ->when($filters['from'] ?? null, fn (Builder $q, $v) => $q->where('placed_at', '>=', $day($v)->startOfDay()->utc()))
             ->when($filters['to'] ?? null, fn (Builder $q, $v) => $q->where('placed_at', '<=', $day($v)->endOfDay()->utc()))
-            ->when($filters['search'] ?? null, fn (Builder $q, string $search) => $this->search($q, $search))
+            ->when($filters['search'] ?? null, fn (Builder $q, string $search) => $this->search($q, $search));
+    }
+
+    private function exportLabel(string $kind, string $value, bool $ar): string
+    {
+        $labels = [
+            'status' => [
+                'pending_payment' => ['Awaiting payment', 'بانتظار الدفع'], 'pending_confirmation' => ['Awaiting confirmation', 'بانتظار التأكيد'],
+                'confirmed' => ['Confirmed', 'مؤكَّد'], 'processing' => ['Being prepared', 'قيد التجهيز'], 'shipped' => ['Shipped', 'تم الشحن'],
+                'delivered' => ['Delivered', 'تم التسليم'], 'cancelled' => ['Cancelled', 'ملغى'], 'expired' => ['Expired (not paid in time)', 'منتهي (لم يُدفع في الوقت)'],
+                'returned' => ['Returned', 'مرتجع'],
+            ],
+            'payment' => ['unpaid' => ['Not paid', 'غير مدفوع'], 'paid' => ['Paid', 'مدفوع']],
+            'method' => ['cod' => ['Cash on delivery', 'الدفع عند الاستلام'], 'card' => ['Card', 'بطاقة']],
+        ];
+
+        return $labels[$kind][$value][$ar ? 1 : 0] ?? $value;
+    }
+
+    public function index(Request $request): JsonResponse
+    {
+        $filters = $this->listFilters($request);
+
+        $page = $this->listQuery($filters)
+            ->withCount('items')
+            ->withSum('items', 'quantity')
             ->latest('placed_at')->latest('id')
             ->paginate($filters['per_page'] ?? 25);
 

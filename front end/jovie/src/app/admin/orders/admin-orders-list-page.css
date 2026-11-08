@@ -181,3 +181,25 @@
     margin-inline-start: 0.35rem;
   }
 }
+
+.ord-export {
+  display: grid;
+  justify-items: end;
+  gap: 0.3rem;
+}
+
+.ord-export-msg {
+  margin: 0;
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+}
+
+.ord-export-msg .is-ok {
+  color: #0b5a46;
+  font-weight: 700;
+}
+
+.ord-export-msg .is-error {
+  color: #a3123d;
+  font-weight: 700;
+}

@@ -37,18 +37,54 @@ export class AdminOrdersListPage {
   protected readonly loading = signal(true);
   protected readonly error = signal(false);
   private request: Subscription | null = null;
+  private exportRequest: Subscription | null = null;
+  /** Exporting needs payments.manage too (the totals), like the report exports. */
+  protected readonly canExport = computed(() => this.auth.can({ permissions: ['orders.view', 'payments.manage'] }));
+  protected readonly exporting = signal(false);
+  protected readonly exported = signal<string | null>(null);
+  protected readonly exportFailed = signal(false);
 
   protected readonly filtered = computed(() => Object.entries(this.query()).some(([key, value]) => key !== 'page' && value !== ''));
 
   constructor() {
     this.language.addTranslations(adminProductsTranslations);
     this.language.addTranslations(adminOrdersTranslations);
-    inject(DestroyRef).onDestroy(() => this.request?.unsubscribe());
+    inject(DestroyRef).onDestroy(() => {
+      this.request?.unsubscribe();
+      this.exportRequest?.unsubscribe();
+    });
     this.load();
+  }
+
+  /** Every order matching the applied filters, as an Excel file (one download at a time). */
+  protected exportExcel(): void {
+    if (this.exporting()) {
+      return;
+    }
+    this.exporting.set(true);
+    this.exported.set(null);
+    this.exportFailed.set(false);
+    this.exportRequest = this.api.export(this.query(), this.language.currentLanguage()).subscribe({
+      next: (name) => {
+        this.exporting.set(false);
+        this.exported.set(name);
+      },
+      error: (error: unknown) => {
+        this.exporting.set(false);
+        if (error instanceof HttpErrorResponse && error.status === 401) {
+          this.auth.sessionEnded();
+          void this.router.navigateByUrl('/admin/login');
+          return;
+        }
+        this.exportFailed.set(true);
+      },
+    });
   }
 
   protected load(): void {
     this.request?.unsubscribe();
+    this.exported.set(null);
+    this.exportFailed.set(false);
     this.loading.set(true);
     this.error.set(false);
     this.request = this.api.list(this.query()).subscribe({

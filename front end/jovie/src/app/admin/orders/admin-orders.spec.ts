@@ -1,4 +1,4 @@
-import { provideHttpClient } from '@angular/common/http';
+import { HttpHeaders, provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
@@ -202,6 +202,51 @@ describe('Admin orders', () => {
       await click('app-admin-state button');
       await answer(is('GET', ORDERS), (r) => r.flush(listPage([row(1)], 2, 3)));
       expect(text('.ord-pages')).toContain('Page 2 of 3');
+    });
+
+    it('exports every order matching the applied filters to Excel, one download at a time', async () => {
+      const save = spyOn(HTMLAnchorElement.prototype, 'click');
+      await open('/admin/orders', storeManager);
+      await answer(is('GET', ORDERS), (r) => r.flush(listPage([row(1)], 1, 3)));
+      (el().querySelector('#ord-status') as HTMLSelectElement).value = 'delivered';
+      (el().querySelector('#ord-from') as HTMLInputElement).value = '2026-11-01';
+      (el().querySelector('form.ord-filters') as HTMLFormElement).dispatchEvent(new Event('submit'));
+      await answer(is('GET', ORDERS), (r) => r.flush(listPage([row(1)], 1, 3)));
+      expect(text('.ord-export-msg')).toBe('All orders matching the filters, not only this page.');
+
+      await click('.ord-export button');
+      expect(text('.ord-export button')).toBe('Preparing the file…');
+      expect((el().querySelector('.ord-export button') as HTMLButtonElement).disabled).toBeTrue();
+      const file = await answer(is('GET', `${ORDERS}/export`), (r) =>
+        r.flush(new Blob(['PK']), { headers: new HttpHeaders({ 'Content-Disposition': 'attachment; filename=jovie-orders_2026-11-01_to_2026-11-08.xlsx' }) }),
+      );
+      const p = file.request.params;
+      expect([p.get('status'), p.get('from'), p.get('lang')]).toEqual(['delivered', '2026-11-01', 'en']);
+      expect(p.has('page')).withContext('the export is not limited to one page').toBeFalse();
+      expect(p.has('per_page')).toBeFalse();
+      expect(file.request.responseType).toBe('blob');
+      expect(save).toHaveBeenCalledTimes(1);
+      expect(text('.ord-export-msg')).toBe('Saved as jovie-orders_2026-11-01_to_2026-11-08.xlsx.');
+
+      await click('.ord-export button');
+      await answer(is('GET', `${ORDERS}/export`), (r) => r.flush(new Blob(['{}']), { status: 500, statusText: 'Server Error' }));
+      expect(text('.ord-export-msg')).toBe('The file could not be prepared. Please try again.');
+    });
+
+    it('does not offer the export without payments.manage', async () => {
+      await open('/admin/orders', support);
+      await answer(is('GET', ORDERS), (r) => r.flush(listPage([row(1)])));
+      expect(el().querySelector('.ord-export')).toBeNull();
+    });
+
+    it('exports in Arabic', async () => {
+      language.setLanguage('ar');
+      await open('/admin/orders', storeManager);
+      await answer(is('GET', ORDERS), (r) => r.flush(listPage([row(1)])));
+      expect(text('.ord-export button')).toBe('تصدير Excel');
+      await click('.ord-export button');
+      const file = await answer(is('GET', `${ORDERS}/export`), (r) => r.flush(new Blob(['PK'])));
+      expect(file.request.params.get('lang')).toBe('ar');
     });
   });
 
