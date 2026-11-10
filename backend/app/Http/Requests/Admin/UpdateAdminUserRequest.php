@@ -15,6 +15,8 @@ class UpdateAdminUserRequest extends FormRequest
             'name' => ['sometimes', 'string', 'max:120'],
             'role' => ['sometimes', Rule::enum(AdminRole::class)],
             'is_active' => ['sometimes', 'boolean'],
+            // The account as the admin saw it: if it changed meanwhile, nothing is saved (409).
+            'expected_updated_at' => ['sometimes', 'nullable', 'date'],
             'locale' => ['sometimes', Rule::in(['en', 'ar'])],
         ];
     }

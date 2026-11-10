@@ -18,6 +18,11 @@ enum AdminPermission: string
     case ViewOrders = 'orders.view';
     case ManageOrders = 'orders.manage';
     case ManagePayments = 'payments.manage';
+    /**
+     * Record that cash on delivery was received for a delivered order, and nothing else: no
+     * reports, exports, payment events or money figures (those stay with payments.manage).
+     */
+    case RecordCodPayments = 'payments.record_cod';
     case ViewCustomers = 'customers.view';
     case ManageShipping = 'shipping.manage';
     case ManageReviews = 'reviews.manage';

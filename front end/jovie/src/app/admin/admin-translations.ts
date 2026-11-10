@@ -112,6 +112,9 @@ export const adminTranslations: Record<Language, Record<string, string>> = {
     'admin.role.content_editor': 'Content editor',
     'admin.role.store_manager': 'Store manager',
     'admin.role.support': 'Support',
+    'admin.role.product_manager': 'Product manager',
+    'admin.role.order_manager': 'Order manager',
+    'admin.role.content_manager': 'Content manager',
   },
   ar: {
     ...shared('ar'),
@@ -212,5 +215,8 @@ export const adminTranslations: Record<Language, Record<string, string>> = {
     'admin.role.content_editor': 'محرر محتوى',
     'admin.role.store_manager': 'مدير المتجر',
     'admin.role.support': 'الدعم',
+    'admin.role.product_manager': 'مدير المنتجات',
+    'admin.role.order_manager': 'مدير الطلبات',
+    'admin.role.content_manager': 'مدير المحتوى',
   },
 };

@@ -57,6 +57,12 @@ class AdminUser extends Authenticatable
         return $this->is_active && $this->role->can($permission);
     }
 
+    /** May record COD cash: payments.manage, or the narrower payments.record_cod. */
+    public function canRecordCodCash(): bool
+    {
+        return $this->hasPermission(AdminPermission::ManagePayments) || $this->hasPermission(AdminPermission::RecordCodPayments);
+    }
+
     public function isSuperAdmin(): bool
     {
         return $this->role === AdminRole::SuperAdmin;

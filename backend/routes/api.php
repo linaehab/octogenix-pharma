@@ -178,6 +178,8 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::middleware('can:admins.manage')->group(function () {
                 Route::get('/admin-users', [AdminUserController::class, 'index'])->name('admin-users.index');
                 Route::post('/admin-users', [AdminUserController::class, 'store'])->name('admin-users.store');
+                Route::get('/admin-users/{adminUser}', [AdminUserController::class, 'show'])->whereNumber('adminUser')
+                    ->name('admin-users.show');
                 Route::patch('/admin-users/{adminUser}', [AdminUserController::class, 'update'])
                     ->name('admin-users.update');
             });
@@ -278,7 +280,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
                     ->middleware('can:inventory.manage')->name('orders.restock-returned');
             });
             Route::post('/orders/{order:order_number}/cod-collected', [AdminOrderController::class, 'codCollected'])
-                ->middleware('can:payments.manage')->name('orders.cod-collected');
+                ->middleware(['can:orders.view', 'can:record-cod-cash'])->name('orders.cod-collected');
 
             Route::middleware('can:payments.manage')->group(function () {
                 Route::get('/payment-webhook-events', [AdminPaymentWebhookEventController::class, 'index'])

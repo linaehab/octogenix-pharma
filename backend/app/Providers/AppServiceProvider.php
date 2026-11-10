@@ -58,6 +58,9 @@ class AppServiceProvider extends ServiceProvider
         // Images are uploaded by content editors (pages, brands, services) and store managers (products).
         Gate::define('upload-images', fn (Authenticatable $user) => $user instanceof AdminUser
             && ($user->hasPermission(AdminPermission::ManageContent) || $user->hasPermission(AdminPermission::ManageCatalog)));
+
+        // Recording COD cash: admins who manage payments, or who may only record COD cash.
+        Gate::define('record-cod-cash', fn (Authenticatable $user) => $user instanceof AdminUser && $user->canRecordCodCash());
     }
 
     private function registerRateLimiters(): void

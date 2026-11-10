@@ -50,6 +50,6 @@ export const ADMIN_SECTIONS: readonly AdminSection[] = [
   { key: 'reviews', path: 'reviews', access: { permissions: ['reviews.manage'] }, planned: false, icon: 'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z' },
   { key: 'customers', path: 'customers', access: { permissions: ['customers.view'] }, planned: false, icon: 'M16 20v-1a4 4 0 0 0-8 0v1M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z' },
   { key: 'settings', path: 'settings', access: { permissions: ['shipping.manage', 'settings.manage'], mode: 'any' }, planned: false, icon: 'M3 7h11v9H3zM14 10h4l3 3v3h-7zM7 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM17 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4z' },
-  { key: 'adminUsers', path: 'admin-users', access: { permissions: ['admins.manage'] }, planned: true, icon: 'M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6zM9 12l2 2 4-4' },
+  { key: 'adminUsers', path: 'users', access: { permissions: ['admins.manage'] }, planned: false, icon: 'M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6zM9 12l2 2 4-4' },
   { key: 'auditLog', path: 'audit-log', access: { permissions: ['admins.manage'] }, planned: false, icon: 'M7 3h8l4 4v14H7zM15 3v4h4M10 12h6M10 16h6M10 8h2' },
 ];

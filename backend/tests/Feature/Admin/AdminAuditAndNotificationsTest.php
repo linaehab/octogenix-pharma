@@ -266,8 +266,8 @@ class AdminAuditAndNotificationsTest extends TestCase
         $number = $this->postJson('/api/v1/checkout', $payload)->assertCreated()->json('data.order_number');
         $this->postJson('/api/v1/checkout', $payload)->assertOk(); // the same checkout replayed
 
-        $this->assertSame(['store_manager', 'super_admin', 'support'], $this->recipients('orders.placed'));
-        $this->assertSame(3, AdminNotification::where('type', 'orders.placed')->count());
+        $this->assertSame(['order_manager', 'store_manager', 'super_admin', 'support'], $this->recipients('orders.placed'));
+        $this->assertSame(4, AdminNotification::where('type', 'orders.placed')->count());
         $note = AdminNotification::where('type', 'orders.placed')->first();
         $this->assertEquals(['order_number' => $number, 'total_piastres' => 51000, 'payment_method' => 'cod'], $note->data);
         $this->assertSame("/admin/orders/{$number}", $note->link);
@@ -281,19 +281,19 @@ class AdminAuditAndNotificationsTest extends TestCase
 
         $this->postJson('/api/v1/checkout', $this->guestCheckout([$variant->id => 1]))->assertCreated();  // 5 -> 4: low
         $this->postJson('/api/v1/checkout', $this->guestCheckout([$variant->id => 1]))->assertCreated();  // 4 -> 3: still low
-        $this->assertSame(['store_manager', 'super_admin'], $this->recipients('inventory.low_stock'));
-        $this->assertSame(2, AdminNotification::where('type', 'inventory.low_stock')->count());
+        $this->assertSame(['product_manager', 'store_manager', 'super_admin'], $this->recipients('inventory.low_stock'));
+        $this->assertSame(3, AdminNotification::where('type', 'inventory.low_stock')->count());
         $this->assertSame(['stock' => 4, 'threshold' => 4], array_intersect_key(AdminNotification::where('type', 'inventory.low_stock')->first()->data, ['stock' => 1, 'threshold' => 1]));
 
         $this->postJson('/api/v1/checkout', $this->guestCheckout([$variant->id => 3]))->assertCreated(); // 3 -> 0: out
-        $this->assertSame(['store_manager', 'super_admin'], $this->recipients('inventory.out_of_stock'));
+        $this->assertSame(['product_manager', 'store_manager', 'super_admin'], $this->recipients('inventory.out_of_stock'));
         $this->assertSame('/admin/inventory', AdminNotification::where('type', 'inventory.out_of_stock')->first()->link);
 
         // A failed checkout (no stock left) changes nothing and notifies nobody.
         $before = AdminNotification::count();
         $this->postJson('/api/v1/checkout', $this->guestCheckout([$variant->id => 1]))->assertStatus(422);
         $this->assertSame($before, AdminNotification::count());
-        $this->assertSame(3 * 3, AdminNotification::where('type', 'orders.placed')->count(), '3 orders x 3 admins who can view orders.');
+        $this->assertSame(3 * 4, AdminNotification::where('type', 'orders.placed')->count(), '3 orders x 4 admins who can view orders.');
     }
 
     public function test_messages_and_reviews_notify_the_admins_who_handle_them(): void
@@ -302,7 +302,7 @@ class AdminAuditAndNotificationsTest extends TestCase
             'first_name' => 'Mona', 'last_name' => 'Hassan', 'email' => 'mona@example.com', 'phone' => '010 1234 5678',
             'subject' => 'import-export', 'message' => 'We would like to discuss distribution of our products in Egypt.',
         ])->assertCreated();
-        $this->assertSame(['content_editor', 'super_admin', 'support'], $this->recipients('messages.received'));
+        $this->assertSame(['content_editor', 'content_manager', 'super_admin', 'support'], $this->recipients('messages.received'));
         $message = AdminNotification::where('type', 'messages.received')->first();
         $this->assertSame('import-export', $message->data['subject']);
         $this->assertStringNotContainsString('mona', strtolower(json_encode($message->getAttributes())));
@@ -312,7 +312,7 @@ class AdminAuditAndNotificationsTest extends TestCase
             'name' => 'Mona', 'email' => 'mona@example.com', 'rating' => 5, 'title' => 'Gentle on her tummy',
             'body' => 'My daughter drinks it happily and sleeps well after her bottle.', 'recommends' => true, 'locale' => 'en',
         ])->assertCreated();
-        $this->assertSame(['content_editor', 'store_manager', 'super_admin'], $this->recipients('reviews.pending'));
+        $this->assertSame(['content_editor', 'content_manager', 'product_manager', 'store_manager', 'super_admin'], $this->recipients('reviews.pending'));
         $this->assertSame(5, AdminNotification::where('type', 'reviews.pending')->first()->data['rating']);
     }
 
@@ -324,7 +324,7 @@ class AdminAuditAndNotificationsTest extends TestCase
             $notifier->notify('orders.placed', AdminPermission::ViewOrders, ['order_number' => 'JV-1'], '/admin/orders/JV-1', 'orders.placed:1');
         });
         $notifier->notify('orders.placed', AdminPermission::ViewOrders, ['order_number' => 'JV-1'], '/admin/orders/JV-1', 'orders.placed:1');
-        $this->assertSame(3, AdminNotification::count());
+        $this->assertSame(4, AdminNotification::count(), 'Once for each of the 4 admins who can view orders.');
 
         // Rolled back: nothing is sent.
         try {
@@ -334,7 +334,7 @@ class AdminAuditAndNotificationsTest extends TestCase
             });
         } catch (\RuntimeException) {
         }
-        $this->assertSame(3, AdminNotification::count());
+        $this->assertSame(4, AdminNotification::count());
 
         $this->expectException(\InvalidArgumentException::class);
         $notifier->notify('orders.placed', AdminPermission::ViewOrders, [], 'https://evil.example', 'x');

@@ -7,16 +7,22 @@ import { CsrfService } from '../core/api/csrf.service';
 import { AdminAccess, AdminPermission, adminCan } from './admin-permissions';
 
 /** AdminUserResource (GET /api/v1/admin/auth/me). Permissions only shape the screens; the API enforces them. */
+/** The admin roles defined in Laravel (App\Enums\AdminRole). */
+export const ADMIN_ROLES = ['super_admin', 'store_manager', 'product_manager', 'order_manager', 'content_manager', 'content_editor', 'support'] as const;
+export type AdminRoleName = (typeof ADMIN_ROLES)[number];
+
 export interface AdminUser {
   id: number;
   name: string;
   email: string;
-  role: 'super_admin' | 'content_editor' | 'store_manager' | 'support';
+  role: AdminRoleName;
   is_active: boolean;
   locale: string | null;
   permissions: AdminPermission[];
   last_login_at: string | null;
   created_at: string | null;
+  /** Sent by the account APIs (used to refuse saving over a newer change). */
+  updated_at?: string | null;
 }
 
 /**

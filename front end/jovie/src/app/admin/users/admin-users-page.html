@@ -1,0 +1,129 @@
+<div class="adm-page-head">
+  <div>
+    <h1>{{ 'admin.nav.adminUsers' | translate }}</h1>
+    <p>{{ 'admin.users.lead' | translate }}</p>
+  </div>
+  <div class="usr-head-actions">
+    <button type="button" class="adm-button" (click)="add()">{{ 'admin.users.add' | translate }}</button>
+  </div>
+</div>
+
+<form #filters class="adm-panel usr-filters" role="search" (submit)="$event.preventDefault(); apply(filters)">
+  <div class="usr-field usr-search">
+    <label for="usr-search">{{ 'admin.users.search' | translate }}</label>
+    <input id="usr-search" name="search" type="search" maxlength="100" [value]="query().search" [placeholder]="'admin.users.searchHint' | translate" />
+  </div>
+  <div class="usr-field">
+    <label for="usr-filter-role">{{ 'admin.users.role' | translate }}</label>
+    <select id="usr-filter-role" name="role">
+      <option value="">{{ 'admin.users.all' | translate }}</option>
+      @for (r of roles; track r) {
+        <option [value]="r" [selected]="query().role === r">{{ 'admin.role.' + r | translate }}</option>
+      }
+    </select>
+  </div>
+  <div class="usr-field">
+    <label for="usr-filter-status">{{ 'admin.users.status' | translate }}</label>
+    <select id="usr-filter-status" name="status">
+      <option value="">{{ 'admin.users.all' | translate }}</option>
+      <option value="active" [selected]="query().status === 'active'">{{ 'admin.users.active' | translate }}</option>
+      <option value="inactive" [selected]="query().status === 'inactive'">{{ 'admin.users.inactive' | translate }}</option>
+    </select>
+  </div>
+  <div class="usr-field">
+    <label for="usr-sort">{{ 'admin.users.sort' | translate }}</label>
+    <select id="usr-sort" name="sort">
+      <option value="name" [selected]="query().sort === 'name'">{{ 'admin.users.sortName' | translate }}</option>
+      <option value="newest" [selected]="query().sort === 'newest'">{{ 'admin.users.sortNewest' | translate }}</option>
+      <option value="oldest" [selected]="query().sort === 'oldest'">{{ 'admin.users.sortOldest' | translate }}</option>
+      <option value="last_login" [selected]="query().sort === 'last_login'">{{ 'admin.users.sortLastLogin' | translate }}</option>
+    </select>
+  </div>
+  <div class="usr-buttons">
+    <button type="submit" class="adm-button">{{ 'admin.users.apply' | translate }}</button>
+    @if (filtered() || query().sort !== 'name') {
+      <button type="button" class="adm-link" (click)="clear(filters)">{{ 'admin.users.clear' | translate }}</button>
+    }
+  </div>
+</form>
+
+@if (notice(); as n) {
+  <p class="adm-notice usr-notice" [class.is-success]="n.tone === 'success'" [class.is-error]="n.tone === 'error'" [class.is-warning]="n.tone === 'warning'"
+    [attr.role]="n.tone === 'success' ? 'status' : 'alert'">{{ n.text }}</p>
+}
+
+<section class="adm-panel usr-panel" aria-labelledby="usr-results" [attr.aria-busy]="loading()">
+  <h2 id="usr-results" class="usr-results">{{ 'admin.users.results' | translate: { count: count(meta()?.total ?? 0) } }}</h2>
+  @if (loading() && !rows().length) {
+    <app-admin-state kind="loading" />
+  } @else if (error()) {
+    <app-admin-state kind="error" (retry)="load()" />
+  } @else if (!rows().length) {
+    <app-admin-state kind="empty" [message]="filtered() ? 'admin.users.noMatch' : 'admin.users.none'" />
+  } @else {
+    <table class="usr-table">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'admin.users.name' | translate }}</th>
+          <th scope="col">{{ 'admin.users.role' | translate }}</th>
+          <th scope="col">{{ 'admin.users.status' | translate }}</th>
+          <th scope="col">{{ 'admin.users.created' | translate }}</th>
+          <th scope="col">{{ 'admin.users.lastLogin' | translate }}</th>
+          <th scope="col">{{ 'admin.users.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (u of rows(); track u.id) {
+          <tr>
+            <td class="usr-name">
+              <bdi>{{ u.name }}</bdi>
+              @if (isMe(u)) {
+                <span class="usr-you">{{ 'admin.users.you' | translate }}</span>
+              }
+              <span class="usr-email"><bdi dir="ltr">{{ u.email }}</bdi></span>
+            </td>
+            <td class="usr-role" [attr.data-label]="'admin.users.role' | translate">{{ 'admin.role.' + u.role | translate }}</td>
+            <td [attr.data-label]="'admin.users.status' | translate">
+              <span class="usr-badge" [class.is-inactive]="!u.is_active">{{ (u.is_active ? 'admin.users.active' : 'admin.users.inactive') | translate }}</span>
+            </td>
+            <td [attr.data-label]="'admin.users.created' | translate">{{ date(u.created_at) }}</td>
+            <td [attr.data-label]="'admin.users.lastLogin' | translate">{{ date(u.last_login_at) }}</td>
+            <td class="usr-actions">
+              <div class="usr-row-actions">
+                <button type="button" class="adm-button is-light is-small" [disabled]="busy() !== null" (click)="edit(u)"
+                  [attr.aria-label]="'admin.users.editFor' | translate: { name: u.name }">{{ 'admin.users.edit' | translate }}</button>
+                @if (!isMe(u)) {
+                  @if (u.is_active) {
+                    @if (isLastSuperAdmin(u)) {
+                      <span class="usr-muted">{{ 'admin.users.lastSuperAdmin' | translate }}</span>
+                    } @else {
+                      <button type="button" class="adm-button is-light is-small" data-action="deactivate" [disabled]="busy() !== null"
+                        [attr.aria-busy]="busy() === u.id" (click)="setActive(u, false)">{{ 'admin.users.deactivate' | translate }}</button>
+                    }
+                  } @else {
+                    <button type="button" class="adm-button is-small" data-action="activate" [disabled]="busy() !== null"
+                      [attr.aria-busy]="busy() === u.id" (click)="setActive(u, true)">{{ 'admin.users.activate' | translate }}</button>
+                  }
+                }
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (meta(); as m) {
+      @if (m.last_page > 1) {
+        <nav class="usr-pages" [attr.aria-label]="'admin.users.pages' | translate">
+          <button type="button" class="adm-button is-light is-small" [disabled]="m.current_page <= 1 || loading()" (click)="goTo(m.current_page - 1)">{{ 'admin.users.prev' | translate }}</button>
+          <span>{{ 'admin.users.pageOf' | translate: { page: count(m.current_page), pages: count(m.last_page) } }}</span>
+          <button type="button" class="adm-button is-light is-small" [disabled]="m.current_page >= m.last_page || loading()" (click)="goTo(m.current_page + 1)">{{ 'admin.users.next' | translate }}</button>
+        </nav>
+      }
+    }
+  }
+</section>
+
+<app-admin-user-dialog [me]="me()" [activeSuperAdmins]="meta()?.active_super_admins ?? 0"
+  (created)="created($event)" (saved)="saved($event)" (changed)="replace($event)" (sessionEnded)="endSession()" />
+<app-admin-confirm-dialog />

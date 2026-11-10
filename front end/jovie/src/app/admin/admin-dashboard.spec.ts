@@ -7,6 +7,7 @@ import { LanguageService } from '../core/i18n/language.service';
 import { AdminUser } from './admin-auth.service';
 import { DashboardSummary } from './admin-dashboard.service';
 import { AdminPermission, adminCan } from './admin-permissions';
+import { ADMIN_SECTIONS } from './admin-sections';
 
 const ME = '/api/v1/admin/auth/me';
 const SUMMARY = '/api/v1/admin/dashboard/summary';
@@ -15,11 +16,14 @@ const SUMMARY = '/api/v1/admin/dashboard/summary';
 const ROLE_PERMISSIONS: Record<AdminUser['role'], AdminPermission[]> = {
   super_admin: [
     'admins.manage', 'settings.manage', 'content.manage', 'messages.view', 'messages.manage', 'catalog.manage', 'inventory.manage',
-    'orders.view', 'orders.manage', 'payments.manage', 'customers.view', 'shipping.manage', 'reviews.manage',
+    'orders.view', 'orders.manage', 'payments.manage', 'payments.record_cod', 'customers.view', 'shipping.manage', 'reviews.manage',
   ],
   store_manager: ['catalog.manage', 'inventory.manage', 'orders.view', 'orders.manage', 'payments.manage', 'customers.view', 'shipping.manage', 'reviews.manage'],
   support: ['messages.view', 'messages.manage', 'orders.view', 'customers.view'],
   content_editor: ['content.manage', 'messages.view', 'reviews.manage'],
+  product_manager: ['catalog.manage', 'inventory.manage', 'reviews.manage'],
+  order_manager: ['orders.view', 'orders.manage', 'customers.view', 'payments.record_cod'],
+  content_manager: ['messages.view', 'messages.manage', 'reviews.manage'],
 };
 
 const adminWith = (role: AdminUser['role'], overrides: Partial<AdminUser> = {}): AdminUser => ({
@@ -174,6 +178,9 @@ describe('Admin dashboard', () => {
       store_manager: ['Overview', 'Products', 'Inventory', 'Discounts & promo codes', 'Orders', 'Sales & reports', 'Reviews', 'Customers', 'Shipping & store settings'],
       support: ['Overview', 'Orders', 'Contact messages', 'Customers'],
       content_editor: ['Overview', 'Contact messages', 'Reviews'],
+      product_manager: ['Overview', 'Products', 'Inventory', 'Discounts & promo codes', 'Reviews'],
+      order_manager: ['Overview', 'Orders', 'Customers'],
+      content_manager: ['Overview', 'Contact messages', 'Reviews'],
     };
     for (const role of Object.keys(expected) as AdminUser['role'][]) {
       // A fresh session check for every role.
@@ -206,14 +213,20 @@ describe('Admin dashboard', () => {
     expect(router.url).toBe('/admin/forbidden');
   });
 
-  it('opens a permitted future section as a plain "not built yet" page without actions', async () => {
-    // Admin users is still a later phase (Reviews, Contact messages, Products and the rest are built).
+  it('shows each new role only its approved sections (reports never for order or product managers)', () => {
+    const visible = (role: AdminUser['role']) => ADMIN_SECTIONS.filter((s) => adminCan(adminWith(role), s.access)).map((s) => s.key);
+    expect(visible('product_manager')).toEqual(['overview', 'products', 'inventory', 'discounts', 'reviews']);
+    expect(visible('order_manager')).toEqual(['overview', 'orders', 'customers']);
+    expect(visible('content_manager')).toEqual(['overview', 'messages', 'reviews']);
+  });
+
+  it('has every section built: no sidebar link is marked "coming soon", and old addresses redirect', async () => {
     await open('/admin/admin-users', adminWith('super_admin'));
-    expect(router.url).toBe('/admin/admin-users');
-    expect(text('main h1')).toBe('Admin users');
-    expect(text('main')).toContain('Not built yet');
-    expect(el().querySelectorAll('main button, main a, main input, main form').length).toBe(0);
-    expect(el().querySelector('.adm-side a.is-active')?.getAttribute('aria-current')).toBe('page');
+    expect(router.url).toBe('/admin/users');
+    expect(el().querySelectorAll('.adm-side .adm-soon').length).toBe(0);
+    expect(el().querySelector('.adm-side a.is-active')?.getAttribute('href')).toBe('/admin/users');
+    expect(ADMIN_SECTIONS.filter((s) => s.planned)).toEqual([]);
+    await answer('/api/v1/admin/admin-users', (r) => r.flush({ data: [], meta: { current_page: 1, last_page: 1, total: 0, roles: [], active_super_admins: 1 } }));
   });
 
   it('opens the shipping and settings section with either of its permissions', async () => {

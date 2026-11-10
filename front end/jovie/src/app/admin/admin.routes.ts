@@ -157,6 +157,13 @@ export const adminRoutes: Routes = [
               },
             ],
           },
+          {
+            path: 'users',
+            canActivate: [adminCanActivate(sectionAccess('adminUsers'))],
+            loadComponent: () => import('./users/admin-users-page').then((m) => m.AdminUsersPage),
+            title: 'Admin users | Octogenix admin',
+          },
+          { path: 'admin-users', pathMatch: 'full', redirectTo: 'users' },
           // The section's earlier address (shown as "coming soon" before this page existed).
           { path: 'messages', pathMatch: 'full', redirectTo: 'contact-messages' },
           {

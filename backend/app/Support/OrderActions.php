@@ -37,7 +37,7 @@ final class OrderActions
         return [
             'statuses' => $manage ? array_map(fn (OrderStatus $s) => $s->value, self::nextStatuses($order)) : [],
             'reason_required' => array_map(fn (OrderStatus $s) => $s->value, self::REASON_REQUIRED),
-            'cod_collect' => $admin->hasPermission(AdminPermission::ManagePayments)
+            'cod_collect' => $admin->canRecordCodCash()
                 && $order->payment_method === PaymentMethod::Cod
                 && $order->status === OrderStatus::Delivered
                 && $order->payment_status === OrderPaymentStatus::Unpaid,
