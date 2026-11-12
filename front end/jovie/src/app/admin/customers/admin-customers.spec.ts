@@ -259,7 +259,7 @@ describe('Admin customers', () => {
       expect(history.request.params.get('per_page')).toBe('10');
       const rows = el().querySelectorAll('.cst-table tbody tr');
       expect(rows.length).toBe(2);
-      expect(rows[0].textContent!.replace(/\s+/g, ' ')).toContain('Awaiting confirmation');
+      expect(rows[0].textContent!.replace(/\s+/g, ' ')).toContain('New');
       expect(rows[0].textContent!.replace(/\s+/g, ' ')).toContain('Not paid · Cash on delivery');
       expect(rows[0].textContent!.replace(/\s+/g, ' ')).toContain('EGP 510');
       expect(rows[1].textContent).toContain('Delivered');

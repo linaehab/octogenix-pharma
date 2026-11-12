@@ -203,3 +203,147 @@
   color: #a3123d;
   font-weight: 700;
 }
+
+/* Phase 11.5: when the stage last changed, and the time-zone hint of the date filters. */
+.ord-since {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.78rem;
+  color: var(--adm-muted, #5b6785);
+}
+
+.ord-time-help {
+  flex-basis: 100%;
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--adm-muted, #5b6785);
+}
+
+/* Status tabs (groups of real statuses, counted by the API). */
+.ord-tabs {
+  display: flex;
+  gap: 0.4rem;
+  margin: 0 0 1rem;
+  padding-bottom: 0.25rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.ord-tab {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.4rem 0.95rem;
+  border: 1px solid rgba(32, 51, 102, 0.2);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--adm-navy);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ord-tab:hover {
+  border-color: var(--adm-navy);
+}
+
+.ord-tab:focus-visible {
+  outline: 3px solid rgba(32, 51, 102, 0.35);
+  outline-offset: 2px;
+}
+
+.ord-tab.is-active {
+  border-color: var(--adm-navy);
+  background: var(--adm-navy);
+  color: #fff;
+}
+
+.ord-tab-count {
+  min-width: 1.6rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: rgba(32, 51, 102, 0.1);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.ord-tab.is-active .ord-tab-count {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.ord-notice {
+  margin-bottom: 1rem;
+}
+
+/* Row actions: the next step is the obvious button; everything else is in "Other actions". */
+.ord-act {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.ord-next {
+  white-space: nowrap;
+}
+
+.ord-menu {
+  position: relative;
+}
+
+.ord-more {
+  white-space: nowrap;
+}
+
+.ord-menu-list {
+  position: absolute;
+  z-index: 20;
+  inset-inline-end: 0;
+  top: calc(100% + 0.3rem);
+  min-width: 14rem;
+  margin: 0;
+  padding: 0.35rem;
+  border: 1px solid rgba(32, 51, 102, 0.15);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(14, 22, 46, 0.18);
+  list-style: none;
+}
+
+.ord-menu-list button {
+  display: block;
+  width: 100%;
+  min-height: 40px;
+  padding: 0.45rem 0.7rem;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--adm-text, #1d2a4d);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.ord-menu-list button:hover,
+.ord-menu-list button:focus-visible {
+  background: #eef1f7;
+}
+
+.ord-menu-list button.is-danger {
+  color: #a3123d;
+}
+
+@container (max-width: 960px) {
+  .ord-actions {
+    padding-top: 0.5rem !important;
+  }
+
+  .ord-menu-list {
+    inset-inline-end: auto;
+    inset-inline-start: 0;
+  }
+}

@@ -3,10 +3,13 @@
 namespace App\Http\Resources\Admin;
 
 use App\Enums\OrderPaymentStatus;
+use App\Models\AdminUser;
 use App\Models\Order;
 use App\Support\Money;
+use App\Support\OrderActions;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Carbon;
 
 /**
  * One row of the dashboard order list. Only what the list shows: no email, address, notes or
@@ -38,6 +41,10 @@ class OrderListResource extends JsonResource
             'refund_review' => $this->payment_status === OrderPaymentStatus::Paid && in_array($this->status->value, OrderResource::REFUND_REVIEW_STATUSES, true),
             'placed_at' => $this->placed_at->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
+            // When the fulfillment stage last changed (from the status history), if loaded.
+            'last_status_at' => $this->last_status_at ? Carbon::parse($this->last_status_at, 'UTC')->toIso8601String() : null,
+            // Row actions for this admin (null without orders.manage).
+            'actions' => ($admin = $request->user('admin')) instanceof AdminUser ? OrderActions::quick($this->resource, $admin) : null,
         ];
     }
 }

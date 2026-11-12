@@ -13,12 +13,14 @@ use App\Models\Order;
 use App\Services\DashboardSummaryService;
 use App\Services\OrderStatusService;
 use App\Support\OrderActions;
+use App\Support\OrderTabs;
 use App\Support\ReportPeriod;
 use App\Support\XlsxWorkbook;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -123,8 +125,10 @@ class OrderController extends Controller
             'customer_id' => ['sometimes', 'integer', 'min:1'],
             'search' => ['sometimes', 'string', 'max:100'],
             // Calendar days in Egyptian time (as on the dashboard), inclusive.
-            'from' => ['sometimes', 'date_format:Y-m-d'],
-            'to' => ['sometimes', 'date_format:Y-m-d', 'after_or_equal:from'],
+            // Egyptian time. A date alone means the whole day; a date and time ("2026-11-01 09:00" or
+            // "2026-11-01T09:00") is exact to the minute, and "to" includes its whole minute.
+            'from' => ['sometimes', 'date_format:Y-m-d,Y-m-d H:i,Y-m-d\\TH:i'],
+            'to' => ['sometimes', 'date_format:Y-m-d,Y-m-d H:i,Y-m-d\\TH:i', 'after_or_equal:from'],
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
         ]);
     }
@@ -137,7 +141,6 @@ class OrderController extends Controller
      */
     private function listQuery(array $filters): Builder
     {
-        $day = fn (string $date) => CarbonImmutable::createFromFormat('Y-m-d', $date, DashboardSummaryService::TIMEZONE);
 
         return Order::query()
             ->when($filters['status'] ?? null, fn (Builder $q, $v) => $q->where('status', $v))
@@ -146,9 +149,26 @@ class OrderController extends Controller
             ->when($filters['governorate_id'] ?? null, fn (Builder $q, $v) => $q->where('shipping_governorate_id', $v))
             // A customer's order history (customer page); guest orders have no customer.
             ->when($filters['customer_id'] ?? null, fn (Builder $q, $v) => $q->where('customer_id', $v))
-            ->when($filters['from'] ?? null, fn (Builder $q, $v) => $q->where('placed_at', '>=', $day($v)->startOfDay()->utc()))
-            ->when($filters['to'] ?? null, fn (Builder $q, $v) => $q->where('placed_at', '<=', $day($v)->endOfDay()->utc()))
+            ->when($filters['from'] ?? null, fn (Builder $q, $v) => $q->where('placed_at', '>=', self::boundary($v, start: true)))
+            ->when($filters['to'] ?? null, fn (Builder $q, $v) => $q->where('placed_at', '<=', self::boundary($v, start: false)))
             ->when($filters['search'] ?? null, fn (Builder $q, string $search) => $this->search($q, $search));
+    }
+
+    /**
+     * A from/to filter value as a UTC time: a date alone covers the whole Cairo day; a date and
+     * time covers that exact minute (from its first second, or to its last second).
+     */
+    public static function boundary(string $value, bool $start): CarbonImmutable
+    {
+        $value = str_replace('T', ' ', $value);
+        if (strlen($value) === 10) {
+            $day = CarbonImmutable::createFromFormat('Y-m-d', $value, DashboardSummaryService::TIMEZONE);
+
+            return ($start ? $day->startOfDay() : $day->endOfDay())->utc();
+        }
+        $minute = CarbonImmutable::createFromFormat('Y-m-d H:i', $value, DashboardSummaryService::TIMEZONE)->startOfMinute();
+
+        return ($start ? $minute : $minute->endOfMinute())->utc();
     }
 
     private function exportLabel(string $kind, string $value, bool $ar): string
@@ -170,8 +190,17 @@ class OrderController extends Controller
     public function index(Request $request): JsonResponse
     {
         $filters = $this->listFilters($request);
+        // The status tab (a group of real statuses). The list only: the export is unchanged.
+        $tab = $request->validate(['tab' => ['sometimes', 'nullable', Rule::in(array_keys(OrderTabs::TABS))]])['tab'] ?? null;
+
+        // Orders per status for the tab counts: every filter applies except the tab and the status.
+        $countsByStatus = $this->listQuery(Arr::except($filters, ['status']))
+            ->toBase()->selectRaw('status, count(*) as aggregate')->groupBy('status')
+            ->pluck('aggregate', 'status')->map(fn ($n) => (int) $n)->all();
 
         $page = $this->listQuery($filters)
+            ->when($tab, fn (Builder $q, string $t) => $q->whereIn('status', OrderTabs::statuses($t)))
+            ->withMax(['histories as last_status_at' => fn (Builder $q) => $q->where('field', 'status')], 'created_at')
             ->withCount('items')
             ->withSum('items', 'quantity')
             ->latest('placed_at')->latest('id')
@@ -181,6 +210,7 @@ class OrderController extends Controller
             'data' => OrderListResource::collection($page->getCollection())->resolve($request),
             'meta' => ['current_page' => $page->currentPage(), 'last_page' => $page->lastPage(), 'total' => $page->total()],
             'options' => [
+                'tabs' => OrderTabs::summary($countsByStatus),
                 // Governorates that appear on orders (names as stored on the orders).
                 'governorates' => Order::query()
                     ->select('shipping_governorate_id as id', 'shipping_governorate_name_en as en', 'shipping_governorate_name_ar as ar')

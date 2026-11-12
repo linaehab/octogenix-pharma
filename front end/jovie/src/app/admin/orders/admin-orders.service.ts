@@ -19,7 +19,10 @@ export class AdminOrdersService {
   static readonly EXPORT_TIMEOUT_MS = 120000;
 
   list(query: OrderListQuery): Observable<OrderListPage> {
-    const params = this.filterParams(query).set('page', query.page).set('per_page', AdminOrdersService.PER_PAGE);
+    let params = this.filterParams(query).set('page', query.page).set('per_page', AdminOrdersService.PER_PAGE);
+    if (query.tab) {
+      params = params.set('tab', query.tab);
+    }
     return this.http.get<OrderListPage>(this.base, { params }).pipe(timeout(AdminOrdersService.TIMEOUT_MS));
   }
 

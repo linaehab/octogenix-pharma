@@ -61,8 +61,17 @@ export class AdminOrderPage {
         order: i,
         at: h.at,
         kind: payment ? 'payment' : 'status',
-        label: placed ? 'admin.orders.event.placed' : payment ? 'admin.orders.event.payment' : 'admin.orders.event.status',
-        params: { status: this.language.translate(`admin.orders.${payment ? 'paymentName' : 'statusName'}.${h.to}`) },
+        label: placed
+          ? 'admin.orders.event.placed'
+          : payment
+            ? 'admin.orders.event.payment'
+            : h.from
+              ? 'admin.orders.event.statusChange'
+              : 'admin.orders.event.status',
+        params: {
+          status: this.language.translate(`admin.orders.${payment ? 'paymentName' : 'statusName'}.${h.to}`),
+          from: h.from ? this.language.translate(`admin.orders.${payment ? 'paymentName' : 'statusName'}.${h.from}`) : '',
+        },
         who: h.admin?.name ?? this.language.translate(`admin.orders.actor.${h.actor}`),
         note: h.note,
         internal: !h.customer_visible,
@@ -82,6 +91,29 @@ export class AdminOrderPage {
     });
     return events.sort((a, b) => a.at.localeCompare(b.at) || a.order - b.order);
   });
+
+  /**
+   * Stages offered as corrections (not the normal next step): the API requires a note for them.
+   * Cancel and Return keep their own buttons even when they need a note.
+   */
+  protected readonly corrections = computed<OrderStatus[]>(() => {
+    const a = this.order()?.actions;
+    return a ? a.statuses.filter((s) => a.reason_required.includes(s) && s !== 'cancelled' && s !== 'returned') : [];
+  });
+
+  /** The normal next step(s), plus Cancel and Return when allowed. */
+  protected readonly nextSteps = computed<OrderStatus[]>(() => {
+    const corrections = this.corrections();
+    return (this.order()?.actions?.statuses ?? []).filter((s) => !corrections.includes(s));
+  });
+
+  /** When the stage last changed (the newest status line of the history). */
+  protected readonly lastStatusAt = computed(() => {
+    const history = this.order()?.history.filter((h) => h.field === 'status') ?? [];
+    return history.length ? history.reduce((a, b) => (b.at >= a.at ? b : a)).at : null;
+  });
+
+  protected readonly correctionTarget = signal<OrderStatus | ''>('');
 
   /** Units the order holds in stock, for the cancellation message. */
   protected readonly units = computed(() => this.order()?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0);
@@ -113,22 +145,27 @@ export class AdminOrderPage {
       return;
     }
     const required = order.actions?.reason_required.includes(to) ?? false;
+    const correction = this.corrections().includes(to);
+    const status = this.language.translate(`admin.orders.statusName.${to}`);
     const note = await this.dialog().ask({
-      title: `admin.orders.confirm.${to}.title`,
-      message: `admin.orders.confirm.${to}.text`,
-      confirm: `admin.orders.action.${to}`,
-      params: { number: order.order_number, count: this.count(this.units()) },
+      title: correction ? 'admin.orders.confirm.correction.title' : `admin.orders.confirm.${to}.title`,
+      message: correction ? 'admin.orders.confirm.correction.text' : `admin.orders.confirm.${to}.text`,
+      confirm: correction ? 'admin.orders.correctGo' : `admin.orders.action.${to}`,
+      params: { number: order.order_number, count: this.count(this.units()), status, from: this.language.translate(`admin.orders.statusName.${order.status}`) },
       noteLabel: required ? 'admin.orders.reason' : 'admin.orders.noteOptional',
       noteRequired: required,
-      noteHelp: required ? 'admin.orders.reasonHelp' : 'admin.orders.noteHelp',
-      tone: to === 'cancelled' || to === 'returned' ? 'danger' : 'default',
+      noteHelp: required ? (correction ? 'admin.orders.correctionNoteHelp' : 'admin.orders.reasonHelp') : 'admin.orders.noteHelp',
+      tone: to === 'cancelled' || to === 'returned' || correction ? 'danger' : 'default',
     });
     if (note === null) {
       return;
     }
-    this.run(this.api.setStatus(order.order_number, to, note || null, order.status), 'admin.orders.done.status', {
-      status: this.language.translate(`admin.orders.statusName.${to}`),
-    });
+    this.correctionTarget.set('');
+    this.run(this.api.setStatus(order.order_number, to, note || null, order.status), 'admin.orders.done.status', { status });
+  }
+
+  protected pickCorrection(value: string): void {
+    this.correctionTarget.set(this.corrections().includes(value as OrderStatus) ? (value as OrderStatus) : '');
   }
 
   protected async collectCod(): Promise<void> {

@@ -18,9 +18,12 @@ use App\Models\Order;
  */
 final class OrderActions
 {
-    /** Statuses an admin may set. pending_* and expired are set by checkout / the system. */
+    /**
+     * Statuses an admin may set. pending_payment and expired are set by checkout / the system;
+     * pending_confirmation ("New") only when moving a cash-on-delivery order back.
+     */
     public const ADMIN_STATUSES = [
-        OrderStatus::Confirmed, OrderStatus::Processing, OrderStatus::Shipped,
+        OrderStatus::PendingConfirmation, OrderStatus::Confirmed, OrderStatus::Processing, OrderStatus::Shipped,
         OrderStatus::Delivered, OrderStatus::Cancelled, OrderStatus::Returned,
     ];
 
@@ -36,7 +39,12 @@ final class OrderActions
 
         return [
             'statuses' => $manage ? array_map(fn (OrderStatus $s) => $s->value, self::nextStatuses($order)) : [],
-            'reason_required' => array_map(fn (OrderStatus $s) => $s->value, self::REASON_REQUIRED),
+            // Cancelling needs a reason; any correction (not the normal next step) needs a note.
+            'reason_required' => array_values(array_unique([
+                ...array_map(fn (OrderStatus $s) => $s->value, self::REASON_REQUIRED),
+                ...array_map(fn (OrderStatus $s) => $s->value,
+                    array_filter(self::nextStatuses($order), fn (OrderStatus $to) => $order->status->isCorrection($to))),
+            ])),
             'cod_collect' => $admin->canRecordCodCash()
                 && $order->payment_method === PaymentMethod::Cod
                 && $order->status === OrderStatus::Delivered
@@ -48,6 +56,32 @@ final class OrderActions
         ];
     }
 
+    /**
+     * The orders list's row actions: the normal next step (one button) and the other allowed
+     * moves (cancel, return, corrections) for the "Other actions" menu. Null without orders.manage.
+     * Same rules as the order page (nextStatuses); the API checks every request again.
+     *
+     * @return array{next: string|null, other: list<string>}|null
+     */
+    public static function quick(Order $order, AdminUser $admin): ?array
+    {
+        if (! $admin->hasPermission(AdminPermission::ManageOrders)) {
+            return null;
+        }
+        $next = null;
+        $other = [];
+        foreach (self::nextStatuses($order) as $to) {
+            $normal = ! $order->status->isCorrection($to) && $to !== OrderStatus::Cancelled && $to !== OrderStatus::Returned;
+            if ($normal && $next === null) {
+                $next = $to->value;
+            } else {
+                $other[] = $to->value;
+            }
+        }
+
+        return ['next' => $next, 'other' => $other];
+    }
+
     /** @return list<OrderStatus> */
     public static function nextStatuses(Order $order): array
     {
@@ -55,8 +89,10 @@ final class OrderActions
         $paid = $order->payment_status === OrderPaymentStatus::Paid;
 
         return array_values(array_filter(
-            $order->status->allowedNext(),
+            $order->status->adminTargets(),
             fn (OrderStatus $to) => in_array($to, self::ADMIN_STATUSES, true)
+                // "New" exists for cash-on-delivery orders; a card order's new stage waits for payment.
+                && ! ($to === OrderStatus::PendingConfirmation && $card)
                 // Card orders are confirmed by the verified payment, not by an admin.
                 && ! ($to === OrderStatus::Confirmed && $card && ! $paid)
                 // A paid card order cannot be cancelled until refunds exist (decision D-05).

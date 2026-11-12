@@ -160,7 +160,7 @@ describe('Admin orders', () => {
       const rows = el().querySelectorAll('.ord-table tbody tr');
       expect(rows.length).toBe(2);
       const first = rows[0].textContent!.replace(/\s+/g, ' ');
-      for (const part of ['JV-261106-00001', 'Mona Hassan', '+201012345678', 'EGP 1,410', 'Cash on delivery', 'Not paid', 'Awaiting confirmation', 'Cairo']) {
+      for (const part of ['JV-261106-00001', 'Mona Hassan', '+201012345678', 'EGP 1,410', 'Cash on delivery', 'Not paid', 'New', 'Cairo']) {
         expect(first).withContext(part).toContain(part);
       }
       expect(rows[1].textContent).toContain('Refund may be due');
@@ -177,19 +177,33 @@ describe('Admin orders', () => {
       set('#ord-payment', 'paid');
       set('#ord-method', 'cod');
       set('#ord-gov', '2');
-      set('#ord-from', '2026-11-01');
-      set('#ord-to', '2026-11-06');
+      set('#ord-from', '2026-11-01T09:00');
+      set('#ord-to', '2026-11-06T18:30');
       (el().querySelector('form.ord-filters') as HTMLFormElement).dispatchEvent(new Event('submit'));
       const filtered = await answer(is('GET', ORDERS), (r) => r.flush(listPage([])));
       const p = filtered.request.params;
       expect([p.get('search'), p.get('status'), p.get('payment_status'), p.get('payment_method'), p.get('governorate_id'), p.get('from'), p.get('to')])
-        .toEqual(['0101234', 'delivered', 'paid', 'cod', '2', '2026-11-01', '2026-11-06']);
+        .toEqual(['0101234', 'delivered', 'paid', 'cod', '2', '2026-11-01T09:00', '2026-11-06T18:30']);
       expect(text('app-admin-state')).toBe('No order matches these filters.');
 
       await click('.ord-buttons .adm-link');
       const cleared = await answer(is('GET', ORDERS), (r) => r.flush(listPage([])));
       expect(cleared.request.params.keys().sort()).toEqual(['page', 'per_page']);
       expect(text('app-admin-state')).toBe('There are no orders yet.');
+    });
+
+    it('shows the stage and the payment as separate badges, and when the stage last changed', async () => {
+      await open('/admin/orders', storeManager);
+      await answer(is('GET', ORDERS), (r) => r.flush(listPage([row(1, { status: 'shipped', payment_status: 'paid', last_status_at: '2026-11-06T10:00:00+00:00' }), row(2)])));
+      const rows = el().querySelectorAll('.ord-table tbody tr');
+      expect(rows[0].querySelector('.ord-status')!.textContent!.trim()).toBe('Prepared');
+      expect(rows[0].querySelector('.ord-pay')!.textContent!.trim()).toBe('Paid');
+      expect(rows[0].querySelector('.ord-since')!.textContent).toContain('Stage since 6 Nov 2026, 12:00');
+      expect(rows[1].querySelector('.ord-since')).toBeNull();
+      const statuses = Array.from(el().querySelectorAll('#ord-status option')).map((o) => o.textContent!.trim());
+      expect(statuses.slice(0, 7)).toEqual(['All', 'New', 'New – awaiting card payment', 'Confirmed', 'Preparing', 'Prepared', 'Delivered']);
+      expect(el().querySelector('#ord-from')!.getAttribute('type')).toBe('datetime-local');
+      expect(text('#ord-time-help')).toContain('Egypt (Cairo) time');
     });
 
     it('pages, and retries after an error', async () => {
@@ -209,7 +223,7 @@ describe('Admin orders', () => {
       await open('/admin/orders', storeManager);
       await answer(is('GET', ORDERS), (r) => r.flush(listPage([row(1)], 1, 3)));
       (el().querySelector('#ord-status') as HTMLSelectElement).value = 'delivered';
-      (el().querySelector('#ord-from') as HTMLInputElement).value = '2026-11-01';
+      (el().querySelector('#ord-from') as HTMLInputElement).value = '2026-11-01T00:00';
       (el().querySelector('form.ord-filters') as HTMLFormElement).dispatchEvent(new Event('submit'));
       await answer(is('GET', ORDERS), (r) => r.flush(listPage([row(1)], 1, 3)));
       expect(text('.ord-export-msg')).toBe('All orders matching the filters, not only this page.');
@@ -221,7 +235,7 @@ describe('Admin orders', () => {
         r.flush(new Blob(['PK']), { headers: new HttpHeaders({ 'Content-Disposition': 'attachment; filename=jovie-orders_2026-11-01_to_2026-11-08.xlsx' }) }),
       );
       const p = file.request.params;
-      expect([p.get('status'), p.get('from'), p.get('lang')]).toEqual(['delivered', '2026-11-01', 'en']);
+      expect([p.get('status'), p.get('from'), p.get('lang')]).toEqual(['delivered', '2026-11-01T00:00', 'en']);
       expect(p.has('page')).withContext('the export is not limited to one page').toBeFalse();
       expect(p.has('per_page')).toBeFalse();
       expect(file.request.responseType).toBe('blob');
@@ -250,6 +264,205 @@ describe('Admin orders', () => {
     });
   });
 
+  describe('list tabs and quick actions', () => {
+    const tabs = (counts: number[] = [11, 3, 3, 1, 1, 3]) => [
+      { key: 'all', statuses: [], count: counts[0] },
+      { key: 'new', statuses: ['pending_confirmation', 'pending_payment'], count: counts[1] },
+      { key: 'in_progress', statuses: ['confirmed', 'processing'], count: counts[2] },
+      { key: 'ready', statuses: ['shipped'], count: counts[3] },
+      { key: 'delivered', statuses: ['delivered'], count: counts[4] },
+      { key: 'closed', statuses: ['cancelled', 'returned', 'expired'], count: counts[5] },
+    ] as OrderListPage['options']['tabs'];
+    const withTabs = (data: OrderListRow[], counts?: number[], current = 1, last = 1): OrderListPage => {
+      const page = listPage(data, current, last);
+      return { ...page, options: { ...page.options, tabs: tabs(counts) } };
+    };
+    const newRow = row(1, { actions: { next: 'confirmed', other: ['processing', 'shipped', 'delivered', 'cancelled'] } });
+    const isList = (r: TestRequest['request']) => r.method === 'GET' && r.url === ORDERS;
+    const tabTexts = () =>
+      Array.from(el().querySelectorAll('.ord-tab')).map((t) => Array.from(t.querySelectorAll('span')).map((x) => x.textContent!.trim()).join(' '));
+    const confirmYes = () => click('dialog[open] .adm-dialog-actions button:last-child');
+
+    it('shows the tabs with their counts and keeps the other filters when switching', async () => {
+      await open('/admin/orders', storeManager);
+      await answer(isList, (r) => r.flush(withTabs([newRow])));
+      expect(tabTexts()).toEqual(['All orders 11', 'New 3', 'In progress 3', 'Ready for delivery 1', 'Delivered 1', 'Cancelled / Returned 3']);
+      expect(el().querySelector('.ord-tab.is-active')?.textContent).toContain('All orders');
+
+      // Apply a search, a time range, a payment status and a stage, then open a tab.
+      const set = (selector: string, value: string) => ((el().querySelector(selector) as HTMLInputElement).value = value);
+      set('#ord-search', 'Mona');
+      set('#ord-from', '2026-11-01T09:00');
+      set('#ord-to', '2026-11-10T18:30');
+      set('#ord-payment', 'unpaid');
+      set('#ord-status', 'pending_confirmation');
+      (el().querySelector('form.ord-filters') as HTMLFormElement).dispatchEvent(new Event('submit'));
+      await settle();
+      await answer(isList, (r) => r.flush(withTabs([newRow])));
+
+      await click('.ord-tab[data-tab="ready"]');
+      const req = await answer(isList, (r) => r.flush(withTabs([], [11, 3, 3, 0, 1, 3])));
+      const p = req.request.params;
+      expect([p.get('tab'), p.get('search'), p.get('from'), p.get('to'), p.get('payment_status'), p.get('status'), p.get('page')])
+        .toEqual(['ready', 'Mona', '2026-11-01T09:00', '2026-11-10T18:30', 'unpaid', null, '1']);
+      expect(el().querySelector('.ord-tab.is-active')?.getAttribute('aria-pressed')).toBe('true');
+      expect(tabTexts()[3]).toBe('Ready for delivery 0');
+      // The stage filter now offers only the tab's statuses.
+      expect(Array.from(el().querySelectorAll('#ord-status option')).map((o) => o.textContent!.trim())).toEqual(['All', 'Prepared']);
+
+      // "Cancelled / Returned" keeps them distinguishable.
+      await click('.ord-tab[data-tab="closed"]');
+      await answer(isList, (r) => r.flush(withTabs([row(2, { status: 'cancelled', actions: { next: null, other: [] } }), row(3, { status: 'returned', actions: { next: null, other: [] } })])));
+      expect(Array.from(el().querySelectorAll('.ord-status')).map((b) => b.textContent!.trim())).toEqual(['Cancelled', 'Returned']);
+      expect(Array.from(el().querySelectorAll('#ord-status option')).map((o) => o.textContent!.trim()))
+        .toEqual(['All', 'Cancelled', 'Returned', 'Expired (not paid in time)']);
+      expect(text('.ord-actions')).toBe('—');
+      expect(text('.ord-export-msg')).toBe('The Excel file uses the filters below but not the status tab.');
+
+      // Paging keeps the tab.
+      await click('.ord-tab[data-tab="new"]');
+      await answer(isList, (r) => r.flush(withTabs([newRow], undefined, 1, 2)));
+      (el().querySelectorAll('.ord-pages button')[1] as HTMLButtonElement).click();
+      const next = await answer(isList, (r) => r.flush(withTabs([row(4)], undefined, 2, 2)));
+      expect([next.request.params.get('tab'), next.request.params.get('page')]).toEqual(['new', '2']);
+
+      // Reset clears everything, the tab included.
+      await click('.ord-buttons .adm-link');
+      const reset = await answer(isList, (r) => r.flush(withTabs([newRow])));
+      expect(reset.request.params.keys().sort()).toEqual(['page', 'per_page']);
+    });
+
+    it('moves an order to its next normal step from the row, then refreshes the row and the counts', async () => {
+      await open('/admin/orders', storeManager);
+      await answer(isList, (r) => r.flush(withTabs([newRow])));
+      await click('.ord-tab[data-tab="new"]');
+      await answer(isList, (r) => r.flush(withTabs([newRow])));
+
+      const button = el().querySelector('.ord-next') as HTMLButtonElement;
+      expect(button.textContent!.trim()).toBe('Confirm order');
+      expect(button.getAttribute('aria-label')).toBe('Confirm order: order JV-261106-00001');
+      button.click();
+      await settle();
+      expect(dialogText()).toContain('Confirm order JV-261106-00001?');
+      await confirmYes();
+      await csrf();
+      const post = await answer(is('POST', `${ORDER}/status`), (r) => r.flush({ data: order({ status: 'confirmed' }) }));
+      expect(post.request.body).toEqual({ status: 'confirmed', note: null, expected_status: 'pending_confirmation' });
+      const reload = await answer(isList, (r) => r.flush(withTabs([], [11, 2, 4, 1, 1, 3])));
+      expect(reload.request.params.get('tab')).toBe('new');
+      expect(text('.ord-notice')).toBe('Order JV-261106-00001 is now: Confirmed.');
+      expect(tabTexts()[1]).toBe('New 2');
+      expect(tabTexts()[2]).toBe('In progress 4');
+    });
+
+    it('labels every normal next step, and cancelling the confirmation sends nothing', async () => {
+      await open('/admin/orders', storeManager);
+      await answer(isList, (r) => r.flush(withTabs([
+        newRow,
+        row(2, { status: 'confirmed', actions: { next: 'processing', other: ['cancelled'] } }),
+        row(3, { status: 'processing', actions: { next: 'shipped', other: ['cancelled'] } }),
+        row(4, { status: 'shipped', actions: { next: 'delivered', other: ['cancelled', 'returned'] } }),
+        row(5, { status: 'delivered', actions: { next: null, other: ['returned'] } }),
+      ])));
+      expect(Array.from(el().querySelectorAll('.ord-next')).map((b) => b.textContent!.trim()))
+        .toEqual(['Confirm order', 'Start preparing', 'Mark as prepared', 'Mark as delivered']);
+      expect(el().querySelectorAll('tbody tr')[4].querySelector('.ord-next')).toBeNull();
+
+      (el().querySelectorAll('.ord-next')[3] as HTMLButtonElement).click();
+      await settle();
+      expect(dialogText()).toContain('Mark order JV-261106-00004 as delivered?');
+      await click('dialog[open] .adm-dialog-actions button:first-child');
+      expect(http.match((r) => !r.url.endsWith('/notifications/unread-count')).length).toBe(0);
+    });
+
+    it('keeps exceptional actions in a menu, with a required note sent to the API', async () => {
+      await open('/admin/orders', storeManager);
+      await answer(isList, (r) => r.flush(withTabs([newRow])));
+      expect(el().querySelector('.ord-menu-list')).toBeNull();
+      await click('.ord-more');
+      expect(el().querySelector('.ord-more')!.getAttribute('aria-expanded')).toBe('true');
+      expect(Array.from(el().querySelectorAll('.ord-menu-list button')).map((b) => b.textContent!.trim()))
+        .toEqual(['Move to "Preparing"', 'Move to "Prepared"', 'Move to "Delivered"', 'Cancel order']);
+      document.body.click();
+      await settle();
+      expect(el().querySelector('.ord-menu-list')).toBeNull();
+
+      // A correction explains itself and requires a note.
+      await click('.ord-more');
+      await click('.ord-menu-list button[data-to="delivered"]');
+      expect(dialogText()).toContain('Move order JV-261106-00001 to "Delivered"?');
+      expect(dialogText()).toContain('From "New" to "Delivered" is not the normal next step.');
+      await dialogSubmit('');
+      expect(text('dialog[open] .adm-note-error')).toBe('Please give a reason.');
+      expect(http.match((r) => !r.url.endsWith('/notifications/unread-count')).length).toBe(0);
+      await dialogSubmit('Handed over at the pharmacy');
+      await csrf();
+      const post = await answer(is('POST', `${ORDER}/status`), (r) => r.flush({ data: order({ status: 'delivered' }) }));
+      expect(post.request.body).toEqual({ status: 'delivered', note: 'Handed over at the pharmacy', expected_status: 'pending_confirmation' });
+      await answer(isList, (r) => r.flush(withTabs([row(1, { status: 'delivered', actions: { next: null, other: ['returned'] } })])));
+      expect(text('.ord-notice')).toBe('Order JV-261106-00001 is now: Delivered.');
+
+      // Cancel from the menu: the reason is required too.
+      await click('.ord-more');
+      await click('.ord-menu-list button[data-to="returned"]');
+      expect(dialogText()).toContain('Mark order JV-261106-00001 as returned?');
+      await dialogSubmit('Refused');
+      const back = await answer(is('POST', `${ORDER}/status`), (r) => r.flush({ data: order({ status: 'returned' }) }));
+      expect(back.request.body).toEqual({ status: 'returned', note: 'Refused', expected_status: 'delivered' });
+      await answer(isList, (r) => r.flush(withTabs([])));
+    });
+
+    it('explains a stale row and an API refusal without losing the filters', async () => {
+      await open('/admin/orders', storeManager);
+      await answer(isList, (r) => r.flush(withTabs([newRow])));
+      await click('.ord-tab[data-tab="new"]');
+      await answer(isList, (r) => r.flush(withTabs([newRow])));
+
+      await click('.ord-next');
+      await confirmYes();
+      await csrf();
+      await answer(is('POST', `${ORDER}/status`), (r) =>
+        r.flush({ message: 'changed', current: { status: 'cancelled' } }, { status: 409, statusText: 'Conflict' }),
+      );
+      const reload = await answer(isList, (r) => r.flush(withTabs([row(1, { status: 'cancelled', actions: { next: null, other: [] } })])));
+      expect(reload.request.params.get('tab')).toBe('new');
+      expect(text('.ord-notice')).toContain('Order JV-261106-00001 changed meanwhile');
+      expect(el().querySelector('.ord-notice')!.getAttribute('role')).toBe('alert');
+
+      await click('.ord-tab[data-tab="all"]');
+      await answer(isList, (r) => r.flush(withTabs([newRow])));
+      await click('.ord-next');
+      await confirmYes();
+      await answer(is('POST', `${ORDER}/status`), (r) =>
+        r.flush({ message: 'Invalid', errors: { status: ['This order cannot move to that stage.'] } }, { status: 422, statusText: 'Unprocessable' }),
+      );
+      expect(text('.ord-notice')).toContain('That did not work.');
+      expect(text('.ord-notice')).toContain('This order cannot move to that stage.');
+      expect((el().querySelector('.ord-next') as HTMLButtonElement).disabled).toBeFalse();
+    });
+
+    it('shows no actions column to admins who cannot change orders', async () => {
+      await open('/admin/orders', support);
+      await answer(isList, (r) => r.flush(withTabs([row(1, { actions: null })])));
+      expect(el().querySelector('.ord-actions')).toBeNull();
+      expect(el().querySelector('.ord-next')).toBeNull();
+      expect(tabTexts().length).toBe(6);
+    });
+
+    it('works in Arabic, right to left', async () => {
+      await open('/admin/orders', storeManager);
+      await answer(isList, (r) => r.flush(withTabs([newRow])));
+      language.setLanguage('ar');
+      await settle();
+      expect(document.documentElement.dir).toBe('rtl');
+      expect(Array.from(el().querySelectorAll('.ord-tab span:first-child')).map((t) => t.textContent!.trim())).toEqual(['كل الطلبات', 'جديدة', 'قيد التنفيذ', 'جاهزة للتوصيل', 'تم التسليم', 'ملغاة / مرتجعة']);
+      expect(text('.ord-next')).toBe('تأكيد الطلب');
+      expect(text('.ord-more')).toContain('إجراءات أخرى');
+      expect(text('.ord-status')).toBe('طلب جديد');
+      expect(text('.ord-pay')).toBe('غير مدفوع');
+    });
+  });
+
   describe('order page', () => {
     it('shows items as ordered, money, payment, customer, address and the timeline', async () => {
       await openOrder();
@@ -267,7 +480,7 @@ describe('Admin orders', () => {
       expect(text('.odr-address')).toContain('Near the pharmacy');
       expect(text('#odr-customer + .odr-facts')).toContain('mona@example.com');
       const events = Array.from(el().querySelectorAll('.odr-timeline li .odr-event')).map((e) => e.textContent!.replace(/\s+/g, ' ').trim());
-      expect(events).toEqual(['Order placed (Awaiting confirmation)', 'Stock reserved: 3 × JOVIE-S1 internal']);
+      expect(events).toEqual(['Order placed (New)', 'Stock reserved: 3 × JOVIE-S1 internal']);
     });
 
     it('shows only the actions the API allows and the refund warning', async () => {
@@ -380,12 +593,60 @@ describe('Admin orders', () => {
       expect(text('app-admin-state')).toBe('This order does not exist.');
     });
 
+    it('keeps corrections apart from the next steps, requires a note and records it in the timeline', async () => {
+      const corrections = ['pending_confirmation', 'confirmed', 'processing', 'shipped'] as const;
+      const delivered = order({
+        status: 'delivered',
+        timestamps: { confirmed_at: '2026-11-06T09:00:00+00:00', paid_at: null, shipped_at: '2026-11-06T10:00:00+00:00', delivered_at: '2026-11-06T11:00:00+00:00', cancelled_at: null, returned_at: null },
+        actions: { statuses: [...corrections, 'returned'], reason_required: ['cancelled', ...corrections, 'returned'], cod_collect: false, restock_returned: false, edit_note: true },
+      });
+      await openOrder(delivered);
+      expect(text('.odr-status')).toBe('Delivered');
+      expect(text('.odr-pay')).toBe('Not paid');
+      expect(text('.odr-since')).toContain('Stage since');
+      expect(buttons()).toEqual(['Mark as returned']);
+      const options = Array.from(el().querySelectorAll('#odr-correct-to option')).map((o) => o.textContent!.trim());
+      expect(options).toEqual(['Choose a stage', 'New', 'Confirmed', 'Preparing', 'Prepared']);
+      const go = el().querySelector('.odr-correct button[type="submit"]') as HTMLButtonElement;
+      expect(go.disabled).toBeTrue();
+
+      const select = el().querySelector('#odr-correct-to') as HTMLSelectElement;
+      select.value = 'processing';
+      select.dispatchEvent(new Event('change'));
+      await settle();
+      expect(go.disabled).toBeFalse();
+      go.click();
+      await settle();
+      expect(dialogText()).toContain('Move order JV-261106-00001 to "Preparing"?');
+      expect(dialogText()).toContain('From "Delivered" to "Preparing" is not the normal next step.');
+      await dialogSubmit('');
+      expect(text('dialog[open] .adm-note-error')).toBe('Please give a reason.');
+      await dialogSubmit('Driver brought it back');
+      await csrf();
+      const post = await answer(is('POST', `${ORDER}/status`), (r) =>
+        r.flush({ data: order({
+          status: 'processing',
+          history: [
+            ...delivered.history,
+            { field: 'status', from: 'delivered', to: 'processing', actor: 'admin', admin: { id: 1, name: 'Lina Admin' }, note: 'Driver brought it back', customer_visible: true, at: '2026-11-06T12:00:00+00:00' },
+          ],
+        }) }),
+      );
+      expect(post.request.body).toEqual({ status: 'processing', note: 'Driver brought it back', expected_status: 'delivered' });
+      expect(text('.odr-notice')).toBe('The order is now: Preparing.');
+      const last = el().querySelector('.odr-timeline li:last-child')!;
+      expect(last.querySelector('.odr-event')!.textContent!.trim()).toBe('Status: Delivered → Preparing');
+      expect(last.querySelector('.odr-meta')!.textContent).toContain('Lina Admin');
+      expect(last.querySelector('.odr-note')!.textContent!.trim()).toBe('Driver brought it back');
+    });
+
     it('works in Arabic, right to left', async () => {
       await openOrder();
       language.setLanguage('ar');
       await settle();
       expect(document.documentElement.dir).toBe('rtl');
-      expect(text('.odr-status')).toBe('بانتظار التأكيد');
+      expect(text('.odr-status')).toBe('طلب جديد');
+      expect(text('.odr-pay')).toBe('غير مدفوع');
       expect(buttons()).toEqual(['تأكيد الطلب', 'إلغاء الطلب']);
       expect(text('.odr-items')).toContain('جوفي 1');
       expect(text('.odr-address')).toContain('القاهرة');

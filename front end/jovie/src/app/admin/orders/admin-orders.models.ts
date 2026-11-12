@@ -28,15 +28,28 @@ export interface OrderListRow {
   refund_review: boolean;
   placed_at: string;
   updated_at: string | null;
+  /** When the fulfillment stage last changed (from the order history). */
+  last_status_at?: string | null;
+  /** Row actions for this admin, from the API rules (null without orders.manage). */
+  actions?: { next: OrderStatus | null; other: OrderStatus[] } | null;
+}
+
+/** A status tab: a group of real statuses defined and counted by the API ("all" has no statuses). */
+export interface OrderListTab {
+  key: 'all' | 'new' | 'in_progress' | 'ready' | 'delivered' | 'closed' | string;
+  statuses: OrderStatus[];
+  count: number;
 }
 
 export interface OrderListPage {
   data: OrderListRow[];
   meta: { current_page: number; last_page: number; total: number };
-  options: { governorates: { id: number; en: string; ar: string }[] };
+  options: { governorates: { id: number; en: string; ar: string }[]; tabs?: OrderListTab[] };
 }
 
 export interface OrderListQuery {
+  /** Status tab ('' = all). Sent to the list only: the Excel export does not use tabs. */
+  tab: string;
   search: string;
   status: string;
   payment_status: string;

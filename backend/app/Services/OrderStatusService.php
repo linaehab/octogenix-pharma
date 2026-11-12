@@ -52,9 +52,21 @@ class OrderStatusService
                 throw new OrderStateChangedException($expected->value, $from->value);
             }
 
-            if (! $from->canBecome($to)) {
+            // Admins may also correct a stage (adminTargets); customers and the system follow the normal flow.
+            $isAdmin = $actor === OrderActor::Admin;
+            $allowed = $isAdmin ? $from->adminCanChangeTo($to) : $from->canBecome($to);
+            if ($isAdmin && $to === OrderStatus::PendingConfirmation && $locked->payment_method !== PaymentMethod::Cod) {
+                $allowed = false; // a card order's "new" stage is waiting for its payment
+            }
+            if (! $allowed) {
                 throw ValidationException::withMessages([
                     'status' => "An order cannot go from {$from->value} to {$to->value}.",
+                ]);
+            }
+            $correction = $isAdmin && $from->isCorrection($to);
+            if ($correction && blank($note)) {
+                throw ValidationException::withMessages([
+                    'note' => 'Add a note explaining this change: it is not the normal next step.',
                 ]);
             }
             if ($to === OrderStatus::Cancelled && $locked->payment_method === PaymentMethod::Card
@@ -68,6 +80,15 @@ class OrderStatusService
             $changes = ['status' => $to];
             if ($column = $to->timestampColumn()) {
                 $changes[$column] = now();
+            }
+            // Moving back to an earlier working stage: the later stages' times no longer apply
+            // (the timeline keeps when they happened).
+            if ($to->stageIndex() !== null && $from->stageIndex() !== null && $to->stageIndex() < $from->stageIndex()) {
+                foreach (array_slice(OrderStatus::WORKING_STAGES, $to->stageIndex() + 1) as $later) {
+                    if ($later->timestampColumn() !== null) {
+                        $changes[$later->timestampColumn()] = null;
+                    }
+                }
             }
             if ($to === OrderStatus::Cancelled || $to === OrderStatus::Expired) {
                 $changes['cancelled_by'] = $actor === OrderActor::Admin ? 'admin'
@@ -86,11 +107,16 @@ class OrderStatusService
             $this->record($locked, 'status', $from->value, $to->value, $actor, $admin, $note);
             if ($actor === OrderActor::Admin && $admin !== null) {
                 $changes = ['status' => ['from' => $from->value, 'to' => $to->value]];
-                if ($to === OrderStatus::Cancelled && $note !== null) {
+                // The admin's note or reason (required for cancellations and corrections).
+                if ($note !== null && trim($note) !== '') {
                     $changes['reason'] = ['from' => null, 'to' => Str::limit($note, 200)];
                 }
-                $this->audit->record($to === OrderStatus::Cancelled ? 'orders.cancelled' : 'orders.status_changed',
-                    'order', $locked->id, $locked->order_number, $changes, $admin);
+                $action = match (true) {
+                    $to === OrderStatus::Cancelled => 'orders.cancelled',
+                    $correction => 'orders.status_corrected',
+                    default => 'orders.status_changed',
+                };
+                $this->audit->record($action, 'order', $locked->id, $locked->order_number, $changes, $admin);
             }
             $order->setRawAttributes($locked->getAttributes(), sync: true);
         });

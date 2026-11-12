@@ -159,9 +159,16 @@ class AdminOrderManagementTest extends TestCase
         $admin = $this->as(AdminRole::SuperAdmin);
         $actions = fn () => $this->getJson("/api/v1/admin/orders/{$order->order_number}")->json('data.actions');
 
-        $this->assertSame(['confirmed', 'cancelled'], $actions()['statuses']);
-        $this->setStatus($order, ['status' => 'delivered'])->assertUnprocessable()->assertJsonValidationErrors('status');
-        foreach (['confirmed' => ['processing', 'cancelled'], 'processing' => ['shipped', 'cancelled'], 'shipped' => ['delivered', 'returned'], 'delivered' => []] as $to => $next) {
+        // Every working stage is offered (corrections need a note); Delivered is never cancelled.
+        $this->assertSame(['confirmed', 'processing', 'shipped', 'delivered', 'cancelled'], $actions()['statuses']);
+        $this->assertSame(['cancelled', 'processing', 'shipped', 'delivered'], $actions()['reason_required']);
+        $this->setStatus($order, ['status' => 'delivered'])->assertUnprocessable()->assertJsonValidationErrors('note');
+        foreach ([
+            'confirmed' => ['pending_confirmation', 'processing', 'shipped', 'delivered', 'cancelled'],
+            'processing' => ['pending_confirmation', 'confirmed', 'shipped', 'delivered', 'cancelled'],
+            'shipped' => ['pending_confirmation', 'confirmed', 'processing', 'delivered', 'cancelled', 'returned'],
+            'delivered' => ['pending_confirmation', 'confirmed', 'processing', 'shipped', 'returned'],
+        ] as $to => $next) {
             $current = $order->refresh()->status->value;
             $this->setStatus($order, ['status' => $to, 'expected_status' => $current])->assertOk()->assertJsonPath('data.status', $to)
                 ->assertJsonPath('data.actions.statuses', $next);
@@ -217,7 +224,8 @@ class AdminOrderManagementTest extends TestCase
         $this->as(AdminRole::StoreManager);
         $data = $this->getJson("/api/v1/admin/orders/{$order->order_number}")->assertOk()->json('data');
         $this->assertSame(['confirmed', 'paid'], [$data['status'], $data['payment_status']]);
-        $this->assertSame(['processing'], $data['actions']['statuses'], 'A paid card order cannot be cancelled until refunds exist.');
+        $this->assertSame(['processing', 'shipped', 'delivered'], $data['actions']['statuses'],
+            'A paid card order cannot be cancelled until refunds exist, and has no cash-on-delivery "New" stage.');
         $this->assertFalse($data['actions']['cod_collect']);
         $this->assertSame([$payment->merchant_reference, $payment->provider_transaction_id, 'visa', '4242', 'succeeded'],
             [$data['payments'][0]['merchant_reference'], $data['payments'][0]['provider_transaction_id'], $data['payments'][0]['card_brand'], $data['payments'][0]['card_last4'], $data['payments'][0]['status']]);

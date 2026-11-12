@@ -17,7 +17,13 @@
           <h1><bdi dir="ltr">{{ o.order_number }}</bdi></h1>
           <p>{{ 'admin.orders.placedOn' | translate: { date: date(o.placed_at) } }} · {{ 'admin.orders.updatedOn' | translate: { date: date(o.updated_at) } }}</p>
         </div>
-        <span class="odr-status" [attr.data-status]="o.status">{{ ('admin.orders.statusName.' + o.status) | translate }}</span>
+        <div class="odr-badges">
+          <span class="odr-status" [attr.data-status]="o.status">{{ ('admin.orders.statusName.' + o.status) | translate }}</span>
+          <span class="odr-pay" [attr.data-paid]="o.payment_status">{{ ('admin.orders.paymentName.' + o.payment_status) | translate }}</span>
+          @if (lastStatusAt(); as at) {
+            <span class="odr-since">{{ 'admin.orders.stageSince' | translate: { date: date(at) } }}</span>
+          }
+        </div>
       </div>
 
       @if (notice(); as n) {
@@ -114,7 +120,7 @@
             @if (o.actions; as a) {
               @if (a.statuses.length || a.cod_collect || a.restock_returned) {
                 <div class="odr-buttons">
-                  @for (s of a.statuses; track s) {
+                  @for (s of nextSteps(); track s) {
                     <button type="button" class="adm-button" [class.is-light]="s === 'cancelled' || s === 'returned'" [disabled]="busy()" (click)="changeStatus(s)">
                       {{ ('admin.orders.action.' + s) | translate }}
                     </button>
@@ -126,6 +132,22 @@
                     <button type="button" class="adm-button is-light" [disabled]="busy()" (click)="restock()">{{ 'admin.orders.action.restock' | translate }}</button>
                   }
                 </div>
+                @if (corrections().length) {
+                  <form class="odr-correct" (submit)="$event.preventDefault(); correctionTarget() && changeStatus($any(correctionTarget()))">
+                    <h3>{{ 'admin.orders.correct' | translate }}</h3>
+                    <p class="odr-help" id="odr-correct-help">{{ 'admin.orders.correctHelp' | translate }}</p>
+                    <label for="odr-correct-to">{{ 'admin.orders.correctPick' | translate }}</label>
+                    <div class="odr-correct-row">
+                      <select id="odr-correct-to" aria-describedby="odr-correct-help" [disabled]="busy()" (change)="pickCorrection($any($event.target).value)">
+                        <option value="" [selected]="correctionTarget() === ''">{{ 'admin.orders.correctChoose' | translate }}</option>
+                        @for (s of corrections(); track s) {
+                          <option [value]="s" [selected]="correctionTarget() === s">{{ ('admin.orders.statusName.' + s) | translate }}</option>
+                        }
+                      </select>
+                      <button type="submit" class="adm-button is-light" [disabled]="busy() || !correctionTarget()">{{ 'admin.orders.correctGo' | translate }}</button>
+                    </div>
+                  </form>
+                }
               } @else {
                 <p class="odr-help">{{ 'admin.orders.noActions' | translate }}</p>
               }

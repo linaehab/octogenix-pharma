@@ -86,7 +86,10 @@ class OrderLifecycleTest extends TestCase
         [$order] = $this->placeGuestOrder();
         $this->actingAsAdmin();
 
-        $this->setStatus($order, 'delivered')->assertUnprocessable()->assertJsonValidationErrors('status');
+        // Skipping stages is a correction: allowed for admins with a note (this helper sends one, Phase 11.5).
+        $this->postJson("/api/v1/admin/orders/{$order->order_number}/status", ['status' => 'delivered'])
+            ->assertUnprocessable()->assertJsonValidationErrors('note');
+        $this->setStatus($order, 'delivered')->assertOk();
         $this->setStatus($order, 'pending_payment')->assertUnprocessable();
         $this->setStatus($order, 'expired')->assertUnprocessable();
 
