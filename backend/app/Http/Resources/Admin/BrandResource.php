@@ -20,6 +20,8 @@ class BrandResource extends JsonResource
                 'cta_label_en', 'cta_label_ar', 'link_url', 'has_store', 'is_featured', 'is_active', 'sort_order',
             ]),
             'link_type' => $this->link_type->value,
+            // Products of the Jovie store linked to this brand: such a brand can be deactivated, not deleted.
+            'products_count' => (int) ($this->products_count ?? 0),
             'logo_url' => ImagePath::url($this->logo_path),
             'image_url' => ImagePath::url($this->image_path),
             'hover_image_url' => ImagePath::url($this->hover_image_path),

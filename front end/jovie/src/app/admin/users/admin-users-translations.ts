@@ -76,11 +76,11 @@ export const adminUsersTranslations: Record<Language, Record<string, string>> = 
     'admin.users.roleChangeConfirm': 'Change role',
 
     'admin.users.sections.super_admin': 'every section, including admin users and the audit log',
-    'admin.users.sections.store_manager': 'products, discounts, inventory, orders, payments and reports, customers, shipping, reviews',
+    'admin.users.sections.store_manager': 'products, discounts, inventory, orders (including the Excel export), payments and reports, customers, shipping, reviews',
     'admin.users.sections.product_manager': 'products, discounts, inventory, reviews',
-    'admin.users.sections.order_manager': 'orders (including recording cash on delivery), customers',
-    'admin.users.sections.content_manager': 'contact messages, reviews',
-    'admin.users.sections.content_editor': 'site content, reading contact messages, reviews',
+    'admin.users.sections.order_manager': 'orders (including the Excel export and recording cash on delivery), customers',
+    'admin.users.sections.content_manager': 'corporate website (brands, services, company information, page content), contact messages, reviews',
+    'admin.users.sections.content_editor': 'corporate website (brands, services, company information, page content), reading contact messages, reviews',
     'admin.users.sections.support': 'contact messages, viewing orders and customers',
   },
   ar: {
@@ -157,11 +157,11 @@ export const adminUsersTranslations: Record<Language, Record<string, string>> = 
     'admin.users.roleChangeConfirm': 'تغيير الدور',
 
     'admin.users.sections.super_admin': 'كل الأقسام، ومنها المستخدمون المسؤولون وسجل النشاط',
-    'admin.users.sections.store_manager': 'المنتجات والخصومات والمخزون والطلبات والمدفوعات والتقارير والعملاء والشحن والتقييمات',
+    'admin.users.sections.store_manager': 'المنتجات والخصومات والمخزون والطلبات (ومنها التصدير إلى Excel) والمدفوعات والتقارير والعملاء والشحن والتقييمات',
     'admin.users.sections.product_manager': 'المنتجات والخصومات والمخزون والتقييمات',
-    'admin.users.sections.order_manager': 'الطلبات (ومنها تسجيل التحصيل عند الاستلام) والعملاء',
-    'admin.users.sections.content_manager': 'رسائل التواصل والتقييمات',
-    'admin.users.sections.content_editor': 'محتوى الموقع وقراءة رسائل التواصل والتقييمات',
+    'admin.users.sections.order_manager': 'الطلبات (ومنها التصدير إلى Excel وتسجيل التحصيل عند الاستلام) والعملاء',
+    'admin.users.sections.content_manager': 'موقع الشركة (العلامات التجارية والخدمات وبيانات الشركة ومحتوى الصفحات) ورسائل التواصل والتقييمات',
+    'admin.users.sections.content_editor': 'موقع الشركة (العلامات التجارية والخدمات وبيانات الشركة ومحتوى الصفحات) وقراءة رسائل التواصل والتقييمات',
     'admin.users.sections.support': 'رسائل التواصل وعرض الطلبات والعملاء',
   },
 };

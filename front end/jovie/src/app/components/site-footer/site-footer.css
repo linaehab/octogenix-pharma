@@ -73,6 +73,36 @@
   margin: 0;
 }
 
+/* Social links: only rendered when set in the dashboard. */
+.footer-social {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-self: end;
+  gap: 10px;
+}
+
+.footer-social a {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.88);
+  transition: color 180ms ease, border-color 180ms ease;
+}
+
+.footer-social a:hover,
+.footer-social a:focus-visible {
+  border-color: #f2b8d7;
+  color: #f2b8d7;
+}
+
+.footer-social svg {
+  fill: currentColor;
+}
+
 .copyright {
   grid-column: 1 / -1;
   margin: 9px 0 0;
@@ -107,6 +137,10 @@
 
   .footer-contact p {
     grid-column: auto;
+  }
+
+  .footer-social {
+    justify-content: flex-start;
   }
 
   .copyright {

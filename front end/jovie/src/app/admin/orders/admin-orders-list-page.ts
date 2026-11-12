@@ -48,13 +48,14 @@ export class AdminOrdersListPage {
   protected readonly error = signal(false);
   private request: Subscription | null = null;
   private exportRequest: Subscription | null = null;
-  /** Exporting needs payments.manage too (the totals), like the report exports. */
-  protected readonly canExport = computed(() => this.auth.can({ permissions: ['orders.view', 'payments.manage'] }));
+  /** Exporting needs orders.view and the dedicated orders.export (the API checks the same). */
+  protected readonly canExport = computed(() => this.auth.can({ permissions: ['orders.view', 'orders.export'] }));
   /** Only decides whether the actions column is shown; each row's actions come from the API. */
   protected readonly canManage = computed(() => this.auth.can({ permissions: ['orders.manage'] }));
   protected readonly exporting = signal(false);
   protected readonly exported = signal<string | null>(null);
-  protected readonly exportFailed = signal(false);
+  /** Why the last export did not download (a translation key), or null. */
+  protected readonly exportFailed = signal<string | null>(null);
 
   /** The order whose action is running (one at a time), and the row whose "Other actions" menu is open. */
   protected readonly acting = signal<string | null>(null);
@@ -87,7 +88,7 @@ export class AdminOrdersListPage {
     }
     this.exporting.set(true);
     this.exported.set(null);
-    this.exportFailed.set(false);
+    this.exportFailed.set(null);
     this.exportRequest = this.api.export(this.query(), this.language.currentLanguage()).subscribe({
       next: (name) => {
         this.exporting.set(false);
@@ -98,7 +99,8 @@ export class AdminOrdersListPage {
         if (this.sessionEnded(error)) {
           return;
         }
-        this.exportFailed.set(true);
+        // 422: no order matches any more (for example changed meanwhile), so there was nothing to export.
+        this.exportFailed.set(error instanceof HttpErrorResponse && error.status === 422 ? 'admin.orders.exportNone' : 'admin.orders.exportFailed');
       },
     });
   }
@@ -106,7 +108,7 @@ export class AdminOrdersListPage {
   protected load(): void {
     this.request?.unsubscribe();
     this.exported.set(null);
-    this.exportFailed.set(false);
+    this.exportFailed.set(null);
     this.loading.set(true);
     this.error.set(false);
     this.request = this.api.list(this.query()).subscribe({

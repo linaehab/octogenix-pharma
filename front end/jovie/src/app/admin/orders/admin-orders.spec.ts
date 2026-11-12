@@ -13,7 +13,8 @@ const ORDERS = '/api/v1/admin/orders';
 const admin = (role: AdminUser['role'], permissions: AdminPermission[]): AdminUser => ({
   id: 1, name: 'Lina Admin', email: 'lina@example.com', role, is_active: true, locale: 'en', permissions, last_login_at: null, created_at: null,
 });
-const storeManager = admin('store_manager', ['catalog.manage', 'inventory.manage', 'orders.view', 'orders.manage', 'payments.manage', 'customers.view', 'shipping.manage', 'reviews.manage']);
+const storeManager = admin('store_manager', ['catalog.manage', 'inventory.manage', 'orders.view', 'orders.manage', 'orders.export', 'payments.manage', 'customers.view', 'shipping.manage', 'reviews.manage']);
+const orderManager = admin('order_manager', ['orders.view', 'orders.manage', 'orders.export', 'customers.view', 'payments.record_cod']);
 const support = admin('support', ['messages.view', 'messages.manage', 'orders.view', 'customers.view']);
 const egp = (p: number) => ({ amount_piastres: p, currency: 'EGP' });
 
@@ -226,7 +227,7 @@ describe('Admin orders', () => {
       (el().querySelector('#ord-from') as HTMLInputElement).value = '2026-11-01T00:00';
       (el().querySelector('form.ord-filters') as HTMLFormElement).dispatchEvent(new Event('submit'));
       await answer(is('GET', ORDERS), (r) => r.flush(listPage([row(1)], 1, 3)));
-      expect(text('.ord-export-msg')).toBe('All orders matching the filters, not only this page.');
+      expect(text('.ord-export-msg')).toBe('All orders matching the tab and filters, not only this page.');
 
       await click('.ord-export button');
       expect(text('.ord-export button')).toBe('Preparing the file…');
@@ -247,8 +248,87 @@ describe('Admin orders', () => {
       expect(text('.ord-export-msg')).toBe('The file could not be prepared. Please try again.');
     });
 
-    it('does not offer the export without payments.manage', async () => {
+    it('exports with the applied tab and every applied filter, follows changes and clearing, and explains an empty result', async () => {
+      spyOn(HTMLAnchorElement.prototype, 'click');
+      const withTotal = (total: number, data: OrderListRow[] = total ? [row(1)] : []) => {
+        const page = listPage(data, 1, total ? 3 : 1);
+        const tabs = [{ key: 'all', statuses: [], count: total }, { key: 'new', statuses: ['pending_confirmation'], count: total }] as OrderListPage['options']['tabs'];
+        return { ...page, meta: { ...page.meta, total }, options: { ...page.options, tabs } };
+      };
+      const exportParams = async () => {
+        await click('.ord-export button');
+        const file = await answer(is('GET', `${ORDERS}/export`), (r) =>
+          r.flush(new Blob(['PK']), { headers: new HttpHeaders({ 'Content-Disposition': 'attachment; filename=jovie-orders_x.xlsx' }) }),
+        );
+        const p = file.request.params;
+        return Object.fromEntries(p.keys().map((k) => [k, p.get(k)]));
+      };
+      await open('/admin/orders', storeManager);
+      await answer(is('GET', ORDERS), (r) => r.flush(withTotal(30)));
+
+      // Tab, search, date-time range and payment status, applied together.
+      const set = (selector: string, value: string) => ((el().querySelector(selector) as HTMLInputElement).value = value);
+      set('#ord-search', '0112');
+      set('#ord-payment', 'unpaid');
+      set('#ord-from', '2026-11-05T09:00');
+      set('#ord-to', '2026-11-05T18:30');
+      (el().querySelector('form.ord-filters') as HTMLFormElement).dispatchEvent(new Event('submit'));
+      await answer(is('GET', ORDERS), (r) => r.flush(withTotal(30)));
+      const page = await (async () => {
+        const nav = Array.from(el().querySelectorAll('.ord-pages button')) as HTMLButtonElement[];
+        nav[1].click();
+        return answer(is('GET', ORDERS), (r) => r.flush(withTotal(30)));
+      })();
+      expect(page.request.params.get('page')).toBe('2');
+      // Typed but not applied: the export uses only what was applied.
+      set('#ord-search', 'not applied');
+      expect(await exportParams()).toEqual({ search: '0112', payment_status: 'unpaid', from: '2026-11-05T09:00', to: '2026-11-05T18:30', lang: 'en' });
+
+      // A tab is part of the export; the page on screen never is.
+      await click('.ord-tab[data-tab="new"]');
+      await answer(is('GET', ORDERS), (r) => r.flush(withTotal(3)));
+      expect(await exportParams()).toEqual(jasmine.objectContaining({ tab: 'new', search: '0112' }));
+
+      // Clearing the filters clears the export too.
+      await click('.ord-buttons .adm-link');
+      await answer(is('GET', ORDERS), (r) => r.flush(withTotal(35)));
+      expect(await exportParams()).toEqual({ lang: 'en' });
+
+      // Nothing matches: no download, a clear message.
+      set('#ord-search', 'nobody');
+      (el().querySelector('form.ord-filters') as HTMLFormElement).dispatchEvent(new Event('submit'));
+      await answer(is('GET', ORDERS), (r) => r.flush(withTotal(0)));
+      expect((el().querySelector('.ord-export button') as HTMLButtonElement).disabled).toBeTrue();
+      expect(text('.ord-export-msg')).toBe('No orders match the current tab and filters, so there is nothing to export.');
+    });
+
+    it('explains when the API finds nothing to export any more', async () => {
+      await open('/admin/orders', storeManager);
+      await answer(is('GET', ORDERS), (r) => r.flush(listPage([row(1)])));
+      await click('.ord-export button');
+      await answer(is('GET', `${ORDERS}/export`), (r) => r.flush(new Blob(['{}']), { status: 422, statusText: 'Unprocessable' }));
+      expect(text('.ord-export-msg')).toBe('No orders match the current tab and filters, so there is nothing to export.');
+    });
+
+    it('offers the export with orders.view and orders.export only (not payments.manage)', async () => {
       await open('/admin/orders', support);
+      await answer(is('GET', ORDERS), (r) => r.flush(listPage([row(1)])));
+      expect(el().querySelector('.ord-export')).toBeNull();
+    });
+
+    it('lets order managers export without payments.manage', async () => {
+      spyOn(HTMLAnchorElement.prototype, 'click');
+      await open('/admin/orders', orderManager);
+      await answer(is('GET', ORDERS), (r) => r.flush(listPage([row(1)])));
+      await click('.ord-export button');
+      await answer(is('GET', `${ORDERS}/export`), (r) =>
+        r.flush(new Blob(['PK']), { headers: new HttpHeaders({ 'Content-Disposition': 'attachment; filename=jovie-orders_all_exported-2026-11-12.xlsx' }) }),
+      );
+      expect(text('.ord-export-msg')).toBe('Saved as jovie-orders_all_exported-2026-11-12.xlsx.');
+    });
+
+    it('hides the export when one of the two permissions is missing', async () => {
+      await open('/admin/orders', admin('store_manager', ['orders.view', 'payments.manage']));
       await answer(is('GET', ORDERS), (r) => r.flush(listPage([row(1)])));
       expect(el().querySelector('.ord-export')).toBeNull();
     });
@@ -317,7 +397,7 @@ describe('Admin orders', () => {
       expect(Array.from(el().querySelectorAll('#ord-status option')).map((o) => o.textContent!.trim()))
         .toEqual(['All', 'Cancelled', 'Returned', 'Expired (not paid in time)']);
       expect(text('.ord-actions')).toBe('—');
-      expect(text('.ord-export-msg')).toBe('The Excel file uses the filters below but not the status tab.');
+      expect(text('.ord-export-msg')).toBe('All orders matching the tab and filters, not only this page.');
 
       // Paging keeps the tab.
       await click('.ord-tab[data-tab="new"]');

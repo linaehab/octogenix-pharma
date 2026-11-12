@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Admin\AdminUserController;
+use App\Http\Controllers\Api\V1\Admin\AuditLogController as AdminAuditLogController;
 use App\Http\Controllers\Api\V1\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Api\V1\Admin\BrandController as AdminBrandController;
+use App\Http\Controllers\Api\V1\Admin\CompanyInfoController as AdminCompanyInfoController;
 use App\Http\Controllers\Api\V1\Admin\ContactMessageController as AdminContactMessageController;
 use App\Http\Controllers\Api\V1\Admin\ContentController as AdminContentController;
 use App\Http\Controllers\Api\V1\Admin\CustomerController as AdminCustomerController;
@@ -10,37 +12,36 @@ use App\Http\Controllers\Api\V1\Admin\DashboardController as AdminDashboardContr
 use App\Http\Controllers\Api\V1\Admin\GovernorateController as AdminGovernorateController;
 use App\Http\Controllers\Api\V1\Admin\ImageUploadController as AdminImageUploadController;
 use App\Http\Controllers\Api\V1\Admin\InventoryController as AdminInventoryController;
-use App\Http\Controllers\Api\V1\Admin\ReportController as AdminReportController;
-use App\Http\Controllers\Api\V1\Admin\AuditLogController as AdminAuditLogController;
 use App\Http\Controllers\Api\V1\Admin\NotificationController as AdminNotificationController;
 use App\Http\Controllers\Api\V1\Admin\OrderController as AdminOrderController;
-use App\Http\Controllers\Api\V1\Admin\PaymentWebhookEventController as AdminPaymentWebhookEventController;
 use App\Http\Controllers\Api\V1\Admin\PasswordResetController as AdminPasswordResetController;
+use App\Http\Controllers\Api\V1\Admin\PaymentWebhookEventController as AdminPaymentWebhookEventController;
 use App\Http\Controllers\Api\V1\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Api\V1\Admin\ProductDiscountController as AdminProductDiscountController;
-use App\Http\Controllers\Api\V1\Admin\PromoCodeController as AdminPromoCodeController;
 use App\Http\Controllers\Api\V1\Admin\ProductImageController as AdminProductImageController;
 use App\Http\Controllers\Api\V1\Admin\ProductReviewController as AdminProductReviewController;
 use App\Http\Controllers\Api\V1\Admin\ProductVariantController as AdminProductVariantController;
+use App\Http\Controllers\Api\V1\Admin\PromoCodeController as AdminPromoCodeController;
+use App\Http\Controllers\Api\V1\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Api\V1\Admin\ServiceController as AdminServiceController;
 use App\Http\Controllers\Api\V1\Admin\SettingsController as AdminSettingsController;
 use App\Http\Controllers\Api\V1\BrandController;
 use App\Http\Controllers\Api\V1\CartPreviewController;
 use App\Http\Controllers\Api\V1\CheckoutController;
-use App\Http\Controllers\Api\V1\Customer\OrderController as CustomerOrderController;
-use App\Http\Controllers\Api\V1\GuestOrderController;
-use App\Http\Controllers\Api\V1\MockPaymentController;
-use App\Http\Controllers\Api\V1\OrderPaymentController;
-use App\Http\Controllers\Api\V1\PaymentWebhookController;
 use App\Http\Controllers\Api\V1\ContactMessageController;
 use App\Http\Controllers\Api\V1\ContentController;
 use App\Http\Controllers\Api\V1\Customer\AddressController as CustomerAddressController;
 use App\Http\Controllers\Api\V1\Customer\AuthController as CustomerAuthController;
 use App\Http\Controllers\Api\V1\Customer\CartController as CustomerCartController;
 use App\Http\Controllers\Api\V1\Customer\EmailVerificationController as CustomerEmailVerificationController;
+use App\Http\Controllers\Api\V1\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Api\V1\Customer\PasswordResetController as CustomerPasswordResetController;
 use App\Http\Controllers\Api\V1\GovernorateController;
+use App\Http\Controllers\Api\V1\GuestOrderController;
 use App\Http\Controllers\Api\V1\HealthController;
+use App\Http\Controllers\Api\V1\MockPaymentController;
+use App\Http\Controllers\Api\V1\OrderPaymentController;
+use App\Http\Controllers\Api\V1\PaymentWebhookController;
 use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\ProductReviewController;
 use App\Http\Controllers\Api\V1\ServiceController;
@@ -202,8 +203,14 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
                 Route::delete('/content-items/{contentItem}', [AdminContentController::class, 'destroyItem'])
                     ->name('content.items.destroy');
 
+                // Registered before the resources so "order" is not read as an id.
+                Route::put('/brands/order', [AdminBrandController::class, 'reorder'])->name('brands.reorder');
+                Route::put('/services/order', [AdminServiceController::class, 'reorder'])->name('services.reorder');
                 Route::apiResource('brands', AdminBrandController::class);
                 Route::apiResource('services', AdminServiceController::class);
+                // Company contact details and social links (only these settings keys).
+                Route::get('/company-info', [AdminCompanyInfoController::class, 'index'])->name('company-info.index');
+                Route::patch('/company-info', [AdminCompanyInfoController::class, 'update'])->name('company-info.update');
             });
 
             Route::middleware('can:catalog.manage')->group(function () {
@@ -264,10 +271,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
                     ->name('governorates.update');
             });
 
-            // Excel export of the orders list (all matching orders): totals need payments.manage too,
-            // like the report exports. Registered before /orders/{order} so "export" is not an order number.
+            // Excel export of the orders list (all matching orders): orders.view and the dedicated
+            // orders.export (not payments.manage). Registered before /orders/{order} so "export" is not an order number.
             Route::get('/orders/export', [AdminOrderController::class, 'export'])
-                ->middleware(['can:orders.view', 'can:payments.manage', 'throttle:20,1,admin-order-exports'])->name('orders.export');
+                ->middleware(['can:orders.view', 'can:orders.export', 'throttle:20,1,admin-order-exports'])->name('orders.export');
 
             Route::middleware('can:orders.view')->group(function () {
                 Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');

@@ -19,15 +19,13 @@ export class AdminOrdersService {
   static readonly EXPORT_TIMEOUT_MS = 120000;
 
   list(query: OrderListQuery): Observable<OrderListPage> {
-    let params = this.filterParams(query).set('page', query.page).set('per_page', AdminOrdersService.PER_PAGE);
-    if (query.tab) {
-      params = params.set('tab', query.tab);
-    }
+    const params = this.filterParams(query).set('page', query.page).set('per_page', AdminOrdersService.PER_PAGE);
     return this.http.get<OrderListPage>(this.base, { params }).pipe(timeout(AdminOrdersService.TIMEOUT_MS));
   }
 
   /**
-   * Downloads every order matching the list's filters (not only the page on screen) as an Excel
+   * Downloads every order matching the list's applied filters and tab (never the page or page size)
+   * as an Excel
    * workbook built by the API, and saves it under the API's file name. Emits that name.
    */
   export(query: OrderListQuery, language: string): Observable<string> {
@@ -53,7 +51,8 @@ export class AdminOrdersService {
 
   private filterParams(query: OrderListQuery): HttpParams {
     let params = new HttpParams();
-    for (const key of ['search', 'status', 'payment_status', 'payment_method', 'governorate_id', 'from', 'to'] as const) {
+    // The same filters for the list and the export (the API applies them with the same query).
+    for (const key of ['tab', 'search', 'status', 'payment_status', 'payment_method', 'governorate_id', 'from', 'to'] as const) {
       const value = query[key].trim();
       if (value) {
         params = params.set(key, value);

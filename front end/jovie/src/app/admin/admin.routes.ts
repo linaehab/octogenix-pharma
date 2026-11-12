@@ -22,6 +22,7 @@ const TITLES: Record<string, string> = {
   reviews: 'Reviews',
   customers: 'Customers',
   settings: 'Shipping & store settings',
+  website: 'Corporate website',
   'admin-users': 'Admin users',
 };
 
@@ -120,6 +121,53 @@ export const adminRoutes: Routes = [
                 path: 'promo-codes',
                 loadComponent: () => import('./discounts/admin-promo-codes-page').then((m) => m.AdminPromoCodesPage),
                 title: 'Promo codes | Octogenix admin',
+              },
+            ],
+          },
+          {
+            path: 'website',
+            canActivate: [adminCanActivate(sectionAccess('website'))],
+            children: [
+              { path: '', pathMatch: 'full', redirectTo: 'brands' },
+              {
+                path: 'brands',
+                loadComponent: () => import('./website/admin-brands-page').then((m) => m.AdminBrandsPage),
+                title: 'Our Brands | Octogenix admin',
+              },
+              {
+                path: 'brands/new',
+                loadComponent: () => import('./website/admin-brand-form-page').then((m) => m.AdminBrandFormPage),
+                title: 'New brand | Octogenix admin',
+              },
+              {
+                path: 'brands/:id',
+                loadComponent: () => import('./website/admin-brand-form-page').then((m) => m.AdminBrandFormPage),
+                title: 'Brand | Octogenix admin',
+              },
+              {
+                path: 'services',
+                loadComponent: () => import('./website/admin-services-page').then((m) => m.AdminServicesPage),
+                title: 'Services | Octogenix admin',
+              },
+              {
+                path: 'services/new',
+                loadComponent: () => import('./website/admin-service-form-page').then((m) => m.AdminServiceFormPage),
+                title: 'New service | Octogenix admin',
+              },
+              {
+                path: 'services/:id',
+                loadComponent: () => import('./website/admin-service-form-page').then((m) => m.AdminServiceFormPage),
+                title: 'Service | Octogenix admin',
+              },
+              {
+                path: 'company',
+                loadComponent: () => import('./website/admin-company-page').then((m) => m.AdminCompanyPage),
+                title: 'Company information | Octogenix admin',
+              },
+              {
+                path: 'content',
+                loadComponent: () => import('./website/admin-content-page').then((m) => m.AdminContentPage),
+                title: 'Page content | Octogenix admin',
               },
             ],
           },

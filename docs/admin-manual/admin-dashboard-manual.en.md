@@ -1,12 +1,12 @@
 # Jovie Admin Dashboard: User Manual
 
-**Version:** Phase 11.5, 10 November 2026
+**Version:** Phase 11.6, 12 November 2026
 **For:** everyone who works in the Jovie admin dashboard (`/admin`)
 **Arabic version:** [admin-dashboard-manual.ar.md](admin-dashboard-manual.ar.md)
 
 This manual explains each section of the dashboard, what each role can do, and how to handle everyday work such as orders, stock and messages. It describes the dashboard as it is built today. Where something is not built yet, it says so.
 
-> **About the screenshots.** The places marked **[Screenshot S-xx]** are reserved for screenshots. Section 16 lists every screen to capture. Use test data only, never real customer details.
+> **About the screenshots.** The places marked **[Screenshot S-xx]** are reserved for screenshots. Section 17 lists every screen to capture. Use test data only, never real customer details.
 
 ---
 
@@ -25,10 +25,11 @@ This manual explains each section of the dashboard, what each role can do, and h
 11. [Reviews](#11-reviews)
 12. [Customers](#12-customers)
 13. [Shipping and store settings](#13-shipping-and-store-settings)
-14. [Admin users (super admins only)](#14-admin-users-super-admins-only)
-15. [Audit log and notifications](#15-audit-log-and-notifications)
-16. [Screens to capture](#16-screens-to-capture)
-17. [Messages you may see and what to do](#17-messages-you-may-see-and-what-to-do)
+14. [Corporate website](#14-corporate-website)
+15. [Admin users (super admins only)](#15-admin-users-super-admins-only)
+16. [Audit log and notifications](#16-audit-log-and-notifications)
+17. [Screens to capture](#17-screens-to-capture)
+18. [Messages you may see and what to do](#18-messages-you-may-see-and-what-to-do)
 
 ---
 
@@ -42,7 +43,7 @@ This manual explains each section of the dashboard, what each role can do, and h
 - Your session ends after a period of inactivity. You are then sent back to the sign-in page; sign in again and continue.
 - If a super admin **deactivates** your account, you are signed out at once.
 
-> **Important: email is not delivered in this environment.** The server writes emails to its log instead of sending them. Until a real mail service is set up, **password-reset and invitation emails do not reach anyone.** See [section 14.3](#143-invitations-the-current-email-limitation).
+> **Important: email is not delivered in this environment.** The server writes emails to its log instead of sending them. Until a real mail service is set up, **password-reset and invitation emails do not reach anyone.** See [section 15.3](#153-invitations-the-current-email-limitation).
 
 **[Screenshot S-01]** Sign-in page.
 
@@ -68,12 +69,12 @@ Each admin has exactly **one role**, and the role decides what they can see and 
 | **Super admin** | مدير عام | Owner / IT lead | Everything, including admin users and the audit log |
 | **Store manager** | مدير المتجر | Runs the online store | Products, discounts, inventory, orders, payments and reports, customers, shipping, reviews |
 | **Product manager** | مدير المنتجات | Looks after the catalogue | Products, discounts, inventory, reviews |
-| **Order manager** | مدير الطلبات | Handles orders and delivery | Orders (including recording cash on delivery), customers |
-| **Content manager** | مدير المحتوى | Handles customer contact | Contact messages, reviews |
-| **Content editor** | محرر محتوى | Edits website texts | Site content*, reading contact messages, reviews |
+| **Order manager** | مدير الطلبات | Handles orders and delivery | Orders (including the Excel export and recording cash on delivery), customers |
+| **Content manager** | مدير المحتوى | Corporate website and customer contact | Corporate website, contact messages, reviews |
+| **Content editor** | محرر محتوى | Edits website texts | Corporate website, reading contact messages, reviews |
 | **Support** | الدعم | Answers customers | Contact messages, viewing orders and customers |
 
-\* **Site content:** the content editor's `content.manage` permission exists on the server, but **the dashboard has no page for editing website content yet.**
+**Changed in Phase 11.6 (approved):** the content manager also has `content.manage`, so it can manage the corporate website. No other role changed.
 
 ### 3.2 Permission matrix
 
@@ -83,14 +84,15 @@ Each admin has exactly **one role**, and the role decides what they can see and 
 |---|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 | `admins.manage` | Admin users, audit log | ✅ | — | — | — | — | — | — |
 | `settings.manage` | Store settings (checkout switches and amounts) | ✅ | — | — | — | — | — | — |
-| `content.manage` | Website content (no dashboard page yet) | ✅ | — | — | — | — | ✅ | — |
+| `content.manage` | Corporate website: brands, services, company information, page content, image upload | ✅ | — | — | — | ✅ | ✅ | — |
 | `messages.view` | Read contact messages | ✅ | — | — | — | ✅ | ✅ | ✅ |
 | `messages.manage` | Change a message's status | ✅ | — | — | — | ✅ | — | ✅ |
 | `catalog.manage` | Products, product discounts, promo codes | ✅ | ✅ | ✅ | — | — | — | — |
 | `inventory.manage` | Stock, stock history, low-stock levels | ✅ | ✅ | ✅ | — | — | — | — |
 | `orders.view` | See orders | ✅ | ✅ | — | ✅ | — | — | ✅ |
 | `orders.manage` | Change order stages, internal note | ✅ | ✅ | — | ✅ | — | — | — |
-| `payments.manage` | Payment details, reports, exports, record cash | ✅ | ✅ | — | — | — | — | — |
+| `orders.export` | Export the orders list to Excel (with `orders.view`) | ✅ | ✅ | — | ✅ | — | — | — |
+| `payments.manage` | Payment details, reports and report exports, record cash | ✅ | ✅ | — | — | — | — | — |
 | `payments.record_cod` | Record cash on delivery **only** | ✅ | — | — | ✅ | — | — | — |
 | `customers.view` | See customers (view only) | ✅ | ✅ | — | ✅ | — | — | ✅ |
 | `shipping.manage` | Shipping fees and delivery per governorate | ✅ | ✅ | — | — | — | — | — |
@@ -100,7 +102,7 @@ Each admin has exactly **one role**, and the role decides what they can see and 
 
 | Action | Needs | Who can |
 |---|---|---|
-| Export the orders list to Excel | `orders.view` + `payments.manage` | Super admin, store manager |
+| Export the orders list to Excel | `orders.view` + `orders.export` | Super admin, store manager, order manager |
 | Sales and reports (and their exports) | `orders.view` + `payments.manage` | Super admin, store manager |
 | Inventory report | `orders.view` + `payments.manage` + `inventory.manage` | Super admin, store manager |
 | Put returned goods back in stock | `orders.manage` + `inventory.manage` | Super admin, store manager |
@@ -233,7 +235,7 @@ New → **Confirm order** → **Start preparing** → **Mark as prepared** → *
 
 - The **Timeline** on the order page lists every change: **from which stage to which stage**, **date and time**, **who** (admin name, customer, system or payment provider) and the **note**.
 - Lines marked **internal** are never shown to the customer. Customers never see admin names or notes.
-- Every stage change is also written to the **audit log** ([section 15](#15-audit-log-and-notifications)): "Order status changed", "Order cancelled" or "Order stage corrected (with a note)".
+- Every stage change is also written to the **audit log** ([section 16](#16-audit-log-and-notifications)): "Order status changed", "Order cancelled" or "Order stage corrected (with a note)".
 - The order header shows the stage and payment badges and **"Stage since …"** (when the stage last changed).
 
 **[Screenshot S-16]** Timeline with a correction and its note.
@@ -268,7 +270,7 @@ Above the filters, tabs group the stages. Each tab shows how many orders it hold
 | Delivered | Delivered |
 | Cancelled / Returned | Cancelled, Returned, Expired (each keeps its own badge; use the stage filter to see only one) |
 
-The **Excel export does not use the tab**: it uses the other filters (the hint under the button says so when a tab is open).
+The **Excel export uses the open tab** together with all the other applied filters ([8.8](#88-excel-export)).
 
 ### 8.5.2 Actions from the list
 
@@ -298,9 +300,13 @@ A free-text note for the team on each order, never shown to the customer (`order
 
 ### 8.8 Excel export
 
-- **Export Excel** downloads **every order matching the filters**, not only the visible page (super admin and store manager).
-- It never includes emails, phone numbers, addresses, notes or card data.
-- Current limitations, unchanged in this phase: the sheet's filter labels say "From/To (Cairo date)" even when a time was chosen, the stage column uses the earlier names (for example "Shipped" for Prepared), and the file name contains the chosen date and time.
+- **Export Excel** downloads **every order matching the open tab and all applied filters** (stage, payment status, payment method, governorate, date-and-time range, and the search by order number, customer name or phone), across all pages. The page on screen never limits it. Needs `orders.view` and `orders.export`: super admin, store manager and order manager (the order manager does **not** get payment management, reports or report exports).
+- It uses what you **applied**: change a filter and choose **Apply filters** (or open another tab) before exporting; after **Clear filters** it exports all orders.
+- The top of the sheet lists the tab and filters used and the number of orders exported; then one row per order, oldest first, with the stage names shown in the dashboard.
+- If **no order matches**, nothing is downloaded and the page says so.
+- File name: the tab or stage, the date-and-time range if any, and the export date, for example `jovie-orders_ready-for-delivery_exported-2026-11-12.xlsx`.
+- It never includes emails, phone numbers, addresses, notes or card data. Arabic files are in Arabic and read right to left.
+- Every download is recorded in the **audit log** ("Orders exported to Excel"): who, when, the file name, the filters used and the number of orders.
 
 ## 9. Sales and reports
 
@@ -369,17 +375,91 @@ Every change is confirmed before it is saved. Some values are **set on the serve
 
 **[Screenshot S-26]** Shipping · **[Screenshot S-27]** Store settings.
 
-## 14. Admin users (super admins only)
+## 14. Corporate website
+
+*Who: super admin, content manager, content editor (permission `content.manage`).* · `/admin/website`
+
+This section manages what the **Octogenix corporate website** shows: the brands, the services, the company contact details and the agreed page texts and images. Saved changes appear on the website **at once**; no developer or new release is needed. The website's layout and design never change from here. Four tabs: **Our Brands**, **Services**, **Company information**, **Page content**.
+
+### 14.1 Our Brands
+
+- The list shows every brand **in website order**, with its logo, English and Arabic name, address name, and a **Published** or **Hidden** badge. Only published brands appear on the website.
+- **↑ / ↓** change the order (saved at once, shown on the website). Clear the search first.
+- **Publish / Hide** asks for confirmation. A hidden brand stays in the list and can be published again.
+- **Delete** asks for confirmation and is offered only for brands **without Jovie store products**. A brand with store products (Jovie) can only be hidden. A deleted brand's address name can never be reused.
+- **Add brand** / **Edit** opens the form:
+  - **Address name** (for example `nova-pharma`): lower-case letters, numbers and hyphens.
+  - **Brand name**, **small label**, **short description** (on the card), **full description**, **image description** and **link text**, each in English and Arabic.
+  - **Logo**, **card image** and **image on hover**: JPEG, PNG or WebP up to 5 MB, with a preview. The card shows the card image (or the logo) and the hover image when the pointer is over it.
+  - **Link on the card**: no link, a page of this website (for example `/contact`) or the brand's website (a full `https://` address).
+  - **Has an online store**: shows a "Visit store" button; only Jovie has a store on this website.
+  - **Published on the website**.
+- **To publish a brand** it needs both names, both short descriptions and a logo or image; otherwise the save is refused and the missing fields are highlighted.
+- The **Jovie store catalogue** (products, prices, stock) stays in **Products** and **Inventory**; this page only manages how Jovie appears in "Our Brands".
+
+**Example: adding a new brand.** Add brand → address name `nova-pharma`, names "Nova Pharma" / «نوفا فارما», short descriptions in both languages, upload the logo, link "Brand website" `https://nova.example.com`, tick **Published** → Save. Nova Pharma appears in "Our Brands" at the end of the list; move it with ↑ if needed.
+
+**[Screenshot S-35]** Our Brands list · **[Screenshot S-36]** Brand form.
+
+### 14.2 Services
+
+- Two tabs, **Customers** and **Suppliers**, as on the website. Each shows its services in website order.
+- **↑ / ↓**, **Publish / Hide** (with confirmation), **Delete** (with confirmation), **Add service** (starts in the open tab) and **Edit** work like brands.
+- The form: tab, **title** and **description** in English and Arabic (required), **image** and **image on hover** (optional). When a service has an image, its **image description** is required in both languages.
+
+**[Screenshot S-37]** Services (Customers tab).
+
+### 14.3 Company information
+
+- **Phone numbers** (international format such as `+201012345678`; add or remove; shown in this order) and **email address**. They appear in the website **footer** and the **Contact** section.
+- **Social media**: Facebook, Instagram and LinkedIn addresses (`https://` only). Each appears as an icon in the website footer **only when it is filled in**; empty ones show nothing.
+- **Company address** and **footer line**, in English and Arabic.
+- Each part has its own **Save** button. If another admin changed these details meanwhile, nothing is saved and the page shows the current values.
+
+**[Screenshot S-38]** Company information.
+
+### 14.4 Page content
+
+- Choose a **page section** (for example "Home: top section", "About: introduction", "Contact section", "Browser tab titles"). Its **texts** appear with an English and an Arabic field; its **images** with a preview and an upload button.
+- **Save changes (n)** saves only what you changed in that section; **Discard changes** puts the saved values back.
+- Some sections also have a **list**: top section slides, core values, company values and leadership. Each item can be edited and saved, published or hidden (with confirmation), moved with ↑ / ↓ and deleted (with confirmation). **New items start hidden**; publish them when ready. Each list has a minimum and maximum number of items.
+- Only the texts and images that were **agreed to be editable** are here: it is not a page builder, and sections cannot be added or removed.
+
+**[Screenshot S-39]** Page content with a section open.
+
+### 14.5 Publishing, order and safety
+
+| | Brands | Services | List items |
+|---|---|---|---|
+| Hidden from the website when | Hidden (unpublished) | Hidden (unpublished) | Hidden |
+| New ones start | As you choose | As you choose | Hidden |
+| Order | ↑ / ↓ in the list | ↑ / ↓ within the tab | ↑ / ↓ within the list |
+| Delete | Only without store products | Yes, with confirmation | Yes, within the list minimum |
+
+- If someone else changed a brand, service or the company details after you opened them, **nothing is saved**; the page shows the current values.
+- Every change is recorded in the **audit log** under **Corporate website**, with the admin, the time and before/after values (including image changes).
+
+### 14.6 Who can do what
+
+| Action | Super admin | Content manager | Content editor | Other roles |
+|---|:-:|:-:|:-:|:-:|
+| Open the Corporate website section | ✅ | ✅ | ✅ | — |
+| Add, edit, publish, hide, order, delete brands and services | ✅ | ✅ | ✅ | — |
+| Edit company contact details, social links, address | ✅ | ✅ | ✅ | — |
+| Edit page texts, images and lists | ✅ | ✅ | ✅ | — |
+| Store settings (checkout switches and amounts) | ✅ | — | — | — |
+
+## 15. Admin users (super admins only)
 
 `/admin/users`
 
-### 14.1 What you can do
+### 15.1 What you can do
 
 - List admins, search by name or email, filter by role or status, sort.
 - **Create** an account, **change** name, email, role or language, **deactivate** or **reactivate**.
 - You **cannot** see or set anyone's password. You cannot change your own role, and you cannot remove the last active super admin.
 
-### 14.2 Creating an account: steps
+### 15.2 Creating an account: steps
 
 1. Go to **Admin users** and choose **Add admin**.
 2. Enter **Name**, **Email** (work email, must be unique), **Role** and **Language** (English/Arabic).
@@ -395,33 +475,33 @@ Every change is confirmed before it is saved. Some values are **set on the serve
 |---|---|---|---|
 | Mona, online store lead | `mona@example.com` | Store manager | Run products, stock, orders, payments, reports, shipping, reviews |
 | Karim, catalogue | `karim@example.com` | Product manager | Edit products and discounts, adjust stock, moderate reviews |
-| Sara, orders desk | `sara@example.com` | Order manager | Move orders through the stages, record cash on delivery, view customers |
-| Nour, customer care | `nour@example.com` | Content manager | Handle contact messages, moderate reviews |
-| Omar, website texts | `omar@example.com` | Content editor | Read contact messages, moderate reviews (content page not built yet) |
+| Sara, orders desk | `sara@example.com` | Order manager | Move orders through the stages, export orders to Excel, record cash on delivery, view customers |
+| Nour, customer care | `nour@example.com` | Content manager | Manage the corporate website, handle contact messages, moderate reviews |
+| Omar, website texts | `omar@example.com` | Content editor | Manage the corporate website, read contact messages, moderate reviews |
 | Hana, call centre | `hana@example.com` | Support | Handle contact messages, look up orders and customers (view only) |
 
 **[Screenshot S-28]** Admin users list · **[Screenshot S-29]** Add admin form with the role line · **[Screenshot S-30]** "Email not delivered" message after creating an account.
 
-### 14.3 Invitations: the current email limitation
+### 15.3 Invitations: the current email limitation
 
 - In this environment the mail setting is **"log"**: emails are written to the server log and **not sent**.
 - The dashboard says this clearly after you create an account: **no invitation reaches the new admin**, so **they cannot set a password until a real mail service is set up.**
 - The dashboard never shows invitation links or reset links, and they must not be shared in chat or email.
 - **What to do now:** create the account (it is ready), and once email delivery is configured on the server, the person can use **Forgot your password?** on the sign-in page to get a link.
 
-### 14.4 Deactivating
+### 15.4 Deactivating
 
 Choose **Deactivate** and confirm. The admin is signed out at once and cannot use the dashboard until reactivated. Their history stays in the audit log.
 
-## 15. Audit log and notifications
+## 16. Audit log and notifications
 
-### 15.1 Audit log (super admins only) · `/admin/audit-log`
+### 16.1 Audit log (super admins only) · `/admin/audit-log`
 
 - Every change made by an admin, newest first: **who**, **when**, **what** (before → after) and the **reason** where one was given.
-- Areas: products, inventory, orders, shipping, store settings, reviews, admin accounts, discounts and promo codes, contact messages.
+- Areas: products, inventory, orders, shipping, store settings, reviews, admin accounts, discounts and promo codes, contact messages, corporate website.
 - Entries **cannot be edited or deleted**.
 
-### 15.2 Notifications (everyone) · bell icon
+### 16.2 Notifications (everyone) · bell icon
 
 | Notification | Who receives it |
 |---|---|
@@ -434,7 +514,7 @@ Open a notification to go to the record; **Mark all as read** clears the counter
 
 **[Screenshot S-31]** Audit log · **[Screenshot S-32]** Notifications.
 
-## 16. Screens to capture
+## 17. Screens to capture
 
 Use a **test admin account and test data only**: no real customer names, phones, emails or addresses. Capture at a desktop width (about 1440 px) unless the item says "phone" (about 390 px). Save as PNG named after the ID, for example `S-13.png`, in `docs/admin-manual/screenshots/`.
 
@@ -474,8 +554,13 @@ Use a **test admin account and test data only**: no real customer names, phones,
 | S-32 | Notifications | AR |
 | S-33 | Orders list with tabs and the Actions column | EN |
 | S-34 | "Other actions" menu open on a row | EN |
+| S-35 | Corporate website: Our Brands list | EN |
+| S-36 | Corporate website: brand form | AR |
+| S-37 | Corporate website: Services (Customers tab) | EN |
+| S-38 | Corporate website: Company information | EN |
+| S-39 | Corporate website: Page content with a section open | EN |
 
-## 17. Messages you may see and what to do
+## 18. Messages you may see and what to do
 
 | Message | Meaning | What to do |
 |---|---|---|

@@ -17,6 +17,11 @@ enum AdminPermission: string
     case ManageInventory = 'inventory.manage';
     case ViewOrders = 'orders.view';
     case ManageOrders = 'orders.manage';
+    /**
+     * Download the orders list as Excel (with orders.view). The order totals in the file are
+     * the order values already shown on the orders pages; no payment records or reports.
+     */
+    case ExportOrders = 'orders.export';
     case ManagePayments = 'payments.manage';
     /**
      * Record that cash on delivery was received for a delivered order, and nothing else: no

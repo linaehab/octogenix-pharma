@@ -48,7 +48,7 @@ export interface OrderListPage {
 }
 
 export interface OrderListQuery {
-  /** Status tab ('' = all). Sent to the list only: the Excel export does not use tabs. */
+  /** Status tab ('' = all). Sent to the list and to the Excel export. */
   tab: string;
   search: string;
   status: string;

@@ -135,12 +135,35 @@ class ContentService
             throw ValidationException::withMessages($errors);
         }
 
-        DB::transaction(function () use ($site, $updates, $admin) {
+        DB::transaction(function () use ($site, $updates, $admin, $definitions) {
+            $rows = ContentEntry::query()->where('site', $site->value)->whereIn('key', array_keys($updates))->get()->keyBy('key');
+            $changes = [];
             foreach ($updates as $key => $values) {
+                // Before: the saved value, or the registry default the site showed until now.
+                $row = $rows->get($key);
+                $default = $definitions[$key];
+                foreach (['value_en', 'value_ar', 'image_path', 'image_ar_path'] as $field) {
+                    if (! array_key_exists($field, $values)) {
+                        continue;
+                    }
+                    $before = $row ? $row->{$field} : match ($field) {
+                        'value_en' => $default['en'] ?? null,
+                        'value_ar' => $default['ar'] ?? null,
+                        'image_path' => $default['image'] ?? null,
+                        default => null,
+                    };
+                    if ($before !== $values[$field]) {
+                        $changes["{$key}.{$field}"] = ['from' => $before, 'to' => $values[$field]];
+                    }
+                }
                 ContentEntry::query()->updateOrCreate(
                     ['site' => $site->value, 'key' => $key],
                     [...$values, 'updated_by_admin_id' => $admin?->id],
                 );
+            }
+            if ($changes !== []) {
+                app(AuditLogger::class)->record('website.content_updated', 'content', $site->value,
+                    implode(', ', array_keys($updates)), $changes, $admin);
             }
         });
 
@@ -189,6 +212,8 @@ class ContentService
                 'updated_by_admin_id' => $admin?->id,
             ]);
 
+            app(AuditLogger::class)->record('website.list_item_created', 'content_item', $item->id, $listKey,
+                AuditLogger::diff([], $item->only(array_keys($data))), $admin);
             $this->flush($site);
 
             return $item;
@@ -210,7 +235,15 @@ class ContentService
                 $this->assertMinimumRemains($item, $definition['min']);
             }
 
+            $before = $item->only(array_keys($data));
             $item->update([...$data, 'updated_by_admin_id' => $admin?->id]);
+            $diff = AuditLogger::diff($before, $item->only(array_keys($data)));
+            if ($diff !== []) {
+                $action = array_keys($diff) === ['is_active']
+                    ? 'website.list_item_'.($diff['is_active']['to'] ? 'activated' : 'deactivated')
+                    : 'website.list_item_updated';
+                app(AuditLogger::class)->record($action, 'content_item', $item->id, $item->list_key, $diff, $admin);
+            }
         });
 
         $this->flush($item->site);
@@ -229,6 +262,8 @@ class ContentService
             }
 
             $item->delete();
+            app(AuditLogger::class)->record('website.list_item_deleted', 'content_item', $item->id, $item->list_key,
+                AuditLogger::diff($item->only(['title_en', 'title_ar', 'image_path']), ['title_en' => null, 'title_ar' => null, 'image_path' => null]));
         });
 
         $this->flush($item->site);
@@ -251,8 +286,16 @@ class ContentService
                 throw ValidationException::withMessages(['ids' => 'Send every item of this list exactly once.']);
             }
 
+            $previous = ContentItem::query()->inList($site, $listKey)->pluck('sort_order', 'id');
+            $changes = [];
             foreach (array_values($ids) as $position => $id) {
                 ContentItem::query()->whereKey($id)->update(['sort_order' => $position]);
+                if ((int) $previous[(int) $id] !== $position) {
+                    $changes["item_{$id}"] = ['from' => (int) $previous[(int) $id], 'to' => $position];
+                }
+            }
+            if ($changes !== []) {
+                app(AuditLogger::class)->record('website.list_reordered', 'content_item', null, $listKey, $changes);
             }
         });
 

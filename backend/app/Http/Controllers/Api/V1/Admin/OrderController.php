@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\OrderListResource;
 use App\Http\Resources\Admin\OrderResource;
 use App\Models\Order;
+use App\Services\AuditLogger;
 use App\Services\DashboardSummaryService;
 use App\Services\OrderStatusService;
 use App\Support\OrderActions;
@@ -34,17 +35,26 @@ class OrderController extends Controller
 {
     private const RELATIONS = ['items', 'payments.collectedBy', 'histories.admin'];
 
-    public function __construct(private readonly OrderStatusService $statuses) {}
+    public function __construct(
+        private readonly OrderStatusService $statuses,
+        private readonly AuditLogger $audit,
+    ) {}
 
     /**
      * GET /admin/orders/export — the orders list as an Excel workbook, with the list's filters and
-     * every matching order (not only the page on screen). Needs orders.view and payments.manage
-     * (totals, like the report exports). No email, phone, address or notes are exported.
+     * every matching order (not only the page on screen). Needs orders.view and orders.export.
+     * No email, phone, address, notes or payment records are exported. Each export is audited.
      */
     public function export(Request $request): BinaryFileResponse
     {
         $filters = $this->listFilters($request);
         $ar = ($request->validate(['lang' => ['sometimes', 'in:en,ar']])['lang'] ?? 'en') === 'ar';
+        $count = $this->listQuery($filters)->count();
+        if ($count === 0) {
+            throw ValidationException::withMessages(['orders' => $ar
+                ? 'لا توجد طلبات تطابق عوامل التصفية الحالية، فلا يوجد ما يُصدَّر.'
+                : 'No orders match the current filters, so there is nothing to export.']);
+        }
         $t = fn (string $en, string $arabic) => $ar ? $arabic : $en;
         $label = fn (string $kind, string $value) => $this->exportLabel($kind, $value, $ar);
 
@@ -53,7 +63,8 @@ class OrderController extends Controller
             ->title($t('Orders', 'الطلبات'))
             ->meta($t('Exported', 'وقت التصدير'), now(ReportPeriod::TIMEZONE)->format('Y-m-d H:i').' (Africa/Cairo)');
         $applied = [
-            'from' => $t('From (Cairo date)', 'من (تاريخ القاهرة)'), 'to' => $t('To (Cairo date)', 'إلى (تاريخ القاهرة)'),
+            'tab' => $t('Status tab', 'تبويب المرحلة'),
+            'from' => $t('From (Cairo time)', 'من (بتوقيت القاهرة)'), 'to' => $t('To (Cairo time)', 'إلى (بتوقيت القاهرة)'),
             'search' => $t('Search', 'البحث'), 'status' => $t('Order status', 'حالة الطلب'),
             'payment_status' => $t('Payment status', 'حالة الدفع'), 'payment_method' => $t('Payment method', 'طريقة الدفع'),
             'governorate_id' => $t('Governorate', 'المحافظة'), 'customer_id' => $t('Customer number', 'رقم العميل'),
@@ -62,6 +73,8 @@ class OrderController extends Controller
             if (isset($filters[$key]) && $filters[$key] !== '') {
                 $value = (string) $filters[$key];
                 $value = match ($key) {
+                    'tab' => $label('tab', $value),
+                    'from', 'to' => str_replace('T', ' ', $value),
                     'status' => $label('status', $value),
                     'payment_status' => $label('payment', $value),
                     'payment_method' => $label('method', $value),
@@ -72,9 +85,10 @@ class OrderController extends Controller
                 $book->meta($name, $value);
             }
         }
-        if (array_diff_key($filters, ['per_page' => true]) === []) {
+        if (array_filter(array_diff_key($filters, ['per_page' => true]), fn ($v) => $v !== null && $v !== '') === []) {
             $book->meta($t('Filters', 'عوامل التصفية'), $t('None (all orders)', 'لا يوجد (كل الطلبات)'));
         }
+        $book->meta($t('Orders exported', 'عدد الطلبات المُصدَّرة'), (string) $count);
         $book->blank()->heading($ar
             ? ['رقم الطلب', 'تاريخ الطلب (القاهرة)', 'اسم العميل', 'المحافظة', 'حالة الطلب', 'حالة الدفع', 'طريقة الدفع', 'عدد الأصناف', 'عدد القطع',
                 'المجموع الفرعي (جنيه)', 'الخصم (جنيه)', 'الشحن (جنيه)', 'رسوم الدفع عند الاستلام (جنيه)', 'الإجمالي (جنيه)', 'كود الخصم']
@@ -107,11 +121,16 @@ class OrderController extends Controller
                 $o->promo_code,
             ]));
 
-        $suffix = isset($filters['from']) || isset($filters['to'])
-            ? '_'.($filters['from'] ?? 'start').'_to_'.($filters['to'] ?? now(ReportPeriod::TIMEZONE)->format('Y-m-d'))
-            : '_'.now(ReportPeriod::TIMEZONE)->format('Y-m-d');
+        $name = $this->exportFileName($filters);
+        // Who downloaded which orders: the filters used and how many orders (no order data).
+        $used = array_filter(array_diff_key($filters, ['per_page' => true]), fn ($v) => $v !== null && $v !== '');
+        $this->audit->record('orders.exported', 'order', null, $name, [
+            'filters' => ['from' => null, 'to' => $used === [] ? 'none' : $used],
+            'orders' => ['from' => null, 'to' => $count],
+            'language' => ['from' => null, 'to' => $ar ? 'ar' : 'en'],
+        ]);
 
-        return $book->download("jovie-orders{$suffix}.xlsx");
+        return $book->download($name);
     }
 
     /** @return array<string, mixed> */
@@ -124,6 +143,8 @@ class OrderController extends Controller
             'governorate_id' => ['sometimes', 'integer'],
             'customer_id' => ['sometimes', 'integer', 'min:1'],
             'search' => ['sometimes', 'string', 'max:100'],
+            // Status tab (a group of real statuses, App\Support\OrderTabs).
+            'tab' => ['sometimes', 'nullable', Rule::in(array_keys(OrderTabs::TABS))],
             // Calendar days in Egyptian time (as on the dashboard), inclusive.
             // Egyptian time. A date alone means the whole day; a date and time ("2026-11-01 09:00" or
             // "2026-11-01T09:00") is exact to the minute, and "to" includes its whole minute.
@@ -143,6 +164,7 @@ class OrderController extends Controller
     {
 
         return Order::query()
+            ->when($filters['tab'] ?? null, fn (Builder $q, string $t) => $q->whereIn('status', OrderTabs::statuses($t)))
             ->when($filters['status'] ?? null, fn (Builder $q, $v) => $q->where('status', $v))
             ->when($filters['payment_status'] ?? null, fn (Builder $q, $v) => $q->where('payment_status', $v))
             ->when($filters['payment_method'] ?? null, fn (Builder $q, $v) => $q->where('payment_method', $v))
@@ -171,14 +193,41 @@ class OrderController extends Controller
         return ($start ? $minute : $minute->endOfMinute())->utc();
     }
 
+    /**
+     * "jovie-orders_<tab or stage>[_<from>_to_<to>]_exported-<Cairo date>.xlsx", for example
+     * jovie-orders_ready-for-delivery_2026-11-01-0900_to_2026-11-10-1830_exported-2026-11-12.xlsx.
+     *
+     * @param  array<string, mixed>  $filters
+     */
+    private function exportFileName(array $filters): string
+    {
+        $tabs = ['new' => 'new', 'in_progress' => 'in-progress', 'ready' => 'ready-for-delivery', 'delivered' => 'delivered', 'closed' => 'cancelled-returned'];
+        $stages = [
+            'pending_confirmation' => 'new', 'pending_payment' => 'awaiting-card-payment', 'confirmed' => 'confirmed', 'processing' => 'preparing',
+            'shipped' => 'prepared', 'delivered' => 'delivered', 'cancelled' => 'cancelled', 'returned' => 'returned', 'expired' => 'expired',
+        ];
+        $scope = isset($filters['status']) ? $stages[$filters['status']] : (isset($filters['tab']) ? $tabs[$filters['tab']] : 'all');
+        $stamp = fn (string $v) => str_replace([' ', 'T', ':'], ['-', '-', ''], $v);
+        $range = isset($filters['from']) || isset($filters['to'])
+            ? '_'.(isset($filters['from']) ? $stamp($filters['from']) : 'start').'_to_'.(isset($filters['to']) ? $stamp($filters['to']) : 'now')
+            : '';
+
+        return "jovie-orders_{$scope}{$range}_exported-".now(ReportPeriod::TIMEZONE)->format('Y-m-d').'.xlsx';
+    }
+
     private function exportLabel(string $kind, string $value, bool $ar): string
     {
         $labels = [
+            // The stage names of the dashboard (Phase 11.5).
             'status' => [
-                'pending_payment' => ['Awaiting payment', 'بانتظار الدفع'], 'pending_confirmation' => ['Awaiting confirmation', 'بانتظار التأكيد'],
-                'confirmed' => ['Confirmed', 'مؤكَّد'], 'processing' => ['Being prepared', 'قيد التجهيز'], 'shipped' => ['Shipped', 'تم الشحن'],
-                'delivered' => ['Delivered', 'تم التسليم'], 'cancelled' => ['Cancelled', 'ملغى'], 'expired' => ['Expired (not paid in time)', 'منتهي (لم يُدفع في الوقت)'],
+                'pending_payment' => ['New – awaiting card payment', 'طلب جديد – بانتظار الدفع بالبطاقة'], 'pending_confirmation' => ['New', 'طلب جديد'],
+                'confirmed' => ['Confirmed', 'تم التأكيد'], 'processing' => ['Preparing', 'جاري التحضير'], 'shipped' => ['Prepared', 'تم التحضير'],
+                'delivered' => ['Delivered', 'تم التسليم'], 'cancelled' => ['Cancelled', 'ملغي'], 'expired' => ['Expired (not paid in time)', 'منتهي (لم يُدفع في الوقت)'],
                 'returned' => ['Returned', 'مرتجع'],
+            ],
+            'tab' => [
+                'new' => ['New', 'جديدة'], 'in_progress' => ['In progress', 'قيد التنفيذ'], 'ready' => ['Ready for delivery', 'جاهزة للتوصيل'],
+                'delivered' => ['Delivered', 'تم التسليم'], 'closed' => ['Cancelled / Returned', 'ملغاة / مرتجعة'],
             ],
             'payment' => ['unpaid' => ['Not paid', 'غير مدفوع'], 'paid' => ['Paid', 'مدفوع']],
             'method' => ['cod' => ['Cash on delivery', 'الدفع عند الاستلام'], 'card' => ['Card', 'بطاقة']],
@@ -190,16 +239,13 @@ class OrderController extends Controller
     public function index(Request $request): JsonResponse
     {
         $filters = $this->listFilters($request);
-        // The status tab (a group of real statuses). The list only: the export is unchanged.
-        $tab = $request->validate(['tab' => ['sometimes', 'nullable', Rule::in(array_keys(OrderTabs::TABS))]])['tab'] ?? null;
 
         // Orders per status for the tab counts: every filter applies except the tab and the status.
-        $countsByStatus = $this->listQuery(Arr::except($filters, ['status']))
+        $countsByStatus = $this->listQuery(Arr::except($filters, ['status', 'tab']))
             ->toBase()->selectRaw('status, count(*) as aggregate')->groupBy('status')
             ->pluck('aggregate', 'status')->map(fn ($n) => (int) $n)->all();
 
         $page = $this->listQuery($filters)
-            ->when($tab, fn (Builder $q, string $t) => $q->whereIn('status', OrderTabs::statuses($t)))
             ->withMax(['histories as last_status_at' => fn (Builder $q) => $q->where('field', 'status')], 'created_at')
             ->withCount('items')
             ->withSum('items', 'quantity')

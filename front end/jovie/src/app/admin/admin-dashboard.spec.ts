@@ -16,14 +16,14 @@ const SUMMARY = '/api/v1/admin/dashboard/summary';
 const ROLE_PERMISSIONS: Record<AdminUser['role'], AdminPermission[]> = {
   super_admin: [
     'admins.manage', 'settings.manage', 'content.manage', 'messages.view', 'messages.manage', 'catalog.manage', 'inventory.manage',
-    'orders.view', 'orders.manage', 'payments.manage', 'payments.record_cod', 'customers.view', 'shipping.manage', 'reviews.manage',
+    'orders.view', 'orders.manage', 'orders.export', 'payments.manage', 'payments.record_cod', 'customers.view', 'shipping.manage', 'reviews.manage',
   ],
-  store_manager: ['catalog.manage', 'inventory.manage', 'orders.view', 'orders.manage', 'payments.manage', 'customers.view', 'shipping.manage', 'reviews.manage'],
+  store_manager: ['catalog.manage', 'inventory.manage', 'orders.view', 'orders.manage', 'orders.export', 'payments.manage', 'customers.view', 'shipping.manage', 'reviews.manage'],
   support: ['messages.view', 'messages.manage', 'orders.view', 'customers.view'],
   content_editor: ['content.manage', 'messages.view', 'reviews.manage'],
   product_manager: ['catalog.manage', 'inventory.manage', 'reviews.manage'],
-  order_manager: ['orders.view', 'orders.manage', 'customers.view', 'payments.record_cod'],
-  content_manager: ['messages.view', 'messages.manage', 'reviews.manage'],
+  order_manager: ['orders.view', 'orders.manage', 'orders.export', 'customers.view', 'payments.record_cod'],
+  content_manager: ['messages.view', 'messages.manage', 'reviews.manage', 'content.manage'],
 };
 
 const adminWith = (role: AdminUser['role'], overrides: Partial<AdminUser> = {}): AdminUser => ({
@@ -173,14 +173,14 @@ describe('Admin dashboard', () => {
     const expected: Record<AdminUser['role'], string[]> = {
       super_admin: [
         'Overview', 'Products', 'Inventory', 'Discounts & promo codes', 'Orders', 'Sales & reports', 'Contact messages', 'Reviews',
-        'Customers', 'Shipping & store settings', 'Admin users', 'Audit log',
+        'Customers', 'Shipping & store settings', 'Corporate website', 'Admin users', 'Audit log',
       ],
       store_manager: ['Overview', 'Products', 'Inventory', 'Discounts & promo codes', 'Orders', 'Sales & reports', 'Reviews', 'Customers', 'Shipping & store settings'],
       support: ['Overview', 'Orders', 'Contact messages', 'Customers'],
-      content_editor: ['Overview', 'Contact messages', 'Reviews'],
+      content_editor: ['Overview', 'Contact messages', 'Reviews', 'Corporate website'],
       product_manager: ['Overview', 'Products', 'Inventory', 'Discounts & promo codes', 'Reviews'],
       order_manager: ['Overview', 'Orders', 'Customers'],
-      content_manager: ['Overview', 'Contact messages', 'Reviews'],
+      content_manager: ['Overview', 'Contact messages', 'Reviews', 'Corporate website'],
     };
     for (const role of Object.keys(expected) as AdminUser['role'][]) {
       // A fresh session check for every role.
@@ -217,7 +217,7 @@ describe('Admin dashboard', () => {
     const visible = (role: AdminUser['role']) => ADMIN_SECTIONS.filter((s) => adminCan(adminWith(role), s.access)).map((s) => s.key);
     expect(visible('product_manager')).toEqual(['overview', 'products', 'inventory', 'discounts', 'reviews']);
     expect(visible('order_manager')).toEqual(['overview', 'orders', 'customers']);
-    expect(visible('content_manager')).toEqual(['overview', 'messages', 'reviews']);
+    expect(visible('content_manager')).toEqual(['overview', 'messages', 'reviews', 'website']);
   });
 
   it('has every section built: no sidebar link is marked "coming soon", and old addresses redirect', async () => {
@@ -309,7 +309,7 @@ describe('Admin dashboard', () => {
     await settle();
     expect(document.documentElement.dir).toBe('rtl');
     expect(document.documentElement.lang).toBe('ar');
-    expect(navLabels()).toEqual(['نظرة عامة', 'رسائل التواصل', 'التقييمات']);
+    expect(navLabels()).toEqual(['نظرة عامة', 'رسائل التواصل', 'التقييمات', 'موقع الشركة']);
     expect(text('h1')).toBe('لا تملك صلاحية الوصول إلى هذا القسم');
     expect(text('.adm-user-role')).toBe('محرر محتوى');
   });

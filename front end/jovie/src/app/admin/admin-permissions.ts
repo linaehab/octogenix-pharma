@@ -14,6 +14,7 @@ export type AdminPermission =
   | 'inventory.manage'
   | 'orders.view'
   | 'orders.manage'
+  | 'orders.export'
   | 'payments.manage'
   | 'payments.record_cod'
   | 'customers.view'

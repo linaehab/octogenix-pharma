@@ -29,6 +29,16 @@ return [
         'group' => 'contact', 'type' => 'email', 'public' => true,
         'default' => 'info@octogenixpharma.com',
     ],
+    // Social links shown in the corporate footer only when set (Phase 11.6). https:// only.
+    'social.facebook' => [
+        'group' => 'social', 'type' => 'url', 'public' => true, 'default' => null,
+    ],
+    'social.instagram' => [
+        'group' => 'social', 'type' => 'url', 'public' => true, 'default' => null,
+    ],
+    'social.linkedin' => [
+        'group' => 'social', 'type' => 'url', 'public' => true, 'default' => null,
+    ],
     'contact.notification_recipients' => [
         'group' => 'notifications', 'type' => 'email_list', 'public' => false,
         'default' => [],

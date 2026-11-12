@@ -641,13 +641,13 @@ class AdminReportsTest extends TestCase
         $this->getJson('/api/v1/admin/orders?per_page=25')->assertJsonPath('meta.total', 28)->assertJsonCount(25, 'data');
 
         $response = $this->get('/api/v1/admin/orders/export?payment_method=cod&from=2026-11-01&to=2026-11-05');
-        $this->assertStringContainsString('jovie-orders_2026-11-01_to_2026-11-05.xlsx', $response->headers->get('Content-Disposition'));
+        $this->assertStringContainsString('jovie-orders_all_2026-11-01_to_2026-11-05_exported-2026-11-06.xlsx', $response->headers->get('Content-Disposition'));
         $rows = $this->xlsx($response)['sheets']['Orders'];
         $headingAt = array_search('Order number', array_column($rows, 0), true);
         $this->assertSame(['Order number', 'Order date (Cairo)', 'Customer name', 'Governorate', 'Order status', 'Payment status', 'Payment method',
             'Lines', 'Units', 'Subtotal (EGP)', 'Discount (EGP)', 'Shipping (EGP)', 'Cash on delivery fee (EGP)', 'Total (EGP)', 'Promo code'], $rows[$headingAt]);
         $this->assertContains(['Payment method', 'Cash on delivery'], $rows);
-        $this->assertContains(['From (Cairo date)', '2026-11-01'], $rows);
+        $this->assertContains(['From (Cairo time)', '2026-11-01'], $rows);
         $data = array_slice($rows, $headingAt + 1);
         $this->assertCount(27, $data, 'All matching orders, beyond the 25 of one page; the card order is filtered out.');
         $this->assertNotContains($card->order_number, array_column($data, 0));

@@ -5,16 +5,17 @@
   </div>
   @if (canExport()) {
     <div class="ord-export">
-      <button type="button" class="adm-button is-light" [disabled]="exporting() || loading() || !meta()?.total" [attr.aria-busy]="exporting()" (click)="exportExcel()">
+      <button type="button" class="adm-button is-light" [disabled]="exporting() || loading() || !meta()?.total" [attr.aria-busy]="exporting()"
+        aria-describedby="ord-export-msg" (click)="exportExcel()">
         {{ (exporting() ? 'admin.orders.exporting' : 'admin.orders.exportExcel') | translate }}
       </button>
-      <p class="ord-export-msg" role="status" aria-live="polite">
+      <p class="ord-export-msg" id="ord-export-msg" role="status" aria-live="polite">
         @if (exported(); as name) {
           <span class="is-ok">{{ 'admin.orders.exported' | translate: { name } }}</span>
-        } @else if (exportFailed()) {
-          <span class="is-error">{{ 'admin.orders.exportFailed' | translate }}</span>
-        } @else if (query().tab) {
-          {{ 'admin.orders.exportNoTab' | translate }}
+        } @else if (exportFailed(); as key) {
+          <span class="is-error">{{ key | translate }}</span>
+        } @else if (!loading() && meta() && !meta()!.total) {
+          {{ 'admin.orders.exportNone' | translate }}
         } @else {
           {{ 'admin.orders.exportHint' | translate }}
         }

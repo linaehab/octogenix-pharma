@@ -29,6 +29,20 @@ class SettingsService
     /** @return array<string, mixed> Every registered key with its stored value, or its default if no row exists. */
     public function all(): array
     {
+        $values = $this->cached();
+
+        // A cache built before a key was added to the registry would lack it: rebuild once.
+        if (array_diff_key($this->registry(), $values) !== []) {
+            $this->flush();
+            $values = $this->cached();
+        }
+
+        return $values;
+    }
+
+    /** @return array<string, mixed> */
+    private function cached(): array
+    {
         return Cache::rememberForever(self::CACHE_KEY, function () {
             $stored = Setting::query()->pluck('value', 'key')->all();
 
@@ -66,7 +80,7 @@ class SettingsService
      *
      * @throws ValidationException
      */
-    public function update(array $input, ?AdminUser $admin = null): void
+    public function update(array $input, ?AdminUser $admin = null, string $auditAction = 'settings.updated'): void
     {
         $registry = $this->registry();
         $errors = [];
@@ -99,7 +113,7 @@ class SettingsService
 
         $previous = $this->all();
 
-        DB::transaction(function () use ($values, $registry, $admin, $previous) {
+        DB::transaction(function () use ($values, $registry, $admin, $previous, $auditAction) {
             $changes = [];
             foreach ($values as $key => $value) {
                 if ($previous[$key] !== $value) {
@@ -114,7 +128,7 @@ class SettingsService
                 ]);
             }
             if ($changes !== []) {
-                app(AuditLogger::class)->record('settings.updated', 'settings', null, implode(', ', array_keys($changes)), $changes, $admin);
+                app(AuditLogger::class)->record($auditAction, 'settings', null, implode(', ', array_keys($changes)), $changes, $admin);
             }
         });
 

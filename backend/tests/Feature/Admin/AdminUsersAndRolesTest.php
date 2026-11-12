@@ -47,11 +47,13 @@ class AdminUsersAndRolesTest extends TestCase
         $expected = [
             'super_admin' => array_map(fn (P $p) => $p->value, P::cases()),
             'content_editor' => ['content.manage', 'messages.view', 'reviews.manage'],
-            'store_manager' => ['catalog.manage', 'customers.view', 'inventory.manage', 'orders.manage', 'orders.view', 'payments.manage', 'reviews.manage', 'shipping.manage'],
+            'store_manager' => ['catalog.manage', 'customers.view', 'inventory.manage', 'orders.export', 'orders.manage', 'orders.view', 'payments.manage', 'reviews.manage', 'shipping.manage'],
             'support' => ['customers.view', 'messages.manage', 'messages.view', 'orders.view'],
             'product_manager' => ['catalog.manage', 'inventory.manage', 'reviews.manage'],
-            'order_manager' => ['customers.view', 'orders.manage', 'orders.view', 'payments.record_cod'],
-            'content_manager' => ['messages.manage', 'messages.view', 'reviews.manage'],
+            // orders.export (approved): the orders Excel export without payments.manage.
+            'order_manager' => ['customers.view', 'orders.export', 'orders.manage', 'orders.view', 'payments.record_cod'],
+            // Phase 11.6 (approved): content managers also manage the corporate website content.
+            'content_manager' => ['content.manage', 'messages.manage', 'messages.view', 'reviews.manage'],
         ];
         foreach (AdminRole::cases() as $role) {
             $want = $expected[$role->value];
@@ -59,7 +61,7 @@ class AdminUsersAndRolesTest extends TestCase
             $this->assertSame($want, self::names($role->permissions()), $role->value);
         }
         $this->assertNotContains(P::ManagePayments, AdminRole::OrderManager->permissions());
-        $this->assertNotContains(P::ManageContent, AdminRole::ContentManager->permissions());
+        $this->assertNotContains(P::ManageSettings, AdminRole::ContentManager->permissions());
     }
 
     public function test_order_managers_record_cod_cash_but_never_see_financial_reports_exports_or_payment_events(): void
@@ -78,7 +80,7 @@ class AdminUsersAndRolesTest extends TestCase
         foreach ([
             "/api/v1/admin/reports/sales?{$period}", "/api/v1/admin/reports/orders?{$period}", "/api/v1/admin/reports/products?{$period}",
             "/api/v1/admin/reports/inventory?{$period}", "/api/v1/admin/reports/sales/export?{$period}", "/api/v1/admin/reports/orders/export?{$period}&format=xlsx",
-            '/api/v1/admin/orders/export', '/api/v1/admin/payment-webhook-events', '/api/v1/admin/governorates', '/api/v1/admin/settings',
+            '/api/v1/admin/payment-webhook-events', '/api/v1/admin/governorates', '/api/v1/admin/settings',
             '/api/v1/admin/products', '/api/v1/admin/inventory', self::URL, '/api/v1/admin/audit-logs',
         ] as $url) {
             $this->getJson($url)->assertForbidden();
@@ -114,7 +116,10 @@ class AdminUsersAndRolesTest extends TestCase
         $this->getJson('/api/v1/admin/reviews')->assertOk();
         $this->getJson("/api/v1/admin/contact-messages/{$message->id}")->assertJsonPath('data.status', 'read');
         $this->patchJson("/api/v1/admin/contact-messages/{$message->id}", ['status' => 'replied'])->assertOk();
-        foreach (['/api/v1/admin/content/corporate', '/api/v1/admin/orders', '/api/v1/admin/products', '/api/v1/admin/reports/sales?from=2026-11-01&to=2026-11-08', self::URL] as $url) {
+        foreach (['/api/v1/admin/content/corporate', '/api/v1/admin/brands', '/api/v1/admin/services', '/api/v1/admin/company-info'] as $url) {
+            $this->getJson($url)->assertOk();
+        }
+        foreach (['/api/v1/admin/settings', '/api/v1/admin/orders', '/api/v1/admin/products', '/api/v1/admin/reports/sales?from=2026-11-01&to=2026-11-08', self::URL] as $url) {
             $this->getJson($url)->assertForbidden();
         }
     }
@@ -184,7 +189,7 @@ class AdminUsersAndRolesTest extends TestCase
         $this->travel(1)->seconds();
         $this->patchJson(self::URL."/{$other->id}", ['role' => 'order_manager', 'expected_updated_at' => $seen])
             ->assertOk()->assertJsonPath('data.role', 'order_manager')
-            ->assertJsonPath('data.permissions', ['orders.view', 'orders.manage', 'customers.view', 'payments.record_cod']);
+            ->assertJsonPath('data.permissions', ['orders.view', 'orders.manage', 'orders.export', 'customers.view', 'payments.record_cod']);
         $this->patchJson(self::URL."/{$other->id}", ['name' => 'Renamed', 'expected_updated_at' => $seen])
             ->assertStatus(409)->assertJsonPath('current.role', 'order_manager');
 

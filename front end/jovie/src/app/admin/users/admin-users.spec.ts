@@ -184,7 +184,7 @@ describe('Admin users', () => {
       await type('#usr-name', 'Nour');
       await type('#usr-email', 'nour@example.com');
       await choose('#usr-role', 'content_manager');
-      expect(text('#usr-role-help')).toBe('Sections this role can use: contact messages, reviews');
+      expect(text('#usr-role-help')).toBe('Sections this role can use: corporate website (brands, services, company information, page content), contact messages, reviews');
       await click('dialog[open] button[type="submit"]');
       await csrf();
       const post = await answer(is('POST', USERS), (r) =>

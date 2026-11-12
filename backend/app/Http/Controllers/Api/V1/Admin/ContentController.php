@@ -60,6 +60,8 @@ class ContentController extends Controller
                 'required' => $definition['required'],
                 'min' => $definition['min'],
                 'max' => $definition['max'],
+                // The built-in graphics a list's icon may use (values.core), or null.
+                'icons' => $definition['icons'] ?? null,
                 'items' => ContentItem::query()->inList($site, $listKey)->ordered()->get()
                     ->map(fn (ContentItem $item) => [
                         ...$this->content->itemPayload($item, $definition['fields']),

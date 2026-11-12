@@ -26,16 +26,17 @@ enum AdminRole: string
             self::SuperAdmin => P::cases(),
             self::ContentEditor => [P::ManageContent, P::ViewMessages, P::ManageReviews],
             self::StoreManager => [
-                P::ManageCatalog, P::ManageInventory, P::ViewOrders, P::ManageOrders,
+                P::ManageCatalog, P::ManageInventory, P::ViewOrders, P::ManageOrders, P::ExportOrders,
                 P::ManagePayments, P::ViewCustomers, P::ManageShipping, P::ManageReviews,
             ],
             self::Support => [P::ViewMessages, P::ManageMessages, P::ViewOrders, P::ViewCustomers],
             // Products, discounts, stock and reviews; no orders, payments or financial reports.
             self::ProductManager => [P::ManageCatalog, P::ManageInventory, P::ManageReviews],
-            // Orders and customers, and recording COD cash only (no payments.manage: no reports or exports).
-            self::OrderManager => [P::ViewOrders, P::ManageOrders, P::ViewCustomers, P::RecordCodPayments],
-            // Contact messages and reviews; content.manage is left out until a content page exists.
-            self::ContentManager => [P::ViewMessages, P::ManageMessages, P::ManageReviews],
+            // Orders (including the orders Excel export) and customers, and recording COD cash only
+            // (no payments.manage: no financial reports, report exports or payment events).
+            self::OrderManager => [P::ViewOrders, P::ManageOrders, P::ExportOrders, P::ViewCustomers, P::RecordCodPayments],
+            // Contact messages, reviews and the corporate website (content.manage, Phase 11.6).
+            self::ContentManager => [P::ViewMessages, P::ManageMessages, P::ManageReviews, P::ManageContent],
         };
     }
 
