@@ -23,19 +23,17 @@ interface BrandCard {
 const BRAND_STORE_ROUTES: Record<string, string> = { jovie: '/jovie' };
 
 /**
- * Jovie card visual: the official Jovie logo beside the actual product range (the Stage 1, 2 and
- * 3 tins, cut-outs of the store's own pack images). Used while the dashboard still has the
- * previous site's Jovie image (or none); an image uploaded in the dashboard is shown as it is.
+ * Jovie card visual: the official Jovie logo in a white tile (reference partner-logo style). Used
+ * while the dashboard still has the previous site's Jovie image (or none); an image uploaded in
+ * the dashboard is shown as it is.
  */
 interface BrandShowcase {
   logo: string;
-  packs: string[];
 }
 
 const LEGACY_JOVIE_IMAGE = '/assets/images/jovie.jpg';
 const JOVIE_SHOWCASE: BrandShowcase = {
   logo: '/assets/images/jovie/logo-official-yellow.png',
-  packs: [2, 1, 3].map((stage) => `/assets/images/corporate-v2/brand-jovie-stage-${stage}.webp`),
 };
 
 function brandShowcase(slug: string, image: string | null): BrandShowcase | null {

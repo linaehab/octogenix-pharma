@@ -1,5 +1,6 @@
 <section class="hero" aria-labelledby="hero-title">
-  <div class="hero-glow" aria-hidden="true"></div>
+  <!-- Lime shape along the outer edge, as in the reference -->
+  <span class="hero-accent" aria-hidden="true"></span>
 
   <div class="hero-inner">
     <div class="hero-copy">
@@ -38,47 +39,50 @@
       </div>
     </div>
 
+    <!-- Round photograph on a dark disc, with the service names floating around it -->
     <div class="hero-visual">
-      <div class="hero-slider" aria-live="polite" aria-atomic="true">
-        @for (slide of slides; track $index; let index = $index) {
-          <div
-            class="hero-slide"
-            [class.is-active]="index === activeIndex()"
-            [style.background-image]="'url(' + slide + ')'"
-            [attr.aria-hidden]="index === activeIndex() ? 'false' : 'true'"
-          ></div>
-        }
+      <div class="hero-disc">
+        <div class="hero-slider" aria-live="polite" aria-atomic="true">
+          @for (slide of slides; track $index; let index = $index) {
+            <div
+              class="hero-slide"
+              [class.is-active]="index === activeIndex()"
+              [style.background-image]="'url(' + slide + ')'"
+              [attr.aria-hidden]="index === activeIndex() ? 'false' : 'true'"
+            ></div>
+          }
+        </div>
       </div>
-      <div class="hero-shade" aria-hidden="true"></div>
+      <ul class="hero-tags" aria-hidden="true">
+        <li class="hero-tag hero-tag--1">{{ 'services.supplierDistributionTitle' | translate }}</li>
+        <li class="hero-tag hero-tag--2">{{ 'services.supplierImportTitle' | translate }}</li>
+        <li class="hero-tag hero-tag--3">{{ 'services.supplierExportTitle' | translate }}</li>
+        <li class="hero-tag hero-tag--4">{{ 'services.supplierScientificTitle' | translate }}</li>
+        <li class="hero-tag hero-tag--5">{{ 'services.supplierRegulatoryTitle' | translate }}</li>
+      </ul>
     </div>
   </div>
+</section>
 
-  <!-- Trust strip: existing statements, presented over the lower edge of the hero -->
-  <div class="hero-strip-wrap">
-    <div class="hero-strip">
-      <div class="strip-item">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.6 8 11 4.6-1.4 8-6 8-11V5zm-1.2 13.8-3.6-3.6 1.4-1.4 2.2 2.2 4.6-4.6 1.4 1.4z" /></svg>
-        <div>
-          <strong>{{ 'hero.noteOne' | translate }}</strong>
-          <span>{{ 'banner.highlight' | translate }}</span>
-        </div>
-      </div>
-      <div class="strip-item">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-4 12.7V22l4-2 4 2v-7.3A7 7 0 0 0 12 2zm0 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10z" /></svg>
-        <div>
-          <strong>{{ 'hero.noteTwo' | translate }}</strong>
-          <span>{{ 'quality.standard' | translate }}</span>
-        </div>
-      </div>
-      <div class="strip-item">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z" /></svg>
-        <div>
-          <strong>{{ 'banner.message' | translate }}</strong>
-        </div>
-      </div>
-      <a class="strip-link" routerLink="/services">
+<!-- The three existing statements, as quote cards under the hero -->
+<section class="hero-notes" [attr.aria-label]="'banner.highlight' | translate">
+  <div class="hero-notes-grid">
+    <article class="note-card">
+      <span class="note-mark" aria-hidden="true">”</span>
+      <strong>{{ 'hero.noteOne' | translate }}</strong>
+      <p>{{ 'banner.highlight' | translate }}</p>
+    </article>
+    <article class="note-card">
+      <span class="note-mark" aria-hidden="true">”</span>
+      <strong>{{ 'hero.noteTwo' | translate }}</strong>
+      <p>{{ 'quality.standard' | translate }}</p>
+    </article>
+    <article class="note-card">
+      <span class="note-mark" aria-hidden="true">”</span>
+      <strong>{{ 'banner.message' | translate }}</strong>
+      <a class="text-link" routerLink="/services">
         {{ 'banner.link' | translate }} <span aria-hidden="true">→</span>
       </a>
-    </div>
+    </article>
   </div>
 </section>

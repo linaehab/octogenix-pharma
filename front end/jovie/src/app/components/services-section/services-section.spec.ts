@@ -57,8 +57,7 @@ describe('ServicesSection', () => {
     expect(element.textContent).toContain('Cold Chain');
     expect(element.textContent).not.toContain('Contracting and Documentation');
     // The design no longer shows numbers: the first API service is listed first and is the open one.
-    expect(element.querySelector('.service-item .service-toggle')?.textContent).toContain('Cold Chain');
-    expect(element.querySelector('.service-item')?.classList).toContain('is-active');
+    expect(element.querySelector('.service-card h3')?.textContent).toContain('Cold Chain');
 
     TestBed.inject(LanguageService).setLanguage('ar');
     fixture.detectChanges();

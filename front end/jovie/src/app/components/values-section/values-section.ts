@@ -2,6 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { SiteContentService } from '../../core/content/site-content.service';
 import { LanguageService } from '../../core/i18n/language.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { CxIcon } from '../cx-icon/cx-icon';
 
 /** Which built-in SVG a core value shows. The dashboard stores the matching symbol. */
 type CoreValueIcon = 'quality' | 'innovation' | 'integrity' | 'distribution' | 'sustainable';
@@ -33,7 +34,7 @@ const DEFAULT_COMPANY_VALUES: { title: string; description: string }[] = [
 
 @Component({
   selector: 'app-values-section',
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, CxIcon],
   templateUrl: './values-section.html',
   styleUrl: './values-section.css',
 })

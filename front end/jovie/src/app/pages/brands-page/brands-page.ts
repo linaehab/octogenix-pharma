@@ -14,8 +14,8 @@ import { designImage } from '../../components/design-image';
 export class BrandsPage {
   protected readonly content = inject(SiteContentService);
 
-  /** The portfolio photograph, unless an image was uploaded for this page in the dashboard. */
+  /** The meeting-from-above photograph (reference banner style), unless an image was uploaded for this page in the dashboard. */
   protected heroImage(): string {
-    return designImage(this.content, 'page.brands.image', '/assets/images/ourbrand.jpg', '/assets/images/corporate-v2/brands-portfolio.jpg');
+    return designImage(this.content, 'page.brands.image', '/assets/images/ourbrand.jpg', '/assets/images/corporate-v3/banner-brands.webp');
   }
 }

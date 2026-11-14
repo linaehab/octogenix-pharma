@@ -15,16 +15,15 @@ export class ServicesPage {
   protected readonly content = inject(SiteContentService);
 
   /**
-   * The page photograph. The warehouse photograph still set in the dashboard is a 34 MB camera
-   * original, so its web-sized copy (same photograph) is shown; any other dashboard image is
-   * shown as it is.
+   * The black-and-white photograph of a man on the phone (reference banner style), replacing the
+   * warehouse photograph from the previous site; any other dashboard image is shown as it is.
    */
   protected heroImage(): string {
     return designImage(
       this.content,
       'page.services.image',
       '/assets/images/warehouse-workers-checking-inventory-goods-distribution-large-storehouse.jpg',
-      '/assets/images/corporate-v2/services-banner.webp',
+      '/assets/images/corporate-v3/banner-services.webp',
     );
   }
 }

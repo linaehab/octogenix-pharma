@@ -18,7 +18,7 @@ export class AboutPage {
   protected readonly content = inject(SiteContentService);
 
   /**
-   * The corporate headquarters photograph, replacing the previous site's default and the earlier upload
+   * The black-and-white office photograph (reference banner style), replacing the previous site's default and the earlier upload
    * (the logo artwork); any other image chosen in the dashboard is shown as it is.
    */
   protected heroImage(): string {
@@ -26,7 +26,7 @@ export class AboutPage {
       this.content,
       'page.about.image',
       ['/assets/images/about us.jpg', '/storage/uploads/images/2026/11/59ec1d7a-1ee8-4343-ab3f-769d0b603929.jpg'],
-      '/assets/images/corporate-v2/about-headquarters.webp',
+      '/assets/images/corporate-v3/banner-about.webp',
     );
   }
 }

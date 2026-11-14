@@ -2,98 +2,59 @@
   display: block;
 }
 
-/* Inner page banner: midnight, the photograph on the end side with an angled edge */
+/* Inner page banner: the page photograph in black and white under a charcoal veil, the title in
+   capitals on the start side; the floating header bar sits over its top edge. */
 .route-intro {
   position: relative;
-  min-height: clamp(520px, 66svh, 640px);
+  display: flex;
+  min-height: clamp(380px, 38vw, 470px);
+  align-items: flex-end;
   overflow: hidden;
   color: #fff;
-  background:
-    radial-gradient(ellipse 45% 70% at 8% 20%, rgba(27, 74, 156, 0.55) 0%, rgba(27, 74, 156, 0) 70%),
-    var(--cx-midnight);
+  background: var(--cx-navy);
 }
 
 .route-visual {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  inset-inline-end: 0;
-  width: 54%;
-  overflow: hidden;
-  clip-path: polygon(18% 0, 100% 0, 100% 100%, 0 100%);
-}
-
-:host-context([dir='rtl']) .route-visual {
-  clip-path: polygon(0 0, 82% 0, 100% 100%, 0 100%);
-}
-
-.route-intro--services .route-visual {
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 18% 100%);
-}
-
-:host-context([dir='rtl']) .route-intro--services .route-visual {
-  clip-path: polygon(0 0, 100% 0, 82% 100%, 0 100%);
+  inset: 0;
 }
 
 .route-visual img {
-  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: saturate(0.85) contrast(1.05);
-  animation: intro-settle 2200ms var(--cx-ease) both;
-}
-
-.route-visual::after {
-  position: absolute;
-  inset: 0;
-  background: var(--cx-royal);
-  content: '';
-  mix-blend-mode: color;
-  opacity: 0.5;
+  filter: grayscale(1) contrast(1.05);
 }
 
 .route-shade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, var(--cx-midnight) 40%, rgba(7, 23, 51, 0.4) 62%, rgba(7, 23, 51, 0) 85%);
-  pointer-events: none;
+  background: linear-gradient(90deg, rgba(43, 44, 45, 0.92) 0%, rgba(51, 52, 53, 0.72) 48%, rgba(51, 52, 53, 0.35) 100%);
 }
 
 :host-context([dir='rtl']) .route-shade {
-  background: linear-gradient(270deg, var(--cx-midnight) 40%, rgba(7, 23, 51, 0.4) 62%, rgba(7, 23, 51, 0) 85%);
+  background: linear-gradient(270deg, rgba(43, 44, 45, 0.92) 0%, rgba(51, 52, 53, 0.72) 48%, rgba(51, 52, 53, 0.35) 100%);
 }
 
 .route-inner {
   position: relative;
-  z-index: 2;
-  display: flex;
+  z-index: 1;
   width: min(var(--cx-max), calc(100% - 2 * var(--cx-gutter)));
-  min-height: inherit;
-  flex-direction: column;
-  justify-content: center;
   margin-inline: auto;
-  padding: 150px 0 80px;
+  padding: 150px 0 clamp(48px, 6vw, 72px);
 }
 
 .route-breadcrumb {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 30px;
+  margin-bottom: 26px;
   color: var(--cx-on-dark-2);
   font-size: 13px;
-  font-weight: 600;
-  animation: cx-rise 800ms var(--cx-ease) both;
-}
-
-.route-breadcrumb a {
-  color: var(--cx-on-dark-2);
-  transition: color 200ms ease;
 }
 
 .route-breadcrumb a:hover {
-  color: #fff;
+  color: var(--cx-azure);
 }
 
 .route-breadcrumb [aria-current] {
@@ -101,88 +62,26 @@
 }
 
 .route-copy {
-  max-width: 600px;
+  max-width: 640px;
 }
 
-.route-copy > * {
-  animation: cx-rise 900ms var(--cx-ease) both;
-}
-
-.route-copy > :nth-child(2) {
-  animation-delay: 110ms;
-}
-
-.route-copy > :nth-child(3) {
-  animation-delay: 220ms;
-}
-
-.route-intro h1 {
-  margin: 20px 0 22px;
+.route-copy h1 {
+  margin: 14px 0 14px;
   color: #fff;
-  font-size: clamp(40px, 5vw, 66px);
-  line-height: 1.06;
-}
-
-:host-context([dir='rtl']) .route-intro h1 {
-  font-size: clamp(36px, 4.4vw, 58px);
-  line-height: 1.28;
+  font-size: clamp(32px, 3.8vw, 50px);
+  font-weight: 700;
+  line-height: 1.1;
 }
 
 .route-description {
-  max-width: 520px;
+  max-width: 540px;
   margin: 0;
   color: var(--cx-on-dark-2);
-  font-size: 18px;
-  line-height: 1.75;
+  font-size: 16px;
 }
 
-@keyframes intro-settle {
-  from {
-    transform: scale(1.08);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-
-@media (max-width: 860px) {
-  .route-intro {
-    min-height: 0;
-  }
-
-  .route-visual,
-  :host-context([dir='rtl']) .route-visual,
-  .route-intro--services .route-visual,
-  :host-context([dir='rtl']) .route-intro--services .route-visual {
-    position: relative;
-    width: 100%;
-    height: 260px;
-    clip-path: none;
-  }
-
-  .route-shade,
-  :host-context([dir='rtl']) .route-shade {
-    top: 0;
-    height: 260px;
-    background: linear-gradient(0deg, var(--cx-midnight) 0%, rgba(7, 23, 51, 0.3) 50%, rgba(7, 23, 51, 0.65) 100%);
-  }
-
+@media (max-width: 1060px) {
   .route-inner {
-    padding: 0 0 56px;
-    margin-top: -36px;
-  }
-
-  .route-breadcrumb {
-    margin-bottom: 18px;
-  }
-
-  .route-description {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .route-visual img {
-    animation: none;
+    padding-top: 120px;
   }
 }

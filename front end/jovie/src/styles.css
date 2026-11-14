@@ -93,7 +93,11 @@ html[dir="rtl"] {
 }
 
 /* ==========================================================================
-   Octogenix corporate website — design system V2 ("Midnight Clinical").
+   Octogenix corporate website — design system V3 (charcoal and lime).
+   Charcoal surfaces, a lime accent, light grey cards; Onest for Latin text.
+   Token names are kept from V2 so every component follows the new palette:
+   "midnight"/"navy" are the charcoal tones, "azure" is the lime accent and
+   "royal" the darker green used where the accent carries text.
    Every rule below is scoped to app-corporate-layout, so it applies to the
    corporate pages only: the Jovie store and the admin dashboard never match
    these selectors, and the shared :root variables above are not changed.
@@ -101,39 +105,39 @@ html[dir="rtl"] {
 
 app-corporate-layout {
   /* Colour */
-  --cx-midnight: #071733;
-  --cx-midnight-2: #0a2047;
-  --cx-navy: #0f2c5d;
-  --cx-royal: #1b4a9c;
-  --cx-periwinkle: #7293d7;
-  --cx-azure: #4c9bff;
-  --cx-azure-hover: #6fb0ff;
-  --cx-ice: #ebf0fe;
-  --cx-cloud: #f6f8fd;
+  --cx-midnight: #2b2c2d;
+  --cx-midnight-2: #3a3b3c;
+  --cx-navy: #333435;
+  --cx-royal: #5f7d17;
+  --cx-periwinkle: #c3df83;
+  --cx-azure: #b0d35b;
+  --cx-azure-hover: #c3df83;
+  --cx-ice: #eef4dc;
+  --cx-cloud: #f7f8f9;
   --cx-white: #ffffff;
-  --cx-ink: #0b1220;
-  --cx-slate: #3e4c66;
-  --cx-gray: #6b7488;
-  --cx-line: #dce3f2;
-  --cx-on-dark: #f2f5fd;
-  --cx-on-dark-2: rgba(235, 240, 254, 0.72);
-  --cx-on-dark-line: rgba(235, 240, 254, 0.14);
+  --cx-ink: #333435;
+  --cx-slate: #4a4c4e;
+  --cx-gray: #6e7173;
+  --cx-line: #e6e8ea;
+  --cx-on-dark: #f7f8f9;
+  --cx-on-dark-2: rgba(247, 248, 249, 0.72);
+  --cx-on-dark-line: rgba(247, 248, 249, 0.16);
   --cx-error: #c0303f;
   --cx-success: #1b7f55;
 
   /* Type */
-  --cx-font: "Manrope", "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif;
-  --cx-track-tight: -0.03em;
+  --cx-font: "Onest", "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif;
+  --cx-track-tight: -0.01em;
   --cx-track-label: 0.16em;
 
   /* Shape and layout */
-  --cx-radius: 14px;
-  --cx-radius-lg: 22px;
+  --cx-radius: 10px;
+  --cx-radius-lg: 16px;
   --cx-max: 1200px;
   --cx-gutter: clamp(20px, 5vw, 64px);
   --cx-section: clamp(76px, 9vw, 124px);
   --cx-ease: cubic-bezier(0.22, 0.68, 0.16, 1);
-  --cx-shadow: 0 1px 2px rgba(7, 23, 51, 0.06), 0 22px 44px -26px rgba(7, 23, 51, 0.38);
+  --cx-shadow: 0 1px 2px rgba(43, 44, 45, 0.05), 0 18px 40px -26px rgba(43, 44, 45, 0.35);
 
   display: block;
   color: var(--cx-slate);
@@ -147,7 +151,7 @@ app-corporate-layout {
 html[dir="rtl"] app-corporate-layout {
   --cx-track-tight: 0;
   --cx-track-label: 0;
-  --cx-font: "IBM Plex Sans Arabic", "Manrope", "Segoe UI", system-ui, sans-serif;
+  --cx-font: "IBM Plex Sans Arabic", "Onest", "Segoe UI", system-ui, sans-serif;
 }
 
 app-corporate-layout h1,
@@ -156,8 +160,19 @@ app-corporate-layout h3,
 app-corporate-layout h4 {
   color: var(--cx-ink);
   font-family: var(--cx-font);
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: var(--cx-track-tight);
+}
+
+/* Section and page titles are set in capitals, as in the reference (Latin only). */
+app-corporate-layout h1,
+app-corporate-layout h2 {
+  text-transform: uppercase;
+}
+
+html[dir="rtl"] app-corporate-layout h1,
+html[dir="rtl"] app-corporate-layout h2 {
+  text-transform: none;
 }
 
 app-corporate-layout ::selection {
@@ -211,9 +226,9 @@ app-corporate-layout .eyebrow {
   align-items: center;
   gap: 10px;
   margin: 0;
-  color: var(--cx-royal);
+  color: var(--cx-gray);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: var(--cx-track-label);
   line-height: 1.4;
   text-transform: uppercase;
@@ -238,17 +253,17 @@ app-corporate-layout .light-eyebrow {
 /* Buttons */
 app-corporate-layout .button {
   display: inline-flex;
-  min-height: 54px;
+  min-height: 50px;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 0 28px;
+  padding: 0 30px;
   border: 1px solid transparent;
   border-radius: var(--cx-radius);
   cursor: pointer;
   font-family: var(--cx-font);
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: 0;
   transition: color 240ms ease, background 240ms ease, border-color 240ms ease, box-shadow 280ms var(--cx-ease),
     transform 280ms var(--cx-ease);
@@ -274,9 +289,9 @@ html[dir="rtl"] app-corporate-layout .button:hover > span[aria-hidden="true"] {
 /* Primary call to action: azure with midnight text (about 7:1 contrast) */
 app-corporate-layout .button-light,
 app-corporate-layout .button-azure {
-  color: var(--cx-midnight);
+  color: var(--cx-navy);
   background: var(--cx-azure);
-  box-shadow: 0 14px 30px -14px rgba(76, 155, 255, 0.75);
+  box-shadow: none;
 }
 
 app-corporate-layout .button-light:hover,
@@ -286,25 +301,33 @@ app-corporate-layout .button-azure:hover {
 }
 
 app-corporate-layout .button-outline {
-  border-color: rgba(235, 240, 254, 0.32);
+  border-color: rgba(247, 248, 249, 0.32);
   color: #fff;
   background: transparent;
 }
 
 app-corporate-layout .button-outline:hover {
   border-color: #fff;
-  background: rgba(235, 240, 254, 0.08);
+  background: rgba(247, 248, 249, 0.08);
 }
 
-app-corporate-layout .button-navy,
-app-corporate-layout .button-submit {
+app-corporate-layout .button-navy {
   color: #fff;
   background: var(--cx-navy);
 }
 
-app-corporate-layout .button-navy:hover,
+app-corporate-layout .button-submit {
+  color: var(--cx-navy);
+  background: var(--cx-azure);
+}
+
+app-corporate-layout .button-navy:hover {
+  background: var(--cx-midnight-2);
+  transform: translateY(-2px);
+}
+
 app-corporate-layout .button-submit:hover:not(:disabled) {
-  background: var(--cx-royal);
+  background: var(--cx-azure-hover);
   transform: translateY(-2px);
 }
 
@@ -401,7 +424,7 @@ app-corporate-layout .photo-caption {
   bottom: 0;
   padding: 10px 16px;
   color: #fff;
-  background: rgba(7, 23, 51, 0.78);
+  background: rgba(43, 44, 45, 0.78);
   font-size: 12px;
   font-weight: 600;
 }

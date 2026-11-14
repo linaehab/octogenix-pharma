@@ -1,116 +1,58 @@
 <section class="guiding" aria-labelledby="guiding-title">
- <div class="guiding-band">
- <div class="section-wrap reveal">
-  <header class="guiding-heading">
-    <p class="eyebrow"><span></span>{{ 'values.kicker' | translate }}</p>
-    <h2 id="guiding-title">{{ 'values.title' | translate }}</h2>
-    <p>{{ 'values.description' | translate }}</p>
-  </header>
+  <div class="section-wrap guiding-inner">
+    <header class="guiding-heading reveal">
+      <p class="eyebrow"><span></span>{{ 'values.kicker' | translate }}</p>
+      <h2 id="guiding-title">{{ 'values.title' | translate }}</h2>
+      <p>{{ 'values.description' | translate }}</p>
+    </header>
 
-  <div class="mission-vision">
-    <article class="principle-card">
-      <div class="principle-image image-swap">
-        <img class="image-swap__primary" [src]="content.image('values.missionImage', '/assets/images/working-office.jpg')"
-          [alt]="'values.missionImageAlt' | translate" loading="lazy" />
-        <img class="image-swap__alternate" [src]="content.image('values.missionHoverImage', '/assets/images/i-m-glad-we-made-agreement.jpg')" alt="" aria-hidden="true" loading="lazy" />
-      </div>
-      <div class="principle-copy">
-        <span class="principle-number">01</span>
+    <!-- Mission and vision: two grey text cards, as in the reference -->
+    <div class="mission-vision">
+      <article class="principle-card">
         <h3>{{ 'values.missionTitle' | translate }}</h3>
         <p>{{ 'values.missionDescription' | translate }}</p>
-      </div>
-    </article>
-    <article class="principle-card">
-      <div class="principle-image image-swap">
-        <img class="image-swap__primary" [src]="content.image('values.visionImage', '/assets/images/mission (2).jpg')"
-          [alt]="'values.visionImageAlt' | translate" loading="lazy" />
-        <img class="image-swap__alternate" [src]="content.image('values.visionHoverImage', '/assets/images/mission (1).jpg')" alt="" aria-hidden="true" loading="lazy" />
-      </div>
-      <div class="principle-copy">
-        <span class="principle-number">02</span>
+      </article>
+      <article class="principle-card">
         <h3>{{ 'values.visionTitle' | translate }}</h3>
         <p>{{ 'values.visionDescription' | translate }}</p>
-      </div>
-    </article>
-  </div>
- </div>
- </div>
+      </article>
+    </div>
 
-<div class="core-values-band">
-<div class="core-values section-wrap reveal">
-  <div class="core-values-heading">
-    <h3>{{ 'values.coreTitle' | translate }}</h3>
-    <p class="values-intro">
-      {{ 'values.description' | translate }}
-    </p>
-  </div>
-
-  <div class="core-value-grid">
-    @for (value of coreValues(); track $index; let first = $first) {
-      <article class="core-value reveal-step" [class.core-value--featured]="first">
-
-        <div class="core-icon" aria-hidden="true">
-          @switch (value.icon) {
-            @case ('quality') {
-              <svg viewBox="0 0 48 48" fill="none">
-                <path d="M24 5 39 14V32L24 41 9 32V14L24 5Z"/>
-                <path d="m16 24 5 5 11-12"/>
-              </svg>
-            }
-            @case ('innovation') {
-              <svg viewBox="0 0 48 48" fill="none">
-                <path d="M18 30c0-4-6-6-6-14a12 12 0 0 1 24 0c0 8-6 10-6 14"/>
-                <path d="M18 35h12M20 40h8M24 2v4M5 16h4M39 16h4M10 5l3 3M38 5l-3 3"/>
-              </svg>
-            }
-            @case ('integrity') {
-              <svg viewBox="0 0 48 48" fill="none">
-                <path d="M24 5 39 11V22c0 10-6 16-15 21C15 38 9 32 9 22V11L24 5Z"/>
-                <path d="m17 23 5 5 10-11"/>
-              </svg>
-            }
-            @case ('distribution') {
-              <svg viewBox="0 0 48 48" fill="none">
-                <rect x="6" y="13" width="23" height="24" rx="2"/>
-                <path d="M29 21h7l6 7v9H29M35 14v13h7M13 20h9M13 26h9"/>
-                <circle cx="15" cy="38" r="3"/>
-                <circle cx="35" cy="38" r="3"/>
-              </svg>
-            }
-            @case ('sustainable') {
-              <svg viewBox="0 0 48 48" fill="none">
-                <path d="M39 8C23 8 10 14 10 27c0 7 5 11 11 11C35 38 39 23 39 8Z"/>
-                <path d="M8 42c5-11 12-17 23-24"/>
-              </svg>
-            }
+    <!-- Core values: an icon grid in a grey card, with a photograph beside it -->
+    <div class="values-card">
+      <div class="values-copy">
+        <h3>{{ 'values.coreTitle' | translate }}</h3>
+        <div class="core-value-grid">
+          @for (value of coreValues(); track $index) {
+            <article class="core-value">
+              <app-cx-icon [name]="value.icon" />
+              <h4>{{ value.title }}</h4>
+              @if (value.description) {
+                <p>{{ value.description }}</p>
+              }
+            </article>
           }
         </div>
-
-        <h4>{{ value.title }}</h4>
-
-        @if (value.description) {
-          <p>{{ value.description }}</p>
-        }
-
-      </article>
-    }
-  </div>
-</div>
-
-</div>
-
-  <div class="company-values-band">
-  <span class="company-values-rings" aria-hidden="true"></span>
-  <div class="company-values section-wrap">
-    <h3 class="reveal">{{ 'values.companyTitle' | translate }}</h3>
-    <div class="company-value-list">
-      @for (value of companyValues(); track $index) {
-        <article class="reveal-step">
-          <h4>{{ value.title }}</h4>
-          <p>{{ value.description }}</p>
-        </article>
-      }
+      </div>
+      <div class="values-photo">
+        <img [src]="content.image('values.missionImage', '/assets/images/working-office.jpg')"
+          [alt]="'values.missionImageAlt' | translate" loading="lazy" decoding="async" />
+      </div>
     </div>
   </div>
+
+  <!-- Company values: charcoal band with the medical line pattern -->
+  <div class="company-values-band">
+    <div class="company-values section-wrap">
+      <h3>{{ 'values.companyTitle' | translate }}</h3>
+      <div class="company-value-list">
+        @for (value of companyValues(); track $index) {
+          <article>
+            <h4>{{ value.title }}</h4>
+            <p>{{ value.description }}</p>
+          </article>
+        }
+      </div>
+    </div>
   </div>
 </section>

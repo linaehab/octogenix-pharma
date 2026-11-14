@@ -5,13 +5,13 @@
     <p>{{ 'leadership.description' | translate }}</p>
   </header>
 
-  <!-- Editorial profiles: role and name, set as typography (no placeholder portraits) -->
+  <!-- People as grey cards with a duotone icon (reference "holding company structure" cards) -->
   <div class="leadership-list" role="list">
-    @for (leader of leaders(); track $index; let first = $first) {
-      <article class="leader-entry reveal-step" [class.leader-entry--lead]="first" role="listitem">
-        <p class="leader-role">{{ leader.role }}</p>
+    @for (leader of leaders(); track $index) {
+      <article class="leader-entry" role="listitem">
+        <app-cx-icon name="person" />
         <h3 class="leader-name">{{ leader.name }}</h3>
-        <span class="leader-rule" aria-hidden="true"></span>
+        <p class="leader-role">{{ leader.role }}</p>
       </article>
     }
   </div>

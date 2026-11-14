@@ -2,16 +2,21 @@
   display: block;
 }
 
-/* Quality credential band: a seal, the statement and a photograph */
+/* Quality credential band: the GSDP seal beside the statement */
 .quality {
   padding-block: var(--cx-section);
-  background: var(--cx-cloud);
+  background: #fff;
 }
 
+/* Grey card, as the reference's "slogan" block: the seal beside the text */
 .quality-inner {
+  padding: clamp(28px, 3.4vw, 44px);
+  border-radius: var(--cx-radius);
+  background: var(--cx-cloud);
   display: grid;
-  grid-template-areas: 'seal copy photo';
-  grid-template-columns: auto minmax(0, 1.1fr) minmax(0, 1fr);
+  grid-template-areas: 'seal copy';
+  grid-template-columns: auto minmax(0, 680px);
+  justify-content: center;
   align-items: center;
   gap: clamp(28px, 4.5vw, 64px);
 }
@@ -26,7 +31,7 @@
   place-items: center;
   border-radius: 50%;
   color: #fff;
-  background: linear-gradient(150deg, var(--cx-royal) 0%, var(--cx-midnight) 100%);
+  background: var(--cx-navy);
   box-shadow: 0 0 0 10px #fff, 0 0 0 11px var(--cx-line), var(--cx-shadow);
   font-size: 36px;
   font-weight: 700;
@@ -91,7 +96,7 @@
 .quality-symbol::before {
   position: absolute;
   inset: 12px;
-  border: 1px dashed rgba(235, 240, 254, 0.4);
+  border: 1px dashed var(--cx-azure);
   border-radius: 50%;
   content: '';
 }
@@ -101,8 +106,8 @@
 }
 
 .quality-copy h2 {
-  margin: 18px 0 18px;
-  font-size: clamp(28px, 3.2vw, 42px);
+  margin: 16px 0 16px;
+  font-size: clamp(24px, 2.4vw, 32px);
   line-height: 1.15;
 }
 
@@ -111,9 +116,9 @@
   margin: 0 0 18px;
   padding: 9px 16px;
   border-radius: 10px;
-  color: #fff;
-  background: linear-gradient(150deg, var(--cx-royal) 0%, var(--cx-navy) 100%);
-  box-shadow: 0 12px 26px -16px rgba(27, 74, 156, 0.8);
+  color: var(--cx-navy);
+  background: var(--cx-azure);
+  box-shadow: none;
   font-size: 14px;
   font-weight: 700;
 }
@@ -125,31 +130,7 @@
   font-size: 16px;
 }
 
-.quality-photo {
-  grid-area: photo;
-  min-height: 360px;
-  border-radius: var(--cx-radius-lg);
-  background: var(--cx-midnight);
-}
-
-.quality-photo::after {
-  position: absolute;
-  inset: 0;
-  background: var(--cx-royal);
-  content: '';
-  mix-blend-mode: color;
-  opacity: 0.35;
-  pointer-events: none;
-}
-
 @media (max-width: 1000px) {
-  .quality-inner {
-    grid-template-areas:
-      'seal copy'
-      'photo photo';
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-
   .quality-symbol {
     width: 140px;
     height: 140px;
@@ -161,13 +142,8 @@
   .quality-inner {
     grid-template-areas:
       'seal'
-      'copy'
-      'photo';
+      'copy';
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .quality-photo {
-    min-height: 260px;
   }
 }
 

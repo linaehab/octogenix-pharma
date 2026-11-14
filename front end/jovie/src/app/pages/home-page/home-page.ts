@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AboutSection } from '../../components/about-section/about-section';
 import { HeroSection } from '../../components/hero-section/hero-section';
 import { ServicesSection } from '../../components/services-section/services-section';
-import { ValuesSection } from '../../components/values-section/values-section';
+import { HomeStory } from '../../components/home-story/home-story';
+import { HomePartners } from '../../components/home-partners/home-partners';
 import { CompanyImpact } from '../../components/company-impact/company-impact';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
@@ -11,9 +11,9 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
   selector: 'app-home-page',
   imports: [
     HeroSection,
-    AboutSection,
+    HomeStory,
     ServicesSection,
-    ValuesSection,
+    HomePartners,
     CompanyImpact,
     RouterLink,
     TranslatePipe,

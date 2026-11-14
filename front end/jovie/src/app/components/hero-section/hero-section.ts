@@ -9,11 +9,11 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
   styleUrl: './hero-section.css',
 })
 export class HeroSection implements OnDestroy {
-  /** Licensed photographs (Unsplash License), resized and compressed for the web. */
+  /** Licensed photographs (Pexels / Unsplash licences), square crops for the round frame. */
   protected readonly slides = [
-    '/assets/images/corporate-v2/hero-scientist.jpg',
-    '/assets/images/corporate-v2/hero-cells.jpg',
-    '/assets/images/corporate-v2/hero-port.jpg',
+    '/assets/images/corporate-v3/hero-hands-capsules.webp',
+    '/assets/images/corporate-v3/hero-hands-care.webp',
+    '/assets/images/corporate-v3/hero-hands-tablets.webp',
   ];
 
   readonly activeIndex = signal(0);

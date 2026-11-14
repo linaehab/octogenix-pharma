@@ -1,127 +1,63 @@
 :host {
   display: block;
-  background:
-    linear-gradient(180deg, #fff 0%, var(--cx-cloud) 100%);
 }
 
-/* Heading on one side; the leaders as an editorial list on the other */
+/* Leadership: grey cards with a duotone person icon, the name and the role */
 .leadership {
-  display: grid;
-  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
-  align-items: start;
-  gap: clamp(32px, 6vw, 96px);
   padding-block: var(--cx-section);
 }
 
 .leadership-heading {
-  position: sticky;
-  top: 120px;
+  margin-bottom: clamp(28px, 3vw, 40px);
 }
 
 .leadership-heading h2 {
-  margin: 18px 0 18px;
-  font-size: clamp(32px, 4vw, 50px);
-  line-height: 1.08;
+  margin: 16px 0 10px;
+  font-size: clamp(26px, 2.6vw, 34px);
 }
 
 .leadership-heading > p:last-child {
-  max-width: 340px;
   margin: 0;
   color: var(--cx-gray);
-  font-size: 16px;
 }
 
 .leadership-list {
-  border-top: 1px solid var(--cx-line);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
 }
 
-/* One profile: the role as a small label, the name set large; a line draws in on hover */
 .leader-entry {
-  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 3fr) minmax(0, 7fr);
-  align-items: baseline;
-  gap: 8px 32px;
-  padding: clamp(28px, 3.4vw, 44px) 0;
-  border-bottom: 1px solid var(--cx-line);
+  justify-items: center;
+  gap: 10px;
+  padding: 30px 22px;
+  border-radius: var(--cx-radius);
+  background: var(--cx-cloud);
+  text-align: center;
+}
+
+.leader-entry app-cx-icon {
+  --cx-icon-size: 52px;
+}
+
+.leader-name {
+  margin: 6px 0 0;
+  font-size: 22px;
+  font-weight: 500;
 }
 
 .leader-role {
   margin: 0;
-  color: var(--cx-royal);
-  font-size: 13px;
-  font-weight: 700;
+  color: #78992a;
+  font-size: 12px;
+  font-weight: 600;
   letter-spacing: var(--cx-track-label);
-  line-height: 1.5;
   text-transform: uppercase;
 }
 
-.leader-name {
-  margin: 0;
-  color: var(--cx-ink);
-  font-size: clamp(28px, 3.4vw, 44px);
-  font-weight: 600;
-  line-height: 1.1;
-  transition: color 400ms ease, transform 600ms var(--cx-ease);
-}
-
-.leader-rule {
-  position: absolute;
-  bottom: -1px;
-  inset-inline-start: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--cx-azure);
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 700ms var(--cx-ease);
-}
-
-:host-context([dir='rtl']) .leader-rule {
-  transform-origin: right center;
-}
-
-.leader-entry:hover .leader-rule {
-  transform: scaleX(1);
-}
-
-.leader-entry:hover .leader-name {
-  color: var(--cx-royal);
-  transform: translateX(8px);
-}
-
-:host-context([dir='rtl']) .leader-entry:hover .leader-name {
-  transform: translateX(-8px);
-}
-
-/* The first entry (the founder) is set a step larger */
-.leader-entry--lead .leader-name {
-  font-size: clamp(34px, 4.4vw, 58px);
-}
-
 .portrait-note {
-  grid-column: 2;
-  margin: 0;
+  margin: 20px 0 0;
   color: var(--cx-gray);
-  font-size: 13px;
-}
-
-@media (max-width: 900px) {
-  .leadership {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .leadership-heading {
-    position: static;
-  }
-
-  .portrait-note {
-    grid-column: 1;
-  }
-}
-
-@media (max-width: 620px) {
-  .leader-entry {
-    grid-template-columns: minmax(0, 1fr);
-  }
+  font-size: 12px;
 }

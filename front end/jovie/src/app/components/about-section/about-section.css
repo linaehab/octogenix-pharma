@@ -2,6 +2,8 @@
   display: block;
 }
 
+/* Split block, as in the reference: a lime panel holding the photograph on one side, the text on
+   light grey on the other. */
 .intro {
   padding-block: var(--cx-section);
   background: #fff;
@@ -9,77 +11,28 @@
 
 .intro-grid {
   display: grid;
-  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
-  align-items: center;
-  gap: clamp(40px, 7vw, 104px);
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  align-items: stretch;
+  overflow: hidden;
+  border-radius: var(--cx-radius-lg);
+  background: var(--cx-cloud);
 }
 
-.intro-content h2 {
-  margin: 20px 0 30px;
-  font-size: clamp(32px, 3.8vw, 50px);
-  line-height: 1.12;
-}
-
-.intro-bottom {
-  display: grid;
-  gap: 30px;
-}
-
-.intro-description {
-  display: grid;
-  gap: 16px;
-  padding-inline-start: 22px;
-  border-inline-start: 3px solid var(--cx-azure);
-}
-
-.intro-description p {
-  margin: 0;
-  color: var(--cx-slate);
-  font-size: 17px;
-  line-height: 1.8;
-}
-
-/* Photograph with a navy badge that overlaps its corner */
 .intro-figure {
   position: relative;
-  padding: 0 0 48px 48px;
-}
-
-:host-context([dir='rtl']) .intro-figure {
-  padding: 0 48px 48px 0;
-}
-
-.intro-figure::before {
-  position: absolute;
-  top: 48px;
-  right: 48px;
-  bottom: 0;
-  left: 0;
-  border: 1px solid var(--cx-line);
-  border-radius: var(--cx-radius-lg);
-  content: '';
-}
-
-:host-context([dir='rtl']) .intro-figure::before {
-  right: 0;
-  left: 48px;
+  order: -1;
+  padding: clamp(28px, 3.4vw, 48px);
+  background: var(--cx-azure);
 }
 
 .intro-photo {
   position: relative;
-  min-height: 560px;
+  height: 100%;
+  min-height: 460px;
   overflow: hidden;
-  border-radius: var(--cx-radius-lg);
+  border: 6px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--cx-radius);
   background: var(--cx-midnight) url('/assets/images/portrait-female-pharmacist-working-drugstore.jpg') center / cover;
-}
-
-.intro-photo::after {
-  position: absolute;
-  inset: 0;
-  background: var(--cx-royal);
-  content: '';
-  mix-blend-mode: color;
-  opacity: 0.35;
 }
 
 .intro-photo .photo-caption {
@@ -88,22 +41,23 @@
   bottom: auto;
   inset-inline-start: auto;
   inset-inline-end: 0;
-  border-end-start-radius: var(--cx-radius);
+  color: var(--cx-navy);
+  background: #fff;
+  border-end-start-radius: 8px;
 }
 
 .intro-aside-note {
   position: absolute;
   z-index: 2;
-  bottom: 0;
-  inset-inline-start: 0;
-  max-width: 260px;
-  padding: 28px 30px;
-  border-radius: var(--cx-radius-lg);
+  bottom: clamp(44px, 5vw, 68px);
+  inset-inline-start: clamp(44px, 5vw, 68px);
+  max-width: 240px;
+  padding: 22px 24px;
+  border-radius: var(--cx-radius);
   color: #fff;
-  background: linear-gradient(150deg, var(--cx-navy) 0%, var(--cx-midnight) 100%);
-  box-shadow: 0 30px 50px -28px rgba(7, 23, 51, 0.7);
-  font-size: 22px;
-  font-weight: 700;
+  background: var(--cx-navy);
+  font-size: 20px;
+  font-weight: 500;
   line-height: 1.35;
   white-space: pre-line;
 }
@@ -112,38 +66,66 @@
   color: var(--cx-azure);
 }
 
+.intro-content {
+  align-self: center;
+  padding: clamp(36px, 5vw, 72px);
+}
+
+.intro-content h2 {
+  margin: 18px 0 24px;
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1.15;
+}
+
+.intro-bottom {
+  display: grid;
+  gap: 28px;
+}
+
+.intro-description {
+  display: grid;
+  gap: 14px;
+}
+
+.intro-description p {
+  position: relative;
+  margin: 0;
+  padding-inline-start: 26px;
+  color: var(--cx-slate);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+/* Small lime marker before each paragraph, like the reference's list icons */
+.intro-description p::before {
+  position: absolute;
+  top: 8px;
+  inset-inline-start: 0;
+  width: 12px;
+  height: 12px;
+  border: 3px solid var(--cx-azure);
+  border-radius: 50%;
+  content: '';
+}
+
 @media (max-width: 960px) {
   .intro-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 
   .intro-photo {
-    min-height: 400px;
+    min-height: 360px;
   }
 }
 
 @media (max-width: 560px) {
-  .intro-figure,
-  :host-context([dir='rtl']) .intro-figure {
-    padding: 0 0 36px;
-  }
-
-  .intro-figure::before {
-    display: none;
-  }
-
   .intro-photo {
-    min-height: 320px;
+    min-height: 280px;
   }
 
   .intro-aside-note {
-    inset-inline-start: 16px;
-    max-width: 230px;
-    padding: 20px 22px;
-    font-size: 18px;
-  }
-
-  .intro-description p {
+    max-width: 210px;
+    padding: 16px 18px;
     font-size: 16px;
   }
 }

@@ -1,5 +1,5 @@
 ﻿import { Component, computed, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { contactEmail, contactPhones, socialLinks } from '../../core/content/contact-details';
 import { SiteContentService } from '../../core/content/site-content.service';
 import { LanguageService } from '../../core/i18n/language.service';
@@ -7,7 +7,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 @Component({
   selector: 'app-site-footer',
-  imports: [RouterLink, TranslatePipe],
+  imports: [RouterLink, RouterLinkActive, TranslatePipe],
   templateUrl: './site-footer.html',
   styleUrl: './site-footer.css',
 })
