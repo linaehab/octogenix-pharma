@@ -1,30 +1,55 @@
 <footer class="site-footer">
-  <a class="wordmark footer-wordmark" routerLink="/" [attr.aria-label]="('company.name' | translate) + ', ' + ('header.home' | translate)">
-    <span>{{ 'company.name' | translate }}<small>{{ 'header.tagline' | translate }}</small></span>
-  </a>
-  <p class="footer-note">{{ 'footer.tagline' | translate }}</p>
-  <nav class="footer-navigation" [attr.aria-label]="'footer.navigation' | translate">
-    <a routerLink="/">{{ 'header.home' | translate }}</a>
-    <a routerLink="/about">{{ 'header.about' | translate }}</a>
-    <a routerLink="/services">{{ 'header.services' | translate }}</a>
-    <a routerLink="/brands">{{ 'header.brands' | translate }}</a>
-    <a routerLink="/contact">{{ 'header.contact' | translate }}</a>
-  </nav>
-  <div class="footer-contact">
-    @for (phone of phones(); track phone.href) {
-      <a dir="ltr" [href]="phone.href">{{ phone.label }}</a>
-    }
-    <a dir="ltr" [href]="'mailto:' + email()">{{ email() }}</a>
-    <p>{{ 'contact.address' | translate }}</p>
-  </div>
-  @if (social().length) {
-    <nav class="footer-social" [attr.aria-label]="'footer.social' | translate">
-      @for (link of social(); track link.network) {
-        <a [href]="link.url" target="_blank" rel="noopener noreferrer" [attr.aria-label]="('footer.social.' + link.network) | translate" [attr.data-network]="link.network">
-          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path [attr.d]="link.icon" /></svg>
+  <div class="footer-inner">
+    <!-- Contact strip: phone numbers, e-mail and address -->
+    <div class="footer-contact">
+      <div class="footer-contact-item">
+        <span class="footer-label">{{ 'contact.phoneLabel' | translate }}</span>
+        @for (phone of phones(); track phone.href) {
+          <a dir="ltr" [href]="phone.href">{{ phone.label }}</a>
+        }
+      </div>
+      <div class="footer-contact-item">
+        <span class="footer-label">{{ 'contact.emailLabel' | translate }}</span>
+        <a dir="ltr" [href]="'mailto:' + email()">{{ email() }}</a>
+      </div>
+      <div class="footer-contact-item">
+        <span class="footer-label">{{ 'contact.addressLabel' | translate }}</span>
+        <p>{{ 'contact.address' | translate }}</p>
+      </div>
+    </div>
+
+    <div class="footer-main">
+      <div class="footer-brand">
+        <a class="wordmark footer-wordmark" routerLink="/" [attr.aria-label]="('company.name' | translate) + ', ' + ('header.home' | translate)">
+          <span>{{ 'company.name' | translate }}<small>{{ 'header.tagline' | translate }}</small></span>
         </a>
-      }
-    </nav>
-  }
-  <p class="copyright">{{ 'footer.copyright' | translate: { year: currentYear } }}</p>
+        <p class="footer-note">{{ 'footer.tagline' | translate }}</p>
+      </div>
+
+      <nav class="footer-navigation" [attr.aria-label]="'footer.navigation' | translate">
+        <a routerLink="/">{{ 'header.home' | translate }}</a>
+        <a routerLink="/about">{{ 'header.about' | translate }}</a>
+        <a routerLink="/services">{{ 'header.services' | translate }}</a>
+        <a routerLink="/brands">{{ 'header.brands' | translate }}</a>
+        <a routerLink="/contact">{{ 'header.contact' | translate }}</a>
+      </nav>
+
+      <div class="footer-aside">
+        @if (social().length) {
+          <nav class="footer-social" [attr.aria-label]="'footer.social' | translate">
+            @for (link of social(); track link.network) {
+              <a [href]="link.url" target="_blank" rel="noopener noreferrer" [attr.aria-label]="('footer.social.' + link.network) | translate" [attr.data-network]="link.network">
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path [attr.d]="link.icon" /></svg>
+              </a>
+            }
+          </nav>
+        }
+        <button class="footer-language" type="button" (click)="toggleLanguage()">
+          {{ 'header.switchLanguage' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <p class="copyright">{{ 'footer.copyright' | translate: { year: currentYear } }}</p>
+  </div>
 </footer>

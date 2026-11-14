@@ -1,19 +1,19 @@
 import { Component, OnDestroy, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { HomeBanner } from '../home-banner/home-banner';
 
 @Component({
   selector: 'app-hero-section',
-  imports: [RouterLink, TranslatePipe, HomeBanner],
+  imports: [RouterLink, TranslatePipe],
   templateUrl: './hero-section.html',
   styleUrl: './hero-section.css',
 })
 export class HeroSection implements OnDestroy {
+  /** Licensed photographs (Unsplash License), resized and compressed for the web. */
   protected readonly slides = [
-    '/assets/images/hero/hero-egypt-nile.jpg',
-    '/assets/images/hero/hero-infant-nutrition.jpg',
-    '/assets/images/hero/hero-research-lab.jpg',
+    '/assets/images/corporate-v2/hero-scientist.jpg',
+    '/assets/images/corporate-v2/hero-cells.jpg',
+    '/assets/images/corporate-v2/hero-port.jpg',
   ];
 
   readonly activeIndex = signal(0);

@@ -3,171 +3,339 @@
 }
 
 .brands {
-  padding-top: 88px;
-  padding-bottom: 94px;
+  padding-block: var(--cx-section);
 }
 
 .brands-heading {
   display: grid;
-  grid-template-columns: 0.78fr 2fr;
-  gap: 8%;
-  align-items: end;
-}
-
-.brands-heading > .eyebrow {
-  padding-top: 10px;
+  gap: 18px;
+  margin-bottom: clamp(44px, 5vw, 72px);
 }
 
 .brands-heading > div {
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+  align-items: end;
+  gap: clamp(28px, 5vw, 80px);
 }
 
 .brands-heading h2 {
   margin: 0;
-  font-family: var(--serif);
-  font-size: clamp(43px, 5.3vw, 68px);
-  font-weight: 400;
-  letter-spacing: -0.055em;
-  line-height: 1.04;
+  font-size: clamp(32px, 4vw, 52px);
+  line-height: 1.1;
 }
 
-.brands-heading h2 em {
-  color: var(--green-light);
-  font-weight: 400;
-}
-
-.brands-heading > div > p {
-  max-width: 460px;
+.brands-heading p {
   margin: 0;
-  color: var(--ink-soft);
-  font-size: 11px;
-  line-height: 1.8;
+  color: var(--cx-gray);
+  font-size: 16px;
 }
 
+/* Brand card: an editorial composition in two halves.
+   The visual half frames the brand image on a layered stage with a soft warm light (a nod to
+   Jovie's own colour); the text half carries the name, story and actions on clean white. */
 .brand-feature {
+  --brand-accent: #f5b400;
+
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid var(--cx-line);
+  border-radius: var(--cx-radius-lg);
+  background: #fff;
+  transition: box-shadow 600ms var(--cx-ease), border-color 400ms ease;
+}
+
+.brand-feature + .brand-feature {
+  margin-top: 26px;
+}
+
+.brand-feature:hover {
+  border-color: transparent;
+  box-shadow: var(--cx-shadow);
+}
+
+/* Visual half */
+.brand-visual {
   position: relative;
   display: grid;
-  min-height: 300px;
-  grid-template-columns: 0.65fr 1.35fr;
-  margin-top: 24px;
-  background: var(--paper-deep);
+  min-height: 440px;
+  place-items: center;
+  overflow: hidden;
+  padding: clamp(36px, 4.4vw, 64px);
+  background:
+    radial-gradient(circle at 28% 22%, rgba(245, 180, 0, 0.22) 0%, rgba(245, 180, 0, 0) 55%),
+    radial-gradient(circle at 80% 90%, rgba(114, 147, 215, 0.25) 0%, rgba(114, 147, 215, 0) 60%),
+    linear-gradient(160deg, #fdf8ec 0%, var(--cx-ice) 100%);
+}
+
+/* A navy plate behind the image gives the composition depth */
+.brand-visual-layer {
+  position: absolute;
+  width: 68%;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--cx-radius-lg);
+  background: linear-gradient(150deg, var(--cx-navy) 0%, var(--cx-midnight) 100%);
+  box-shadow: 0 30px 50px -30px rgba(7, 23, 51, 0.7);
+  transform: translate(-7%, 9%) rotate(-6deg);
+  transition: transform 800ms var(--cx-ease);
 }
 
 .brand-image {
-  min-height: 300px;
-  background: var(--image-placeholder);
+  position: relative;
+  z-index: 1;
+  width: 78%;
+  aspect-ratio: 4 / 3;
+  border: 8px solid #fff;
+  border-radius: var(--cx-radius-lg);
+  background: var(--cx-ice);
+  box-shadow: 0 26px 50px -28px rgba(7, 23, 51, 0.55);
+  transition: transform 800ms var(--cx-ease);
 }
 
+.brand-feature:hover .brand-image {
+  transform: translateY(-8px) rotate(1deg);
+}
+
+.brand-feature:hover .brand-visual-layer {
+  transform: translate(-9%, 11%) rotate(-9deg);
+}
+
+/* Jovie: the official logo on its own badge, the product range on a warm stage.
+   The logo never moves; on hover the tins fan out (transform only). */
+.brand-visual--range {
+  place-items: end center;
+}
+
+.brand-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(84%, 420px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 180, 0, 0.5) 0%, rgba(245, 180, 0, 0.18) 46%, rgba(245, 180, 0, 0) 70%);
+  transform: translate(-50%, -36%);
+}
+
+.brand-logo {
+  position: absolute;
+  z-index: 2;
+  top: clamp(20px, 2.4vw, 32px);
+  inset-inline-start: clamp(20px, 2.4vw, 32px);
+  width: clamp(64px, 6vw, 88px);
+  height: auto;
+  border: 5px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 14px 30px -16px rgba(7, 23, 51, 0.55);
+}
+
+.brand-range {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: min(100%, 420px);
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* Soft contact shadow under the tins */
+.brand-range::after {
+  position: absolute;
+  z-index: -1;
+  right: 10%;
+  bottom: -12px;
+  left: 10%;
+  height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(7, 23, 51, 0.3) 0%, rgba(7, 23, 51, 0) 70%);
+  content: '';
+}
+
+.brand-pack {
+  width: 32%;
+  height: auto;
+  margin-inline: -5%;
+  transition: transform 800ms var(--cx-ease);
+}
+
+.brand-pack:nth-child(1) {
+  transform: translateY(-4%) rotate(-7deg);
+}
+
+.brand-pack:nth-child(2) {
+  position: relative;
+  z-index: 1;
+  width: 40%;
+}
+
+.brand-pack:nth-child(3) {
+  transform: translateY(-4%) rotate(7deg);
+}
+
+.brand-feature:hover .brand-pack:nth-child(1) {
+  transform: translate(-10%, -6%) rotate(-11deg);
+}
+
+.brand-feature:hover .brand-pack:nth-child(2) {
+  transform: translateY(-10px);
+}
+
+.brand-feature:hover .brand-pack:nth-child(3) {
+  transform: translate(10%, -6%) rotate(11deg);
+}
+
+/* Text half */
 .brand-panel {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  padding: 60px 12%;
+  padding: clamp(32px, 4.6vw, 68px);
+  border-inline-start: 1px solid var(--cx-line);
 }
 
 .brand-label {
-  color: var(--green-light);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--cx-royal);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: var(--cx-track-label);
   text-transform: uppercase;
 }
 
+.brand-label::before {
+  width: 28px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--brand-accent);
+  content: '';
+}
+
 .brand-name {
-  margin: 20px 0 13px;
-  color: var(--green);
-  font-family: var(--serif);
-  font-size: clamp(32px, 4vw, 52px);
-  font-weight: 400;
-  letter-spacing: -0.05em;
-  line-height: 1.15;
+  margin: 18px 0 18px;
+  color: var(--cx-navy);
+  font-size: clamp(40px, 4.4vw, 62px);
+  font-weight: 700;
+  line-height: 1;
 }
 
 .brand-description {
-  max-width: 290px;
-  margin: 0 0 10px;
-  color: var(--ink-soft);
-  font-size: 12px;
-  line-height: 1.85;
+  max-width: 480px;
+  margin: 0 0 30px;
+  color: var(--cx-slate);
+  font-size: 17px;
+  line-height: 1.75;
 }
 
-.brand-asset-note {
-  max-width: 310px;
-  margin-bottom: 20px;
-  color: #778178;
-  font-size: 9px;
-  line-height: 1.6;
+.brand-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 28px;
+}
+
+.brand-actions .text-link {
+  margin-bottom: 0;
 }
 
 .store-button {
   display: inline-flex;
+  min-height: 52px;
   align-items: center;
   gap: 12px;
-  margin-bottom: 22px;
-  padding: 11px 20px;
-  border-radius: 999px;
-  background: var(--green);
-  color: #fff;
-  font-size: 11px;
+  padding: 0 26px;
+  border-radius: var(--cx-radius);
+  color: var(--cx-midnight);
+  background: var(--cx-azure);
+  box-shadow: 0 14px 30px -14px rgba(76, 155, 255, 0.75);
+  font-size: 15px;
   font-weight: 700;
-  transition: background 180ms ease;
+  transition: background 240ms ease, transform 280ms var(--cx-ease);
 }
 
 .store-button:hover {
-  background: var(--clay);
+  background: var(--cx-azure-hover);
+  transform: translateY(-2px);
 }
 
-@media (max-width: 1050px) {
-  .brands-heading {
-    grid-template-columns: 0.6fr 2fr;
-    gap: 6%;
-  }
+:host-context([dir='rtl']) .store-button span {
+  display: inline-block;
+  transform: scaleX(-1);
 }
 
-@media (max-width: 760px) {
-  .brands {
-    padding-top: 91px;
-    padding-bottom: 86px;
-  }
+:host-context([dir='rtl']) .brand-visual-layer {
+  transform: translate(7%, 9%) rotate(6deg);
+}
 
-  .brands-heading {
-    display: block;
-  }
+:host-context([dir='rtl']) .brand-feature:hover .brand-visual-layer {
+  transform: translate(9%, 11%) rotate(9deg);
+}
 
-  .brands-heading > div {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 16px;
-    margin-top: 23px;
-  }
+:host-context([dir='rtl']) .brand-feature:hover .brand-pack:nth-child(1) {
+  transform: translate(10%, -6%) rotate(11deg);
+}
 
-  .brands-heading h2 {
-    margin-top: 19px;
-    font-size: clamp(42px, 10.5vw, 61px);
-  }
+:host-context([dir='rtl']) .brand-feature:hover .brand-pack:nth-child(3) {
+  transform: translate(-10%, -6%) rotate(-11deg);
+}
 
-  .brands-heading > div > p {
-    max-width: 320px;
-  }
+:host-context([dir='rtl']) .brand-pack:nth-child(1) {
+  transform: translateY(-4%) rotate(7deg);
+}
 
+:host-context([dir='rtl']) .brand-pack:nth-child(3) {
+  transform: translateY(-4%) rotate(-7deg);
+}
+
+:host-context([dir='rtl']) .brand-feature:hover .brand-image {
+  transform: translateY(-8px) rotate(-1deg);
+}
+
+@media (max-width: 900px) {
+  .brands-heading > div,
   .brand-feature {
-    grid-template-columns: 1fr;
-    margin-top: 32px;
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .brand-image {
-    min-height: 230px;
+  .brand-visual {
+    min-height: 320px;
   }
 
   .brand-panel {
-    min-height: 320px;
-    padding: 40px 9%;
+    border-inline-start: 0;
+    border-top: 1px solid var(--cx-line);
+  }
+}
+
+@media (max-width: 560px) {
+  .brand-visual {
+    min-height: 260px;
+    padding: 30px 24px;
+  }
+
+  .brand-image {
+    width: 86%;
+  }
+
+  .brand-logo {
+    width: 56px;
+    border-width: 4px;
+  }
+
+  .brand-actions .text-link {
+    font-size: 13px;
+    letter-spacing: 0.02em;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .brand-image,
+  .brand-pack,
+  .brand-visual-layer {
+    transition: none;
+  }
 }

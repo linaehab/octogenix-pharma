@@ -9,9 +9,9 @@
   <div class="contact-layout">
     <aside class="contact-details" [attr.aria-label]="'contact.detailsTitle' | translate">
       <div class="contact-image image-swap">
-        <img class="image-swap__primary" [src]="content.image('contact.image', '/assets/images/hero-partnership.jpg')"
+        <img class="image-swap__primary" [src]="cardImage()"
           [alt]="'contact.imageAlt' | translate" loading="lazy" />
-        <img class="image-swap__alternate" [src]="content.image('contact.hoverImage', '/assets/images/hero-operations.jpg')" alt="" aria-hidden="true" loading="lazy" />
+        <img class="image-swap__alternate" [src]="cardHoverImage()" alt="" aria-hidden="true" loading="lazy" />
       </div>
       <h3>{{ 'contact.detailsTitle' | translate }}</h3>
       <div class="detail-group">

@@ -10,6 +10,21 @@
   </div>
   @for (brand of brands(); track $index) {
     <div class="brand-feature">
+      @if (brand.showcase; as showcase) {
+        <!-- Visual: the brand logo on its own badge, the product range on a warm stage -->
+        <div class="brand-visual brand-visual--range">
+          <span class="brand-glow" aria-hidden="true"></span>
+          <img class="brand-logo" [src]="showcase.logo" [alt]="brand.name" width="96" height="96" />
+          <div class="brand-range" role="img" [attr.aria-label]="brand.imageAlt">
+            @for (pack of showcase.packs; track pack) {
+              <img class="brand-pack" [src]="pack" alt="" width="360" height="487" loading="lazy" decoding="async" />
+            }
+          </div>
+        </div>
+      } @else {
+      <!-- Visual: the brand image framed on a layered stage -->
+      <div class="brand-visual">
+        <span class="brand-visual-layer" aria-hidden="true"></span>
       <div class="brand-image image-swap">
         <img class="image-swap__primary" [src]="brand.image"
           [alt]="brand.imageAlt" loading="lazy" />
@@ -17,13 +32,15 @@
           <img class="image-swap__alternate" [src]="brand.hoverImage" alt="" aria-hidden="true" loading="lazy" />
         }
       </div>
+      </div>
+      }
       <div class="brand-panel">
         <span class="brand-label">{{ brand.label }}</span>
         <h3 class="brand-name">{{ brand.name }}</h3>
         <p class="brand-description">
           {{ brand.description }}
         </p>
-        <span class="brand-asset-note">{{ 'brands.assetNote' | translate }}</span>
+        <div class="brand-actions">
         @if (brand.storeUrl) {
           <a class="store-button" [routerLink]="brand.storeUrl">
             {{ 'brands.visitStore' | translate: { brand: brand.name } }} <span aria-hidden="true">↗</span>
@@ -38,6 +55,7 @@
             {{ brand.ctaLabel }} <span aria-hidden="true">↗</span>
           </a>
         }
+        </div>
       </div>
     </div>
   }

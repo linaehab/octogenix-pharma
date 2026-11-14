@@ -66,185 +66,6 @@ p {
   margin-top: 0;
 }
 
-.wordmark {
-  display: inline-flex;
-  align-items: center;
-  font-family: var(--serif);
-  font-size: 17px;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-}
-
-.wordmark small {
-  display: block;
-  margin-top: 3px;
-  color: var(--ink-soft);
-  font-family: var(--sans);
-  font-size: 8px;
-  font-weight: 500;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-}
-
-.eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  margin: 0;
-  color: var(--green-light);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  line-height: 1.6;
-  text-transform: uppercase;
-}
-
-.eyebrow > span {
-  width: 21px;
-  height: 1px;
-  background: currentColor;
-}
-
-.light-eyebrow {
-  color: #f1c2dc;
-}
-
-.button {
-  display: inline-flex;
-  min-height: 50px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 44px;
-  padding: 0 18px;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  transition: color 180ms ease, background 180ms ease, border-color 180ms ease;
-}
-
-.button-light {
-  color: white;
-  background: var(--clay);
-}
-
-.button-light:hover {
-  border-color: var(--clay);
-  color: var(--clay);
-  background: transparent;
-}
-
-.text-link {
-  display: inline-flex;
-  flex: 0 0 auto;
-  align-items: center;
-  gap: 20px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--green-light);
-  color: var(--green);
-  font-size: 10px;
-  font-weight: 600;
-}
-
-.text-link span {
-  transition: transform 180ms ease;
-}
-
-.text-link:hover span {
-  transform: translate(3px, -3px);
-}
-
-.section-wrap {
-  padding-right: 13.4%;
-  padding-left: 13.4%;
-}
-
-.reveal {
-  animation: reveal-on-entry linear both;
-  animation-timeline: view();
-  animation-range: entry 0% entry 28%;
-}
-
-.reveal-step {
-  animation: reveal-on-entry linear both;
-  animation-timeline: view();
-  animation-range: entry 0% entry 48%;
-}
-
-.reveal-step:nth-child(2) {
-  animation-delay: 90ms;
-}
-
-.reveal-step:nth-child(3) {
-  animation-delay: 180ms;
-}
-
-.photo-caption {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  padding: 11px 9px;
-  color: white;
-  background: linear-gradient(transparent, rgba(28, 44, 35, 0.72));
-  font-size: 8px;
-  letter-spacing: 0.04em;
-}
-
-.image-swap {
-  position: relative;
-  overflow: hidden;
-}
-
-.image-swap > img {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: opacity 420ms ease, transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-
-.image-swap__alternate {
-  opacity: 0;
-  transform: scale(1.04);
-}
-
-.image-swap:hover .image-swap__primary,
-.image-swap:focus-within .image-swap__primary {
-  opacity: 0;
-  transform: scale(1.04);
-}
-
-.image-swap:hover .image-swap__alternate,
-.image-swap:focus-within .image-swap__alternate {
-  opacity: 1;
-  transform: scale(1.05);
-}
-
-@keyframes image-arrive {
-  from { transform: scale(1.035); }
-  to { transform: scale(1); }
-}
-
-@keyframes copy-arrive {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes reveal-on-entry {
-  from {
-    opacity: 0;
-    transform: translateY(28px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @keyframes route-enter {
   from {
     opacity: 0;
@@ -260,118 +81,6 @@ html[dir="rtl"] {
   text-align: right;
 }
 
-html[dir="rtl"] .hero-copy {
-  margin-right: 10%;
-  margin-left: 0;
-}
-
-html[dir="rtl"] .hero-shade {
-  background: linear-gradient(270deg, rgba(28, 49, 94, 0.64) 0%, rgba(28, 49, 94, 0.29) 45%, rgba(28, 49, 94, 0.02) 100%);
-}
-
-html[dir="rtl"] .hero-note {
-  right: auto;
-  left: 7.2%;
-}
-
-html[dir="rtl"] .scroll-cue {
-  right: 0;
-  left: auto;
-}
-
-html[dir="rtl"] .intro-photo {
-  right: auto;
-  left: 9%;
-}
-
-html[dir="rtl"] .footer-note {
-  text-align: center;
-}
-
-html[dir="rtl"] .service-number {
-  right: auto;
-  left: 15px;
-}
-
-html[dir="rtl"] .service-arrow {
-  right: auto;
-  left: 20px;
-}
-
-html[dir="rtl"] .ticker-track {
-  animation-name: ticker-scroll-rtl;
-}
-
-@keyframes ticker-scroll-rtl {
-  to {
-    transform: translateX(50%);
-  }
-}
-
-@media (max-width: 1050px) {
-  .section-wrap {
-    padding-right: 8%;
-    padding-left: 8%;
-  }
-
-  html[dir="rtl"] .hero-copy {
-    margin-right: 9%;
-  }
-
-  html[dir="rtl"] .hero-shade {
-    background: linear-gradient(0deg, rgba(28, 49, 94, 0.78) 0%, rgba(28, 49, 94, 0.28) 62%, rgba(28, 49, 94, 0.08) 100%);
-  }
-
-  html[dir="rtl"] .intro-photo {
-    right: auto;
-    left: 5%;
-  }
-}
-
-@media (max-width: 760px) {
-  :root {
-    scroll-padding-top: 4rem;
-  }
-
-  .wordmark {
-    font-size: 15px;
-  }
-
-  .section-wrap {
-    padding-right: 7%;
-    padding-left: 7%;
-  }
-
-  html[dir="rtl"] .hero-copy {
-    margin-right: 7%;
-    margin-left: 7%;
-  }
-
-  html[dir="rtl"] .hero-note {
-    right: auto;
-    left: 7%;
-  }
-
-  html[dir="rtl"] .scroll-cue {
-    right: auto;
-  }
-
-  html[dir="rtl"] .intro-photo {
-    right: auto;
-    left: 7%;
-  }
-
-  html[dir="rtl"] .footer-note {
-    text-align: right;
-  }
-}
-
-@media (max-width: 380px) {
-  .wordmark small {
-    font-size: 7px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -381,9 +90,361 @@ html[dir="rtl"] .ticker-track {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
 
-  .reveal,
-  .reveal-step {
+/* ==========================================================================
+   Octogenix corporate website — design system V2 ("Midnight Clinical").
+   Every rule below is scoped to app-corporate-layout, so it applies to the
+   corporate pages only: the Jovie store and the admin dashboard never match
+   these selectors, and the shared :root variables above are not changed.
+   ========================================================================== */
+
+app-corporate-layout {
+  /* Colour */
+  --cx-midnight: #071733;
+  --cx-midnight-2: #0a2047;
+  --cx-navy: #0f2c5d;
+  --cx-royal: #1b4a9c;
+  --cx-periwinkle: #7293d7;
+  --cx-azure: #4c9bff;
+  --cx-azure-hover: #6fb0ff;
+  --cx-ice: #ebf0fe;
+  --cx-cloud: #f6f8fd;
+  --cx-white: #ffffff;
+  --cx-ink: #0b1220;
+  --cx-slate: #3e4c66;
+  --cx-gray: #6b7488;
+  --cx-line: #dce3f2;
+  --cx-on-dark: #f2f5fd;
+  --cx-on-dark-2: rgba(235, 240, 254, 0.72);
+  --cx-on-dark-line: rgba(235, 240, 254, 0.14);
+  --cx-error: #c0303f;
+  --cx-success: #1b7f55;
+
+  /* Type */
+  --cx-font: "Manrope", "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif;
+  --cx-track-tight: -0.03em;
+  --cx-track-label: 0.16em;
+
+  /* Shape and layout */
+  --cx-radius: 14px;
+  --cx-radius-lg: 22px;
+  --cx-max: 1200px;
+  --cx-gutter: clamp(20px, 5vw, 64px);
+  --cx-section: clamp(76px, 9vw, 124px);
+  --cx-ease: cubic-bezier(0.22, 0.68, 0.16, 1);
+  --cx-shadow: 0 1px 2px rgba(7, 23, 51, 0.06), 0 22px 44px -26px rgba(7, 23, 51, 0.38);
+
+  display: block;
+  color: var(--cx-slate);
+  background: var(--cx-white);
+  font-family: var(--cx-font);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+/* Arabic is never letter-spaced. */
+html[dir="rtl"] app-corporate-layout {
+  --cx-track-tight: 0;
+  --cx-track-label: 0;
+  --cx-font: "IBM Plex Sans Arabic", "Manrope", "Segoe UI", system-ui, sans-serif;
+}
+
+app-corporate-layout h1,
+app-corporate-layout h2,
+app-corporate-layout h3,
+app-corporate-layout h4 {
+  color: var(--cx-ink);
+  font-family: var(--cx-font);
+  font-weight: 600;
+  letter-spacing: var(--cx-track-tight);
+}
+
+app-corporate-layout ::selection {
+  color: var(--cx-midnight);
+  background: var(--cx-azure);
+}
+
+app-corporate-layout a:focus-visible,
+app-corporate-layout button:focus-visible,
+app-corporate-layout input:focus-visible,
+app-corporate-layout select:focus-visible,
+app-corporate-layout textarea:focus-visible {
+  outline: 2px solid var(--cx-azure);
+  outline-offset: 3px;
+}
+
+/* Wordmark (the company has no logo file: the name is set as a typographic mark) */
+app-corporate-layout .wordmark {
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
+  font-family: var(--cx-font);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+app-corporate-layout .wordmark small {
+  display: block;
+  margin-top: 5px;
+  opacity: 0.72;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+html[dir="rtl"] app-corporate-layout .wordmark {
+  letter-spacing: 0;
+}
+
+html[dir="rtl"] app-corporate-layout .wordmark small {
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+/* Section label: small capitals with a leading azure dot */
+app-corporate-layout .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: var(--cx-royal);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: var(--cx-track-label);
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+html[dir="rtl"] app-corporate-layout .eyebrow {
+  font-size: 14px;
+}
+
+app-corporate-layout .eyebrow > span {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--cx-azure);
+}
+
+app-corporate-layout .light-eyebrow {
+  color: var(--cx-azure);
+}
+
+/* Buttons */
+app-corporate-layout .button {
+  display: inline-flex;
+  min-height: 54px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 28px;
+  border: 1px solid transparent;
+  border-radius: var(--cx-radius);
+  cursor: pointer;
+  font-family: var(--cx-font);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0;
+  transition: color 240ms ease, background 240ms ease, border-color 240ms ease, box-shadow 280ms var(--cx-ease),
+    transform 280ms var(--cx-ease);
+}
+
+app-corporate-layout .button > span[aria-hidden="true"] {
+  display: inline-block;
+  transition: transform 300ms var(--cx-ease);
+}
+
+app-corporate-layout .button:hover > span[aria-hidden="true"] {
+  transform: translate(3px, -3px);
+}
+
+html[dir="rtl"] app-corporate-layout .button > span[aria-hidden="true"] {
+  transform: scaleX(-1);
+}
+
+html[dir="rtl"] app-corporate-layout .button:hover > span[aria-hidden="true"] {
+  transform: scaleX(-1) translate(3px, -3px);
+}
+
+/* Primary call to action: azure with midnight text (about 7:1 contrast) */
+app-corporate-layout .button-light,
+app-corporate-layout .button-azure {
+  color: var(--cx-midnight);
+  background: var(--cx-azure);
+  box-shadow: 0 14px 30px -14px rgba(76, 155, 255, 0.75);
+}
+
+app-corporate-layout .button-light:hover,
+app-corporate-layout .button-azure:hover {
+  background: var(--cx-azure-hover);
+  transform: translateY(-2px);
+}
+
+app-corporate-layout .button-outline {
+  border-color: rgba(235, 240, 254, 0.32);
+  color: #fff;
+  background: transparent;
+}
+
+app-corporate-layout .button-outline:hover {
+  border-color: #fff;
+  background: rgba(235, 240, 254, 0.08);
+}
+
+app-corporate-layout .button-navy,
+app-corporate-layout .button-submit {
+  color: #fff;
+  background: var(--cx-navy);
+}
+
+app-corporate-layout .button-navy:hover,
+app-corporate-layout .button-submit:hover:not(:disabled) {
+  background: var(--cx-royal);
+  transform: translateY(-2px);
+}
+
+app-corporate-layout .button:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+/* Text link: label with an underline that grows */
+app-corporate-layout .text-link {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 6px;
+  color: var(--cx-navy);
+  background: linear-gradient(var(--cx-azure), var(--cx-azure)) 0 100% / 36px 2px no-repeat;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background-size 360ms var(--cx-ease);
+}
+
+app-corporate-layout .text-link:hover {
+  background-size: 100% 2px;
+}
+
+html[dir="rtl"] app-corporate-layout .text-link {
+  background-position: 100% 100%;
+  letter-spacing: 0;
+}
+
+html[dir="rtl"] app-corporate-layout .text-link span {
+  display: inline-block;
+  transform: scaleX(-1);
+}
+
+/* One content width for every section */
+app-corporate-layout .section-wrap {
+  width: min(var(--cx-max), calc(100% - 2 * var(--cx-gutter)));
+  margin-inline: auto;
+}
+
+/* Scroll reveal (browsers without scroll timelines simply show the content) */
+app-corporate-layout .reveal {
+  animation: cx-reveal linear both;
+  animation-timeline: view();
+  animation-range: entry 0% entry 30%;
+}
+
+app-corporate-layout .reveal-step {
+  animation: cx-reveal linear both;
+  animation-timeline: view();
+  animation-range: entry 0% entry 40%;
+}
+
+/* Two images cross-fading on hover */
+app-corporate-layout .image-swap {
+  position: relative;
+  overflow: hidden;
+}
+
+app-corporate-layout .image-swap > img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 600ms ease, transform 1100ms var(--cx-ease);
+}
+
+app-corporate-layout .image-swap__alternate {
+  opacity: 0;
+  transform: scale(1.05);
+}
+
+app-corporate-layout .image-swap:hover .image-swap__primary,
+app-corporate-layout .image-swap:focus-within .image-swap__primary {
+  opacity: 0;
+  transform: scale(1.05);
+}
+
+app-corporate-layout .image-swap:hover .image-swap__alternate,
+app-corporate-layout .image-swap:focus-within .image-swap__alternate {
+  opacity: 1;
+  transform: scale(1.01);
+}
+
+app-corporate-layout .photo-caption {
+  position: absolute;
+  inset-inline-start: 0;
+  bottom: 0;
+  padding: 10px 16px;
+  color: #fff;
+  background: rgba(7, 23, 51, 0.78);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+@keyframes cx-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cx-rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cx-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+app-corporate-layout .route-content > router-outlet + * {
+  animation: cx-fade 520ms ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  app-corporate-layout .reveal,
+  app-corporate-layout .reveal-step,
+  app-corporate-layout .route-content > router-outlet + * {
     animation: none !important;
   }
 }

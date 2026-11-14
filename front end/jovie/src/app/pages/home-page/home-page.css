@@ -1,3 +1,59 @@
 :host {
   display: block;
 }
+
+.home-cta {
+  padding: var(--cx-section) 0;
+  background: var(--cx-ice);
+}
+
+.home-cta-inner {
+  position: relative;
+  display: flex;
+  width: min(var(--cx-max), calc(100% - 2 * var(--cx-gutter)));
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  margin-inline: auto;
+  overflow: hidden;
+  padding: clamp(36px, 5vw, 64px);
+  border-radius: var(--cx-radius-lg);
+  background:
+    radial-gradient(ellipse 50% 90% at 100% 50%, rgba(76, 155, 255, 0.28) 0%, rgba(76, 155, 255, 0) 70%),
+    linear-gradient(120deg, var(--cx-midnight) 0%, var(--cx-navy) 100%);
+}
+
+:host-context([dir='rtl']) .home-cta-inner {
+  background:
+    radial-gradient(ellipse 50% 90% at 0% 50%, rgba(76, 155, 255, 0.28) 0%, rgba(76, 155, 255, 0) 70%),
+    linear-gradient(240deg, var(--cx-midnight) 0%, var(--cx-navy) 100%);
+}
+
+.home-cta h2 {
+  margin: 16px 0 10px;
+  color: #fff;
+  font-size: clamp(28px, 3.4vw, 44px);
+  line-height: 1.12;
+}
+
+.home-cta-text {
+  max-width: 560px;
+  margin: 0;
+  color: var(--cx-on-dark-2);
+  font-size: 16px;
+}
+
+.home-cta .button {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 760px) {
+  .home-cta-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .home-cta .button {
+    width: 100%;
+  }
+}

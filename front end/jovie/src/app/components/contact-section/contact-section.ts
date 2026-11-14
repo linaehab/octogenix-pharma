@@ -7,6 +7,7 @@ import { SiteContentService } from '../../core/content/site-content.service';
 import { LanguageService } from '../../core/i18n/language.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { emailAddress } from '../../core/forms/email-address.validator';
+import { designImage } from '../design-image';
 
 type SendStatus = 'idle' | 'sending' | 'sent' | 'error';
 
@@ -24,6 +25,13 @@ export class ContactSection {
 
   protected readonly phones = computed(() => contactPhones(this.content));
   protected readonly email = computed(() => contactEmail(this.content));
+  /** Card photographs: the redesign's images unless others were uploaded in the dashboard. */
+  protected readonly cardImage = computed(() =>
+    designImage(this.content, 'contact.image', '/assets/images/hero-partnership.jpg', '/assets/images/corporate-v2/contact-team.jpg'),
+  );
+  protected readonly cardHoverImage = computed(() =>
+    designImage(this.content, 'contact.hoverImage', '/assets/images/hero-operations.jpg', '/assets/images/corporate-v2/contact-call.jpg'),
+  );
 
   protected readonly status = signal<SendStatus>('idle');
   /** Translation key of the error shown when status is 'error'. */

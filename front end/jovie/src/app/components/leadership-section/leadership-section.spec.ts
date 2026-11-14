@@ -27,7 +27,9 @@ describe('LeadershipSection', () => {
   it('shows the bundled leaders until the dashboard list is loaded', () => {
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(text).toContain('Dr. Tarek Kandil');
-    expect(text).toContain('TK');
+    expect(text).toContain('Founder');
+    // The design shows names and roles only: no initials placeholder in place of a portrait.
+    expect((fixture.nativeElement as HTMLElement).querySelector('.leader-avatar')).toBeNull();
   });
 
   it('derives initials like the current site, skipping honorifics', () => {

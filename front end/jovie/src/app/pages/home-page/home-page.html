@@ -3,3 +3,17 @@
 <app-services-section />
 <app-about-section />
 <app-values-section />
+
+<!-- Closing call to action: the existing contact heading and text, linking to the contact page -->
+<section class="home-cta" aria-labelledby="home-cta-title">
+  <div class="home-cta-inner reveal">
+    <div>
+      <p class="eyebrow light-eyebrow"><span></span>{{ 'contact.kicker' | translate }}</p>
+      <h2 id="home-cta-title">{{ 'contact.title' | translate }}</h2>
+      <p class="home-cta-text">{{ 'contact.description' | translate }}</p>
+    </div>
+    <a class="button button-azure" routerLink="/contact">
+      {{ 'header.contact' | translate }} <span aria-hidden="true">↗</span>
+    </a>
+  </div>
+</section>

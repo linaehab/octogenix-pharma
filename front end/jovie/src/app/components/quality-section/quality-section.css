@@ -1,124 +1,179 @@
-
 :host {
   display: block;
 }
 
+/* Quality credential band: a seal, the statement and a photograph */
 .quality {
-  padding: 60px 0;
-  background: var(--section-lilac);
+  padding-block: var(--cx-section);
+  background: var(--cx-cloud);
 }
 
 .quality-inner {
   display: grid;
-  grid-template-columns: minmax(160px, 0.8fr) 110px minmax(0, 1.5fr);
+  grid-template-areas: 'seal copy photo';
+  grid-template-columns: auto minmax(0, 1.1fr) minmax(0, 1fr);
   align-items: center;
-  gap: 24px;
+  gap: clamp(28px, 4.5vw, 64px);
 }
 
-.quality-photo {
-  height: 190px;
-  border-radius: var(--card-radius);
-  background: var(--image-placeholder);
-}
-
+/* The standard's initials set in a round seal */
 .quality-symbol {
+  position: relative;
   display: grid;
-  width: 110px;
-  min-height: 64px;
+  width: 184px;
+  height: 184px;
+  grid-area: seal;
   place-items: center;
-  border: 1px solid rgba(32, 59, 98, 0.2);
-  border-radius: 12px;
-  color: var(--green);
-  background: #fff;
-  font-family: var(--serif);
-  font-size: 23px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  border-radius: 50%;
+  color: #fff;
+  background: linear-gradient(150deg, var(--cx-royal) 0%, var(--cx-midnight) 100%);
+  box-shadow: 0 0 0 10px #fff, 0 0 0 11px var(--cx-line), var(--cx-shadow);
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* A soft halo that breathes outward from the seal */
+.quality-symbol::after {
+  position: absolute;
+  inset: -22px;
+  border: 2px solid var(--cx-azure);
+  border-radius: 50%;
+  content: '';
+  opacity: 0;
+  animation: quality-halo 3.6s ease-out infinite;
+}
+
+/* A band of light that sweeps across the seal every few seconds */
+.quality-shine {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.quality-shine::before {
+  position: absolute;
+  top: -20%;
+  left: 0;
+  width: 45%;
+  height: 140%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.38) 50%, rgba(255, 255, 255, 0) 100%);
+  content: '';
+  transform: translateX(-120%) rotate(18deg);
+  animation: quality-shine 4.8s ease-in-out infinite;
+}
+
+/* Transform and opacity only: both run on the compositor */
+@keyframes quality-shine {
+  0%,
+  55% {
+    transform: translateX(-120%) rotate(18deg);
+  }
+  85%,
+  100% {
+    transform: translateX(260%) rotate(18deg);
+  }
+}
+
+@keyframes quality-halo {
+  0% {
+    opacity: 0.55;
+    transform: scale(0.88);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.12);
+  }
+}
+
+.quality-symbol::before {
+  position: absolute;
+  inset: 12px;
+  border: 1px dashed rgba(235, 240, 254, 0.4);
+  border-radius: 50%;
+  content: '';
+}
+
+.quality-copy {
+  grid-area: copy;
 }
 
 .quality-copy h2 {
-  margin: 12px 0 7px;
-  font-family: var(--serif);
-  font-size: clamp(32px, 4.3vw, 52px);
-  font-weight: 400;
-  letter-spacing: -0.045em;
-  line-height: 1.12;
+  margin: 18px 0 18px;
+  font-size: clamp(28px, 3.2vw, 42px);
+  line-height: 1.15;
 }
 
 .quality-standard {
-  margin: 0;
-  color: var(--green);
-  font-size: 13px;
-  font-weight: 600;
+  display: inline-block;
+  margin: 0 0 18px;
+  padding: 9px 16px;
+  border-radius: 10px;
+  color: #fff;
+  background: linear-gradient(150deg, var(--cx-royal) 0%, var(--cx-navy) 100%);
+  box-shadow: 0 12px 26px -16px rgba(27, 74, 156, 0.8);
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .quality-description {
-  max-width: 680px;
-  margin: 8px 0 0;
-  color: var(--ink-soft);
-  font-size: 11px;
-  line-height: 1.75;
+  max-width: 520px;
+  margin: 0;
+  color: var(--cx-gray);
+  font-size: 16px;
 }
 
-/* Tablet */
+.quality-photo {
+  grid-area: photo;
+  min-height: 360px;
+  border-radius: var(--cx-radius-lg);
+  background: var(--cx-midnight);
+}
 
-@media (max-width: 900px) {
-  .quality {
-    padding: 48px 0;
-  }
+.quality-photo::after {
+  position: absolute;
+  inset: 0;
+  background: var(--cx-royal);
+  content: '';
+  mix-blend-mode: color;
+  opacity: 0.35;
+  pointer-events: none;
+}
 
+@media (max-width: 1000px) {
   .quality-inner {
-    grid-template-columns: minmax(130px, 0.7fr) 90px minmax(0, 1.5fr);
-    gap: 18px;
-  }
-
-  .quality-photo {
-    height: 170px;
+    grid-template-areas:
+      'seal copy'
+      'photo photo';
+    grid-template-columns: auto minmax(0, 1fr);
   }
 
   .quality-symbol {
-    width: 90px;
-    min-height: 58px;
-    font-size: 20px;
+    width: 140px;
+    height: 140px;
+    font-size: 28px;
   }
 }
-
-/* Mobile */
 
 @media (max-width: 620px) {
-  .quality {
-    padding: 36px 0;
-  }
-
   .quality-inner {
-    grid-template-columns: 82px minmax(0, 1fr);
-    gap: 14px;
+    grid-template-areas:
+      'seal'
+      'copy'
+      'photo';
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .quality-photo {
-    height: 135px;
-    grid-column: 1 / -1;
+    min-height: 260px;
   }
+}
 
-  .quality-symbol {
-    width: 82px;
-    min-height: 52px;
-    border-radius: 9px;
-    font-size: 18px;
-  }
-
-  .quality-copy h2 {
-    margin: 8px 0 6px;
-    font-size: clamp(29px, 7.5vw, 40px);
-  }
-
-  .quality-standard {
-    font-size: 12px;
-  }
-
-  .quality-description {
-    margin-top: 6px;
-    font-size: 10px;
-    line-height: 1.7;
+@media (prefers-reduced-motion: reduce) {
+  .quality-symbol::after,
+  .quality-shine::before {
+    animation: none;
   }
 }

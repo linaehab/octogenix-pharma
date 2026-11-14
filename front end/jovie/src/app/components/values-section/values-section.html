@@ -1,4 +1,6 @@
-<section class="guiding section-wrap reveal" aria-labelledby="guiding-title">
+<section class="guiding" aria-labelledby="guiding-title">
+ <div class="guiding-band">
+ <div class="section-wrap reveal">
   <header class="guiding-heading">
     <p class="eyebrow"><span></span>{{ 'values.kicker' | translate }}</p>
     <h2 id="guiding-title">{{ 'values.title' | translate }}</h2>
@@ -31,17 +33,21 @@
       </div>
     </article>
   </div>
+ </div>
+ </div>
 
-<div class="core-values">
-  <h3>{{ 'values.coreTitle' | translate }}</h3>
-
-  <p class="values-intro">
-    {{ 'values.description' | translate }}
-  </p>
+<div class="core-values-band">
+<div class="core-values section-wrap reveal">
+  <div class="core-values-heading">
+    <h3>{{ 'values.coreTitle' | translate }}</h3>
+    <p class="values-intro">
+      {{ 'values.description' | translate }}
+    </p>
+  </div>
 
   <div class="core-value-grid">
-    @for (value of coreValues(); track $index) {
-      <article class="core-value">
+    @for (value of coreValues(); track $index; let first = $first) {
+      <article class="core-value reveal-step" [class.core-value--featured]="first">
 
         <div class="core-icon" aria-hidden="true">
           @switch (value.icon) {
@@ -80,10 +86,6 @@
           }
         </div>
 
-        <span class="core-value-index">
-          {{ '0' + ($index + 1) }}
-        </span>
-
         <h4>{{ value.title }}</h4>
 
         @if (value.description) {
@@ -95,15 +97,20 @@
   </div>
 </div>
 
-  <div class="company-values">
-    <h3>{{ 'values.companyTitle' | translate }}</h3>
+</div>
+
+  <div class="company-values-band">
+  <span class="company-values-rings" aria-hidden="true"></span>
+  <div class="company-values section-wrap">
+    <h3 class="reveal">{{ 'values.companyTitle' | translate }}</h3>
     <div class="company-value-list">
       @for (value of companyValues(); track $index) {
-        <article>
+        <article class="reveal-step">
           <h4>{{ value.title }}</h4>
           <p>{{ value.description }}</p>
         </article>
       }
     </div>
+  </div>
   </div>
 </section>

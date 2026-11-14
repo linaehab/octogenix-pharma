@@ -1,50 +1,84 @@
 <section class="hero" aria-labelledby="hero-title">
-  <div class="hero-slider" aria-live="polite" aria-atomic="true">
-    @for (slide of slides; track $index; let index = $index) {
-      <div
-        class="hero-slide"
-        [class.is-active]="index === activeIndex()"
-        [style.background-image]="'url(' + slide + ')'"
-        [attr.aria-hidden]="index === activeIndex() ? 'false' : 'true'"
-      ></div>
-    }
+  <div class="hero-glow" aria-hidden="true"></div>
+
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <p class="eyebrow light-eyebrow"><span></span>{{ 'hero.kicker' | translate }}</p>
+      <h1 id="hero-title">
+        {{ 'hero.titleFirst' | translate }}<br />{{ 'hero.titleSecond' | translate }}
+        <em>{{ 'hero.titleEmphasis' | translate }}</em>
+      </h1>
+      <p class="hero-intro">
+        {{ 'hero.description' | translate }}
+      </p>
+      <div class="hero-actions">
+        <a class="button button-light" routerLink="/about">
+          {{ 'hero.cta' | translate }} <span aria-hidden="true">↗</span>
+        </a>
+        <a class="button button-outline" routerLink="/contact">
+          {{ 'hero.contactCta' | translate }} <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+      <div class="hero-meta">
+        <div class="hero-dots" role="tablist" aria-label="Hero slides">
+          @for (slide of slides; track $index; let index = $index) {
+            <button
+              type="button"
+              class="hero-dot"
+              [class.is-active]="index === activeIndex()"
+              [attr.aria-label]="'Slide ' + (index + 1)"
+              [attr.aria-selected]="index === activeIndex()"
+              (click)="selectSlide(index)"
+            ><span class="hero-dot-number" aria-hidden="true">0{{ index + 1 }}</span><span class="hero-dot-bar"><span class="hero-dot-fill"></span></span></button>
+          }
+        </div>
+        <a class="scroll-cue" routerLink="/about" [attr.aria-label]="'hero.scroll' | translate">
+          <span>{{ 'hero.scroll' | translate }}</span><span aria-hidden="true">↓</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-slider" aria-live="polite" aria-atomic="true">
+        @for (slide of slides; track $index; let index = $index) {
+          <div
+            class="hero-slide"
+            [class.is-active]="index === activeIndex()"
+            [style.background-image]="'url(' + slide + ')'"
+            [attr.aria-hidden]="index === activeIndex() ? 'false' : 'true'"
+          ></div>
+        }
+      </div>
+      <div class="hero-shade" aria-hidden="true"></div>
+    </div>
   </div>
-  <div class="hero-shade"></div>
-  <div class="hero-copy">
-    <p class="eyebrow light-eyebrow"><span></span>{{ 'hero.kicker' | translate }}</p>
-    <h1 id="hero-title">
-      {{ 'hero.titleFirst' | translate }}<br />{{ 'hero.titleSecond' | translate }}
-      <em>{{ 'hero.titleEmphasis' | translate }}</em>
-    </h1>
-    <p class="hero-intro">
-      {{ 'hero.description' | translate }}
-    </p>
-    <a class="button button-light" routerLink="/about">
-      {{ 'hero.cta' | translate }} <span aria-hidden="true">↗</span>
-    </a>
-    <a class="button button-outline" routerLink="/contact">
-      {{ 'hero.contactCta' | translate }} <span aria-hidden="true">↗</span>
-    </a>
+
+  <!-- Trust strip: existing statements, presented over the lower edge of the hero -->
+  <div class="hero-strip-wrap">
+    <div class="hero-strip">
+      <div class="strip-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.6 8 11 4.6-1.4 8-6 8-11V5zm-1.2 13.8-3.6-3.6 1.4-1.4 2.2 2.2 4.6-4.6 1.4 1.4z" /></svg>
+        <div>
+          <strong>{{ 'hero.noteOne' | translate }}</strong>
+          <span>{{ 'banner.highlight' | translate }}</span>
+        </div>
+      </div>
+      <div class="strip-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-4 12.7V22l4-2 4 2v-7.3A7 7 0 0 0 12 2zm0 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10z" /></svg>
+        <div>
+          <strong>{{ 'hero.noteTwo' | translate }}</strong>
+          <span>{{ 'quality.standard' | translate }}</span>
+        </div>
+      </div>
+      <div class="strip-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z" /></svg>
+        <div>
+          <strong>{{ 'banner.message' | translate }}</strong>
+        </div>
+      </div>
+      <a class="strip-link" routerLink="/services">
+        {{ 'banner.link' | translate }} <span aria-hidden="true">→</span>
+      </a>
+    </div>
   </div>
-  <div class="hero-note" aria-hidden="true">
-    <span>{{ 'hero.noteOne' | translate }}</span>
-    <span class="hero-note-line"></span>
-    <span>{{ 'hero.noteTwo' | translate }}</span>
-  </div>
-  <div class="hero-dots" role="tablist" aria-label="Hero slides">
-    @for (slide of slides; track $index; let index = $index) {
-      <button
-        type="button"
-        class="hero-dot"
-        [class.is-active]="index === activeIndex()"
-        [attr.aria-label]="'Slide ' + (index + 1)"
-        [attr.aria-selected]="index === activeIndex()"
-        (click)="selectSlide(index)"
-      ></button>
-    }
-  </div>
-  <a class="scroll-cue" routerLink="/about" [attr.aria-label]="'hero.scroll' | translate">
-    <span>{{ 'hero.scroll' | translate }}</span><span aria-hidden="true">↓</span>
-  </a>
-  <app-home-banner />
 </section>

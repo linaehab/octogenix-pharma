@@ -15,10 +15,32 @@ interface BrandCard {
   link: { type: 'none' | 'internal' | 'external'; url: string | null };
   /** Route of the brand's own store in this app, when it has one. */
   storeUrl: string | null;
+  /** Logo and product composition shown instead of the image (Jovie). */
+  showcase: BrandShowcase | null;
 }
 
 /** Brand stores that exist in this Angular app (has_store only says the brand sells online). */
 const BRAND_STORE_ROUTES: Record<string, string> = { jovie: '/jovie' };
+
+/**
+ * Jovie card visual: the official Jovie logo beside the actual product range (the Stage 1, 2 and
+ * 3 tins, cut-outs of the store's own pack images). Used while the dashboard still has the
+ * previous site's Jovie image (or none); an image uploaded in the dashboard is shown as it is.
+ */
+interface BrandShowcase {
+  logo: string;
+  packs: string[];
+}
+
+const LEGACY_JOVIE_IMAGE = '/assets/images/jovie.jpg';
+const JOVIE_SHOWCASE: BrandShowcase = {
+  logo: '/assets/images/jovie/logo-official-yellow.png',
+  packs: [2, 1, 3].map((stage) => `/assets/images/corporate-v2/brand-jovie-stage-${stage}.webp`),
+};
+
+function brandShowcase(slug: string, image: string | null): BrandShowcase | null {
+  return slug === 'jovie' && (!image || image === LEGACY_JOVIE_IMAGE || image.endsWith(LEGACY_JOVIE_IMAGE)) ? JOVIE_SHOWCASE : null;
+}
 
 @Component({
   selector: 'app-brands-section',
@@ -44,6 +66,7 @@ export class BrandsSection {
         ctaLabel: this.content.pick(brand.cta_label),
         link: brand.link,
         storeUrl: brand.has_store ? (BRAND_STORE_ROUTES[brand.slug] ?? null) : null,
+        showcase: brandShowcase(brand.slug, brand.image_url),
       }));
     }
 
@@ -58,6 +81,7 @@ export class BrandsSection {
       ctaLabel: t('brands.cta'),
       link: { type: 'internal', url: '/contact' },
       storeUrl: BRAND_STORE_ROUTES['jovie'],
+      showcase: JOVIE_SHOWCASE,
     }];
   });
 }

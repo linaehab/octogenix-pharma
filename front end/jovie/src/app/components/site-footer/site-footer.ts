@@ -2,6 +2,7 @@
 import { RouterLink } from '@angular/router';
 import { contactEmail, contactPhones, socialLinks } from '../../core/content/contact-details';
 import { SiteContentService } from '../../core/content/site-content.service';
+import { LanguageService } from '../../core/i18n/language.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 @Component({
@@ -12,10 +13,15 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 })
 export class SiteFooter {
   private readonly content = inject(SiteContentService);
+  private readonly language = inject(LanguageService);
 
   protected readonly currentYear = new Date().getFullYear();
   protected readonly phones = computed(() => contactPhones(this.content));
   protected readonly email = computed(() => contactEmail(this.content));
   /** Social links set in the dashboard (https only); none set means nothing is shown. */
   protected readonly social = computed(() => socialLinks(this.content));
+
+  protected toggleLanguage(): void {
+    this.language.toggleLanguage();
+  }
 }

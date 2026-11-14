@@ -1,20 +1,17 @@
-<section class="leadership section-wrap reveal" aria-labelledby="leadership-title">
-  <header class="leadership-heading">
+<section class="leadership section-wrap" aria-labelledby="leadership-title">
+  <header class="leadership-heading reveal">
     <p class="eyebrow"><span></span>{{ 'leadership.kicker' | translate }}</p>
     <h2 id="leadership-title">{{ 'leadership.title' | translate }}</h2>
     <p>{{ 'leadership.description' | translate }}</p>
   </header>
+
+  <!-- Editorial profiles: role and name, set as typography (no placeholder portraits) -->
   <div class="leadership-list" role="list">
-    @for (leader of leaders(); track $index) {
-      <article class="leader-entry" role="listitem">
-        <span class="leader-arrow" aria-hidden="true">→</span>
-        <div class="leader-body">
-          <span class="leader-avatar" aria-hidden="true">{{ leader.initials }}</span>
-          <div>
-            <h3>{{ leader.name }}</h3>
-            <p>{{ leader.role }}</p>
-          </div>
-        </div>
+    @for (leader of leaders(); track $index; let first = $first) {
+      <article class="leader-entry reveal-step" [class.leader-entry--lead]="first" role="listitem">
+        <p class="leader-role">{{ leader.role }}</p>
+        <h3 class="leader-name">{{ leader.name }}</h3>
+        <span class="leader-rule" aria-hidden="true"></span>
       </article>
     }
   </div>

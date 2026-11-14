@@ -43,7 +43,7 @@ describe('ServicesSection', () => {
     expect(content).toContain('Scientific Office');
   });
 
-  it('shows services from the API, numbered in order and in the current language', () => {
+  it('shows services from the API, in order and in the current language', () => {
     TestBed.inject(SiteContentService).services.set({
       customers: [
         { id: 7, title: { en: 'Cold Chain', ar: 'سلسلة التبريد' }, description: { en: 'Cooled storage.', ar: 'تخزين مبرد.' },
@@ -56,7 +56,9 @@ describe('ServicesSection', () => {
     const element = fixture.nativeElement as HTMLElement;
     expect(element.textContent).toContain('Cold Chain');
     expect(element.textContent).not.toContain('Contracting and Documentation');
-    expect(element.querySelector('.service-number')?.textContent).toBe('01');
+    // The design no longer shows numbers: the first API service is listed first and is the open one.
+    expect(element.querySelector('.service-item .service-toggle')?.textContent).toContain('Cold Chain');
+    expect(element.querySelector('.service-item')?.classList).toContain('is-active');
 
     TestBed.inject(LanguageService).setLanguage('ar');
     fixture.detectChanges();

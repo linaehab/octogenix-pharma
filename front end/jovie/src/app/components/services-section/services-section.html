@@ -1,46 +1,114 @@
-<section class="services section-wrap reveal" id="services" aria-labelledby="services-title">
-  <div class="section-heading">
-    <div>
-      <p class="eyebrow"><span></span>{{ 'services.kicker' | translate }}</p>
-      <h2 id="services-title">{{ 'services.title' | translate }}</h2>
+<section class="services" [class.services--editorial]="layout() === 'editorial'" id="services" aria-labelledby="services-title">
+  <div class="section-wrap">
+    <div class="section-heading reveal">
+      <div class="section-heading-copy">
+        <p class="eyebrow"><span></span>{{ 'services.kicker' | translate }}</p>
+        <h2 id="services-title">{{ 'services.title' | translate }}</h2>
+      </div>
+      <div class="service-category-switcher" role="tablist" aria-label="{{ 'services.kicker' | translate }}">
+        <button
+          type="button"
+          class="service-category-button"
+          [class.is-active]="selectedCategory() === 'customers'"
+          role="tab"
+          [attr.aria-selected]="selectedCategory() === 'customers'"
+          (click)="selectCategory('customers')"
+        >
+          {{ 'services.customers' | translate }}
+        </button>
+        <button
+          type="button"
+          class="service-category-button"
+          [class.is-active]="selectedCategory() === 'suppliers'"
+          role="tab"
+          [attr.aria-selected]="selectedCategory() === 'suppliers'"
+          (click)="selectCategory('suppliers')"
+        >
+          {{ 'services.suppliers' | translate }}
+        </button>
+      </div>
     </div>
-    <div class="service-category-switcher" role="tablist" aria-label="{{ 'services.kicker' | translate }}">
-      <button
-        type="button"
-        class="service-category-button"
-        [class.is-active]="selectedCategory() === 'customers'"
-        role="tab"
-        [attr.aria-selected]="selectedCategory() === 'customers'"
-        (click)="selectCategory('customers')"
-      >
-        {{ 'services.customers' | translate }}
-      </button>
-      <button
-        type="button"
-        class="service-category-button"
-        [class.is-active]="selectedCategory() === 'suppliers'"
-        role="tab"
-        [attr.aria-selected]="selectedCategory() === 'suppliers'"
-        (click)="selectCategory('suppliers')"
-      >
-        {{ 'services.suppliers' | translate }}
-      </button>
-    </div>
-  </div>
-  <div class="service-list">
-    @for (service of currentServices(); track service.number) {
-      <article class="service-item reveal-step">
-        <div class="service-image image-swap">
-          <img class="image-swap__primary" [src]="service.image" [alt]="service.imageAlt" loading="lazy" />
-          <img class="image-swap__alternate" [src]="service.hoverImage" alt="" aria-hidden="true" loading="lazy" />
-          <span class="service-number">{{ service.number }}</span>
+
+    @if (layout() === 'showcase') {
+      <!-- Home: a featured photograph that follows the service being explored in the list -->
+      <div class="showcase reveal">
+        <div class="showcase-stage" aria-hidden="true">
+          @for (service of currentServices(); track service.number; let index = $index) {
+            <img
+              class="stage-image"
+              [class.is-active]="index === activeIndex()"
+              [src]="service.image"
+              alt=""
+              loading="lazy"
+            />
+          }
+          <span class="stage-shade"></span>
+          @if (activeService(); as active) {
+            <div class="stage-caption">
+              <span class="stage-category">{{ (selectedCategory() === 'customers' ? 'services.customers' : 'services.suppliers') | translate }}</span>
+              <strong>{{ active.title }}</strong>
+            </div>
+          }
         </div>
-        <div class="service-copy">
-          <h3>{{ service.title }}</h3>
-          <p>{{ service.description }}</p>
-          <span class="service-arrow" aria-hidden="true">↗</span>
+
+        <div class="service-list">
+          @for (service of currentServices(); track service.number; let index = $index) {
+            <article
+              class="service-item"
+              [class.is-active]="index === activeIndex()"
+              (mouseenter)="showService(index)"
+            >
+              <h3>
+                <button
+                  type="button"
+                  class="service-toggle"
+                  [attr.aria-expanded]="index === activeIndex()"
+                  (click)="showService(index)"
+                  (focus)="showService(index)"
+                >
+                  <span>{{ service.title }}</span>
+                  <span class="service-arrow" aria-hidden="true">→</span>
+                </button>
+              </h3>
+              <div class="service-detail">
+                <div class="service-detail-inner">
+                  <p>{{ service.description }}</p>
+                  <div class="service-thumb image-swap">
+                    <img class="image-swap__primary" [src]="service.image" [alt]="service.imageAlt" loading="lazy" />
+                    <img class="image-swap__alternate" [src]="service.hoverImage" alt="" aria-hidden="true" loading="lazy" />
+                  </div>
+                </div>
+              </div>
+            </article>
+          }
         </div>
-      </article>
+      </div>
+    } @else {
+      <!-- Services page: an index of the services, then a two-column grid of service cards -->
+      <nav class="service-index" [attr.aria-label]="'services.kicker' | translate">
+        @for (service of currentServices(); track service.number; let index = $index) {
+          <button type="button" class="service-index-item" (click)="scrollToService(index)">
+            {{ service.title }}
+          </button>
+        }
+      </nav>
+
+      <div class="editorial-list">
+        @for (service of currentServices(); track service.number; let index = $index) {
+          <article class="service-block" #serviceBlock [id]="'service-' + index">
+            <div class="service-block-image image-swap">
+              <img class="image-swap__primary" [src]="service.image" [alt]="service.imageAlt" loading="lazy" decoding="async" />
+              <img class="image-swap__alternate" [src]="service.hoverImage" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+            </div>
+            <div class="service-block-copy">
+              <span class="service-block-number" aria-hidden="true">{{ service.number }}</span>
+              <span class="service-block-category">{{ (selectedCategory() === 'customers' ? 'services.customers' : 'services.suppliers') | translate }}</span>
+              <h3>{{ service.title }}</h3>
+              <p>{{ service.description }}</p>
+            </div>
+          </article>
+        }
+      </div>
     }
   </div>
 </section>
