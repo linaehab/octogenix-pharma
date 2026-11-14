@@ -246,6 +246,8 @@
 
 .promo {
   display: grid;
+  /* One column no wider than the summary panel, so the code field + button never overflow it. */
+  grid-template-columns: minmax(0, 1fr);
   font-weight: 700;
   gap: 0.4rem;
   margin: 0 0 1.2rem;
@@ -270,6 +272,7 @@
 }
 
 .promo-button {
+  flex: 0 0 auto;
   min-height: 44px;
   padding: 0 1rem;
   border: 2px solid var(--jv-night);
