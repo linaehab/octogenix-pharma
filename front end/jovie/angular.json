@@ -27,8 +27,14 @@
                 "glob": "**/*",
                 "input": "src/assets/images",
                 "output": "assets/images"
+              },
+              {
+                "glob": "leaflet.css",
+                "input": "node_modules/leaflet/dist",
+                "output": "assets/vendor/leaflet"
               }
             ],
+            "allowedCommonJsDependencies": ["leaflet"],
             "styles": [
               "src/styles.css"
             ],

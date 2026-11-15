@@ -6,11 +6,12 @@ import { RouteIntro } from '../../components/route-intro/route-intro';
 import { ValuesSection } from '../../components/values-section/values-section';
 import { LeadershipSection } from '../../components/leadership-section/leadership-section';
 import { QualitySection } from '../../components/quality-section/quality-section';
+import { JourneyTimeline } from '../../components/journey-timeline/journey-timeline';
 import { designImage } from '../../components/design-image';
 
 @Component({
   selector: 'app-about-page',
-  imports: [RouteIntro, AboutSection, ValuesSection, QualitySection, LeadershipSection, TranslatePipe],
+  imports: [RouteIntro, AboutSection, JourneyTimeline, ValuesSection, QualitySection, LeadershipSection, TranslatePipe],
   templateUrl: './about-page.html',
   styleUrl: './about-page.css',
 })

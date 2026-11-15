@@ -50,6 +50,34 @@ const translations: Record<Language, Record<string, string>> = {
     'about.link': 'Explore our services',
     'about.imageAlt': 'A baby resting on a soft blanket',
     'about.caption': 'Care for brighter beginnings',
+    'journey.kicker': 'Our journey',
+    'journey.title': 'Our journey towards wider horizons',
+    'journey.description':
+      'Experience we build on, and partnerships through which we look ahead to a better future for healthcare.',
+    'journey.2020.title': 'Our beginning',
+    'journey.2020.text':
+      'Octogenix Pharma is founded under Dr. Tarek Kandil, specializing in the import, export and distribution of pharmaceutical products.',
+    'journey.2021.title': 'Laying the foundation',
+    'journey.2021.text':
+      "Building a business base in pharmaceutical trade and distribution, grounded in trust and an understanding of the Egyptian market's needs.",
+    'journey.2022.title': 'Growing our partner network',
+    'journey.2022.text':
+      "Developing relationships with pharmacies and distribution partners, and strengthening ties across the pharmaceutical sector's channels.",
+    'journey.2023.title': 'Strengthening operational efficiency',
+    'journey.2023.text':
+      'Developing our supply and distribution system to support business continuity and prepare for expansion.',
+    'journey.2024.title': 'Broadening the vision',
+    'journey.2024.text':
+      'Moving towards new opportunities in food supplements and specialized nutrition, complementing our work in the pharmaceutical sector.',
+    'journey.2025.title': 'Building international bridges',
+    'journey.2025.text':
+      'Opening channels of cooperation with global companies, and exploring partnerships that bring together product quality and local market needs.',
+    'journey.2026.title': 'Developing our international portfolio',
+    'journey.2026.text':
+      'Registering selected products, developing import partnerships, and building the groundwork to launch international brands in Egypt.',
+    'journey.2027.title': 'Our next horizon',
+    'journey.2027.text':
+      'We look forward to launching our portfolio of international brands and expanding our presence, as a trusted partner in providing healthcare and nutrition products.',
     'services.kicker': 'Our services',
     'services.title': 'Pharmaceutical services with care and quality.',
     'services.summary':
@@ -340,6 +368,32 @@ const translations: Record<Language, Record<string, string>> = {
     'about.link': 'اكتشفوا خدماتنا',
     'about.imageAlt': 'طفل يستريح على غطاء ناعم',
     'about.caption': 'رعاية لبدايات أكثر إشراقًا',
+    'journey.kicker': 'رحلتنا',
+    'journey.title': 'رحلتنا نحو آفاق أوسع',
+    'journey.description': 'خبرة نبني عليها، وشراكات نتطلع من خلالها إلى مستقبل أفضل للرعاية الصحية.',
+    'journey.2020.title': 'البداية',
+    'journey.2020.text':
+      'تأسيس أوكتوجينيكس فارما تحت قيادة الدكتور طارق قنديل، متخصصةً في استيراد وتصدير وتوزيع المنتجات الصيدلانية.',
+    'journey.2021.title': 'ترسيخ الأساس',
+    'journey.2021.text':
+      'بناء قاعدة أعمال في تجارة وتوزيع الأدوية، ترتكز على الثقة وفهم احتياجات السوق المصري.',
+    'journey.2022.title': 'تنمية شبكة الشركاء',
+    'journey.2022.text':
+      'تطوير العلاقات مع الصيدليات وشركاء التوزيع، وتعزيز التواصل مع مختلف قنوات القطاع الدوائي.',
+    'journey.2023.title': 'تعزيز الكفاءة التشغيلية',
+    'journey.2023.text': 'تطوير منظومة التوريد والتوزيع لدعم استمرارية الأعمال والاستعداد للتوسع.',
+    'journey.2024.title': 'توسيع الرؤية',
+    'journey.2024.text':
+      'التوجه نحو فرص جديدة في المكملات الغذائية والتغذية المتخصصة، استكمالًا لنشاطنا في القطاع الدوائي.',
+    'journey.2025.title': 'بناء جسور دولية',
+    'journey.2025.text':
+      'فتح قنوات التعاون مع شركات عالمية، ودراسة شراكات تجمع بين جودة المنتجات واحتياجات السوق المحلي.',
+    'journey.2026.title': 'تطوير محفظتنا الدولية',
+    'journey.2026.text':
+      'العمل على تسجيل منتجات مختارة، وتطوير شراكات الاستيراد، وبناء مقومات إطلاق علامات دولية في مصر.',
+    'journey.2027.title': 'أفقنا القادم',
+    'journey.2027.text':
+      'نتطلع إلى إطلاق محفظتنا من العلامات الدولية وتوسيع حضورنا، لنكون شريكًا موثوقًا في إتاحة منتجات الرعاية الصحية والتغذية.',
     'services.kicker': 'خدماتنا',
     'services.title': 'خدمات صيدلانية ترتكز على العناية والجودة.',
     'services.summary':

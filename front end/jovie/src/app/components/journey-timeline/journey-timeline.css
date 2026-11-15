@@ -1,0 +1,241 @@
+:host {
+  display: block;
+  --line: #b0d35b;
+  --line-y: 50px; /* height of the line inside each row: under the pin, through the dot */
+  --row-gap: 64px;
+  --turn: 64px; /* width of the bends at the ends of the rows */
+}
+
+.journey {
+  padding-block: var(--cx-section);
+  background: #fff;
+}
+
+.journey-path {
+  padding-inline: var(--turn);
+}
+
+/* Each row: four equal columns (no gap, so the column centres sit at 12.5 / 37.5 / 62.5 / 87.5 %) */
+.journey-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+}
+
+.journey-row + .journey-row {
+  margin-top: var(--row-gap);
+}
+
+/* The straight part of the line in each row */
+.track {
+  position: absolute;
+  top: calc(var(--line-y) - 1px);
+  height: 2px;
+  background: var(--line);
+}
+
+.journey-row--middle .track {
+  inset-inline: 0;
+}
+
+/* Bottom row: from 2020 (column 2) to the start-side bend */
+.journey-row--bottom .track {
+  inset-inline: 0 62.5%;
+}
+
+/* Top row: from the end-side bend to 2026 solid, then dashed to the coming year 2027 */
+.journey-row--top .track {
+  inset-inline: 62.5% 0;
+  background:
+    linear-gradient(to right, transparent 66.67%, var(--line) 66.67%),
+    repeating-linear-gradient(to right, var(--line) 0 8px, transparent 8px 14px) 0 0 / 66.67% 100% no-repeat;
+}
+
+:host-context([dir='rtl']) .journey-row--top .track {
+  transform: scaleX(-1);
+}
+
+/* The bends: half-rounded boxes that carry the line from one row down to the next */
+.journey-row--top::after,
+.journey-row--middle::after {
+  position: absolute;
+  top: calc(var(--line-y) - 1px);
+  width: var(--turn);
+  box-sizing: border-box;
+  height: calc(100% + var(--row-gap) + 2px); /* top border on this row's line, bottom border on the next */
+  border: 2px solid var(--line);
+  content: '';
+  pointer-events: none;
+}
+
+.journey-row--top::after {
+  inset-inline-end: calc(-1 * var(--turn));
+  border-inline-start: 0;
+  border-start-end-radius: var(--turn);
+  border-end-end-radius: var(--turn);
+}
+
+.journey-row--middle::after {
+  inset-inline-start: calc(-1 * var(--turn));
+  border-inline-end: 0;
+  border-start-start-radius: var(--turn);
+  border-end-start-radius: var(--turn);
+}
+
+/* Heading in the free corner of the top row */
+.journey-head {
+  grid-column: 1 / span 2;
+  grid-row: 1;
+  max-width: 470px;
+  padding-inline-end: 24px;
+}
+
+.journey-head h2 {
+  margin: 14px 0 12px;
+  font-size: clamp(26px, 2.6vw, 34px);
+  line-height: 1.15;
+}
+
+.journey-head > p:last-child {
+  margin: 0;
+  color: var(--cx-slate);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* A stop: pin, dot on the line, then the year and its text */
+.stop {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-row: 1;
+  justify-items: center;
+  padding-inline: 14px;
+  text-align: center;
+}
+
+.stop-pin {
+  width: 34px;
+  height: 43px;
+  fill: var(--line);
+  filter: drop-shadow(0 6px 6px rgba(95, 125, 23, 0.18));
+}
+
+.stop-dot {
+  width: 14px;
+  height: 14px;
+  margin-top: 0;
+  border: 2px solid var(--line);
+  border-radius: 50%;
+  background: #fff;
+}
+
+.stop-year {
+  margin-top: 16px;
+  color: var(--cx-ink);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.stop h3 {
+  margin: 4px 0 8px;
+  color: var(--cx-ink);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-transform: none;
+}
+
+.stop p {
+  max-width: 230px;
+  margin: 0;
+  color: var(--cx-gray);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* The coming year: an outlined pin on the dashed part */
+.stop.is-future .stop-pin {
+  fill: #fff;
+  stroke: var(--line);
+  stroke-width: 2.5;
+}
+
+.stop.is-future .stop-pin circle {
+  fill: var(--line);
+}
+
+.stop.is-future .stop-dot {
+  border-style: dashed;
+}
+
+/* Narrow screens: one vertical line on the start side, the years in order from 2020 */
+@media (max-width: 900px) {
+  .journey-path {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding-inline: 0;
+  }
+
+  .journey-row,
+  .journey-row + .journey-row {
+    display: contents;
+    margin: 0;
+  }
+
+  .track,
+  .journey-row--top::after,
+  .journey-row--middle::after,
+  .stop-dot {
+    display: none;
+  }
+
+  .journey-head {
+    order: 0;
+    max-width: none;
+    padding: 0 0 6px;
+  }
+
+  /* The vertical line through the pins, from the first year to the last */
+  .stop {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    column-gap: 18px;
+    justify-items: start;
+    padding: 0;
+    text-align: start;
+  }
+
+  .stop::before {
+    position: absolute;
+    top: 46px;
+    bottom: -30px;
+    inset-inline-start: 16px;
+    width: 2px;
+    background: var(--line);
+    content: '';
+  }
+
+  .stop.leads-future::before {
+    background: repeating-linear-gradient(to bottom, var(--line) 0 8px, transparent 8px 14px);
+  }
+
+  .stop.is-future::before {
+    display: none;
+  }
+
+  .stop-pin {
+    grid-row: 1 / span 3;
+  }
+
+  .stop-year {
+    margin-top: 6px;
+  }
+
+  .stop p {
+    max-width: none;
+  }
+}
