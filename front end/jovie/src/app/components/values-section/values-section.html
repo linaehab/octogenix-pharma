@@ -18,7 +18,7 @@
       </article>
     </div>
 
-    <!-- Core values: an icon grid in a grey card, with a photograph beside it -->
+    <!-- Core values: an icon grid and the team photograph, joined in one card -->
     <div class="values-card">
       <div class="values-copy">
         <h3>{{ 'values.coreTitle' | translate }}</h3>
@@ -35,8 +35,7 @@
         </div>
       </div>
       <div class="values-photo">
-        <img [src]="content.image('values.missionImage', '/assets/images/working-office.jpg')"
-          [alt]="'values.missionImageAlt' | translate" loading="lazy" decoding="async" />
+        <img [src]="valuesImage()" [alt]="valuesImageAlt()" loading="lazy" decoding="async" />
       </div>
     </div>
   </div>

@@ -6,12 +6,15 @@ import { RouteIntro } from '../../components/route-intro/route-intro';
 import { ValuesSection } from '../../components/values-section/values-section';
 import { LeadershipSection } from '../../components/leadership-section/leadership-section';
 import { QualitySection } from '../../components/quality-section/quality-section';
+import { GlobalBridge } from '../../components/global-bridge/global-bridge';
+import { MarketReach } from '../../components/market-reach/market-reach';
+import { FocusAreas } from '../../components/focus-areas/focus-areas';
 import { JourneyTimeline } from '../../components/journey-timeline/journey-timeline';
 import { designImage } from '../../components/design-image';
 
 @Component({
   selector: 'app-about-page',
-  imports: [RouteIntro, AboutSection, JourneyTimeline, ValuesSection, QualitySection, LeadershipSection, TranslatePipe],
+  imports: [RouteIntro, AboutSection, JourneyTimeline, GlobalBridge, FocusAreas, MarketReach, QualitySection, ValuesSection, LeadershipSection, TranslatePipe],
   templateUrl: './about-page.html',
   styleUrl: './about-page.css',
 })

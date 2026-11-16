@@ -2,68 +2,45 @@
   display: block;
 }
 
-/* Split block, as in the reference: a lime panel holding the photograph on one side, the text on
-   light grey on the other. */
+/* Company introduction: text only, on a light grey card. */
 .intro {
+  position: relative;
+  overflow: hidden;
   padding-block: var(--cx-section);
   background: #fff;
 }
 
+/* Pencil sketch of a doctor in the page background, on the left edge behind the card, as in
+   the reference (the card is slightly see-through so the drawing shows faintly behind it) */
+.intro::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0; /* on the left in both languages */
+  width: clamp(280px, 34vw, 520px);
+  background: url('/assets/images/corporate-v3/doctor-sketch.webp') center top / cover no-repeat;
+  content: '';
+  opacity: 0.55;
+  pointer-events: none;
+  /* soft inner edge instead of a hard cut */
+  -webkit-mask-image: linear-gradient(to right, #000 70%, transparent);
+  mask-image: linear-gradient(to right, #000 70%, transparent);
+}
+
 .intro-grid {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  grid-template-columns: minmax(0, 1fr);
   align-items: stretch;
   overflow: hidden;
   border-radius: var(--cx-radius-lg);
-  background: var(--cx-cloud);
+  background: rgba(247, 248, 249, 0.86);
 }
 
-.intro-figure {
+.intro-content {
   position: relative;
-  order: -1;
-  padding: clamp(28px, 3.4vw, 48px);
-  background: var(--cx-azure);
-}
-
-.intro-photo {
-  position: relative;
-  height: 100%;
-  min-height: 460px;
-  overflow: hidden;
-  border: 6px solid rgba(255, 255, 255, 0.55);
-  border-radius: var(--cx-radius);
-  background: var(--cx-midnight) url('/assets/images/portrait-female-pharmacist-working-drugstore.jpg') center / cover;
-}
-
-.intro-photo .photo-caption {
   z-index: 1;
-  top: 0;
-  bottom: auto;
-  inset-inline-start: auto;
-  inset-inline-end: 0;
-  color: var(--cx-navy);
-  background: #fff;
-  border-end-start-radius: 8px;
-}
-
-.intro-aside-note {
-  position: absolute;
-  z-index: 2;
-  bottom: clamp(44px, 5vw, 68px);
-  inset-inline-start: clamp(44px, 5vw, 68px);
-  max-width: 240px;
-  padding: 22px 24px;
-  border-radius: var(--cx-radius);
-  color: #fff;
-  background: var(--cx-navy);
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 1.35;
-  white-space: pre-line;
-}
-
-.intro-aside-note::first-line {
-  color: var(--cx-azure);
+  max-width: 62%;
 }
 
 .intro-content {
@@ -84,6 +61,7 @@
 
 .intro-description {
   display: grid;
+  max-width: 760px;
   gap: 14px;
 }
 
@@ -113,19 +91,13 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .intro-photo {
-    min-height: 360px;
+  .intro-content {
+    max-width: none;
+  }
+
+  .intro::before {
+    width: 60%;
+    opacity: 0.35;
   }
 }
 
-@media (max-width: 560px) {
-  .intro-photo {
-    min-height: 280px;
-  }
-
-  .intro-aside-note {
-    max-width: 210px;
-    padding: 16px 18px;
-    font-size: 16px;
-  }
-}

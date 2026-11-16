@@ -108,16 +108,24 @@
   line-height: 1.5;
 }
 
+.values-photo {
+  position: relative;
+  min-height: 320px;
+}
+
+/* The photograph takes the height of the values list beside it (portrait images included) */
 .values-photo img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  min-height: 320px;
   object-fit: cover;
+  object-position: center 40%;
 }
 
 /* Company values: charcoal band, medical pattern, large words with their meaning */
 .company-values-band {
-  padding-block: var(--cx-section);
+  padding-block: clamp(48px, 6vw, 80px);
   color: var(--cx-on-dark);
   background: var(--cx-navy) url('/assets/images/corporate-v3/patterns/medical-dark.svg') 0 0 / 760px auto;
 }
@@ -133,7 +141,7 @@
   padding-top: 18px;
   border-top: 3px solid var(--cx-azure);
   color: #fff;
-  font-size: clamp(24px, 2.4vw, 32px);
+  font-size: clamp(20px, 1.9vw, 26px);
   align-self: start;
 }
 
@@ -145,22 +153,22 @@
   display: grid;
   grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
   align-items: center;
-  gap: 24px;
-  padding: 16px 0;
+  gap: 20px;
+  padding: 11px 0;
   border-bottom: 1px solid var(--cx-on-dark-line);
 }
 
 .company-value-list h4 {
   margin: 0;
   color: var(--cx-azure);
-  font-size: clamp(22px, 2.2vw, 30px);
+  font-size: clamp(18px, 1.7vw, 23px);
   font-weight: 500;
 }
 
 .company-value-list p {
   margin: 0;
   color: var(--cx-on-dark-2);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 @media (max-width: 900px) {
@@ -171,8 +179,8 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .values-photo img {
-    min-height: 240px;
+  .values-photo {
+    min-height: 320px;
   }
 }
 

@@ -4,7 +4,9 @@ export type CxIconName =
   | 'story' | 'mission' | 'vision' | 'values'
   | 'marketing' | 'contracting' | 'order' | 'delivery' | 'payment' | 'support'
   | 'distribution' | 'regulatory' | 'agency' | 'import' | 'export' | 'scientific'
-  | 'person' | 'pin' | 'quality' | 'innovation' | 'integrity' | 'growth';
+  | 'person' | 'pin' | 'quality' | 'innovation' | 'integrity' | 'growth'
+  | 'medicine' | 'supplement' | 'infant' | 'partnership'
+  | 'pharmacy' | 'hospital' | 'clinic';
 
 /**
  * Corporate icons in the reference style: a charcoal outline over soft lime fills (duotone).
@@ -98,6 +100,38 @@ export type CxIconName =
         @case ('integrity') {
           <path class="l" d="M6 26l10-10 8 6 8-6 10 10-14 14h-4z" />
           <path d="M6 26l10-10 8 6 8-6 10 10M6 26l14 14h8l14-14M18 30l4 4M22 26l6 6" />
+        }
+        @case ('pharmacy') {
+          <path class="l" d="M7 20h34v22H7z" /><path class="l2" d="M5 12 9 6h30l4 6v6a4 4 0 0 1-8 0 4 4 0 0 1-8 0 4 4 0 0 1-8 0 4 4 0 0 1-8 0 4 4 0 0 1-8 0z" />
+          <path d="M5 12 9 6h30l4 6v6a4 4 0 0 1-8 0 4 4 0 0 1-8 0 4 4 0 0 1-8 0 4 4 0 0 1-8 0 4 4 0 0 1-8 0zM5 12h38M7 21v21h34V21M4 42h40" />
+          <path class="w" d="M21 25h6v4h4v6h-4v4h-6v-4h-4v-6h4z" /><path d="M21 25h6v4h4v6h-4v4h-6v-4h-4v-6h4z" />
+        }
+        @case ('hospital') {
+          <path class="l" d="M8 18h32v24H8z" /><rect class="l2" x="16" y="6" width="16" height="14" rx="1" />
+          <path d="M8 18h8M32 18h8v24H8V18M16 6h16v36H16zM4 42h40M21 42v-6h6v6M22 13h4M24 11v4M11 24h2M11 30h2M35 24h2M35 30h2" />
+        }
+        @case ('clinic') {
+          <circle class="l" cx="34" cy="30" r="8" />
+          <path d="M12 6H9a2 2 0 0 0-2 2v10a9 9 0 0 0 18 0V8a2 2 0 0 0-2-2h-3M16 27v5a10 10 0 0 0 20 0v-2" /><circle cx="34" cy="30" r="8" /><circle class="l2" cx="34" cy="30" r="3" /><circle cx="34" cy="30" r="3" />
+        }
+        @case ('medicine') {
+          <path class="l" d="M9.5 26.5 22 14a7.8 7.8 0 0 1 11 11L20.5 37.5a7.8 7.8 0 0 1-11-11z" /><path class="l2" d="M15.75 20.25 22 14a7.8 7.8 0 0 1 11 11l-6.25 6.25z" />
+          <path d="M9.5 26.5 22 14a7.8 7.8 0 0 1 11 11L20.5 37.5a7.8 7.8 0 0 1-11-11zM15.75 20.25l11 11" />
+          <circle class="l" cx="36" cy="36" r="7" /><circle cx="36" cy="36" r="7" /><path d="m31 31 10 10" />
+        }
+        @case ('supplement') {
+          <rect class="l" x="12" y="14" width="24" height="28" rx="4" /><rect class="l2" x="15" y="6" width="18" height="8" rx="2" />
+          <rect x="12" y="14" width="24" height="28" rx="4" /><rect x="15" y="6" width="18" height="8" rx="2" />
+          <path d="M24 36c-5-2-6-7-3-12 4 1 7 4 3 12zM24 36c0-4 1-7 3-9" />
+        }
+        @case ('infant') {
+          <path class="l" d="M16 20h16v18a4 4 0 0 1-4 4h-8a4 4 0 0 1-4-4z" /><path class="l2" d="M21 8a3 3 0 0 1 6 0l2 8H19z" />
+          <path d="M16 20h16v18a4 4 0 0 1-4 4h-8a4 4 0 0 1-4-4zM19 16h10v4H19zM21 8a3 3 0 0 1 6 0l2 8H19zM16 27h5M16 33h5" />
+        }
+        @case ('partnership') {
+          <circle class="l" cx="24" cy="24" r="17" />
+          <circle cx="24" cy="24" r="17" /><path d="M7 24h34M24 7c-6 6-6 28 0 34M24 7c6 6 6 28 0 34" />
+          <circle class="l2" cx="38" cy="10" r="5" /><circle cx="38" cy="10" r="5" /><circle class="l2" cx="10" cy="38" r="5" /><circle cx="10" cy="38" r="5" />
         }
         @default {
           <path class="l" d="M10 40V26h7v14zM21 40V18h7v22zM32 40V8h7v32z" />

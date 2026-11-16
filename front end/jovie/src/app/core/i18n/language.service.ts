@@ -44,12 +44,36 @@ const translations: Record<Language, Record<string, string>> = {
     'about.aside': 'Founded in 2020.\nServing healthcare.',
     'about.title': 'Pharmaceutical solutions for a healthier future.',
     'about.description':
-      'Octogenix Pharma was founded in 2020 as a company specializing in pharmaceutical import, export, and distribution, under the leadership of its founder and owner, Dr. Tarek Kandil.',
+      'Octogenix Pharma was founded in 2020 as a company specializing in pharmaceutical import, export, and distribution, under the leadership of its founder and owner, Dr. Tarek Elmetwally Kandil.',
     'about.story':
       'Our story began with an ambitious vision to bring advanced pharmaceutical solutions and import and export services to the healthcare sector.',
     'about.link': 'Explore our services',
     'about.imageAlt': 'A baby resting on a soft blanket',
     'about.caption': 'Care for brighter beginnings',
+    'bridge.title': "Connecting global expertise with Egypt's healthcare needs",
+    'bridge.textOne':
+      'At Octogenix, we build on our experience in the Egyptian market to develop partnerships with international companies and to make selected products available in pharmaceuticals, dietary supplements and specialized nutrition.',
+    'bridge.textTwo':
+      'We combine local knowledge with international ambition, and we are developing our registration, import and distribution capabilities to create lasting value for our partners and for the healthcare sector.',
+    'bridge.imageAlt': 'Hands holding a tablet showing a health app',
+    'market.title': 'Our market reach',
+    'market.description':
+      "We are developing a network of commercial relationships that connects our portfolio's products with healthcare channels in Egypt, suited to the needs of each sector and supporting our partners' growth.",
+    'market.pharmacies': 'Pharmacies',
+    'market.distributors': 'Distributors & Wholesalers',
+    'market.hospitals': 'Hospitals',
+    'market.clinics': 'Clinics & Medical Centers',
+    'values.teamImageAlt': 'Colleagues joining hands in the middle of a circle',
+    'quality.sectionTitle': 'Certified quality',
+    'focus.title': 'Our areas of focus',
+    'focus.medicine.title': 'Pharmaceuticals',
+    'focus.medicine.text': 'Trading and distributing pharmaceutical products.',
+    'focus.supplement.title': 'Dietary supplements',
+    'focus.supplement.text': 'Developing a selected portfolio that supports nutritional needs.',
+    'focus.infant.title': 'Infant and child nutrition',
+    'focus.infant.text': 'Working to bring specialized brands to the Egyptian market.',
+    'focus.partnership.title': 'International partnerships',
+    'focus.partnership.text': 'Developing import and commercial representation opportunities.',
     'journey.kicker': 'Our journey',
     'journey.title': 'Our journey towards wider horizons',
     'journey.description':
@@ -276,7 +300,7 @@ const translations: Record<Language, Record<string, string>> = {
     'page.brands.kicker': 'Our brands',
     'page.brands.title': 'A considered brand portfolio.',
     'page.brands.description':
-      'Meet Jovie, a brand identified in the company’s portfolio. Its official logo has not been supplied.',
+      'Meet Jovie, one of the brands in the Octogenix Pharma portfolio.',
     'page.contact.kicker': 'Contact us',
     'page.contact.title': 'Contact Octogenix Pharma',
     'page.contact.description':
@@ -362,12 +386,36 @@ const translations: Record<Language, Record<string, string>> = {
     'about.aside': 'تأسست عام 2020.\nمن أجل الرعاية الصحية.',
     'about.title': 'حلول صيدلانية من أجل مستقبل صحي أفضل.',
     'about.description':
-      'تأسست شركة أوكتوجينيكس فارما عام 2020، وهي شركة متخصصة في استيراد وتصدير وتوزيع المنتجات الصيدلانية، تحت قيادة مؤسسها ومالكها الدكتور طارق قنديل.',
+      'تأسست شركة أوكتوجينيكس فارما عام 2020، وهي شركة متخصصة في استيراد وتصدير وتوزيع المنتجات الصيدلانية، تحت قيادة مؤسسها ومالكها الدكتور طارق المتولي قنديل.',
     'about.story':
       'بدأت رحلتنا برؤية طموحة لتقديم حلول صيدلانية متطورة وخدمات الاستيراد والتصدير لقطاع الرعاية الصحية.',
     'about.link': 'اكتشفوا خدماتنا',
     'about.imageAlt': 'طفل يستريح على غطاء ناعم',
     'about.caption': 'رعاية لبدايات أكثر إشراقًا',
+    'bridge.title': 'نربط الخبرات العالمية باحتياجات الرعاية الصحية في مصر',
+    'bridge.textOne':
+      'في أوكتوجينيكس، نبني على خبرتنا في السوق المصري لتطوير شراكات مع شركات دولية، وإتاحة منتجات مختارة في الأدوية والمكملات الغذائية والتغذية المتخصصة.',
+    'bridge.textTwo':
+      'نجمع بين المعرفة المحلية والطموح الدولي، ونعمل على تطوير قدرات التسجيل والاستيراد والتوزيع، لنصنع قيمة مستدامة لشركائنا وللقطاع الصحي.',
+    'bridge.imageAlt': 'يدان تحملان جهازًا لوحيًا يعرض تطبيقًا صحيًا',
+    'market.title': 'قنوات تواجدنا في السوق',
+    'market.description':
+      'نطوّر شبكة علاقات تجارية تربط منتجات محفظتنا بقنوات الرعاية الصحية في مصر، بما يلائم احتياجات كل قطاع ويدعم نمو شركائنا.',
+    'market.pharmacies': 'الصيدليات',
+    'market.distributors': 'شركات التوزيع وتجار الجملة',
+    'market.hospitals': 'المستشفيات',
+    'market.clinics': 'العيادات والمراكز الطبية',
+    'values.teamImageAlt': 'زملاء يضعون أيديهم معًا في دائرة',
+    'quality.sectionTitle': 'جودة معتمدة',
+    'focus.title': 'مجالات تركيزنا',
+    'focus.medicine.title': 'الأدوية',
+    'focus.medicine.text': 'تجارة وتوزيع المستحضرات الدوائية.',
+    'focus.supplement.title': 'المكملات الغذائية',
+    'focus.supplement.text': 'تطوير محفظة مختارة تدعم الاحتياجات الغذائية.',
+    'focus.infant.title': 'تغذية الرضع والأطفال',
+    'focus.infant.text': 'العمل على إتاحة علامات متخصصة للسوق المصري.',
+    'focus.partnership.title': 'الشراكات الدولية',
+    'focus.partnership.text': 'تطوير فرص الاستيراد والتمثيل التجاري.',
     'journey.kicker': 'رحلتنا',
     'journey.title': 'رحلتنا نحو آفاق أوسع',
     'journey.description': 'خبرة نبني عليها، وشراكات نتطلع من خلالها إلى مستقبل أفضل للرعاية الصحية.',
@@ -580,7 +628,7 @@ const translations: Record<Language, Record<string, string>> = {
     'page.brands.kicker': 'علاماتنا التجارية',
     'page.brands.title': 'مجموعة علامات تجارية مختارة بعناية.',
     'page.brands.description':
-      'تعرّفوا على Jovie، إحدى العلامات المحددة ضمن محفظة الشركة. لم يُقدَّم شعارها الرسمي بعد.',
+      'تعرّفوا على Jovie، إحدى العلامات التجارية ضمن محفظة أوكتوجينيكس فارما.',
     'page.contact.kicker': 'تواصلوا معنا',
     'page.contact.title': 'تواصلوا مع أوكتوجينيكس فارما',
     'page.contact.description':

@@ -16,7 +16,7 @@ const DEFAULT_CORE_VALUES = ['values.quality', 'values.innovation', 'values.inte
   template: `
     <section class="story" aria-labelledby="story-title">
       <div class="story-visual" aria-hidden="true">
-        <img src="/assets/images/dnahand.png" alt="" width="439" height="423" loading="lazy" />
+        <img src="/assets/images/corporate-v3/dna-hands.webp" alt="" width="1024" height="1024" loading="lazy" />
       </div>
       <div class="story-list">
         <h2 id="story-title" class="visually-hidden">{{ 'values.title' | translate }}</h2>
@@ -60,13 +60,15 @@ const DEFAULT_CORE_VALUES = ['values.quality', 'values.innovation', 'values.inte
       overflow: hidden;
       border-start-end-radius: 10px;
       border-end-end-radius: 10px;
-      background: #b0d45d;
+      background: #a7cf52;
     }
 
     .story-visual img {
       display: block;
       width: 100%;
-      height: auto;
+      height: 100%;
+      min-height: 360px;
+      object-fit: cover;
     }
 
     .story-list {

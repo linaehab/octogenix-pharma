@@ -48,6 +48,9 @@ Font: Onest (Google Fonts, SIL Open Font License) in place of Yandex Sans.
 | `banner-services.webp` | Services page banner | https://unsplash.com/photos/MPnn435Dr9w | Unsplash License |
 | `banner-brands.webp` | Our Brands page banner | https://unsplash.com/photos/M79HJGCKYk0 | Unsplash License |
 | `banner-contact.webp` | Contact page banner | https://unsplash.com/photos/xSdFf1Lcx6o | Unsplash License |
+| `values-team.webp` | About page, Core Values card (team photograph) | WebP copy of `src/assets/images/co.jpg`, supplied by the project team | Project asset |
+| `health-tablet.webp` | About page, "Connecting global expertise" block | WebP copy of `src/assets/images/health.jpg`, supplied by the project team | Project asset |
 | `location-map.svg` | Contact page, location map | Drawn from Natural Earth 1:50m land data (public domain), https://www.naturalearthdata.com | Public domain |
 | `patterns/medical-*.svg` | Background patterns | Drawn for this project (line art in the reference style) | Project asset |
-| `../dnahand.png` (`src/assets/images/dnahand.png`) | Home lime panel (hands and DNA) | Supplied by the project team | Project asset |
+| `doctor-sketch.webp` | About page, background behind the company introduction card | WebP copy of `src/assets/images/man.jpg`, supplied by the project team | Project asset |
+| `dna-hands.webp` | Home lime panel (hands and DNA) | WebP copy of `src/assets/images/dnahand.jpg`, supplied by the project team | Project asset |

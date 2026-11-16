@@ -8,6 +8,12 @@
   background: #fff;
 }
 
+/* Section title above the card */
+.quality-heading {
+  margin-block: 0 clamp(24px, 3vw, 36px);
+  font-size: clamp(26px, 2.6vw, 34px);
+}
+
 /* Grey card, as the reference's "slogan" block: the seal beside the text */
 .quality-inner {
   padding: clamp(28px, 3.4vw, 44px);
@@ -105,10 +111,15 @@
   grid-area: copy;
 }
 
-.quality-copy h2 {
+.quality-copy h3 {
   margin: 16px 0 16px;
   font-size: clamp(24px, 2.4vw, 32px);
   line-height: 1.15;
+}
+
+/* Keeps the look it had as the section's main title (capitals in English only) */
+:host-context(html:not([dir='rtl'])) .quality-copy h3 {
+  text-transform: uppercase;
 }
 
 .quality-standard {

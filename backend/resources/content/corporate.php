@@ -331,8 +331,8 @@ Serving healthcare.',
         'about.description' => [
             'group' => 'about.intro',
             'type' => 'textarea',
-            'en' => 'Octogenix Pharma was founded in 2020 as a company specializing in pharmaceutical import, export, and distribution, under the leadership of its founder and owner, Dr. Tarek Kandil.',
-            'ar' => 'تأسست شركة أوكتوجينيكس فارما عام 2020، وهي شركة متخصصة في استيراد وتصدير وتوزيع المنتجات الصيدلانية، تحت قيادة مؤسسها ومالكها الدكتور طارق قنديل.',
+            'en' => 'Octogenix Pharma was founded in 2020 as a company specializing in pharmaceutical import, export, and distribution, under the leadership of its founder and owner, Dr. Tarek Elmetwally Kandil.',
+            'ar' => 'تأسست شركة أوكتوجينيكس فارما عام 2020، وهي شركة متخصصة في استيراد وتصدير وتوزيع المنتجات الصيدلانية، تحت قيادة مؤسسها ومالكها الدكتور طارق المتولي قنديل.',
         ],
         'about.story' => [
             'group' => 'about.intro',
@@ -693,8 +693,8 @@ Serving healthcare.',
         'page.brands.description' => [
             'group' => 'page.brands',
             'type' => 'textarea',
-            'en' => 'Meet Jovie, a brand identified in the company’s portfolio. Its official logo has not been supplied.',
-            'ar' => 'تعرّفوا على Jovie، إحدى العلامات المحددة ضمن محفظة الشركة. لم يُقدَّم شعارها الرسمي بعد.',
+            'en' => 'Meet Jovie, one of the brands in the Octogenix Pharma portfolio.',
+            'ar' => 'تعرّفوا على Jovie، إحدى العلامات التجارية ضمن محفظة أوكتوجينيكس فارما.',
         ],
         'page.brands.imageAlt' => [
             'group' => 'page.brands',
