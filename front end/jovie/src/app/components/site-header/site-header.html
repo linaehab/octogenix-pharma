@@ -21,8 +21,8 @@
   </div>
 
   <header class="site-header" [class.home-route]="isHomePage()">
-    <a class="wordmark" routerLink="/" [attr.aria-label]="'header.homeLabel' | translate">
-      <span>{{ 'company.name' | translate }}<small>{{ 'header.tagline' | translate }}</small></span>
+    <a class="wordmark" routerLink="/home" [attr.aria-label]="'header.homeLabel' | translate">
+      <img class="brand-logo" src="/assets/images/brand/octogenix-logo.png" [alt]="'company.name' | translate" width="640" height="219" />
     </a>
 
     <button
@@ -44,7 +44,7 @@
       [class.is-open]="isMenuOpen()"
       [attr.aria-label]="'header.navigation' | translate"
     >
-      <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }"
+      <a routerLink="/home" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }"
          ariaCurrentWhenActive="page" (click)="closeNavigation()">{{ 'header.home' | translate }}</a>
       <a routerLink="/about" routerLinkActive="is-active" ariaCurrentWhenActive="page"
          (click)="closeNavigation()">{{ 'header.about' | translate }}</a>

@@ -6,8 +6,6 @@ export type Language = 'en' | 'ar';
 const translations: Record<Language, Record<string, string>> = {
   en: {
     'company.name': 'Octogenix Pharma',
-    'header.announcement': 'Pharmaceutical distribution, supplements, import and export',
-    'header.meetBrands': 'Discover Octogenix',
     'header.tagline': 'Trusted pharmaceutical solutions',
     'header.home': 'Home',
     'header.about': 'About Us',
@@ -20,6 +18,7 @@ const translations: Record<Language, Record<string, string>> = {
     'header.navigation': 'Main navigation',
     'header.homeLabel': 'Octogenix Pharma home',
     'header.switchLanguage': 'العربية',
+    'title.welcome': 'Octogenix Pharma',
     'title.home': 'Home | Octogenix Pharma',
     'title.about': 'About Us | Octogenix Pharma',
     'title.services': 'Services | Octogenix Pharma',
@@ -33,23 +32,21 @@ const translations: Record<Language, Record<string, string>> = {
     'hero.titleSecond': 'Solutions for Better',
     'hero.titleEmphasis': 'Healthcare',
     'hero.description':
-      'Octogenix Pharma specializes in pharmaceutical import, export, and distribution, with a commitment to quality and trusted healthcare partnerships.',
+      'Octogenix Pharma delivers pharmaceutical distribution, import, and export services with a focus on quality, reliability, and long-term partnerships.',
     'hero.cta': 'About Us',
+    'hero.tagMarketing': 'Marketing',
     'hero.contactCta': 'Contact Us',
     'hero.noteOne': 'Quality-led',
     'hero.noteTwo': 'GSDP',
     'hero.scroll': 'Discover our company',
     'hero.imageAlt': 'A mother holding her baby in a bright studio',
     'about.kicker': 'About Octogenix Pharma',
-    'about.aside': 'Founded in 2020.\nServing healthcare.',
     'about.title': 'Pharmaceutical solutions for a healthier future.',
     'about.description':
       'Octogenix Pharma was founded in 2020 as a company specializing in pharmaceutical import, export, and distribution, under the leadership of its founder and owner, Dr. Tarek Elmetwally Kandil.',
     'about.story':
       'Our story began with an ambitious vision to bring advanced pharmaceutical solutions and import and export services to the healthcare sector.',
     'about.link': 'Explore our services',
-    'about.imageAlt': 'A baby resting on a soft blanket',
-    'about.caption': 'Care for brighter beginnings',
     'bridge.title': "Connecting global expertise with Egypt's healthcare needs",
     'bridge.textOne':
       'At Octogenix, we build on our experience in the Egyptian market to develop partnerships with international companies and to make selected products available in pharmaceuticals, dietary supplements and specialized nutrition.',
@@ -104,8 +101,6 @@ const translations: Record<Language, Record<string, string>> = {
       'We look forward to launching our portfolio of international brands and expanding our presence, as a trusted partner in providing healthcare and nutrition products.',
     'services.kicker': 'Our services',
     'services.title': 'Pharmaceutical services with care and quality.',
-    'services.summary':
-      'Our stated business activities span pharmaceutical distribution, pharmaceutical import and export, and supplements.',
     'services.customers': 'Customers',
     'services.suppliers': 'Suppliers',
     'services.customerContractingTitle': 'Contracting and Documentation',
@@ -144,19 +139,6 @@ const translations: Record<Language, Record<string, string>> = {
     'services.supplierScientificTitle': 'Scientific Office',
     'services.supplierScientificDescription':
       'Providing scientific support, consultations, and communication with healthcare professionals and physicians to introduce products.',
-    'services.distributionTitle': 'Pharmaceutical Distribution',
-    'services.distributionDescription':
-      'Distribution of pharmaceutical products as part of our stated business activities.',
-    'services.importTitle': 'Pharmaceutical Import & Export',
-    'services.importDescription':
-      'Import and export of pharmaceutical products for the healthcare sector.',
-    'services.supplementsTitle': 'Supplements',
-    'services.supplementsDescription':
-      'Supplements and related activities within our stated business scope.',
-    'services.distributionImageAlt':
-      'Warehouse forklift and packaged goods in a distribution center',
-    'services.importImageAlt': 'Palletized cartons in a large distribution warehouse',
-    'services.supplementsImageAlt': 'Unbranded infant nutrition powder, bottle and measuring scoop',
     'services.customerContractingImageAlt': 'Professionals collaborating in a bright meeting room',
     'services.customerOrderReceptionImageAlt': 'A laboratory specialist conducting quality checks',
     'services.customerOrderSupplyImageAlt': 'Packaged goods in an organized distribution warehouse',
@@ -179,55 +161,52 @@ const translations: Record<Language, Record<string, string>> = {
       'Our mission, vision and values guide how we approach pharmaceutical solutions and our role in healthcare.',
     'values.missionTitle': 'Our Mission',
     'values.missionDescription':
-      'To offer innovative, high-quality pharmaceutical solutions in important therapeutic areas, supporting patients’ quality of life and healthcare professionals’ confidence.',
+      'To make quality healthcare products more accessible in Egypt by connecting international manufacturers with pharmacies, hospitals and healthcare professionals through reliable import and distribution services.',
     'values.visionTitle': 'Our Vision',
     'values.visionDescription':
-      'To be a trusted partner in pharmaceutical import, export and distribution services in Egypt.',
+      'To become a leading healthcare distribution company in Egypt and a trusted partner for international brands expanding into regional markets.',
     'values.missionImageAlt': 'A laboratory specialist preparing samples for quality checks',
-    'values.visionImageAlt': 'Healthcare researchers collaborating at a microscope',
-    'values.qualityImageAlt': 'Healthcare researchers using a microscope in a laboratory',
-    'values.innovationImageAlt': 'Researchers collaborating over laboratory samples',
-    'values.integrityImageAlt': 'Laboratory worker carefully using a pipette',
-    'values.distributionImageAlt': 'Warehouse workers handling stocked goods',
-    'values.growthImageAlt': 'A green seedling emerging from soil',
-    'values.coreTitle': 'Core Values',
-    'values.quality': 'Quality',
-    'values.qualityDescription':
-      'We commit to rigorous pharmaceutical standards through each stage of the supply chain, import and export.',
-    'values.innovation': 'Innovation',
-    'values.integrity': 'Integrity & Trust',
-    'values.distributionExcellence': 'Distribution Excellence',
-    'values.sustainable': 'Sustainable Growth',
-    'values.companyTitle': 'Company Values',
-    'values.commitment': 'Commitment',
-    'values.commitmentDescription': 'Integrity, respect, fairness and compliance.',
-    'values.companyExcellence': 'Excellence',
-    'values.excellenceDescription': 'Through development and a drive to succeed and excel.',
-    'values.harmony': 'Harmony',
-    'values.harmonyDescription': 'Communication and connection.',
-    'values.growth': 'Growth',
-    'values.growthDescription': 'Through development, empowerment and continuous improvement.',
-    'values.credibility': 'Credibility',
-    'values.credibilityDescription': 'Earning trust.',
+    'ourValues.title': 'Our Values',
+    'ourValues.intro': 'Our values guide our decisions, shape our relationships and define how we work every day.',
+    'ourValues.teamSpirit': 'Team Spirit',
+    'ourValues.teamSpiritText': 'We work together towards shared goals.',
+    'ourValues.responsibility': 'Responsibility',
+    'ourValues.responsibilityText': 'We take ownership of our actions and commitments.',
+    'ourValues.respect': 'Respect',
+    'ourValues.respectText': 'We value people and treat everyone fairly.',
+    'ourValues.innovation': 'Innovation',
+    'ourValues.innovationText': 'We welcome new ideas and better ways of working.',
+    'ourValues.professionalism': 'Professionalism',
+    'ourValues.professionalismText': 'We bring care, knowledge and dedication to our work.',
+    'ourValues.efficiency': 'Efficiency',
+    'ourValues.efficiencyText': 'We use time and resources wisely.',
+    'ourValues.personalGrowth': 'Personal Growth',
+    'ourValues.personalGrowthText': 'We support continuous learning and development.',
+    'ourValues.trust': 'Trust',
+    'ourValues.trustText': 'We build lasting relationships through honesty and transparency.',
+    'approach.title': 'Our Approach',
+    'approach.market': 'Market Understanding',
+    'approach.marketText': 'Identify healthcare needs and assess the market potential of each product.',
+    'approach.portfolio': 'Portfolio Selection',
+    'approach.portfolioText': 'Select complementary brands and products with a clear role in our portfolio.',
+    'approach.regulatory': 'Regulatory Coordination',
+    'approach.regulatoryText': 'Coordinate documentation and registration requirements to support market entry.',
+    'approach.distribution': 'Distribution Planning',
+    'approach.distributionText': 'Plan supply and distribution around product requirements and customer demand.',
+    'approach.commercial': 'Commercial Development',
+    'approach.commercialText': 'Support market presence through focused sales, marketing and ongoing performance review.',
     'quality.kicker': 'Our quality commitment',
     'quality.title': 'A clear standard for storage and distribution practices.',
     'quality.standard': 'GSDP — Good Storage and Distribution Practices',
-    'quality.description':
-      'Presented as a company quality credential. No certificate image, number, issuing authority or validity details have been supplied.',
-    'quality.imageAlt': 'A specialist conducting quality checks in a clean production environment',
     'leadership.kicker': 'Leadership',
-    'leadership.title': 'Meet our leadership',
+    'leadership.title': 'Our leadership',
     'leadership.description': 'The people leading Octogenix Pharma.',
-    'leadership.imageAlt': 'Healthcare professionals collaborating in a clinical setting',
-    'leadership.imageCaption': 'A shared commitment to healthcare',
     'leadership.tarek': 'Dr. Tarek Kandil',
     'leadership.founder': 'Founder',
     'leadership.metwally': 'Mr. Metwally Kandil',
     'leadership.managingDirector': 'VP & Managing Director',
     'leadership.soha': 'Dr. Soha El-Kholy',
     'leadership.coo': 'COO',
-    'leadership.portraitNote':
-      'The image above is illustrative, not a portrait. Official leadership photos can be added when approved.',
     'brands.kicker': 'Our brands',
     'brands.title': 'A considered brand portfolio.',
     'brands.summary': 'Meet one confirmed brand from Octogenix Pharma’s portfolio.',
@@ -235,14 +214,13 @@ const translations: Record<Language, Record<string, string>> = {
     'brands.jovie': 'Jovie',
     'brands.description':
       'Jovie has been identified as a brand represented by the company. An approved brand description has not been supplied.',
-    'brands.assetNote': 'Displayed as text only; no official Jovie logo asset has been supplied.',
     'brands.imageAlt': 'Infant nutrition powder, bottle and measuring scoop',
     'page.about.imageAlt': 'A technical specialist working in a bright production facility',
     'page.services.imageAlt': 'An organized aisle in a high-bay distribution warehouse',
     'page.brands.imageAlt': 'Healthcare researchers collaborating in a bright laboratory',
     'page.contact.imageAlt': 'Healthcare researchers collaborating in a bright laboratory',
     'brands.cta': 'Contact us about our portfolio',
-    'brands.visitStore': 'Visit the {brand} store',
+    'brands.visitWebsite': 'Visit {brand} Egypt website',
     'contact.kicker': 'Contact Octogenix Pharma',
     'contact.title': 'Let’s start a conversation.',
     'contact.description':
@@ -314,12 +292,6 @@ const translations: Record<Language, Record<string, string>> = {
     'companyImpact.aboutCta': 'About OCTOGENIX',
 
     // Feature Cards
-    'companyImpact.services': 'OUR SERVICES',
-    'companyImpact.servicesAlt': 'Pharmaceutical laboratory and medical research',
-    'companyImpact.brands': 'OUR BRANDS',
-    'companyImpact.brandsAlt': 'Jovie and pharmaceutical product brands',
-    'companyImpact.aboutUs': 'ABOUT US',
-    'companyImpact.aboutUsAlt': 'Octogenix Pharma healthcare and pharmaceutical expertise',
 
     // Company Impact Statistics
     'companyImpact.impact': 'OUR IMPACT',
@@ -348,8 +320,6 @@ const translations: Record<Language, Record<string, string>> = {
   },
   ar: {
     'company.name': 'أوكتوجينيكس فارما',
-    'header.announcement': 'التوزيع الدوائي والمكملات الغذائية والاستيراد والتصدير',
-    'header.meetBrands': 'تعرّفوا على أوكتوجينيكس',
     'header.tagline': 'حلول صيدلانية موثوقة',
     'header.home': 'الرئيسية',
     'header.about': 'من نحن',
@@ -362,6 +332,7 @@ const translations: Record<Language, Record<string, string>> = {
     'header.navigation': 'القائمة الرئيسية',
     'header.homeLabel': 'أوكتوجينيكس فارما - الرئيسية',
     'header.switchLanguage': 'English',
+    'title.welcome': 'أوكتوجينيكس فارما',
     'title.home': 'الرئيسية | أوكتوجينيكس فارما',
     'title.about': 'من نحن | أوكتوجينيكس فارما',
     'title.services': 'خدماتنا | أوكتوجينيكس فارما',
@@ -375,23 +346,21 @@ const translations: Record<Language, Record<string, string>> = {
     'hero.titleSecond': 'موثوقة لرعاية صحية',
     'hero.titleEmphasis': 'أفضل',
     'hero.description':
-      'تتخصص أوكتوجينيكس فارما في استيراد وتصدير وتوزيع المنتجات الصيدلانية، مع الالتزام بالجودة وبناء شراكات موثوقة في قطاع الرعاية الصحية.',
+      'تقدّم أوكتوجينيكس فارما خدمات توزيع واستيراد وتصدير المنتجات الصيدلانية، مع التركيز على الجودة والموثوقية والشراكات طويلة الأمد.',
     'hero.cta': 'عن الشركة',
+    'hero.tagMarketing': 'التسويق',
     'hero.contactCta': 'تواصل معنا',
     'hero.noteOne': 'الجودة أولًا',
     'hero.noteTwo': 'GSDP',
     'hero.scroll': 'اكتشفوا الشركة',
     'hero.imageAlt': 'أم تحتضن طفلها في أجواء مشرقة',
     'about.kicker': 'عن أوكتوجينيكس فارما',
-    'about.aside': 'تأسست عام 2020.\nمن أجل الرعاية الصحية.',
     'about.title': 'حلول صيدلانية من أجل مستقبل صحي أفضل.',
     'about.description':
       'تأسست شركة أوكتوجينيكس فارما عام 2020، وهي شركة متخصصة في استيراد وتصدير وتوزيع المنتجات الصيدلانية، تحت قيادة مؤسسها ومالكها الدكتور طارق المتولي قنديل.',
     'about.story':
       'بدأت رحلتنا برؤية طموحة لتقديم حلول صيدلانية متطورة وخدمات الاستيراد والتصدير لقطاع الرعاية الصحية.',
     'about.link': 'اكتشفوا خدماتنا',
-    'about.imageAlt': 'طفل يستريح على غطاء ناعم',
-    'about.caption': 'رعاية لبدايات أكثر إشراقًا',
     'bridge.title': 'نربط الخبرات العالمية باحتياجات الرعاية الصحية في مصر',
     'bridge.textOne':
       'في أوكتوجينيكس، نبني على خبرتنا في السوق المصري لتطوير شراكات مع شركات دولية، وإتاحة منتجات مختارة في الأدوية والمكملات الغذائية والتغذية المتخصصة.',
@@ -444,8 +413,6 @@ const translations: Record<Language, Record<string, string>> = {
       'نتطلع إلى إطلاق محفظتنا من العلامات الدولية وتوسيع حضورنا، لنكون شريكًا موثوقًا في إتاحة منتجات الرعاية الصحية والتغذية.',
     'services.kicker': 'خدماتنا',
     'services.title': 'خدمات صيدلانية ترتكز على العناية والجودة.',
-    'services.summary':
-      'تشمل أنشطة الشركة المعلنة توزيع المنتجات الصيدلانية واستيرادها وتصديرها والمكملات الغذائية.',
     'services.customers': 'العملاء',
     'services.suppliers': 'الموردون',
     'services.customerContractingTitle': 'التعاقد والتوثيق',
@@ -484,16 +451,6 @@ const translations: Record<Language, Record<string, string>> = {
     'services.supplierScientificTitle': 'المكتب العلمي',
     'services.supplierScientificDescription':
       'تقديم الدعم العلمي، الاستشارات، والتواصل مع القطاع الطبي والأطباء للتعريف بالمنتجات.',
-    'services.distributionTitle': 'توزيع المنتجات الصيدلانية',
-    'services.distributionDescription': 'توزيع المنتجات الصيدلانية ضمن أنشطة الشركة المعلنة.',
-    'services.importTitle': 'استيراد وتصدير المنتجات الصيدلانية',
-    'services.importDescription': 'استيراد وتصدير المنتجات الصيدلانية لقطاع الرعاية الصحية.',
-    'services.supplementsTitle': 'المكملات الغذائية',
-    'services.supplementsDescription':
-      'المكملات الغذائية والأنشطة المرتبطة بها ضمن نطاق أعمال الشركة المعلن.',
-    'services.distributionImageAlt': 'رافعة شوكية وبضائع معبأة في مركز توزيع',
-    'services.importImageAlt': 'صناديق على منصات داخل مستودع توزيع كبير',
-    'services.supplementsImageAlt': 'مسحوق تغذية أطفال غير موسوم وزجاجة وملعقة قياس',
     'services.customerContractingImageAlt': 'متخصصون يتعاونون في غرفة اجتماعات مشرقة',
     'services.customerOrderReceptionImageAlt': 'متخصص مختبر يجري فحوصات الجودة',
     'services.customerOrderSupplyImageAlt': 'بضائع معبأة في مستودع توزيع منظم',
@@ -512,55 +469,52 @@ const translations: Record<Language, Record<string, string>> = {
       'توجّه رسالتنا ورؤيتنا وقيمنا نهجنا في الحلول الصيدلانية ودورنا في قطاع الرعاية الصحية.',
     'values.missionTitle': 'رسالتنا',
     'values.missionDescription':
-      'تقديم حلول صيدلانية مبتكرة وعالية الجودة في مجالات علاجية هامة، بما يدعم تحسين جودة حياة المرضى وتعزيز ثقة الممارسين الصحيين.',
+      'إتاحة منتجات رعاية صحية عالية الجودة على نطاق أوسع في مصر، من خلال ربط الشركات المصنّعة الدولية بالصيدليات والمستشفيات ومقدّمي الرعاية الصحية عبر خدمات استيراد وتوزيع موثوقة.',
     'values.visionTitle': 'رؤيتنا',
     'values.visionDescription':
-      'أن نكون الشريك الموثوق به في خدمات استيراد وتصدير وتوزيع المنتجات الصيدلانية في مصر.',
+      'أن نصبح شركة رائدة في توزيع منتجات الرعاية الصحية في مصر، وشريكًا موثوقًا للعلامات الدولية التي تتوسع في الأسواق الإقليمية.',
     'values.missionImageAlt': 'متخصص مختبر يجهز عينات لفحوصات الجودة',
-    'values.visionImageAlt': 'باحثون صحيون يتعاونون باستخدام مجهر',
-    'values.qualityImageAlt': 'باحثون صحيون يستخدمون المجهر في مختبر',
-    'values.innovationImageAlt': 'باحثون يتعاونون حول عينات مخبرية',
-    'values.integrityImageAlt': 'عامل مختبر يستخدم ماصة بعناية',
-    'values.distributionImageAlt': 'عاملون في مستودع يتعاملون مع بضائع مخزنة',
-    'values.growthImageAlt': 'شتلة خضراء تنمو من التربة',
-    'values.coreTitle': 'قيمنا الجوهرية',
-    'values.quality': 'الجودة',
-    'values.qualityDescription':
-      'نلتزم بمعايير صيدلانية صارمة في كل مرحلة من مراحل سلسلة التوريد والاستيراد والتصدير.',
-    'values.innovation': 'الابتكار',
-    'values.integrity': 'النزاهة والثقة',
-    'values.distributionExcellence': 'التميز في التوزيع',
-    'values.sustainable': 'النمو المستدام',
-    'values.companyTitle': 'قيم الشركة',
-    'values.commitment': 'الالتزام',
-    'values.commitmentDescription': 'النزاهة، الاحترام، العدالة، والامتثال.',
-    'values.companyExcellence': 'التميز',
-    'values.excellenceDescription': 'من خلال التطوير والرغبة في النجاح والتميز.',
-    'values.harmony': 'التناغم',
-    'values.harmonyDescription': 'الاتصال والترابط.',
-    'values.growth': 'النمو',
-    'values.growthDescription': 'من خلال التطوير والتمكين والتحسين المستمر.',
-    'values.credibility': 'المصداقية',
-    'values.credibilityDescription': 'كسب الثقة.',
+    'ourValues.title': 'قيمنا',
+    'ourValues.intro': 'قيمنا توجّه قراراتنا، وتشكّل علاقاتنا، وتحدد طريقة عملنا كل يوم.',
+    'ourValues.teamSpirit': 'روح الفريق',
+    'ourValues.teamSpiritText': 'نعمل معًا لتحقيق أهداف مشتركة.',
+    'ourValues.responsibility': 'المسؤولية',
+    'ourValues.responsibilityText': 'نتحمّل مسؤولية أفعالنا والتزاماتنا.',
+    'ourValues.respect': 'الاحترام',
+    'ourValues.respectText': 'نقدّر الناس ونتعامل مع الجميع بإنصاف.',
+    'ourValues.innovation': 'الابتكار',
+    'ourValues.innovationText': 'نرحّب بالأفكار الجديدة وبطرق عمل أفضل.',
+    'ourValues.professionalism': 'الاحترافية',
+    'ourValues.professionalismText': 'نؤدي عملنا بعناية ومعرفة وتفانٍ.',
+    'ourValues.efficiency': 'الكفاءة',
+    'ourValues.efficiencyText': 'نستخدم الوقت والموارد بحكمة.',
+    'ourValues.personalGrowth': 'النمو الشخصي',
+    'ourValues.personalGrowthText': 'ندعم التعلّم والتطوير المستمرين.',
+    'ourValues.trust': 'الثقة',
+    'ourValues.trustText': 'نبني علاقات دائمة قائمة على الصدق والشفافية.',
+    'approach.title': 'نهجنا',
+    'approach.market': 'فهم السوق',
+    'approach.marketText': 'تحديد احتياجات الرعاية الصحية وتقييم الإمكانات السوقية لكل منتج.',
+    'approach.portfolio': 'اختيار المحفظة',
+    'approach.portfolioText': 'اختيار علامات ومنتجات متكاملة، لكلٍّ منها دور واضح في محفظتنا.',
+    'approach.regulatory': 'التنسيق التنظيمي',
+    'approach.regulatoryText': 'تنسيق متطلبات المستندات والتسجيل لدعم دخول المنتجات إلى السوق.',
+    'approach.distribution': 'تخطيط التوزيع',
+    'approach.distributionText': 'تخطيط التوريد والتوزيع وفق متطلبات كل منتج واحتياجات العملاء.',
+    'approach.commercial': 'التطوير التجاري',
+    'approach.commercialText': 'دعم الحضور في السوق من خلال مبيعات وتسويق مركّزين ومراجعة مستمرة للأداء.',
     'quality.kicker': 'التزامنا بالجودة',
     'quality.title': 'معيار واضح لممارسات التخزين والتوزيع.',
     'quality.standard': 'ممارسات التخزين والتوزيع الجيد (GSDP)',
-    'quality.description':
-      'يُعرض باعتباره بيان جودة للشركة. لم تُقدَّم صورة شهادة أو رقمها أو جهة إصدارها أو تفاصيل صلاحيتها.',
-    'quality.imageAlt': 'متخصص يجري فحوصات الجودة في بيئة إنتاج نظيفة',
     'leadership.kicker': 'القيادة',
-    'leadership.title': 'تعرّفوا على فريق القيادة',
+    'leadership.title': 'فريق القيادة',
     'leadership.description': 'الأشخاص الذين يقودون أوكتوجينيكس فارما.',
-    'leadership.imageAlt': 'ممارسون صحيون يتعاونون في بيئة سريرية',
-    'leadership.imageCaption': 'التزام مشترك بالرعاية الصحية',
     'leadership.tarek': 'د. طارق قنديل',
     'leadership.founder': 'المؤسس',
     'leadership.metwally': 'أ. متولي قنديل',
     'leadership.managingDirector': 'نائب الرئيس والعضو المنتدب',
     'leadership.soha': 'د. سها الخولي',
     'leadership.coo': 'رئيس قطاع العمليات',
-    'leadership.portraitNote':
-      'الصورة أعلاه توضيحية وليست صورة شخصية. يمكن إضافة صور القيادة الرسمية عند توفيرها واعتمادها.',
     'brands.kicker': 'علاماتنا التجارية',
     'brands.title': 'مجموعة علامات تجارية مختارة بعناية.',
     'brands.summary': 'تعرّفوا على إحدى العلامات المؤكدة ضمن محفظة أوكتوجينيكس فارما.',
@@ -568,14 +522,13 @@ const translations: Record<Language, Record<string, string>> = {
     'brands.jovie': 'Jovie',
     'brands.description':
       'تم تحديد Jovie ضمن العلامات التي تمثلها الشركة. لم يُقدَّم وصف معتمد للعلامة.',
-    'brands.assetNote': 'يُعرض الاسم كنص فقط؛ لم يُقدَّم الشعار الرسمي لـ Jovie.',
     'brands.imageAlt': 'مسحوق تغذية أطفال وزجاجة وملعقة قياس',
     'page.about.imageAlt': 'متخصص فني يعمل في منشأة إنتاج مشرقة',
     'page.services.imageAlt': 'ممر منظم في مستودع توزيع مرتفع الرفوف',
     'page.brands.imageAlt': 'باحثون صحيون يتعاونون في مختبر مشرق',
     'page.contact.imageAlt': 'باحثون صحيون يتعاونون في مختبر مشرق',
     'brands.cta': 'تواصلوا معنا بشأن العلامات',
-    'brands.visitStore': 'زيارة متجر {brand}',
+    'brands.visitWebsite': 'زيارة موقع {brand} مصر',
     'contact.kicker': 'تواصلوا مع أوكتوجينيكس فارما',
     'contact.title': 'لنبدأ حوارًا.',
     'contact.description': 'هل لديك استفسار أو ترغب في مناقشة فرصة تعاون؟ تواصل مع فريقنا.',
@@ -641,12 +594,6 @@ const translations: Record<Language, Record<string, string>> = {
     'companyImpact.aboutCta': 'عن أوكتوجينيكس',
 
     // Feature Cards
-    'companyImpact.services': 'خدماتنا',
-    'companyImpact.servicesAlt': 'معمل أبحاث دوائية وفحوصات علمية',
-    'companyImpact.brands': 'علاماتنا التجارية',
-    'companyImpact.brandsAlt': 'جوفي ومنتجات العلامات التجارية الدوائية',
-    'companyImpact.aboutUs': 'من نحن',
-    'companyImpact.aboutUsAlt': 'خبرات أوكتوجينيكس فارما في مجال الرعاية الصحية والأدوية',
 
     // Company Impact Statistics
     'companyImpact.impact': 'أثرنا',
@@ -711,10 +658,6 @@ export class LanguageService {
     this.updateDocumentTitle();
   }
 
-  /**
-   * Applies texts loaded from the API. Keys without a non-empty value for a language keep
-   * using the bundled translation, so the bundled dictionary always remains the fallback.
-   */
   /** Adds the bundled dictionary of a lazily loaded section; corporate keys keep precedence. */
   addTranslations(texts: Record<Language, Record<string, string>>): void {
     this.sectionTranslations.update((current) => ({
@@ -724,6 +667,10 @@ export class LanguageService {
     this.updateDocumentTitle();
   }
 
+  /**
+   * Applies texts loaded from the API. Keys without a non-empty value for a language keep
+   * using the bundled translation, so the bundled dictionary always remains the fallback.
+   */
   setRemoteTranslations(texts: Record<string, Partial<Record<Language, string | null>>>): void {
     this.remoteTranslations.set(texts);
     this.updateDocumentTitle();

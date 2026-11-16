@@ -2,9 +2,10 @@
   display: block;
 }
 
-/* Quality credential band: the GSDP seal beside the statement */
+/* Quality credential band: the GSDP seal beside the statement. No padding of its own: the
+   sections before and after it already provide the spacing (it sat in a doubled gap). */
 .quality {
-  padding-block: var(--cx-section);
+  padding-block: 0;
   background: #fff;
 }
 
@@ -132,13 +133,6 @@
   box-shadow: none;
   font-size: 14px;
   font-weight: 700;
-}
-
-.quality-description {
-  max-width: 520px;
-  margin: 0;
-  color: var(--cx-gray);
-  font-size: 16px;
 }
 
 @media (max-width: 1000px) {

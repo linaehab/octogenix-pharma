@@ -2,7 +2,7 @@
   display: block;
 }
 
-/* Leadership: grey cards with a duotone person icon, the name and the role */
+/* Leadership: cards with a monogram seal, the name and the role */
 .leadership {
   padding-block: var(--cx-section);
 }
@@ -30,34 +30,88 @@
 .leader-entry {
   display: grid;
   justify-items: center;
-  gap: 10px;
-  padding: 30px 22px;
-  border-radius: var(--cx-radius);
+  align-content: start;
+  padding: clamp(32px, 3vw, 42px) 24px 34px;
+  border: 1px solid var(--cx-line);
+  border-radius: var(--cx-radius-lg);
   background: var(--cx-cloud);
   text-align: center;
+  transition: transform 360ms var(--cx-ease), box-shadow 360ms ease;
 }
 
-.leader-entry app-cx-icon {
-  --cx-icon-size: 52px;
+.leader-entry:hover {
+  box-shadow: 0 24px 44px -32px rgba(43, 44, 45, 0.55);
+  transform: translateY(-3px);
+}
+
+/* Monogram seal: charcoal ring, thin lime ring inside, the initials, a lime leaf at the edge */
+.leader-monogram {
+  position: relative;
+  display: grid;
+  width: clamp(128px, 11vw, 150px);
+  aspect-ratio: 1;
+  place-items: center;
+  border: 2px solid var(--cx-navy);
+  border-radius: 50%;
+  background: #fff;
+}
+
+.leader-monogram::before {
+  position: absolute;
+  inset: 7px;
+  border: 1.5px solid var(--cx-azure);
+  border-radius: 50%;
+  content: '';
+}
+
+.leader-initials {
+  color: var(--cx-navy);
+  font-size: clamp(40px, 3.6vw, 50px);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.leader-leaf {
+  position: absolute;
+  right: 16%;
+  bottom: 13%;
+  width: 26px;
+  height: 26px;
+  border-radius: 0 100%;
+  background: linear-gradient(135deg, var(--cx-azure) 50%, var(--cx-royal) 50%);
+  transform: rotate(-12deg);
+}
+
+.leader-rule {
+  width: 40px;
+  height: 2px;
+  margin: 26px 0 18px;
+  border-radius: 2px;
+  background: var(--cx-azure);
 }
 
 .leader-name {
-  margin: 6px 0 0;
+  margin: 0 0 10px;
   font-size: 22px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .leader-role {
   margin: 0;
-  color: #78992a;
+  color: var(--cx-slate);
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: var(--cx-track-label);
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
-.portrait-note {
-  margin: 20px 0 0;
-  color: var(--cx-gray);
-  font-size: 12px;
+:host-context([dir='rtl']) .leader-role {
+  letter-spacing: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .leader-entry {
+    transition: none;
+  }
 }

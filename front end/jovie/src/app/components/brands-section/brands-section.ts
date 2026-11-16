@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { SiteContentService } from '../../core/content/site-content.service';
 import { LanguageService } from '../../core/i18n/language.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { publicCopy } from '../draft-copy';
 
 interface BrandCard {
   name: string;
@@ -50,14 +51,17 @@ export class BrandsSection {
   private readonly content = inject(SiteContentService);
   private readonly language = inject(LanguageService);
 
+  /** Text under the section title (empty while it is still the seeded draft note). */
+  protected readonly summary = computed(() => publicCopy(this.language.translate('brands.summary')));
+
   /** Active brands from the dashboard, or the bundled Jovie card when the API is unavailable. */
   protected readonly brands = computed<BrandCard[]>(() => {
     const remote = this.content.brands();
     if (remote) {
       return remote.map((brand) => ({
         name: this.content.pick(brand.name),
-        label: this.content.pick(brand.label),
-        description: this.content.pick(brand.short_description),
+        label: publicCopy(this.content.pick(brand.label)),
+        description: publicCopy(this.content.pick(brand.short_description)),
         image: brand.image_url ?? brand.logo_url ?? '',
         hoverImage: brand.hover_image_url,
         imageAlt: this.content.pick(brand.image_alt),
@@ -71,8 +75,8 @@ export class BrandsSection {
     const t = (key: string) => this.language.translate(key);
     return [{
       name: t('brands.jovie'),
-      label: t('brands.label'),
-      description: t('brands.description'),
+      label: publicCopy(t('brands.label')),
+      description: publicCopy(t('brands.description')),
       image: '/assets/images/jovie.jpg',
       hoverImage: '/assets/images/mom.jpg',
       imageAlt: t('brands.imageAlt'),

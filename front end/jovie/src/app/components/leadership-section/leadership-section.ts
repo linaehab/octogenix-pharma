@@ -2,7 +2,6 @@ import { Component, computed, inject } from '@angular/core';
 import { SiteContentService } from '../../core/content/site-content.service';
 import { LanguageService } from '../../core/i18n/language.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { CxIcon } from '../cx-icon/cx-icon';
 
 /** Bundled leaders (translation keys), shown until (or unless) the dashboard list is loaded. */
 const DEFAULT_LEADERS = [
@@ -27,7 +26,7 @@ export function initialsOf(name: string): string {
 
 @Component({
   selector: 'app-leadership-section',
-  imports: [TranslatePipe, CxIcon],
+  imports: [TranslatePipe],
   templateUrl: './leadership-section.html',
   styleUrl: './leadership-section.css',
 })

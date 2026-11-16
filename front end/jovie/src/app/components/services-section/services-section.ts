@@ -1,4 +1,5 @@
 import { Component, computed, inject, input, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { SiteContentService } from '../../core/content/site-content.service';
 import { LanguageService } from '../../core/i18n/language.service';
@@ -169,7 +170,8 @@ export class ServicesSection {
     const routeCategory = this.route.snapshot.queryParamMap.get('category');
     this.selectedCategory.set(routeCategory === 'suppliers' ? 'suppliers' : 'customers');
 
-    this.route.queryParamMap.subscribe((params) => {
+    // Ends with the component (on the home page the route outlives it)
+    this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((params) => {
       const nextCategory = params.get('category');
       this.selectedCategory.set(nextCategory === 'suppliers' ? 'suppliers' : 'customers');
     });

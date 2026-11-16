@@ -18,6 +18,8 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'jovie/account/**', renderMode: RenderMode.Client },
   { path: 'admin', renderMode: RenderMode.Client },
   { path: 'admin/**', renderMode: RenderMode.Client },
+  // The intro is shown once per visit, which only the browser knows: rendered in the browser.
+  { path: '', renderMode: RenderMode.Client },
   {
     path: '**',
     renderMode: RenderMode.Prerender

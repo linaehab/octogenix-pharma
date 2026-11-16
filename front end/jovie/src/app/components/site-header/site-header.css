@@ -88,6 +88,11 @@
   border-color: var(--cx-azure);
 }
 
+/* Charcoal behind the top-bar switch so it stays readable over the hero's lime shape */
+.utility-language {
+  background: var(--cx-navy);
+}
+
 /* Main bar: white, rounded, floating */
 .site-header {
   display: flex;
@@ -114,9 +119,15 @@
   box-shadow: 0 1px 0 var(--cx-line), 0 18px 40px -24px rgba(43, 44, 45, 0.55);
 }
 
-.wordmark small {
-  color: var(--cx-gray);
-  opacity: 1;
+/* Official logo in the white bar */
+.wordmark .brand-logo {
+  height: 62px;
+}
+
+@media (max-width: 1060px) {
+  .wordmark .brand-logo {
+    height: 50px;
+  }
 }
 
 .primary-navigation {

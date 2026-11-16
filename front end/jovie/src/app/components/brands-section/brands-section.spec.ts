@@ -57,7 +57,7 @@ describe('BrandsSection', () => {
     const cards = compiled.querySelectorAll('.brand-feature');
     const store = cards[0].querySelector('.store-button');
     expect(store?.getAttribute('href')).toBe('/jovie');
-    expect(store?.textContent).toContain('Visit the Jovie store');
+    expect(store?.textContent).toContain('Visit Jovie Egypt website');
     expect(cards[1].querySelector('.store-button')).toBeNull();
     expect(cards[2].querySelector('.store-button')).toBeNull();
   });

@@ -76,6 +76,15 @@
   padding: 28px;
 }
 
+/* Line under the values title */
+.values-intro {
+  max-width: 460px;
+  margin: 0;
+  color: var(--cx-slate);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
 .core-value-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

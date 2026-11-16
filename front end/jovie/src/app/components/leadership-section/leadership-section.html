@@ -5,15 +5,18 @@
     <p>{{ 'leadership.description' | translate }}</p>
   </header>
 
-  <!-- People as grey cards with a duotone icon (reference "holding company structure" cards) -->
+  <!-- People as cards with a monogram seal (initials in a double ring with a lime leaf) -->
   <div class="leadership-list" role="list">
     @for (leader of leaders(); track $index) {
       <article class="leader-entry" role="listitem">
-        <app-cx-icon name="person" />
+        <div class="leader-monogram" aria-hidden="true">
+          <span class="leader-initials">{{ leader.initials }}</span>
+          <span class="leader-leaf"></span>
+        </div>
+        <span class="leader-rule" aria-hidden="true"></span>
         <h3 class="leader-name">{{ leader.name }}</h3>
         <p class="leader-role">{{ leader.role }}</p>
       </article>
     }
   </div>
-  <p class="portrait-note">{{ 'leadership.portraitNote' | translate }}</p>
 </section>

@@ -15,7 +15,7 @@ export class LocalizedTitleStrategy extends TitleStrategy {
         segments.push(route.routeConfig.path);
       }
     }
-    const routePath = segments.join('/') || 'home';
+    const routePath = segments.join('/') || 'welcome';
     const fallbackTitle = this.buildTitle(snapshot) ?? 'Octogenix Pharma';
     this.language.setRouteTitle(`title.${routePath}`, fallbackTitle);
   }

@@ -28,13 +28,13 @@ export class SiteHeader {
   private readonly destroyRef = inject(DestroyRef);
 
   constructor() {
-    this.isHomePage.set(this.router.url === '/');
+    this.isHomePage.set(this.router.url === '/home');
     this.router.events
       .pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((event) => this.isHomePage.set(event.urlAfterRedirects === '/'));
+      .subscribe((event) => this.isHomePage.set(event.urlAfterRedirects === '/home'));
   }
 
   @HostListener('window:scroll')

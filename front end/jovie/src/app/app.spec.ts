@@ -24,6 +24,40 @@ describe('App', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
+  it('opens on the intro page, which then opens the Home page by itself', async () => {
+    sessionStorage.removeItem('octogenix.introSeen');
+    jasmine.clock().install();
+    try {
+      const fixture = TestBed.createComponent(App);
+      const router = TestBed.inject(Router);
+      await router.navigateByUrl('/');
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement as HTMLElement;
+
+      expect(compiled.querySelector('app-welcome-page img')?.getAttribute('alt')).toBe('Octogenix Pharma');
+      expect(compiled.querySelector('.site-header')).toBeNull();
+      expect(document.title).toBe('Octogenix Pharma');
+
+      jasmine.clock().tick(4000);
+      await fixture.whenStable();
+      expect(router.url).toBe('/home');
+    } finally {
+      jasmine.clock().uninstall();
+    }
+  });
+
+  it('shows the intro only once per visit: the site address then opens Home directly', async () => {
+    sessionStorage.setItem('octogenix.introSeen', '1');
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+    await router.navigateByUrl('/');
+    fixture.detectChanges();
+
+    expect(router.url).toBe('/home');
+    expect((fixture.nativeElement as HTMLElement).querySelector('app-welcome-page')).toBeNull();
+    sessionStorage.removeItem('octogenix.introSeen');
+  });
+
   it('should navigate to each page from the main navigation', async () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
@@ -31,7 +65,7 @@ describe('App', () => {
     const compiled = fixture.nativeElement as HTMLElement;
 
     for (const [path, label] of [
-      ['/', 'Home'],
+      ['/home', 'Home'],
       ['/about', 'About Us'],
       ['/services', 'Services'],
       ['/brands', 'Our Brands'],
@@ -47,7 +81,7 @@ describe('App', () => {
   it('should open and close the mobile navigation', async () => {
     const fixture = TestBed.createComponent(App);
     // The header belongs to the corporate layout route, rendered once the router has navigated.
-    await TestBed.inject(Router).navigateByUrl('/');
+    await TestBed.inject(Router).navigateByUrl('/home');
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     const button = compiled.querySelector<HTMLButtonElement>('.menu-toggle');
@@ -397,7 +431,7 @@ describe('App', () => {
 
   it('should switch all page copy and document direction to Arabic', async () => {
     const fixture = TestBed.createComponent(App);
-    await TestBed.inject(Router).navigateByUrl('/');
+    await TestBed.inject(Router).navigateByUrl('/home');
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     const languageButton = compiled.querySelector<HTMLButtonElement>('.language-toggle');

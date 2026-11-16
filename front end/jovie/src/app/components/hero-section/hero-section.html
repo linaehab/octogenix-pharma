@@ -30,7 +30,7 @@
               [attr.aria-label]="'Slide ' + (index + 1)"
               [attr.aria-selected]="index === activeIndex()"
               (click)="selectSlide(index)"
-            ><span class="hero-dot-number" aria-hidden="true">0{{ index + 1 }}</span><span class="hero-dot-bar"><span class="hero-dot-fill"></span></span></button>
+            ><span class="hero-dot-bar"><span class="hero-dot-fill"></span></span></button>
           }
         </div>
         <a class="scroll-cue" routerLink="/about" [attr.aria-label]="'hero.scroll' | translate">
@@ -57,7 +57,7 @@
         <li class="hero-tag hero-tag--1">{{ 'services.supplierDistributionTitle' | translate }}</li>
         <li class="hero-tag hero-tag--2">{{ 'services.supplierImportTitle' | translate }}</li>
         <li class="hero-tag hero-tag--3">{{ 'services.supplierExportTitle' | translate }}</li>
-        <li class="hero-tag hero-tag--4">{{ 'services.supplierScientificTitle' | translate }}</li>
+        <li class="hero-tag hero-tag--4">{{ 'hero.tagMarketing' | translate }}</li>
         <li class="hero-tag hero-tag--5">{{ 'services.supplierRegulatoryTitle' | translate }}</li>
       </ul>
     </div>

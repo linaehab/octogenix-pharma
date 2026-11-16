@@ -22,13 +22,15 @@
   border-bottom: 1px solid var(--cx-on-dark-line);
 }
 
+/* The official logo is charcoal: it sits on a white plate over the dark footer */
 .footer-wordmark {
-  color: #fff;
+  padding: 12px 18px;
+  border-radius: var(--cx-radius);
+  background: #fff;
 }
 
-.footer-wordmark small {
-  color: var(--cx-azure);
-  opacity: 1;
+.footer-wordmark .brand-logo {
+  height: 64px;
 }
 
 .footer-note {
@@ -80,6 +82,7 @@
 
 .footer-contact-item > div {
   display: grid;
+  align-content: start; /* the label stays right above its lines, however tall the row is */
   gap: 4px;
 }
 

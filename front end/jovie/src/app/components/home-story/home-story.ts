@@ -1,10 +1,8 @@
 import { Component, computed, inject } from '@angular/core';
-import { SiteContentService } from '../../core/content/site-content.service';
 import { LanguageService } from '../../core/i18n/language.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { CxIcon } from '../cx-icon/cx-icon';
-
-const DEFAULT_CORE_VALUES = ['values.quality', 'values.innovation', 'values.integrity', 'values.distributionExcellence', 'values.sustainable'];
+import { OUR_VALUES } from '../our-values';
 
 /**
  * Home: the reference's lime panel (line-art DNA) beside a short list of the company's existing
@@ -33,7 +31,7 @@ const DEFAULT_CORE_VALUES = ['values.quality', 'values.innovation', 'values.inte
           <p>{{ 'values.visionDescription' | translate }}</p>
         </article>
         <article>
-          <h3><app-cx-icon name="values" />{{ 'values.coreTitle' | translate }}</h3>
+          <h3><app-cx-icon name="values" />{{ 'ourValues.title' | translate }}</h3>
           <p>{{ coreValues() }}</p>
         </article>
       </div>
@@ -127,15 +125,12 @@ const DEFAULT_CORE_VALUES = ['values.quality', 'values.innovation', 'values.inte
   `,
 })
 export class HomeStory {
-  private readonly content = inject(SiteContentService);
   private readonly language = inject(LanguageService);
 
-  /** The core value names, from the dashboard when available. */
-  protected readonly coreValues = computed(() => {
-    const remote = this.content.list('values.core');
-    const names = remote?.length
-      ? remote.map((item) => this.content.pick(item.title))
-      : DEFAULT_CORE_VALUES.map((key) => this.language.translate(key));
-    return names.join(this.language.currentLanguage() === 'ar' ? '، ' : ', ');
-  });
+  /** The company value names, as a list. */
+  protected readonly coreValues = computed(() =>
+    OUR_VALUES.map((value) => this.language.translate(`ourValues.${value.key}`)).join(
+      this.language.currentLanguage() === 'ar' ? '، ' : ', ',
+    ),
+  );
 }

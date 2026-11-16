@@ -28,8 +28,9 @@ describe('LeadershipSection', () => {
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(text).toContain('Dr. Tarek Kandil');
     expect(text).toContain('Founder');
-    // The design shows names and roles only: no initials placeholder in place of a portrait.
-    expect((fixture.nativeElement as HTMLElement).querySelector('.leader-avatar')).toBeNull();
+    // Each leader shows a monogram seal with their initials (no portrait photographs).
+    const initials = [...(fixture.nativeElement as HTMLElement).querySelectorAll('.leader-initials')].map((e) => e.textContent?.trim());
+    expect(initials).toEqual(['TK', 'MK', 'SE']);
   });
 
   it('derives initials like the current site, skipping honorifics', () => {

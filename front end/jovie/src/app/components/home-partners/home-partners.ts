@@ -30,7 +30,7 @@ const BRAND_STORES: Record<string, string> = { jovie: '/jovie' };
             </a>
             @if (store(); as s) {
               <a class="text-link" [routerLink]="s.url">
-                {{ 'brands.visitStore' | translate: { brand: s.name } }} <span aria-hidden="true">→</span>
+                {{ 'brands.visitWebsite' | translate: { brand: s.name } }} <span aria-hidden="true">→</span>
               </a>
             }
           </div>

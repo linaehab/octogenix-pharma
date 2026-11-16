@@ -29,9 +29,12 @@ export class ContactSection {
   protected readonly cardImage = computed(() =>
     designImage(this.content, 'contact.image', '/assets/images/hero-partnership.jpg', '/assets/images/corporate-v2/contact-team.jpg'),
   );
-  protected readonly cardHoverImage = computed(() =>
-    designImage(this.content, 'contact.hoverImage', '/assets/images/hero-operations.jpg', '/assets/images/corporate-v2/contact-call.jpg'),
-  );
+  /** Second photograph shown on hover, only when one is set in the dashboard (the previous site's
+   *  default does not count); without it the card keeps its single photograph. */
+  protected readonly cardHoverImage = computed(() => {
+    const url = this.content.image('contact.hoverImage', '');
+    return url && !url.endsWith('/assets/images/hero-operations.jpg') ? url : null;
+  });
 
   protected readonly status = signal<SendStatus>('idle');
   /** Translation key of the error shown when status is 'error'. */

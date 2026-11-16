@@ -87,7 +87,7 @@ const PIN_SVG = `<svg viewBox="0 0 40 52" aria-hidden="true">
       width: 100%;
       aspect-ratio: 1000 / 755;
       overflow: hidden;
-      border-radius: var(--cx-radius);
+      border-radius: var(--cx-radius-lg); /* same curve as the site's large cards */
       background: var(--cx-cloud);
       font-family: var(--cx-font);
     }

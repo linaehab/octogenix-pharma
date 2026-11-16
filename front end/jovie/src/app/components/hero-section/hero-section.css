@@ -80,15 +80,10 @@
 .hero-dot {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 6px 0;
+  padding: 10px 0;
   border: 0;
-  color: var(--cx-on-dark-2);
   background: transparent;
   cursor: pointer;
-  font-family: var(--cx-font);
-  font-size: 12px;
-  font-weight: 600;
 }
 
 .hero-dot-bar {
@@ -111,10 +106,6 @@
 
 :host-context([dir='rtl']) .hero-dot-fill {
   transform-origin: right center;
-}
-
-.hero-dot.is-active {
-  color: #fff;
 }
 
 .hero-dot.is-active .hero-dot-fill {

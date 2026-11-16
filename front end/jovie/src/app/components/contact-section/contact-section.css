@@ -57,6 +57,13 @@
   background: var(--cx-midnight);
 }
 
+/* Without a second photograph the card keeps its photograph on hover */
+.contact-image.is-single:hover .image-swap__primary,
+.contact-image.is-single:focus-within .image-swap__primary {
+  opacity: 1;
+  transform: none;
+}
+
 .contact-image::after {
   position: absolute;
   inset: 0;

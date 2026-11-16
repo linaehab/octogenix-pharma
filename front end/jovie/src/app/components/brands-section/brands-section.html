@@ -3,9 +3,9 @@
     <p class="eyebrow"><span></span>{{ 'brands.kicker' | translate }}</p>
     <div>
       <h2 id="brands-title">{{ 'brands.title' | translate }}</h2>
-      <p>
-        {{ 'brands.summary' | translate }}
-      </p>
+      @if (summary()) {
+        <p>{{ summary() }}</p>
+      }
     </div>
   </div>
   @for (brand of brands(); track $index) {
@@ -19,15 +19,17 @@
         }
       </div>
       <div class="brand-panel">
-        <span class="brand-label">{{ brand.label }}</span>
+        @if (brand.label) {
+          <span class="brand-label">{{ brand.label }}</span>
+        }
         <h3 class="brand-name">{{ brand.name }}</h3>
-        <p class="brand-description">
-          {{ brand.description }}
-        </p>
+        @if (brand.description) {
+          <p class="brand-description">{{ brand.description }}</p>
+        }
         <div class="brand-actions">
         @if (brand.storeUrl) {
           <a class="store-button" [routerLink]="brand.storeUrl">
-            {{ 'brands.visitStore' | translate: { brand: brand.name } }} <span aria-hidden="true">↗</span>
+            {{ 'brands.visitWebsite' | translate: { brand: brand.name } }} <span aria-hidden="true">↗</span>
           </a>
         }
         @if (brand.link.type === 'internal' && brand.link.url) {

@@ -7,6 +7,8 @@ import { BrandsPage } from './pages/brands-page/brands-page';
 import { ContactPage } from './pages/contact-page/contact-page';
 import { HomePage } from './pages/home-page/home-page';
 import { ServicesPage } from './pages/services-page/services-page';
+import { WelcomePage } from './pages/welcome-page/welcome-page';
+import { introOnce } from './pages/welcome-page/intro-seen';
 
 type AccountGuards = typeof import('./jovie/account/account.guards');
 
@@ -214,11 +216,14 @@ export const routes: Routes = [
   // Short addresses for the store's sign-in pages.
   { path: 'login', redirectTo: '/jovie/login' },
   { path: 'signup', redirectTo: '/jovie/signup' },
+  // Opening page at the site address (outside the corporate layout), shown once per visit; the
+  // website starts at /home.
+  { path: '', pathMatch: 'full', component: WelcomePage, canActivate: [introOnce], title: 'Octogenix Pharma' },
   {
     path: '',
     component: CorporateLayout,
     children: [
-      { path: '', pathMatch: 'full', component: HomePage, title: 'Home | Octogenix Pharma' },
+      { path: 'home', component: HomePage, title: 'Home | Octogenix Pharma' },
       { path: 'about', component: AboutPage, title: 'About Us | Octogenix Pharma' },
       { path: 'services', component: ServicesPage, title: 'Services | Octogenix Pharma' },
       { path: 'brands', component: BrandsPage, title: 'Our Brands | Octogenix Pharma' },

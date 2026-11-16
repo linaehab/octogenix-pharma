@@ -18,18 +18,17 @@
       </article>
     </div>
 
-    <!-- Core values: an icon grid and the team photograph, joined in one card -->
+    <!-- Our values: intro and an icon grid beside the team photograph, joined in one card -->
     <div class="values-card">
       <div class="values-copy">
-        <h3>{{ 'values.coreTitle' | translate }}</h3>
+        <h3>{{ 'ourValues.title' | translate }}</h3>
+        <p class="values-intro">{{ 'ourValues.intro' | translate }}</p>
         <div class="core-value-grid">
           @for (value of coreValues(); track $index) {
             <article class="core-value">
               <app-cx-icon [name]="value.icon" />
               <h4>{{ value.title }}</h4>
-              @if (value.description) {
-                <p>{{ value.description }}</p>
-              }
+              <p>{{ value.description }}</p>
             </article>
           }
         </div>
@@ -40,12 +39,12 @@
     </div>
   </div>
 
-  <!-- Company values: charcoal band with the medical line pattern -->
+  <!-- Our approach: charcoal band with the medical line pattern -->
   <div class="company-values-band">
     <div class="company-values section-wrap">
-      <h3>{{ 'values.companyTitle' | translate }}</h3>
+      <h3>{{ 'approach.title' | translate }}</h3>
       <div class="company-value-list">
-        @for (value of companyValues(); track $index) {
+        @for (value of approachSteps(); track $index) {
           <article>
             <h4>{{ value.title }}</h4>
             <p>{{ value.description }}</p>

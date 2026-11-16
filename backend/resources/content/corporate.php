@@ -104,8 +104,8 @@ return [
         'hero.description' => [
             'group' => 'home.hero',
             'type' => 'textarea',
-            'en' => 'Octogenix Pharma specializes in pharmaceutical import, export, and distribution, with a commitment to quality and trusted healthcare partnerships.',
-            'ar' => 'تتخصص أوكتوجينيكس فارما في استيراد وتصدير وتوزيع المنتجات الصيدلانية، مع الالتزام بالجودة وبناء شراكات موثوقة في قطاع الرعاية الصحية.',
+            'en' => 'Octogenix Pharma delivers pharmaceutical distribution, import, and export services with a focus on quality, reliability, and long-term partnerships.',
+            'ar' => 'تقدّم أوكتوجينيكس فارما خدمات توزيع واستيراد وتصدير المنتجات الصيدلانية، مع التركيز على الجودة والموثوقية والشراكات طويلة الأمد.',
         ],
         'hero.cta' => [
             'group' => 'home.hero',
@@ -415,8 +415,8 @@ Serving healthcare.',
         'values.missionDescription' => [
             'group' => 'values',
             'type' => 'textarea',
-            'en' => 'To offer innovative, high-quality pharmaceutical solutions in important therapeutic areas, supporting patients’ quality of life and healthcare professionals’ confidence.',
-            'ar' => 'تقديم حلول صيدلانية مبتكرة وعالية الجودة في مجالات علاجية هامة، بما يدعم تحسين جودة حياة المرضى وتعزيز ثقة الممارسين الصحيين.',
+            'en' => 'To make quality healthcare products more accessible in Egypt by connecting international manufacturers with pharmacies, hospitals and healthcare professionals through reliable import and distribution services.',
+            'ar' => 'إتاحة منتجات رعاية صحية عالية الجودة على نطاق أوسع في مصر، من خلال ربط الشركات المصنّعة الدولية بالصيدليات والمستشفيات ومقدّمي الرعاية الصحية عبر خدمات استيراد وتوزيع موثوقة.',
         ],
         'values.missionImageAlt' => [
             'group' => 'values',
@@ -433,8 +433,8 @@ Serving healthcare.',
         'values.visionDescription' => [
             'group' => 'values',
             'type' => 'textarea',
-            'en' => 'To be a trusted partner in pharmaceutical import, export and distribution services in Egypt.',
-            'ar' => 'أن نكون الشريك الموثوق به في خدمات استيراد وتصدير وتوزيع المنتجات الصيدلانية في مصر.',
+            'en' => 'To become a leading healthcare distribution company in Egypt and a trusted partner for international brands expanding into regional markets.',
+            'ar' => 'أن نصبح شركة رائدة في توزيع منتجات الرعاية الصحية في مصر، وشريكًا موثوقًا للعلامات الدولية التي تتوسع في الأسواق الإقليمية.',
         ],
         'values.visionImageAlt' => [
             'group' => 'values',
@@ -523,8 +523,8 @@ Serving healthcare.',
         'leadership.title' => [
             'group' => 'about.leadership',
             'type' => 'text',
-            'en' => 'Meet our leadership',
-            'ar' => 'تعرّفوا على فريق القيادة',
+            'en' => 'Our leadership',
+            'ar' => 'فريق القيادة',
         ],
         'leadership.description' => [
             'group' => 'about.leadership',
