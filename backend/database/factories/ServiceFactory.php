@@ -21,9 +21,6 @@ class ServiceFactory extends Factory
             'title_ar' => 'خدمة',
             'description_en' => fake()->sentence(),
             'description_ar' => 'وصف الخدمة',
-            'image_path' => '/assets/images/hero-warehouse.jpg',
-            'image_alt_en' => 'Service image',
-            'image_alt_ar' => 'صورة الخدمة',
             'is_active' => true,
         ];
     }

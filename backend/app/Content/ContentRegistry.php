@@ -23,7 +23,7 @@ class ContentRegistry
         return $this->load($site)['entries'];
     }
 
-    /** @return array<string, array{group: string, fields: list<string>, required: list<string>, min: int, max: int, icons?: list<string>}> */
+    /** @return array<string, array{group: string, fields: list<string>, required: list<string>, min: int, max: int}> */
     public function lists(Site $site): array
     {
         return $this->load($site)['lists'];

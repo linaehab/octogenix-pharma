@@ -3,7 +3,6 @@ import { SiteContentService } from '../../core/content/site-content.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { RouteIntro } from '../../components/route-intro/route-intro';
 import { ServicesSection } from '../../components/services-section/services-section';
-import { designImage } from '../../components/design-image';
 
 @Component({
   selector: 'app-services-page',
@@ -14,16 +13,8 @@ import { designImage } from '../../components/design-image';
 export class ServicesPage {
   protected readonly content = inject(SiteContentService);
 
-  /**
-   * The black-and-white photograph of a man on the phone (reference banner style), replacing the
-   * warehouse photograph from the previous site; any other dashboard image is shown as it is.
-   */
+  /** Banner photograph (black and white, reference banner style); editable in the dashboard. */
   protected heroImage(): string {
-    return designImage(
-      this.content,
-      'page.services.image',
-      '/assets/images/warehouse-workers-checking-inventory-goods-distribution-large-storehouse.jpg',
-      '/assets/images/corporate-v3/banner-services.webp',
-    );
+    return this.content.image('page.services.image', '/assets/images/corporate-v3/banner-services.webp');
   }
 }

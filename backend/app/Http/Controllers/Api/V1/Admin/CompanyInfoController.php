@@ -10,13 +10,16 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
 /**
- * Company contact details and social links shown on the corporate website (routes require
+ * Company contact details, map location and social links shown on the corporate website (routes require
  * content.manage). Only these setting keys: store, payment and notification settings stay
  * under settings.manage. Saved through SettingsService (validation, cache, audit).
  */
 class CompanyInfoController extends Controller
 {
-    public const KEYS = ['contact.phones', 'contact.email', 'social.facebook', 'social.instagram', 'social.linkedin'];
+    public const KEYS = [
+        'contact.phones', 'contact.email', 'contact.map_latitude', 'contact.map_longitude', 'contact.map_url',
+        'social.facebook', 'social.instagram', 'social.linkedin',
+    ];
 
     public function index(SettingsService $settings): JsonResponse
     {

@@ -7,7 +7,6 @@ import { SiteContentService } from '../../core/content/site-content.service';
 import { LanguageService } from '../../core/i18n/language.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { emailAddress } from '../../core/forms/email-address.validator';
-import { designImage } from '../design-image';
 
 type SendStatus = 'idle' | 'sending' | 'sent' | 'error';
 
@@ -25,16 +24,10 @@ export class ContactSection {
 
   protected readonly phones = computed(() => contactPhones(this.content));
   protected readonly email = computed(() => contactEmail(this.content));
-  /** Card photographs: the redesign's images unless others were uploaded in the dashboard. */
+  /** Card photograph; editable in the dashboard. */
   protected readonly cardImage = computed(() =>
-    designImage(this.content, 'contact.image', '/assets/images/hero-partnership.jpg', '/assets/images/corporate-v2/contact-team.jpg'),
+    this.content.image('contact.image', '/assets/images/corporate-v2/contact-team.jpg'),
   );
-  /** Second photograph shown on hover, only when one is set in the dashboard (the previous site's
-   *  default does not count); without it the card keeps its single photograph. */
-  protected readonly cardHoverImage = computed(() => {
-    const url = this.content.image('contact.hoverImage', '');
-    return url && !url.endsWith('/assets/images/hero-operations.jpg') ? url : null;
-  });
 
   protected readonly status = signal<SendStatus>('idle');
   /** Translation key of the error shown when status is 'error'. */

@@ -170,6 +170,8 @@ class SettingsService
                 'required', 'integer:strict', 'min:'.($definition['min'] ?? 0), 'max:'.($definition['max'] ?? PHP_INT_MAX),
             ]],
             'money' => ['value' => ['nullable', 'integer:strict', 'min:0', 'max:4294967295']],
+            'latitude' => ['value' => ['required', 'numeric', 'between:-90,90']],
+            'longitude' => ['value' => ['required', 'numeric', 'between:-180,180']],
         };
     }
 
@@ -179,6 +181,7 @@ class SettingsService
             'boolean' => filter_var($value, FILTER_VALIDATE_BOOLEAN),
             'integer' => (int) $value,
             'money' => $value === null ? null : (int) $value,
+            'latitude', 'longitude' => (float) $value,
             default => $value,
         };
     }

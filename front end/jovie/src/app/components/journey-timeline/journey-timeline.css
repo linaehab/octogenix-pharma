@@ -27,7 +27,7 @@
   margin-top: var(--row-gap);
 }
 
-/* The straight part of the line in each row */
+/* The straight parts of the line in each row (placed by the component, in % of the row) */
 .track {
   position: absolute;
   top: calc(var(--line-y) - 1px);
@@ -35,48 +35,38 @@
   background: var(--line);
 }
 
-.journey-row--middle .track {
-  inset-inline: 0;
+/* Towards a year still to come: dashed, the dashes starting from the earlier year */
+.track.is-dashed {
+  background: repeating-linear-gradient(to right, var(--line) 0 8px, transparent 8px 14px);
 }
 
-/* Bottom row: from 2020 (column 2) to the start-side bend */
-.journey-row--bottom .track {
-  inset-inline: 0 62.5%;
-}
-
-/* Top row: from the end-side bend to 2026 solid, then dashed to the coming year 2027 */
-.journey-row--top .track {
-  inset-inline: 62.5% 0;
-  background:
-    linear-gradient(to right, transparent 66.67%, var(--line) 66.67%),
-    repeating-linear-gradient(to right, var(--line) 0 8px, transparent 8px 14px) 0 0 / 66.67% 100% no-repeat;
-}
-
-:host-context([dir='rtl']) .journey-row--top .track {
+:host-context([dir='rtl']) .track.is-dashed {
   transform: scaleX(-1);
 }
 
-/* The bends: half-rounded boxes that carry the line from one row down to the next */
-.journey-row--top::after,
-.journey-row--middle::after {
+/* The bends: half-rounded boxes that carry the line from the row below up into this row */
+.bend {
   position: absolute;
   top: calc(var(--line-y) - 1px);
   width: var(--turn);
   box-sizing: border-box;
   height: calc(100% + var(--row-gap) + 2px); /* top border on this row's line, bottom border on the next */
   border: 2px solid var(--line);
-  content: '';
   pointer-events: none;
 }
 
-.journey-row--top::after {
+.bend.is-dashed {
+  border-style: dashed;
+}
+
+.bend--end {
   inset-inline-end: calc(-1 * var(--turn));
   border-inline-start: 0;
   border-start-end-radius: var(--turn);
   border-end-end-radius: var(--turn);
 }
 
-.journey-row--middle::after {
+.bend--start {
   inset-inline-start: calc(-1 * var(--turn));
   border-inline-end: 0;
   border-start-start-radius: var(--turn);
@@ -170,7 +160,7 @@
   border-style: dashed;
 }
 
-/* Narrow screens: one vertical line on the start side, the years in order from 2020 */
+/* Narrow screens: one vertical line on the start side, the years in order from the first */
 @media (max-width: 900px) {
   .journey-path {
     position: relative;
@@ -187,8 +177,7 @@
   }
 
   .track,
-  .journey-row--top::after,
-  .journey-row--middle::after,
+  .bend,
   .stop-dot {
     display: none;
   }
@@ -223,7 +212,7 @@
     background: repeating-linear-gradient(to bottom, var(--line) 0 8px, transparent 8px 14px);
   }
 
-  .stop.is-future::before {
+  .stop.is-last::before {
     display: none;
   }
 

@@ -62,17 +62,10 @@ import { adminWebsiteTranslations } from './admin-website-translations';
           } @else {
             <ul class="web-rows">
               @for (s of rows(); track s.id; let first = $first; let last = $last) {
-                <li class="web-row" [class.is-hidden]="!s.is_active" [attr.data-service]="s.id">
+                <li class="web-row web-row--no-thumb" [class.is-hidden]="!s.is_active" [attr.data-service]="s.id">
                   <div class="web-order">
                     <button type="button" [disabled]="busy() || first" [attr.aria-label]="'admin.website.moveUp' | translate: { name: s.title_en }" (click)="move(s, -1)">↑</button>
                     <button type="button" [disabled]="busy() || last" [attr.aria-label]="'admin.website.moveDown' | translate: { name: s.title_en }" (click)="move(s, 1)">↓</button>
-                  </div>
-                  <div class="web-thumb">
-                    @if (s.image_url; as src) {
-                      <img [src]="src" alt="" loading="lazy" />
-                    } @else {
-                      {{ 'admin.website.noImage' | translate }}
-                    }
                   </div>
                   <div class="web-main">
                     <strong>{{ s.title_en }}</strong>

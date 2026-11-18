@@ -320,3 +320,19 @@
 .web-panel {
   container-type: inline-size;
 }
+
+/* Journey years: a short field for four digits */
+.web-year {
+  max-width: 8rem;
+}
+
+/* Services have no photographs: the row keeps the order buttons, the texts and the actions */
+.web-row.web-row--no-thumb {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+@container (max-width: 640px) {
+  .web-row.web-row--no-thumb {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+}

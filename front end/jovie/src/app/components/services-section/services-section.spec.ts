@@ -46,8 +46,7 @@ describe('ServicesSection', () => {
   it('shows services from the API, in order and in the current language', () => {
     TestBed.inject(SiteContentService).services.set({
       customers: [
-        { id: 7, title: { en: 'Cold Chain', ar: 'سلسلة التبريد' }, description: { en: 'Cooled storage.', ar: 'تخزين مبرد.' },
-          image_url: '/assets/images/hero-warehouse.jpg', hover_image_url: null, image_alt: { en: 'Warehouse', ar: 'مستودع' } },
+        { id: 7, title: { en: 'Cold Chain', ar: 'سلسلة التبريد' }, description: { en: 'Cooled storage.', ar: 'تخزين مبرد.' } },
       ],
       suppliers: [],
     });

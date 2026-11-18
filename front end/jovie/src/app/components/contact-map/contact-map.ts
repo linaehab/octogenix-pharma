@@ -11,15 +11,17 @@ import {
 } from '@angular/core';
 import type { Map as LeafletMap, Marker } from 'leaflet';
 import { DOCUMENT } from '@angular/common';
+import { SiteContentService } from '../../core/content/site-content.service';
 import { LanguageService } from '../../core/i18n/language.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 /**
- * Company location, as supplied by the company (Google Maps: 31°26'35.7"N 31°39'52.5"E),
- * 128/4, Building 14, District 3, Neighborhood 14, New Damietta.
+ * Company location as supplied by the company (Google Maps: 31°26'35.7"N 31°39'52.5"E,
+ * 128/4, Building 14, District 3, Neighborhood 14, New Damietta). The dashboard manages it
+ * (Website → Company information); these values are used until the settings load.
  */
-const COMPANY_LOCATION: [number, number] = [31.44325, 31.664583];
-const COMPANY_MAPS_URL = 'https://maps.app.goo.gl/s75MFAW9BD1c9Y189';
+const DEFAULT_LOCATION: [number, number] = [31.44325, 31.664583];
+const DEFAULT_MAPS_URL = 'https://maps.app.goo.gl/s75MFAW9BD1c9Y189';
 const START_ZOOM = 15;
 
 /** The same grey pin with a lime mark as the previous static map. */
@@ -165,6 +167,7 @@ const PIN_SVG = `<svg viewBox="0 0 40 52" aria-hidden="true">
 })
 export class ContactMap {
   private readonly language = inject(LanguageService);
+  private readonly content = inject(SiteContentService);
   private readonly document = inject(DOCUMENT);
   private readonly mapElement = viewChild.required<ElementRef<HTMLElement>>('map');
   private map?: LeafletMap;
@@ -181,12 +184,25 @@ export class ContactMap {
     return { city: parts.at(-3) ?? '', country: parts.at(-1) ?? '' };
   });
 
+  /** The company location from the settings; an invalid pair keeps the supplied location. */
+  private readonly location = computed<[number, number]>(() => {
+    const lat = Number(this.content.setting<number | string>('contact.map_latitude', DEFAULT_LOCATION[0]));
+    const lng = Number(this.content.setting<number | string>('contact.map_longitude', DEFAULT_LOCATION[1]));
+    return Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180 ? [lat, lng] : DEFAULT_LOCATION;
+  });
+
+  /** The Google Maps link of the pin's popup (https only). */
+  private readonly mapsUrl = computed(() => {
+    const url = this.content.setting<string>('contact.map_url', DEFAULT_MAPS_URL);
+    return typeof url === 'string' && url.startsWith('https://') ? url : DEFAULT_MAPS_URL;
+  });
+
   private readonly popupHtml = computed(() => {
     this.language.currentLanguage();
     const text = (key: string) => escapeHtml(this.language.translate(key));
     const open = this.language.currentLanguage() === 'ar' ? 'افتح في خرائط Google' : 'Open in Google Maps';
     return `<strong>${text('company.name')}</strong><span>${text('contact.address')}</span>
-      <a href="${COMPANY_MAPS_URL}" target="_blank" rel="noopener noreferrer">${open} ↗</a>`;
+      <a href="${escapeHtml(this.mapsUrl())}" target="_blank" rel="noopener noreferrer">${open} ↗</a>`;
   });
 
   constructor() {
@@ -196,6 +212,12 @@ export class ContactMap {
     effect(() => {
       const html = this.popupHtml();
       this.marker?.setPopupContent(html);
+    });
+    // A location saved in the dashboard arrives after the map may already be drawn
+    effect(() => {
+      const location = this.location();
+      this.marker?.setLatLng(location);
+      this.map?.setView(location, this.map.getZoom());
     });
   }
 
@@ -208,7 +230,7 @@ export class ContactMap {
     if (this.map || !element.isConnected) return;
 
     const map = L.map(element, {
-      center: COMPANY_LOCATION,
+      center: this.location(),
       zoom: START_ZOOM,
       minZoom: 3,
       maxZoom: 19,
@@ -224,7 +246,7 @@ export class ContactMap {
     map.on('mouseout blur', () => map.scrollWheelZoom.disable());
 
     const icon = L.divIcon({ className: 'cx-pin', html: PIN_SVG, iconSize: [34, 44], iconAnchor: [17, 44], popupAnchor: [0, -40] });
-    this.marker = L.marker(COMPANY_LOCATION, { icon, keyboard: true, title: this.language.translate('company.name') })
+    this.marker = L.marker(this.location(), { icon, keyboard: true, title: this.language.translate('company.name') })
       .addTo(map)
       .bindPopup(this.popupHtml(), { className: 'cx-popup', autoPanPaddingTopLeft: [56, 16], autoPanPaddingBottomRight: [16, 16] });
     this.map = map;

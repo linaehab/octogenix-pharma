@@ -1,4 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
+import { SiteContentService } from '../../core/content/site-content.service';
 import { LanguageService } from '../../core/i18n/language.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { CxIcon } from '../cx-icon/cx-icon';
@@ -14,7 +15,7 @@ import { OUR_VALUES } from '../our-values';
   template: `
     <section class="story" aria-labelledby="story-title">
       <div class="story-visual" aria-hidden="true">
-        <img src="/assets/images/corporate-v3/dna-hands.webp" alt="" width="1024" height="1024" loading="lazy" />
+        <img [src]="content.image('story.image', '/assets/images/corporate-v3/dna-hands.webp')" alt="" width="1024" height="1024" loading="lazy" />
       </div>
       <div class="story-list">
         <h2 id="story-title" class="visually-hidden">{{ 'values.title' | translate }}</h2>
@@ -125,6 +126,7 @@ import { OUR_VALUES } from '../our-values';
   `,
 })
 export class HomeStory {
+  protected readonly content = inject(SiteContentService);
   private readonly language = inject(LanguageService);
 
   /** The company value names, as a list. */

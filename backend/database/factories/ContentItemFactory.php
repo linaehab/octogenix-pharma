@@ -7,7 +7,7 @@ use App\Models\ContentItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * Defaults to an item of the corporate "values.company" list (title + description).
+ * Defaults to an item of the corporate "about.leadership" list (name and role).
  *
  * @extends Factory<ContentItem>
  */
@@ -19,11 +19,11 @@ class ContentItemFactory extends Factory
     {
         return [
             'site' => Site::Corporate,
-            'list_key' => 'values.company',
-            'title_en' => fake()->word(),
-            'title_ar' => 'قيمة',
-            'description_en' => fake()->sentence(),
-            'description_ar' => 'وصف',
+            'list_key' => 'about.leadership',
+            'title_en' => fake()->name(),
+            'title_ar' => 'اسم',
+            'subtitle_en' => fake()->jobTitle(),
+            'subtitle_ar' => 'منصب',
             'is_active' => true,
         ];
     }
@@ -32,8 +32,8 @@ class ContentItemFactory extends Factory
     {
         return $this->state(fn () => [
             'list_key' => 'home.hero_slides',
-            'title_en' => null, 'title_ar' => null, 'description_en' => null, 'description_ar' => null,
-            'image_path' => '/assets/images/hero-warehouse.jpg',
+            'title_en' => null, 'title_ar' => null, 'subtitle_en' => null, 'subtitle_ar' => null,
+            'image_path' => '/assets/images/corporate-v3/hero-hands-capsules.webp',
         ]);
     }
 }

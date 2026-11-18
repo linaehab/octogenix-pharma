@@ -15,7 +15,6 @@ use App\Support\Localized;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -83,7 +82,7 @@ class ContentService
         foreach ($fields as $field) {
             $payload[$field] = match ($field) {
                 'image', 'secondary_image' => ['url' => ImagePath::url($item->{ContentItem::FIELD_COLUMNS[$field][0]})],
-                'icon' => $item->icon,
+                'year' => $item->subtitle_en,
                 'link' => $item->link_url,
                 default => Localized::pair($item, $field),
             };
@@ -340,15 +339,14 @@ class ContentService
                 $allowedColumns[] = $column;
                 $rules[$column] = [...explode('|', $presence), ...$this->itemColumnRules($field)];
             }
-
-            // Lists whose icon picks one of the component's built-in graphics.
-            if ($field === 'icon' && isset($definition['icons'])) {
-                $rules['icon'][] = Rule::in($definition['icons']);
-            }
         }
 
         $unknown = array_diff(array_keys($input), $allowedColumns);
-        $validator = Validator::make($input, $rules);
+        // A list's year is stored in subtitle_en: name it "year" in the messages.
+        $year = in_array('year', $definition['fields'], true);
+        $validator = Validator::make($input, $rules,
+            $year ? ['subtitle_en.regex' => 'The year must be four digits, for example 2028.'] : [],
+            $year ? ['subtitle_en' => 'year'] : []);
         $validator->after(function ($validator) use ($unknown) {
             foreach ($unknown as $column) {
                 $validator->errors()->add($column, 'This field is not used by this list.');
@@ -364,7 +362,7 @@ class ContentService
         return match ($field) {
             'image', 'secondary_image' => ['string', new ValidImagePath],
             'description' => ['string', 'max:2000', new PlainText],
-            'icon' => ['string', 'max:20', new PlainText],
+            'year' => ['string', 'regex:/^(19|20)\d{2}$/'],
             // An Angular route ("/about", not "//host") or an https URL.
             'link' => ['string', 'max:500', 'regex:#^(/(?!/)[^\s]*|https://[^\s]+)$#'],
             default => ['string', 'max:255', new PlainText],

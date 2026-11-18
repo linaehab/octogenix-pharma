@@ -22,8 +22,9 @@ const COLUMNS: Record<ContentListField, string[]> = {
   image: ['image_path'],
   secondary_image: ['secondary_image_path'],
   image_alt: ['image_alt_en', 'image_alt_ar'],
-  icon: ['icon'],
   link: ['link_url'],
+  // The year of a journey stop: one value for both languages.
+  year: ['subtitle_en'],
 };
 
 type Draft = Record<string, string>;
@@ -123,6 +124,9 @@ type Draft = Record<string, string>;
           <section class="adm-panel" [attr.aria-labelledby]="'web-list-' + list.key" [attr.data-list]="list.key">
             <h2 [id]="'web-list-' + list.key">{{ listLabel(list.key) }}</h2>
             <p class="web-help">{{ 'admin.website.content.listHelp' | translate: { min: list.min, max: list.max } }}</p>
+            @if (list.key === 'about.journey') {
+              <p class="web-help">{{ 'admin.website.content.journeyHelp' | translate }}</p>
+            }
             <ul class="web-rows">
               @for (item of list.items; track item.id; let first = $first; let last = $last) {
                 <li class="web-item" [class.is-hidden]="!item.is_active" [attr.data-item]="item.id">
@@ -146,14 +150,12 @@ type Draft = Record<string, string>;
                           <app-admin-image-field [fieldId]="'web-i-' + item.id + '-image2'" label="admin.website.content.secondaryImage"
                             [url]="itemDraftValue(item.id, 'secondary_image_path') === (item.secondary_image_path ?? '') ? item.secondary_image?.url ?? null : null" (changed)="setItem(item.id, 'secondary_image_path', $event)" />
                         }
-                        @case ('icon') {
+                        @case ('year') {
                           <div class="web-field">
-                            <label [for]="'web-i-' + item.id + '-icon'">{{ 'admin.website.content.field.icon' | translate }}</label>
-                            <select [id]="'web-i-' + item.id + '-icon'" (change)="setItem(item.id, 'icon', $any($event.target).value)">
-                              @for (icon of list.icons ?? []; track icon) {
-                                <option [value]="icon" [selected]="itemDraftValue(item.id, 'icon') === icon">{{ icon }}</option>
-                              }
-                            </select>
+                            <label [for]="'web-i-' + item.id + '-year'">{{ 'admin.website.content.field.year' | translate }}@if (list.required.includes('year')) { <span class="web-req" aria-hidden="true">*</span>}</label>
+                            <input [id]="'web-i-' + item.id + '-year'" class="web-year" dir="ltr" inputmode="numeric" maxlength="4" [value]="itemDraftValue(item.id, 'subtitle_en')"
+                              [attr.aria-invalid]="!!itemErrors()[item.id + '.subtitle_en']" (input)="setItem(item.id, 'subtitle_en', $any($event.target).value)" />
+                            @for (err of itemErrors()[item.id + '.subtitle_en'] ?? []; track $index) {<p class="web-error">{{ err }}</p>}
                           </div>
                         }
                         @case ('link') {
@@ -167,9 +169,15 @@ type Draft = Record<string, string>;
                             @for (lang of langs; track lang) {
                               <div class="web-field">
                                 <label [for]="'web-i-' + item.id + '-' + field + '-' + lang">{{ ('admin.website.content.field.' + field) | translate }} ({{ ('admin.website.lang.' + lang) | translate }})@if (list.required.includes(field)) { <span class="web-req" aria-hidden="true">*</span>}</label>
-                                <input [id]="'web-i-' + item.id + '-' + field + '-' + lang" [attr.dir]="lang === 'ar' ? 'rtl' : 'ltr'" [attr.lang]="lang"
-                                  [value]="itemDraftValue(item.id, field + '_' + lang)" [attr.aria-invalid]="!!itemErrors()[item.id + '.' + field + '_' + lang]"
-                                  (input)="setItem(item.id, field + '_' + lang, $any($event.target).value)" />
+                                @if (field === 'description') {
+                                  <textarea [id]="'web-i-' + item.id + '-' + field + '-' + lang" rows="3" [attr.dir]="lang === 'ar' ? 'rtl' : 'ltr'" [attr.lang]="lang"
+                                    [value]="itemDraftValue(item.id, field + '_' + lang)" [attr.aria-invalid]="!!itemErrors()[item.id + '.' + field + '_' + lang]"
+                                    (input)="setItem(item.id, field + '_' + lang, $any($event.target).value)"></textarea>
+                                } @else {
+                                  <input [id]="'web-i-' + item.id + '-' + field + '-' + lang" [attr.dir]="lang === 'ar' ? 'rtl' : 'ltr'" [attr.lang]="lang"
+                                    [value]="itemDraftValue(item.id, field + '_' + lang)" [attr.aria-invalid]="!!itemErrors()[item.id + '.' + field + '_' + lang]"
+                                    (input)="setItem(item.id, field + '_' + lang, $any($event.target).value)" />
+                                }
                                 @for (err of itemErrors()[item.id + '.' + field + '_' + lang] ?? []; track $index) {<p class="web-error">{{ err }}</p>}
                               </div>
                             }
@@ -194,15 +202,10 @@ type Draft = Record<string, string>;
                     @case ('secondary_image') {
                       <app-admin-image-field [fieldId]="'web-n-' + list.key + '-image2'" label="admin.website.content.secondaryImage" [url]="null" (changed)="setNew(list.key, 'secondary_image_path', $event)" />
                     }
-                    @case ('icon') {
+                    @case ('year') {
                       <div class="web-field">
-                        <label [for]="'web-n-' + list.key + '-icon'">{{ 'admin.website.content.field.icon' | translate }}</label>
-                        <select [id]="'web-n-' + list.key + '-icon'" (change)="setNew(list.key, 'icon', $any($event.target).value)">
-                          <option value="">—</option>
-                          @for (icon of list.icons ?? []; track icon) {
-                            <option [value]="icon">{{ icon }}</option>
-                          }
-                        </select>
+                        <label [for]="'web-n-' + list.key + '-year'">{{ 'admin.website.content.field.year' | translate }}@if (list.required.includes('year')) { <span class="web-req" aria-hidden="true">*</span>}</label>
+                        <input [id]="'web-n-' + list.key + '-year'" class="web-year" dir="ltr" inputmode="numeric" maxlength="4" [value]="newDrafts()[list.key]?.['subtitle_en'] ?? ''" (input)="setNew(list.key, 'subtitle_en', $any($event.target).value)" />
                       </div>
                     }
                     @case ('link') {
@@ -216,8 +219,13 @@ type Draft = Record<string, string>;
                         @for (lang of langs; track lang) {
                           <div class="web-field">
                             <label [for]="'web-n-' + list.key + '-' + field + '-' + lang">{{ ('admin.website.content.field.' + field) | translate }} ({{ ('admin.website.lang.' + lang) | translate }})@if (list.required.includes(field)) { <span class="web-req" aria-hidden="true">*</span>}</label>
-                            <input [id]="'web-n-' + list.key + '-' + field + '-' + lang" [attr.dir]="lang === 'ar' ? 'rtl' : 'ltr'" [attr.lang]="lang"
-                              [value]="newDrafts()[list.key]?.[field + '_' + lang] ?? ''" (input)="setNew(list.key, field + '_' + lang, $any($event.target).value)" />
+                            @if (field === 'description') {
+                              <textarea [id]="'web-n-' + list.key + '-' + field + '-' + lang" rows="3" [attr.dir]="lang === 'ar' ? 'rtl' : 'ltr'" [attr.lang]="lang"
+                                [value]="newDrafts()[list.key]?.[field + '_' + lang] ?? ''" (input)="setNew(list.key, field + '_' + lang, $any($event.target).value)"></textarea>
+                            } @else {
+                              <input [id]="'web-n-' + list.key + '-' + field + '-' + lang" [attr.dir]="lang === 'ar' ? 'rtl' : 'ltr'" [attr.lang]="lang"
+                                [value]="newDrafts()[list.key]?.[field + '_' + lang] ?? ''" (input)="setNew(list.key, field + '_' + lang, $any($event.target).value)" />
+                            }
                           </div>
                         }
                       </div>
@@ -362,7 +370,8 @@ export class AdminContentPage {
   }
 
   protected itemName(item: ContentListItem): string {
-    return item.title?.en ?? `#${item.id}`;
+    const title = item.title?.en ?? `#${item.id}`;
+    return item.year ? `${item.year} — ${title}` : title;
   }
 
   protected setNew(listKey: string, column: string, value: string): void {
@@ -513,11 +522,11 @@ export class AdminContentPage {
     if ('secondary_image' in item) {
       v['secondary_image_path'] = item.secondary_image_path ?? '';
     }
-    if ('icon' in item) {
-      v['icon'] = item.icon ?? '';
-    }
     if ('link' in item) {
       v['link_url'] = item.link ?? '';
+    }
+    if ('year' in item) {
+      v['subtitle_en'] = item.year ?? '';
     }
     return v;
   }

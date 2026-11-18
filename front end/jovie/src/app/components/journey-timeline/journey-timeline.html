@@ -1,26 +1,32 @@
 <section class="journey" aria-labelledby="journey-title">
   <div class="journey-inner section-wrap">
     <div class="journey-path">
-      @for (row of rows; track row.key) {
-        <div [class]="'journey-row journey-row--' + row.key">
-          <span class="track" aria-hidden="true"></span>
-          @if (row.key === 'top') {
+      @for (row of rows(); track row.key) {
+        <div class="journey-row" [class.journey-row--top]="row.top">
+          @for (segment of row.segments; track $index) {
+            <span class="track" [class.is-dashed]="segment.dashed" aria-hidden="true"
+              [style.inset-inline-start.%]="segment.from" [style.inset-inline-end.%]="100 - segment.to"></span>
+          }
+          @if (row.bend; as bend) {
+            <span class="bend" [class.bend--start]="bend.side === 'start'" [class.bend--end]="bend.side === 'end'" [class.is-dashed]="bend.dashed" aria-hidden="true"></span>
+          }
+          @if (row.top) {
             <div class="journey-head">
               <p class="eyebrow"><span></span>{{ 'journey.kicker' | translate }}</p>
               <h2 id="journey-title">{{ 'journey.title' | translate }}</h2>
               <p>{{ 'journey.description' | translate }}</p>
             </div>
           }
-          @for (stop of row.stops; track stop.year) {
-            <div class="stop" [class.is-future]="stop.future" [class.leads-future]="stop.order === 7" [style.grid-column]="stop.col" [style.order]="stop.order">
+          @for (stop of row.stops; track stop.order) {
+            <div class="stop" [class.is-future]="stop.future" [class.leads-future]="stop.leadsFuture" [class.is-last]="stop.last" [style.grid-column]="stop.col" [style.order]="stop.order">
               <svg class="stop-pin" viewBox="0 0 40 50" aria-hidden="true">
                 <path d="M20 48S5 30.5 5 19.5a15 15 0 0 1 30 0C35 30.5 20 48 20 48z" />
                 <circle cx="20" cy="19.5" r="6" fill="#fff" />
               </svg>
               <span class="stop-dot" aria-hidden="true"></span>
               <strong class="stop-year">{{ stop.year }}</strong>
-              <h3>{{ 'journey.' + stop.year + '.title' | translate }}</h3>
-              <p>{{ 'journey.' + stop.year + '.text' | translate }}</p>
+              <h3>{{ stop.title }}</h3>
+              <p>{{ stop.text }}</p>
             </div>
           }
         </div>

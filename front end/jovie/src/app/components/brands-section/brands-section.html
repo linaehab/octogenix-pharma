@@ -3,18 +3,15 @@
     <p class="eyebrow"><span></span>{{ 'brands.kicker' | translate }}</p>
     <div>
       <h2 id="brands-title">{{ 'brands.title' | translate }}</h2>
-      @if (summary()) {
-        <p>{{ summary() }}</p>
-      }
     </div>
   </div>
   @for (brand of brands(); track $index) {
     <div class="brand-feature">
       <!-- Visual: the brand logo in a white tile, as the reference's partner logos -->
       <div class="brand-visual">
-        @if (brand.showcase; as showcase) {
-          <img class="brand-logo" [src]="showcase.logo" [alt]="brand.name" width="220" height="220" />
-        } @else {
+        @if (brand.logo) {
+          <img class="brand-logo" [src]="brand.logo" [alt]="brand.name" width="220" height="220" />
+        } @else if (brand.image) {
           <img class="brand-image" [src]="brand.image" [alt]="brand.imageAlt" loading="lazy" />
         }
       </div>

@@ -10,7 +10,6 @@ import { GlobalBridge } from '../../components/global-bridge/global-bridge';
 import { MarketReach } from '../../components/market-reach/market-reach';
 import { FocusAreas } from '../../components/focus-areas/focus-areas';
 import { JourneyTimeline } from '../../components/journey-timeline/journey-timeline';
-import { designImage } from '../../components/design-image';
 
 @Component({
   selector: 'app-about-page',
@@ -21,16 +20,8 @@ import { designImage } from '../../components/design-image';
 export class AboutPage {
   protected readonly content = inject(SiteContentService);
 
-  /**
-   * The black-and-white office photograph (reference banner style), replacing the previous site's default and the earlier upload
-   * (the logo artwork); any other image chosen in the dashboard is shown as it is.
-   */
+  /** Banner photograph (black and white, reference banner style); editable in the dashboard. */
   protected heroImage(): string {
-    return designImage(
-      this.content,
-      'page.about.image',
-      ['/assets/images/about us.jpg', '/storage/uploads/images/2026/11/59ec1d7a-1ee8-4343-ab3f-769d0b603929.jpg'],
-      '/assets/images/corporate-v3/banner-about.webp',
-    );
+    return this.content.image('page.about.image', '/assets/images/corporate-v3/banner-about.webp');
   }
 }

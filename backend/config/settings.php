@@ -15,7 +15,8 @@
 | - Store switches are off and fees are null until the client provides them.
 | - store.pending_payment_ttl_minutes is a technical default.
 |
-| Types: string, email, email_list, phone_list, url, boolean, integer, money (piastres).
+| Types: string, email, email_list, phone_list, url, boolean, integer, money (piastres),
+| latitude, longitude (decimal degrees).
 |
 */
 
@@ -28,6 +29,17 @@ return [
     'contact.email' => [
         'group' => 'contact', 'type' => 'email', 'public' => true,
         'default' => 'info@octogenixpharma.com',
+    ],
+    // Company location on the Contact page map, and the Google Maps link its button opens.
+    'contact.map_latitude' => [
+        'group' => 'contact', 'type' => 'latitude', 'public' => true, 'default' => 31.44325,
+    ],
+    'contact.map_longitude' => [
+        'group' => 'contact', 'type' => 'longitude', 'public' => true, 'default' => 31.664583,
+    ],
+    'contact.map_url' => [
+        'group' => 'contact', 'type' => 'url', 'public' => true,
+        'default' => 'https://maps.app.goo.gl/s75MFAW9BD1c9Y189',
     ],
     // Social links shown in the corporate footer only when set (Phase 11.6). https:// only.
     'social.facebook' => [

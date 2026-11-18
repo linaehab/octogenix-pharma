@@ -21,21 +21,24 @@ const support = admin('support', ['messages.view', 'messages.manage', 'orders.vi
 const brand = (id: number, o: Partial<AdminBrand> = {}): AdminBrand => ({
   id, slug: `brand-${id}`, name_en: `Brand ${id}`, name_ar: `علامة ${id}`, label_en: null, label_ar: null,
   short_description_en: 'Short.', short_description_ar: 'قصير.', description_en: null, description_ar: null,
-  logo_path: '/assets/images/jovie.jpg', image_path: null, hover_image_path: null, image_alt_en: null, image_alt_ar: null,
+  logo_path: '/assets/images/jovie/logo-official-yellow.png', image_path: null, hover_image_path: null, image_alt_en: null, image_alt_ar: null,
   cta_label_en: null, cta_label_ar: null, link_type: 'none', link_url: null, has_store: false, is_featured: false, is_active: true,
-  sort_order: id, products_count: 0, logo_url: '/assets/images/jovie.jpg', image_url: null, hover_image_url: null,
+  sort_order: id, products_count: 0, logo_url: '/assets/images/jovie/logo-official-yellow.png', image_url: null, hover_image_url: null,
   created_at: '2026-11-01T10:00:00+00:00', updated_at: `2026-11-0${id}T10:00:00+00:00`, ...o,
 });
 const service = (id: number, o: Partial<AdminService> = {}): AdminService => ({
   id, category: 'customers', title_en: `Service ${id}`, title_ar: `خدمة ${id}`, description_en: 'Text.', description_ar: 'نص.',
-  image_path: null, hover_image_path: null, image_alt_en: null, image_alt_ar: null, sort_order: id, is_active: true,
-  image_url: null, hover_image_url: null, created_at: null, updated_at: `2026-11-0${id}T10:00:00+00:00`, ...o,
+  sort_order: id, is_active: true,
+  created_at: null, updated_at: `2026-11-0${id}T10:00:00+00:00`, ...o,
 });
 const companyInfo = (o: Record<string, unknown> = {}): CompanyInfoSetting[] =>
   (
     [
       ['contact.phones', 'phone_list', ['+201090075087']],
       ['contact.email', 'email', 'info@octogenixpharma.com'],
+      ['contact.map_latitude', 'latitude', 31.44325],
+      ['contact.map_longitude', 'longitude', 31.664583],
+      ['contact.map_url', 'url', 'https://maps.app.goo.gl/s75MFAW9BD1c9Y189'],
       ['social.facebook', 'url', null],
       ['social.instagram', 'url', null],
       ['social.linkedin', 'url', null],
@@ -49,17 +52,17 @@ const content = (o: { address?: string } = {}): SiteContentEditor => ({
       group: 'contact.section',
       entries: [
         { key: 'contact.address', type: 'textarea', max_length: 2000, value_en: o.address ?? 'Cairo', value_ar: 'القاهرة', updated_at: null },
-        { key: 'contact.image', type: 'image', image_path: '/assets/images/mom.jpg', image_ar_path: null, image_url: '/assets/images/mom.jpg', image_ar_url: null, updated_at: null },
+        { key: 'contact.image', type: 'image', image_path: '/assets/images/corporate-v2/contact-team.jpg', image_ar_path: null, image_url: '/assets/images/corporate-v2/contact-team.jpg', image_ar_url: null, updated_at: null },
       ],
     },
-    { group: 'values', entries: [{ key: 'values.title', type: 'text', max_length: 255, value_en: 'Quality.', value_ar: 'الجودة.', updated_at: null }] },
+    { group: 'about.leadership', entries: [{ key: 'leadership.title', type: 'text', max_length: 255, value_en: 'Our leadership', value_ar: 'فريق القيادة', updated_at: null }] },
   ],
   lists: [
     {
-      key: 'values.company', group: 'values', fields: ['title', 'description'], required: ['title', 'description'], min: 1, max: 8, icons: null,
+      key: 'about.leadership', group: 'about.leadership', fields: ['title', 'subtitle'], required: ['title', 'subtitle'], min: 0, max: 12,
       items: [
-        { id: 7, is_active: true, title: { en: 'Integrity', ar: 'النزاهة' }, description: { en: 'Honest.', ar: 'صادق.' } },
-        { id: 8, is_active: true, title: { en: 'Care', ar: 'العناية' }, description: { en: 'Kind.', ar: 'لطيف.' } },
+        { id: 7, is_active: true, title: { en: 'Dr. Tarek Kandil', ar: 'د. طارق قنديل' }, subtitle: { en: 'Founder', ar: 'المؤسس' } },
+        { id: 8, is_active: true, title: { en: 'Dr. Soha El-Kholy', ar: 'د. سها الخولي' }, subtitle: { en: 'COO', ar: 'مدير العمليات' } },
       ],
     },
   ],
@@ -263,9 +266,25 @@ describe('Admin corporate website', () => {
     const order = await answer(is('PUT', `${API}/services/order`), (r) => r.flush({ data: [service(2), service(1)] }));
     expect(order.request.body).toEqual({ category: 'customers', ids: [2, 1] });
     expect(texts('.web-row .web-main strong')).toEqual(['Service 2', 'Service 1']);
+    // Services have no photographs: no thumbnails in the list
+    expect(el().querySelector('[data-service] .web-thumb')).toBeNull();
   });
 
-  it('edits company contact details, social links and the address', async () => {
+  it('edits a service without image fields and sends only its texts and publishing', async () => {
+    await open('/admin/website/services/1', contentManager);
+    await answer(is('GET', `${API}/services/1`), (r) => r.flush({ data: service(1) }));
+    expect(el().querySelector('app-admin-image-field')).toBeNull();
+    expect(el().querySelector('#web-s-image_alt-en')).toBeNull();
+    await type('#web-s-title-en', 'Contracting');
+    await click('form button[type="submit"]');
+    await csrf();
+    const save = await answer(is('PATCH', `${API}/services/1`), (r) => r.flush({ data: service(1, { title_en: 'Contracting' }) }));
+    expect(Object.keys(save.request.body).sort()).toEqual(
+      ['category', 'description_ar', 'description_en', 'expected_updated_at', 'is_active', 'title_ar', 'title_en'],
+    );
+  });
+
+  it('edits company contact details, map location, social links and the address', async () => {
     await open('/admin/website/company', contentManager);
     await answer(is('GET', `${API}/company-info`), (r) => r.flush({ data: companyInfo() }));
     await answer(is('GET', `${API}/content/corporate`), (r) => r.flush({ data: content() }));
@@ -274,6 +293,8 @@ describe('Admin corporate website', () => {
     await type('#web-c-phone-1', '+20 100 000 0001');
     await type('#web-c-email', 'hello@octogenix.test');
     await type('#web-c-social\\.linkedin', 'https://www.linkedin.com/company/octogenix');
+    expect((el().querySelector('#web-c-contact\\.map_latitude') as HTMLInputElement).value).toBe('31.44325');
+    await type('#web-c-contact\\.map_longitude', '31,6646');
     await click('form[aria-labelledby="web-c-contact"] button[type="submit"]');
     await csrf();
     const save = await answer(is('PATCH', `${API}/company-info`), (r) =>
@@ -283,8 +304,13 @@ describe('Admin corporate website', () => {
       settings: {
         'contact.phones': ['+201090075087', '+201000000001'], 'contact.email': 'hello@octogenix.test',
         'social.facebook': null, 'social.instagram': null, 'social.linkedin': 'https://www.linkedin.com/company/octogenix',
+        'contact.map_latitude': 31.44325, 'contact.map_longitude': 31.6646, 'contact.map_url': 'https://maps.app.goo.gl/s75MFAW9BD1c9Y189',
       },
-      expected: { 'contact.phones': ['+201090075087'], 'contact.email': 'info@octogenixpharma.com', 'social.facebook': null, 'social.instagram': null, 'social.linkedin': null },
+      expected: {
+        'contact.phones': ['+201090075087'], 'contact.email': 'info@octogenixpharma.com',
+        'contact.map_latitude': 31.44325, 'contact.map_longitude': 31.664583, 'contact.map_url': 'https://maps.app.goo.gl/s75MFAW9BD1c9Y189',
+        'social.facebook': null, 'social.instagram': null, 'social.linkedin': null,
+      },
     });
     expect(text('.web-notice')).toBe('The contact details are saved and shown on the website.');
 
@@ -303,7 +329,7 @@ describe('Admin corporate website', () => {
   it('edits page texts by section, sends only the changed entries, and manages list items', async () => {
     await open('/admin/website/content', contentManager);
     await answer(is('GET', `${API}/content/corporate`), (r) => r.flush({ data: content() }));
-    expect(texts('#web-section option')).toEqual(['Footer (all pages)', 'Contact section', 'Mission, vision and values']);
+    expect(texts('#web-section option')).toEqual(['Footer (all pages)', 'Contact section', 'About: leadership']);
 
     const select = el().querySelector('#web-section') as HTMLSelectElement;
     select.value = 'contact.section';
@@ -321,13 +347,13 @@ describe('Admin corporate website', () => {
     expect(text('.web-notice')).toBe('1 item(s) saved. The website shows the change.');
 
     // Lists live in their section.
-    select.value = 'values';
+    select.value = 'about.leadership';
     select.dispatchEvent(new Event('change'));
     await settle();
-    expect(text('[data-list="values.company"] h2')).toBe('Company values');
+    expect(text('[data-list="about.leadership"] h2')).toBe('Leadership');
     buttonIn('[data-item="7"]', 'Hide').click();
     await settle();
-    expect(dialogText()).toContain('Hide "Integrity"?');
+    expect(dialogText()).toContain('Hide "Dr. Tarek Kandil"?');
     await confirmYes();
     const hide = await answer(is('PATCH', `${API}/content-items/7`), (r) => r.flush({ data: { id: 7, is_active: false } }));
     expect(hide.request.body).toEqual({ is_active: false });

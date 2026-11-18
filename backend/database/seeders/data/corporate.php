@@ -2,6 +2,7 @@
 
 /*
 | Initial corporate list items, services and brands, copied from the current Angular site.
+| Journey stops keep their year in subtitle_en (the "year" field: the same in both languages).
 | Seeded only into empty lists/tables; never overwrites dashboard edits.
 */
 
@@ -9,74 +10,71 @@ return [
     'lists' => [
         'home.hero_slides' => [
             [
-                'image_path' => '/assets/images/factory-worker-packaging-boxes.jpg',
+                'image_path' => '/assets/images/corporate-v3/hero-hands-capsules.webp',
             ],
             [
-                'image_path' => '/assets/images/interior-large-distribution-warehouse-with-shelves-stacked-with-palettes-goods-ready-market.jpg',
+                'image_path' => '/assets/images/corporate-v3/hero-hands-care.webp',
             ],
             [
-                'image_path' => '/assets/images/medium-shot-delivery-man-with-mask.jpg',
-            ],
-        ],
-        'values.core' => [
-            [
-                'title_en' => 'Quality',
-                'title_ar' => 'الجودة',
-                'description_en' => 'We commit to rigorous pharmaceutical standards through each stage of the supply chain, import and export.',
-                'description_ar' => 'نلتزم بمعايير صيدلانية صارمة في كل مرحلة من مراحل سلسلة التوريد والاستيراد والتصدير.',
-                'icon' => '◈',
-            ],
-            [
-                'title_en' => 'Innovation',
-                'title_ar' => 'الابتكار',
-                'icon' => '✳',
-            ],
-            [
-                'title_en' => 'Integrity & Trust',
-                'title_ar' => 'النزاهة والثقة',
-                'icon' => '◇',
-            ],
-            [
-                'title_en' => 'Distribution Excellence',
-                'title_ar' => 'التميز في التوزيع',
-                'icon' => '↗',
-            ],
-            [
-                'title_en' => 'Sustainable Growth',
-                'title_ar' => 'النمو المستدام',
-                'icon' => '∞',
+                'image_path' => '/assets/images/corporate-v3/hero-hands-tablets.webp',
             ],
         ],
-        'values.company' => [
+        'about.journey' => [
             [
-                'title_en' => 'Commitment',
-                'title_ar' => 'الالتزام',
-                'description_en' => 'Integrity, respect, fairness and compliance.',
-                'description_ar' => 'النزاهة، الاحترام، العدالة، والامتثال.',
+                'subtitle_en' => '2020',
+                'title_en' => 'Our beginning',
+                'title_ar' => 'البداية',
+                'description_en' => 'Octogenix Pharma is founded under Dr. Tarek Kandil, specializing in the import, export and distribution of pharmaceutical products.',
+                'description_ar' => 'تأسيس أوكتوجينيكس فارما تحت قيادة الدكتور طارق قنديل، متخصصةً في استيراد وتصدير وتوزيع المنتجات الصيدلانية.',
             ],
             [
-                'title_en' => 'Excellence',
-                'title_ar' => 'التميز',
-                'description_en' => 'Through development and a drive to succeed and excel.',
-                'description_ar' => 'من خلال التطوير والرغبة في النجاح والتميز.',
+                'subtitle_en' => '2021',
+                'title_en' => 'Laying the foundation',
+                'title_ar' => 'ترسيخ الأساس',
+                'description_en' => 'Building a business base in pharmaceutical trade and distribution, grounded in trust and an understanding of the Egyptian market\'s needs.',
+                'description_ar' => 'بناء قاعدة أعمال في تجارة وتوزيع الأدوية، ترتكز على الثقة وفهم احتياجات السوق المصري.',
             ],
             [
-                'title_en' => 'Harmony',
-                'title_ar' => 'التناغم',
-                'description_en' => 'Communication and connection.',
-                'description_ar' => 'الاتصال والترابط.',
+                'subtitle_en' => '2022',
+                'title_en' => 'Growing our partner network',
+                'title_ar' => 'تنمية شبكة الشركاء',
+                'description_en' => 'Developing relationships with pharmacies and distribution partners, and strengthening ties across the pharmaceutical sector\'s channels.',
+                'description_ar' => 'تطوير العلاقات مع الصيدليات وشركاء التوزيع، وتعزيز التواصل مع مختلف قنوات القطاع الدوائي.',
             ],
             [
-                'title_en' => 'Growth',
-                'title_ar' => 'النمو',
-                'description_en' => 'Through development, empowerment and continuous improvement.',
-                'description_ar' => 'من خلال التطوير والتمكين والتحسين المستمر.',
+                'subtitle_en' => '2023',
+                'title_en' => 'Strengthening operational efficiency',
+                'title_ar' => 'تعزيز الكفاءة التشغيلية',
+                'description_en' => 'Developing our supply and distribution system to support business continuity and prepare for expansion.',
+                'description_ar' => 'تطوير منظومة التوريد والتوزيع لدعم استمرارية الأعمال والاستعداد للتوسع.',
             ],
             [
-                'title_en' => 'Credibility',
-                'title_ar' => 'المصداقية',
-                'description_en' => 'Earning trust.',
-                'description_ar' => 'كسب الثقة.',
+                'subtitle_en' => '2024',
+                'title_en' => 'Broadening the vision',
+                'title_ar' => 'توسيع الرؤية',
+                'description_en' => 'Moving towards new opportunities in food supplements and specialized nutrition, complementing our work in the pharmaceutical sector.',
+                'description_ar' => 'التوجه نحو فرص جديدة في المكملات الغذائية والتغذية المتخصصة، استكمالًا لنشاطنا في القطاع الدوائي.',
+            ],
+            [
+                'subtitle_en' => '2025',
+                'title_en' => 'Building international bridges',
+                'title_ar' => 'بناء جسور دولية',
+                'description_en' => 'Opening channels of cooperation with global companies, and exploring partnerships that bring together product quality and local market needs.',
+                'description_ar' => 'فتح قنوات التعاون مع شركات عالمية، ودراسة شراكات تجمع بين جودة المنتجات واحتياجات السوق المحلي.',
+            ],
+            [
+                'subtitle_en' => '2026',
+                'title_en' => 'Developing our international portfolio',
+                'title_ar' => 'تطوير محفظتنا الدولية',
+                'description_en' => 'Registering selected products, developing import partnerships, and building the groundwork to launch international brands in Egypt.',
+                'description_ar' => 'العمل على تسجيل منتجات مختارة، وتطوير شراكات الاستيراد، وبناء مقومات إطلاق علامات دولية في مصر.',
+            ],
+            [
+                'subtitle_en' => '2027',
+                'title_en' => 'Our next horizon',
+                'title_ar' => 'أفقنا القادم',
+                'description_en' => 'We look forward to launching our portfolio of international brands and expanding our presence, as a trusted partner in providing healthcare and nutrition products.',
+                'description_ar' => 'نتطلع إلى إطلاق محفظتنا من العلامات الدولية وتوسيع حضورنا، لنكون شريكًا موثوقًا في إتاحة منتجات الرعاية الصحية والتغذية.',
             ],
         ],
         'about.leadership' => [
@@ -107,10 +105,6 @@ return [
             'title_ar' => 'التعاقد والتوثيق',
             'description_en' => 'Official contracting procedures and documentation of company-client information and agreements, including pharmacies and medical institutions.',
             'description_ar' => 'إجراءات التعاقد رسميًا وتوثيق البيانات بين الشركة والعملاء، مثل الصيدليات والمؤسسات الطبية.',
-            'image_path' => '/assets/images/hero-partnership.jpg',
-            'hover_image_path' => '/assets/images/hero-operations.jpg',
-            'image_alt_en' => 'Professionals collaborating in a bright meeting room',
-            'image_alt_ar' => 'متخصصون يتعاونون في غرفة اجتماعات مشرقة',
         ],
         [
             'category' => 'customers',
@@ -118,10 +112,6 @@ return [
             'title_ar' => 'استلام الطلبات',
             'description_en' => 'Receiving orders for medicines and medical supplies through digital platforms and various communication channels.',
             'description_ar' => 'استقبال طلبات الأدوية والمستلزمات الطبية من العملاء عبر المنصات الرقمية أو وسائل التواصل المختلفة.',
-            'image_path' => '/assets/images/cut-out-medicament-drug-doctor-medical.jpg',
-            'hover_image_path' => '/assets/images/female-pharmacist-with-table-checking-stock-pharmacy.jpg',
-            'image_alt_en' => 'A laboratory specialist conducting quality checks',
-            'image_alt_ar' => 'متخصص مختبر يجري فحوصات الجودة',
         ],
         [
             'category' => 'customers',
@@ -129,10 +119,6 @@ return [
             'title_ar' => 'تجهيز الطلبات والتسليم',
             'description_en' => 'Logistics and distribution operations for delivering medicines and products to pharmacies and outlets across different governorates.',
             'description_ar' => 'عمليات اللوجستيات والتوزيع لنقل الأدوية والمنتجات إلى الصيدليات والمنافذ بمختلف المحافظات.',
-            'image_path' => '/assets/images/medium-shot-delivery-man-with-mask.jpg',
-            'hover_image_path' => '/assets/images/hero-warehouse.jpg',
-            'image_alt_en' => 'Packaged goods in an organized distribution warehouse',
-            'image_alt_ar' => 'بضائع معبأة في مستودع توزيع منظم',
         ],
         [
             'category' => 'customers',
@@ -140,10 +126,6 @@ return [
             'title_ar' => 'خدمات الدفع',
             'description_en' => 'Providing diverse payment solutions, including electronic payment options, to facilitate customer transactions.',
             'description_ar' => 'توفير حلول وطرق دفع متنوعة وإلكترونية لتسهيل المعاملات المالية للعملاء.',
-            'image_path' => '/assets/images/beautiful-asian-woman-using-smartphone-buying-online-shopping.jpg',
-            'hover_image_path' => '/assets/images/pay-goods-by-credit-card-through-smartphone-coffee-shop.jpg',
-            'image_alt_en' => 'Palletized goods in a distribution warehouse',
-            'image_alt_ar' => 'بضائع مرصوصة على منصات في مستودع توزيع',
         ],
         [
             'category' => 'customers',
@@ -151,10 +133,6 @@ return [
             'title_ar' => 'خدمة العملاء',
             'description_en' => 'Ongoing support, inquiry follow-up, problem resolution, and assistance to meet customer needs.',
             'description_ar' => 'الدعم الفني والمتابعة المستمرة للاستفسارات، حل المشكلات، وتلبية احتياجات العملاء.',
-            'image_path' => '/assets/images/smile.jpg',
-            'hover_image_path' => '/assets/images/happy.jpg',
-            'image_alt_en' => 'Healthcare researchers working at a microscope',
-            'image_alt_ar' => 'باحثون صحيون يعملون باستخدام مجهر',
         ],
         [
             'category' => 'suppliers',
@@ -162,10 +140,6 @@ return [
             'title_ar' => 'التوزيع',
             'description_en' => 'Efficient storage and distribution services for pharmaceutical and medical products, supported by broad distribution coverage.',
             'description_ar' => 'خدمات تخزين وتوزيع المنتجات الدوائية والطبية بكفاءة وتغطية واسعة.',
-            'image_path' => '/assets/images/service-warehouse-forklift.jpg',
-            'hover_image_path' => '/assets/images/hero-warehouse.jpg',
-            'image_alt_en' => 'An organized aisle in a high-bay warehouse',
-            'image_alt_ar' => 'ممر منظم في مستودع مرتفع الرفوف',
         ],
         [
             'category' => 'suppliers',
@@ -173,10 +147,6 @@ return [
             'title_ar' => 'الشؤون التنظيمية',
             'description_en' => 'Assistance with regulatory procedures, product registration, and official legal and administrative requirements related to pharmaceuticals.',
             'description_ar' => 'المساعدة في الإجراءات التنظيمية، التسجيل، وتسهيل المعاملات القانونية والرسمية الخاصة بالدواء.',
-            'image_path' => '/assets/images/doctor .jpg',
-            'hover_image_path' => '/assets/images/doctor 2.jpg',
-            'image_alt_en' => 'A specialist working in a clean production environment',
-            'image_alt_ar' => 'متخصص يعمل في بيئة إنتاج نظيفة',
         ],
         [
             'category' => 'suppliers',
@@ -184,10 +154,6 @@ return [
             'title_ar' => 'خدمات الوكالة',
             'description_en' => 'Commercial representation and agency services for manufacturers and suppliers.',
             'description_ar' => 'تقديم خدمات التمثيل التجاري والوكالة للمصنعين والموردين.',
-            'image_path' => '/assets/images/hero-operations.jpg',
-            'hover_image_path' => '/assets/images/hero-partnership.jpg',
-            'image_alt_en' => 'A professional working in an industrial production facility',
-            'image_alt_ar' => 'متخصص يعمل في منشأة إنتاج صناعية',
         ],
         [
             'category' => 'suppliers',
@@ -195,10 +161,6 @@ return [
             'title_ar' => 'خدمات التسويق',
             'description_en' => 'Developing marketing and promotional strategies for pharmaceutical products to increase sales and reach customers.',
             'description_ar' => 'وضع الاستراتيجيات التسويقية والترويجية للمنتجات الدوائية لزيادة مبيعاتها وصولاً للعملاء.',
-            'image_path' => '/assets/images/discussing-evidence.jpg',
-            'hover_image_path' => '/assets/images/doctor 3.jpg',
-            'image_alt_en' => 'Infant nutrition powder and feeding products in a clean studio',
-            'image_alt_ar' => 'مسحوق تغذية أطفال ومنتجات إطعام في استوديو نظيف',
         ],
         [
             'category' => 'suppliers',
@@ -206,10 +168,6 @@ return [
             'title_ar' => 'الاستيراد',
             'description_en' => 'Managing import operations and customs-clearance procedures for medicines and medical supplies sourced internationally.',
             'description_ar' => 'إدارة عمليات التخليص واستيراد الأدوية والمستلزمات من الخارج.',
-            'image_path' => '/assets/images/buiss.jpg',
-            'hover_image_path' => '/assets/images/warehouse-workers-checking-inventory-goods-distribution-large-storehouse.jpg',
-            'image_alt_en' => 'A laboratory specialist preparing samples for quality checks',
-            'image_alt_ar' => 'متخصص مختبر يجهز عينات لفحوصات الجودة',
         ],
         [
             'category' => 'suppliers',
@@ -217,10 +175,6 @@ return [
             'title_ar' => 'التصدير',
             'description_en' => 'Supporting access to international markets and facilitating product export procedures.',
             'description_ar' => 'فتح منافذ وتسهيل إجراءات تصدير المنتجات إلى الأسواق الخارجية.',
-            'image_path' => '/assets/images/workers-with-hardhats-reflective-jackets-walking-through-big-warehouse-aisle-checking-goods-condition.jpg',
-            'hover_image_path' => '/assets/images/value-distribution.jpg',
-            'image_alt_en' => 'A laboratory specialist selecting a sample for inspection',
-            'image_alt_ar' => 'متخصص مختبر يختار عينة للفحص',
         ],
         [
             'category' => 'suppliers',
@@ -228,10 +182,6 @@ return [
             'title_ar' => 'المكتب العلمي',
             'description_en' => 'Providing scientific support, consultations, and communication with healthcare professionals and physicians to introduce products.',
             'description_ar' => 'تقديم الدعم العلمي، الاستشارات، والتواصل مع القطاع الطبي والأطباء للتعريف بالمنتجات.',
-            'image_path' => '/assets/images/pharmacists-analyzing-tablet-pharmacy.jpg',
-            'hover_image_path' => '/assets/images/value-sustainable-growth.jpg',
-            'image_alt_en' => 'Researchers collaborating in a pharmaceutical laboratory',
-            'image_alt_ar' => 'باحثون يتعاونون في مختبر صيدلاني',
         ],
     ],
     'brands' => [
@@ -239,14 +189,8 @@ return [
             'slug' => 'jovie',
             'name_en' => 'Jovie',
             'name_ar' => 'Jovie',
-            'label_en' => 'A confirmed represented brand',
-            'label_ar' => 'علامة تجارية مؤكدة ضمن محفظتنا',
-            'short_description_en' => 'Jovie has been identified as a brand represented by the company. An approved brand description has not been supplied.',
-            'short_description_ar' => 'تم تحديد Jovie ضمن العلامات التي تمثلها الشركة. لم يُقدَّم وصف معتمد للعلامة.',
-            'image_path' => '/assets/images/jovie.jpg',
-            'hover_image_path' => '/assets/images/mom.jpg',
-            'image_alt_en' => 'Infant nutrition powder, bottle and measuring scoop',
-            'image_alt_ar' => 'مسحوق تغذية أطفال وزجاجة وملعقة قياس',
+            // The official Jovie logo, shown in a white tile on the Our Brands page.
+            'logo_path' => '/assets/images/jovie/logo-official-yellow.png',
             'cta_label_en' => 'Contact us about our portfolio',
             'cta_label_ar' => 'تواصلوا معنا بشأن العلامات',
             'link_type' => 'internal',

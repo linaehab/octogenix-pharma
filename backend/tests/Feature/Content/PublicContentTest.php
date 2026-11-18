@@ -21,16 +21,33 @@ class PublicContentTest extends TestCase
 
         $this->assertSame('Trusted Pharmaceutical', $data['texts']['hero.titleFirst']['en']);
         $this->assertNotEmpty($data['texts']['hero.titleFirst']['ar']);
-        $this->assertSame("Founded in 2020.\nServing healthcare.", $data['texts']['about.aside']['en']);
+        $this->assertSame('A Trusted Pharmaceutical Distribution Company', $data['texts']['header.tagline']['en']);
+        $this->assertSame('شركة موثوقة في توزيع المنتجات الدوائية', $data['texts']['header.tagline']['ar']);
+        // The sections of the final site are editable: journey, values, approach, focus, market, statement.
+        foreach (['journey.title', 'ourValues.trustText', 'approach.commercial', 'focus.infant.text', 'market.clinics', 'bridge.title', 'hero.tagMarketing'] as $key) {
+            $this->assertNotEmpty($data['texts'][$key]['en'], $key);
+            $this->assertNotEmpty($data['texts'][$key]['ar'], $key);
+        }
         $this->assertSame(
-            ['url' => '/assets/images/about us.jpg', 'url_ar' => '/assets/images/about us.jpg'],
+            ['url' => '/assets/images/corporate-v3/banner-about.webp', 'url_ar' => '/assets/images/corporate-v3/banner-about.webp'],
             $data['images']['page.about.image']
         );
+        $images = ['story.image', 'values.teamImage', 'bridge.image', 'contact.image', 'page.about.image', 'page.services.image', 'page.brands.image', 'page.contact.image'];
+        $this->assertEqualsCanonicalizing($images, array_keys($data['images']));
+        $this->assertSame(['home.hero_slides', 'about.journey', 'about.leadership'], array_keys($data['lists']));
+        $this->assertCount(8, $data['lists']['about.journey']);
+        $this->assertSame(['id', 'year', 'title', 'description'], array_keys($data['lists']['about.journey'][0]));
+        $this->assertSame('2020', $data['lists']['about.journey'][0]['year']);
+        $this->assertNotEmpty($data['lists']['about.journey'][0]['title']['ar']);
+        $this->assertArrayNotHasKey('journey.2020.title', $data['texts'], 'The years are a list, not fixed texts.');
         $this->assertCount(3, $data['lists']['home.hero_slides']);
         $this->assertSame(['id', 'image'], array_keys($data['lists']['home.hero_slides'][0]));
-        $this->assertCount(5, $data['lists']['values.core']);
-        $this->assertSame('◈', $data['lists']['values.core'][0]['icon']);
         $this->assertSame(['id', 'title', 'subtitle'], array_keys($data['lists']['about.leadership'][0]));
+
+        // Content of the previous design is no longer part of the payload.
+        foreach (['about.aside', 'companyImpact.services', 'quality.description', 'values.coreTitle'] as $key) {
+            $this->assertArrayNotHasKey($key, $data['texts']);
+        }
 
         // Fixed UI labels stay in Angular and are not part of the editable payload.
         $this->assertArrayNotHasKey('contact.submit', $data['texts']);
@@ -43,7 +60,7 @@ class PublicContentTest extends TestCase
         ContentItem::factory()->create(['title_en' => 'First', 'sort_order' => 1]);
         ContentItem::factory()->create(['title_en' => 'Hidden', 'is_active' => false]);
 
-        $items = $this->getJson('/api/v1/sites/corporate/content')->json('data')['lists']['values.company'];
+        $items = $this->getJson('/api/v1/sites/corporate/content')->json('data')['lists']['about.leadership'];
 
         $this->assertSame(['First', 'Second'], array_column(array_column($items, 'title'), 'en'));
     }
@@ -71,8 +88,13 @@ class PublicContentTest extends TestCase
             ->assertJsonCount(2, 'data')
             ->assertJsonPath('data.0.slug', 'jovie')
             ->assertJsonPath('data.0.name.en', 'Jovie')
-            ->assertJsonPath('data.0.image_url', '/assets/images/jovie.jpg')
-            ->assertJsonPath('data.0.hover_image_url', '/assets/images/mom.jpg')
+            // The Jovie card shows the official logo; no earlier photograph or draft texts.
+            ->assertJsonPath('data.0.logo_url', '/assets/images/jovie/logo-official-yellow.png')
+            ->assertJsonPath('data.0.image_url', null)
+            ->assertJsonPath('data.0.hover_image_url', null)
+            ->assertJsonPath('data.0.label', ['en' => null, 'ar' => null])
+            ->assertJsonPath('data.0.short_description', ['en' => null, 'ar' => null])
+            ->assertJsonPath('data.0.cta_label.en', 'Contact us about our portfolio')
             ->assertJsonPath('data.0.link', ['type' => 'internal', 'url' => '/contact'])
             ->assertJsonPath('data.0.has_store', true)
             ->assertJsonPath('data.1.slug', 'second');
@@ -92,6 +114,7 @@ class PublicContentTest extends TestCase
         $this->assertCount(5, $data['customers']);
         $this->assertCount(7, $data['suppliers']);
         $this->assertSame('Contracting and Documentation', $data['customers'][0]['title']['en']);
-        $this->assertSame('/assets/images/doctor .jpg', $data['suppliers'][1]['image_url']);
+        $this->assertSame(['id', 'title', 'description'], array_keys($data['suppliers'][1]));
+        $this->assertSame(0, Service::whereNotNull('image_path')->orWhereNotNull('hover_image_path')->count());
     }
 }

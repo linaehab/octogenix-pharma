@@ -6,7 +6,6 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { AdminAuthService } from '../admin-auth.service';
 import { AdminState } from '../components/admin-state';
 import { apiErrorMessages, apiFieldErrors } from '../products/api-errors';
-import { AdminImageField } from './admin-image-field';
 import { AdminService, ServiceCategory } from './admin-website.models';
 import { AdminWebsiteNav } from './admin-website-nav';
 import { AdminWebsiteService } from './admin-website.service';
@@ -18,28 +17,23 @@ interface ServiceForm {
   title_ar: string;
   description_en: string;
   description_ar: string;
-  image_alt_en: string;
-  image_alt_ar: string;
-  image_path: string;
-  hover_image_path: string;
   is_active: boolean;
 }
 
 const EMPTY: ServiceForm = {
   category: 'customers', title_en: '', title_ar: '', description_en: '', description_ar: '',
-  image_alt_en: '', image_alt_ar: '', image_path: '', hover_image_path: '', is_active: false,
+  is_active: false,
 };
 
 const PAIRS = [
   { field: 'title', label: 'admin.website.services.serviceTitle', required: true, max: 150, area: false },
   { field: 'description', label: 'admin.website.services.description', required: true, max: 2000, area: true },
-  { field: 'image_alt', label: 'admin.website.imageAlt', required: false, max: 255, area: false },
 ] as const;
 
 /** /admin/website/services/new and /admin/website/services/:id — one service in English and Arabic. */
 @Component({
   selector: 'app-admin-service-form-page',
-  imports: [RouterLink, TranslatePipe, AdminState, AdminImageField, AdminWebsiteNav],
+  imports: [RouterLink, TranslatePipe, AdminState, AdminWebsiteNav],
   template: `
     <app-admin-website-nav current="services" />
     <p class="web-back"><a routerLink="/admin/website/services" [queryParams]="{ category: form().category }">{{ 'admin.website.services.back' | translate }}</a></p>
@@ -105,15 +99,6 @@ const PAIRS = [
                 }
               </div>
             }
-          </section>
-
-          <section class="adm-panel" aria-labelledby="web-s-images">
-            <h2 id="web-s-images">{{ 'admin.website.services.secImages' | translate }}</h2>
-            <div class="web-images">
-              <app-admin-image-field fieldId="web-s-image" label="admin.website.services.image" [url]="imageUrl('image')" (changed)="set('image_path', $event)" />
-              <app-admin-image-field fieldId="web-s-hover" label="admin.website.services.hoverImage" [url]="imageUrl('hover_image')" (changed)="set('hover_image_path', $event)" />
-            </div>
-            <p class="web-help">{{ 'admin.website.services.imagesHelp' | translate }}</p>
           </section>
 
           <section class="adm-panel" aria-labelledby="web-s-publish">
@@ -187,15 +172,6 @@ export class AdminServiceFormPage {
     this.form.update((f) => ({ ...f, [key]: value }));
   }
 
-  protected imageUrl(kind: 'image' | 'hover_image'): string | null {
-    const path = this.value(`${kind}_path`);
-    if (!path) {
-      return null;
-    }
-    const original = this.original();
-    return original && original[`${kind}_path`] === path ? original[`${kind}_url`] : path.startsWith('/') ? path : null;
-  }
-
   protected save(): void {
     if (this.saving()) {
       return;
@@ -248,10 +224,6 @@ export class AdminServiceFormPage {
       title_ar: service.title_ar ?? '',
       description_en: service.description_en ?? '',
       description_ar: service.description_ar ?? '',
-      image_alt_en: service.image_alt_en ?? '',
-      image_alt_ar: service.image_alt_ar ?? '',
-      image_path: service.image_path ?? '',
-      hover_image_path: service.hover_image_path ?? '',
       is_active: service.is_active,
     };
     this.original.set(service);

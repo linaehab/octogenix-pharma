@@ -18,7 +18,7 @@ describe('BrandsSection', () => {
     short_description: { en: 'Description', ar: 'وصف' },
     description: { en: null, ar: null },
     logo_url: null,
-    image_url: '/assets/images/jovie.jpg',
+    image_url: '/storage/uploads/images/2026/11/brand.webp',
     hover_image_url: null,
     image_alt: { en: 'Alt', ar: 'نص بديل' },
     cta_label: { en: 'Visit', ar: 'زيارة' },
@@ -44,6 +44,26 @@ describe('BrandsSection', () => {
     expect(compiled.querySelector('.brand-name')?.textContent).toContain('Jovie');
     expect(compiled.querySelector('.brand-panel .text-link')?.getAttribute('href')).toBe('/contact');
     expect(compiled.querySelector('.brand-panel .store-button')?.getAttribute('href')).toBe('/jovie');
+    expect(compiled.querySelector('.brand-logo')?.getAttribute('src')).toBe('/assets/images/jovie/logo-official-yellow.png');
+    // Only the approved texts: no label, description or summary.
+    expect(compiled.querySelector('.brand-label')).toBeNull();
+    expect(compiled.querySelector('.brand-description')).toBeNull();
+    expect(compiled.querySelector('.brands-heading > div > p')).toBeNull();
+  });
+
+  it('shows the logo saved in the dashboard, or else the brand photograph', () => {
+    TestBed.inject(SiteContentService).brands.set([
+      brand({ slug: 'jovie', name: { en: 'Jovie', ar: 'جوفي' }, logo_url: '/assets/images/jovie/logo-official-yellow.png', image_url: null }),
+      brand({ slug: 'other', name: { en: 'Other', ar: 'أخرى' } }),
+    ]);
+    fixture.detectChanges();
+
+    const cards = compiled.querySelectorAll('.brand-feature');
+    expect(cards[0].querySelector('.brand-logo')?.getAttribute('src')).toBe('/assets/images/jovie/logo-official-yellow.png');
+    expect(cards[0].querySelector('.brand-image')).toBeNull();
+    expect(cards[1].querySelector('.brand-logo')).toBeNull();
+    expect(cards[1].querySelector('.brand-image')?.getAttribute('src')).toBe('/storage/uploads/images/2026/11/brand.webp');
+    expect(cards[1].querySelector('.brand-label')?.textContent).toBe('Label');
   });
 
   it('offers a store button only for brands with a store in this app', () => {

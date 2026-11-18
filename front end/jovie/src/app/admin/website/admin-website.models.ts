@@ -43,24 +43,26 @@ export interface AdminService {
   title_ar: string;
   description_en: string;
   description_ar: string;
-  image_path: string | null;
-  hover_image_path: string | null;
-  image_alt_en: string | null;
-  image_alt_ar: string | null;
   sort_order: number;
   is_active: boolean;
-  image_url: string | null;
-  hover_image_url: string | null;
   created_at: string | null;
   updated_at: string | null;
 }
 
-export type CompanyInfoKey = 'contact.phones' | 'contact.email' | 'social.facebook' | 'social.instagram' | 'social.linkedin';
+export type CompanyInfoKey =
+  | 'contact.phones'
+  | 'contact.email'
+  | 'contact.map_latitude'
+  | 'contact.map_longitude'
+  | 'contact.map_url'
+  | 'social.facebook'
+  | 'social.instagram'
+  | 'social.linkedin';
 
 export interface CompanyInfoSetting {
   key: CompanyInfoKey;
-  type: 'phone_list' | 'email' | 'url';
-  value: string[] | string | null;
+  type: 'phone_list' | 'email' | 'url' | 'latitude' | 'longitude';
+  value: string[] | string | number | null;
 }
 
 export interface ContentTextEntry {
@@ -84,7 +86,7 @@ export interface ContentImageEntry {
 
 export type ContentEntry = ContentTextEntry | ContentImageEntry;
 
-export type ContentListField = 'title' | 'subtitle' | 'description' | 'image' | 'secondary_image' | 'image_alt' | 'icon' | 'link';
+export type ContentListField = 'title' | 'subtitle' | 'description' | 'image' | 'secondary_image' | 'image_alt' | 'link' | 'year';
 
 export interface ContentListItem {
   id: number;
@@ -97,8 +99,8 @@ export interface ContentListItem {
   image_alt?: { en: string | null; ar: string | null };
   image?: { url: string | null };
   secondary_image?: { url: string | null };
-  icon?: string | null;
   link?: string | null;
+  year?: string | null;
 }
 
 export interface ContentList {
@@ -108,7 +110,6 @@ export interface ContentList {
   required: ContentListField[];
   min: number;
   max: number;
-  icons: string[] | null;
   items: ContentListItem[];
 }
 

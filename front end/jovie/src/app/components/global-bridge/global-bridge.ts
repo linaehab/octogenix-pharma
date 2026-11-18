@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { SiteContentService } from '../../core/content/site-content.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 /**
  * About page: the company statement, laid out like the reference's slogan block — a light grey
  * card with the title and two paragraphs on one side and a rounded photograph on the other.
- * Photograph: supplied by the project team (src/assets/images/health.jpg), as WebP.
+ * Photograph: supplied by the project team (original: archive/images/source-originals/health.jpg), as WebP; editable in
+ * the dashboard (About: statement).
  */
 @Component({
   selector: 'app-global-bridge',
@@ -19,7 +21,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
         </div>
         <figure class="bridge-figure">
           <img
-            src="/assets/images/corporate-v3/health-tablet.webp"
+            [src]="content.image('bridge.image', '/assets/images/corporate-v3/health-tablet.webp')"
             [alt]="'bridge.imageAlt' | translate"
             width="1216"
             height="873"
@@ -99,4 +101,6 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
     }
   `,
 })
-export class GlobalBridge {}
+export class GlobalBridge {
+  protected readonly content = inject(SiteContentService);
+}

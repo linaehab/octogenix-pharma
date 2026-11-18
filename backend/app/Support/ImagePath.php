@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Storage;
 
 /**
  * Image references stored in the database come in two forms:
- * - "/assets/images/<file>": an image bundled with the Angular app (the current site's images);
+ * - "/assets/images/[<folder>/]<file>": an image bundled with the Angular app;
  * - "uploads/images/<yyyy>/<mm>/<uuid>.<ext>": a file an admin uploaded to the public disk.
  */
 final class ImagePath
@@ -15,7 +15,8 @@ final class ImagePath
 
     public const UPLOAD_DIRECTORY = 'uploads/images';
 
-    private const BUNDLED_PATTERN = '#^/assets/images/[^/\\\\]+\.(jpe?g|png|webp)$#i';
+    // Folders are allowed (the final site's photographs live in /assets/images/corporate-v3/ and similar).
+    private const BUNDLED_PATTERN = '#^/assets/images/(?:[^/\\\\]+/)*[^/\\\\]+\.(jpe?g|png|webp)$#i';
 
     private const UPLOAD_PATTERN = '#^uploads/images/\d{4}/\d{2}/[0-9a-f-]{36}\.(jpe?g|png|webp)$#';
 

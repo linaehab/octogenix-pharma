@@ -162,8 +162,8 @@ class AdminCorporateWebsiteTest extends TestCase
 
         $this->patchJson("/api/v1/admin/services/{$a['id']}", ['is_active' => false])->assertOk();
         $this->assertSame(1, AdminAuditLog::where('action', 'website.service_deactivated')->count());
-        $this->patchJson("/api/v1/admin/services/{$s['id']}", ['image_path' => '/assets/images/jovie.jpg'])
-            ->assertUnprocessable()->assertJsonValidationErrors(['image_alt_en', 'image_alt_ar']);
+        $this->patchJson("/api/v1/admin/services/{$s['id']}", ['image_path' => '/assets/images/corporate-v3/banner-about.webp'])->assertOk();
+        $this->assertNull(Service::find($s['id'])->image_path, 'Services keep no photographs.');
 
         $this->app['auth']->forgetGuards();
         $public = $this->getJson('/api/v1/services')->assertOk()->json('data');
@@ -180,7 +180,12 @@ class AdminCorporateWebsiteTest extends TestCase
     {
         $admin = $this->as(AdminRole::ContentManager);
         $data = collect($this->getJson('/api/v1/admin/company-info')->assertOk()->json('data'))->pluck('value', 'key');
-        $this->assertSame(['contact.phones', 'contact.email', 'social.facebook', 'social.instagram', 'social.linkedin'], $data->keys()->all());
+        $this->assertSame([
+            'contact.phones', 'contact.email', 'contact.map_latitude', 'contact.map_longitude', 'contact.map_url',
+            'social.facebook', 'social.instagram', 'social.linkedin',
+        ], $data->keys()->all());
+        // The map starts at the location the company supplied.
+        $this->assertSame([31.44325, 31.664583], [$data['contact.map_latitude'], $data['contact.map_longitude']]);
         $this->assertNull($data['social.facebook']);
 
         $this->patchJson('/api/v1/admin/company-info', ['settings' => [
@@ -196,6 +201,8 @@ class AdminCorporateWebsiteTest extends TestCase
             ->assertUnprocessable()->assertJsonValidationErrors('settings.social.facebook');
         $this->patchJson('/api/v1/admin/company-info', ['settings' => ['contact.phones' => ['call us']]])
             ->assertUnprocessable()->assertJsonValidationErrors('settings.contact.phones');
+        $this->patchJson('/api/v1/admin/company-info', ['settings' => ['contact.map_latitude' => 95, 'contact.map_longitude' => 'east', 'contact.map_url' => 'http://maps.example.com']])
+            ->assertUnprocessable()->assertJsonValidationErrors(['settings.contact.map_latitude', 'settings.contact.map_longitude', 'settings.contact.map_url']);
         $this->patchJson('/api/v1/admin/company-info', ['settings' => ['store.enabled' => true]])
             ->assertUnprocessable()->assertJsonValidationErrors('settings');
         $this->patchJson('/api/v1/admin/company-info', ['settings' => ['contact.email' => 'x@octogenix.test'], 'expected' => ['contact.email' => $data['contact.email']]])
@@ -208,6 +215,20 @@ class AdminCorporateWebsiteTest extends TestCase
         $this->assertSame('https://www.linkedin.com/company/octogenix', $public['social.linkedin']);
         $this->assertNull($public['social.facebook']);
         $this->assertArrayNotHasKey('contact.notification_recipients', $public);
+    }
+
+    public function test_the_map_location_is_managed_from_company_information(): void
+    {
+        $this->as(AdminRole::ContentManager);
+
+        $this->patchJson('/api/v1/admin/company-info', ['settings' => [
+            'contact.map_latitude' => 30.0444, 'contact.map_longitude' => '31.2357', 'contact.map_url' => 'https://maps.app.goo.gl/example',
+        ]])->assertOk();
+
+        $this->app['auth']->forgetGuards();
+        $public = $this->getJson('/api/v1/settings')->assertOk()->json('data');
+        $this->assertSame([30.0444, 31.2357], [$public['contact.map_latitude'], $public['contact.map_longitude']]);
+        $this->assertSame('https://maps.app.goo.gl/example', $public['contact.map_url']);
     }
 
     public function test_a_settings_cache_built_before_new_keys_existed_does_not_break_the_page(): void
@@ -247,9 +268,9 @@ class AdminCorporateWebsiteTest extends TestCase
 
         // List items: deactivating and reordering are audited too.
         $this->as(AdminRole::ContentManager);
-        $items = ContentItem::query()->where('list_key', 'values.company')->orderBy('sort_order')->pluck('id')->all();
+        $items = ContentItem::query()->where('list_key', 'about.leadership')->orderBy('sort_order')->pluck('id')->all();
         $this->patchJson("/api/v1/admin/content-items/{$items[0]}", ['is_active' => false])->assertOk();
-        $this->putJson('/api/v1/admin/content/corporate/lists/values.company/order', ['ids' => array_reverse($items)])->assertNoContent();
+        $this->putJson('/api/v1/admin/content/corporate/lists/about.leadership/order', ['ids' => array_reverse($items)])->assertNoContent();
         $this->assertSame(1, AdminAuditLog::where('action', 'website.list_item_deactivated')->count());
         $this->assertSame(1, AdminAuditLog::where('action', 'website.list_reordered')->count());
     }

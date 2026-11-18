@@ -3,7 +3,6 @@ import { SiteContentService } from '../../core/content/site-content.service';
 import { LanguageService } from '../../core/i18n/language.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { CxIcon } from '../cx-icon/cx-icon';
-import { designImage } from '../design-image';
 import { OUR_VALUES } from '../our-values';
 
 /** Steps of the company's approach, shown in the charcoal band. */
@@ -19,18 +18,9 @@ export class ValuesSection {
   protected readonly content = inject(SiteContentService);
   private readonly language = inject(LanguageService);
 
-  /** Team photograph (hands joined) beside the core values, replacing the previous office photo;
-   *  any other image chosen in the dashboard is shown as it is. */
-  private static readonly TEAM_IMAGE = '/assets/images/corporate-v3/values-team.webp';
-
+  /** Photograph beside our values (the team, hands joined); editable in the dashboard. */
   protected readonly valuesImage = computed(() =>
-    designImage(this.content, 'values.missionImage', '/assets/images/working-office.jpg', ValuesSection.TEAM_IMAGE),
-  );
-
-  protected readonly valuesImageAlt = computed(() =>
-    this.valuesImage() === ValuesSection.TEAM_IMAGE
-      ? this.language.translate('values.teamImageAlt')
-      : this.language.translate('values.missionImageAlt'),
+    this.content.image('values.teamImage', '/assets/images/corporate-v3/values-team.webp'),
   );
 
   protected readonly coreValues = computed(() =>

@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Models\Service;
-use App\Support\ImagePath;
 use App\Support\Localized;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -17,9 +16,6 @@ class ServiceResource extends JsonResource
             'id' => $this->id,
             'title' => Localized::pair($this->resource, 'title'),
             'description' => Localized::pair($this->resource, 'description'),
-            'image_url' => ImagePath::url($this->image_path),
-            'hover_image_url' => ImagePath::url($this->hover_image_path),
-            'image_alt' => Localized::pair($this->resource, 'image_alt'),
         ];
     }
 }

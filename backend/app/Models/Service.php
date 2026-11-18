@@ -16,10 +16,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $title_ar
  * @property string $description_en
  * @property string $description_ar
- * @property string|null $image_path
- * @property string|null $hover_image_path
- * @property string|null $image_alt_en
- * @property string|null $image_alt_ar
+ * @property string|null $image_path not used (the services section shows no photographs)
+ * @property string|null $hover_image_path not used
+ * @property string|null $image_alt_en not used
+ * @property string|null $image_alt_ar not used
  * @property int $sort_order
  * @property bool $is_active
  */
@@ -34,10 +34,6 @@ class Service extends Model
         'title_ar',
         'description_en',
         'description_ar',
-        'image_path',
-        'hover_image_path',
-        'image_alt_en',
-        'image_alt_ar',
         'sort_order',
         'is_active',
     ];

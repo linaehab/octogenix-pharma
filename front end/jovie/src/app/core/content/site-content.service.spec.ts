@@ -13,7 +13,7 @@ describe('SiteContentService', () => {
 
   const content: SiteContent = {
     texts: { 'hero.titleFirst': { en: 'Edited title', ar: 'عنوان معدل' }, 'hero.cta': { en: 'Only English', ar: null } },
-    images: { 'quality.image': { url: 'http://api.test/storage/q.jpg', url_ar: 'http://api.test/storage/q-ar.jpg' } },
+    images: { 'page.about.image': { url: 'http://api.test/storage/q.jpg', url_ar: 'http://api.test/storage/q-ar.jpg' } },
     lists: { 'about.leadership': [] },
   };
 
@@ -43,7 +43,7 @@ describe('SiteContentService', () => {
     setUp();
 
     expect(language.translate('hero.titleFirst')).toBe('Trusted Pharmaceutical');
-    expect(service.image('quality.image', '/assets/fallback.jpg')).toBe('/assets/fallback.jpg');
+    expect(service.image('page.about.image', '/assets/fallback.jpg')).toBe('/assets/fallback.jpg');
     expect(service.list('about.leadership')).toBeNull();
     expect(service.setting('contact.email', 'fallback@example.com')).toBe('fallback@example.com');
   });
@@ -59,13 +59,13 @@ describe('SiteContentService', () => {
     await settle();
 
     expect(language.translate('hero.titleFirst')).toBe('Edited title');
-    expect(service.image('quality.image', '/assets/fallback.jpg')).toBe('http://api.test/storage/q.jpg');
+    expect(service.image('page.about.image', '/assets/fallback.jpg')).toBe('http://api.test/storage/q.jpg');
     expect(service.list('about.leadership')).toEqual([]);
     expect(service.setting('contact.email', 'fallback@example.com')).toBe('sales@example.com');
 
     language.setLanguage('ar');
     expect(language.translate('hero.titleFirst')).toBe('عنوان معدل');
-    expect(service.image('quality.image', '/assets/fallback.jpg')).toBe('http://api.test/storage/q-ar.jpg');
+    expect(service.image('page.about.image', '/assets/fallback.jpg')).toBe('http://api.test/storage/q-ar.jpg');
     // A missing remote value for a language falls back to the bundled translation.
     expect(language.translate('hero.cta')).toBe(bundledArabicCta);
   });

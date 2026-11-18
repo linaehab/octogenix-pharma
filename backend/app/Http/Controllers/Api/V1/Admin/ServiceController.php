@@ -25,7 +25,7 @@ class ServiceController extends Controller
 {
     private const AUDITED = [
         'category', 'title_en', 'title_ar', 'description_en', 'description_ar',
-        'image_path', 'hover_image_path', 'image_alt_en', 'image_alt_ar', 'sort_order', 'is_active',
+        'sort_order', 'is_active',
     ];
 
     public function __construct(private readonly AuditLogger $audit) {}

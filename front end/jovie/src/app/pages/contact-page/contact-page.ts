@@ -4,7 +4,6 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ContactSection } from '../../components/contact-section/contact-section';
 import { ContactMap } from '../../components/contact-map/contact-map';
 import { RouteIntro } from '../../components/route-intro/route-intro';
-import { designImage } from '../../components/design-image';
 
 @Component({
   selector: 'app-contact-page',
@@ -15,13 +14,8 @@ import { designImage } from '../../components/design-image';
 export class ContactPage {
   protected readonly content = inject(SiteContentService);
 
-  /** The network-globe photograph (reference "global presence" banner), unless an image was uploaded for this page in the dashboard. */
+  /** Banner photograph (black and white, reference banner style); editable in the dashboard. */
   protected heroImage(): string {
-    return designImage(
-      this.content,
-      'page.contact.image',
-      '/assets/images/contact-register-feedback-support-help-concept.jpg',
-      '/assets/images/corporate-v3/banner-contact.webp',
-    );
+    return this.content.image('page.contact.image', '/assets/images/corporate-v3/banner-contact.webp');
   }
 }

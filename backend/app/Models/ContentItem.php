@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $secondary_image_path
  * @property string|null $image_alt_en
  * @property string|null $image_alt_ar
- * @property string|null $icon
+ * @property string|null $icon not used (no list has icons)
  * @property string|null $link_url
  * @property int $sort_order
  * @property bool $is_active
@@ -41,8 +41,9 @@ class ContentItem extends Model
         'image' => ['image_path'],
         'secondary_image' => ['secondary_image_path'],
         'image_alt' => ['image_alt_en', 'image_alt_ar'],
-        'icon' => ['icon'],
         'link' => ['link_url'],
+        // A year (journey stops): the same in both languages, kept in the English subtitle column.
+        'year' => ['subtitle_en'],
     ];
 
     protected $fillable = [
@@ -58,7 +59,6 @@ class ContentItem extends Model
         'secondary_image_path',
         'image_alt_en',
         'image_alt_ar',
-        'icon',
         'link_url',
         'sort_order',
         'is_active',

@@ -117,15 +117,17 @@ class AdminBrandsAndServicesTest extends TestCase
             'category' => 'suppliers',
             'title_en' => 'Cold Chain', 'title_ar' => 'سلسلة التبريد',
             'description_en' => 'Temperature-controlled storage.', 'description_ar' => 'تخزين مبرد.',
-            'image_path' => '/assets/images/hero-warehouse.jpg',
-            'image_alt_en' => 'Warehouse', 'image_alt_ar' => 'مستودع',
             'is_active' => true,
         ])->assertCreated()->assertJsonPath('data.category', 'suppliers')->json('data.id');
 
         $this->getJson('/api/v1/services')->assertJsonPath('data.suppliers.0.title.en', 'Cold Chain');
 
-        $this->patchJson("/api/v1/admin/services/{$id}", ['image_alt_ar' => null])
-            ->assertUnprocessable()->assertJsonValidationErrors('image_alt_ar');
+        // Services have no photographs: image fields are neither stored nor returned.
+        $this->patchJson("/api/v1/admin/services/{$id}", ['title_en' => 'Cold Chain Logistics', 'image_path' => '/assets/images/corporate-v3/banner-about.webp', 'image_alt_en' => 'x'])
+            ->assertOk()->assertJsonPath('data.title_en', 'Cold Chain Logistics')
+            ->assertJsonMissingPath('data.image_path')->assertJsonMissingPath('data.image_url');
+        $this->assertDatabaseHas('services', ['id' => $id, 'image_path' => null, 'image_alt_en' => null]);
+        $this->assertSame(['id', 'title', 'description'], array_keys($this->getJson('/api/v1/services')->json('data.suppliers.0')));
         $this->patchJson("/api/v1/admin/services/{$id}", ['category' => 'partners'])
             ->assertUnprocessable()->assertJsonValidationErrors('category');
 

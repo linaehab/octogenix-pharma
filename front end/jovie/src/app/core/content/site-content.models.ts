@@ -18,8 +18,9 @@ export interface ContentListItem {
   image?: { url: string | null };
   secondary_image?: { url: string | null };
   image_alt?: LocalizedText;
-  icon?: string | null;
   link?: string | null;
+  /** Journey stops: the year, the same in both languages. */
+  year?: string | null;
 }
 
 export interface SiteContent {
@@ -32,9 +33,6 @@ export interface ApiService {
   id: number;
   title: LocalizedText;
   description: LocalizedText;
-  image_url: string | null;
-  hover_image_url: string | null;
-  image_alt: LocalizedText;
 }
 
 export interface ApiServiceGroups {

@@ -15,6 +15,8 @@ import { adminWebsiteTranslations } from './admin-website-translations';
 /** The page texts edited here (they are also in Page content); the rest of the page is settings. */
 const COMPANY_TEXTS = ['contact.address', 'footer.tagline'] as const;
 const SOCIAL = ['social.facebook', 'social.instagram', 'social.linkedin'] as const;
+/** Map location of the Contact page: coordinates and the Google Maps link of the pin. */
+const MAP = ['contact.map_latitude', 'contact.map_longitude', 'contact.map_url'] as const;
 
 interface Contacts {
   phones: string[];
@@ -22,10 +24,13 @@ interface Contacts {
   'social.facebook': string;
   'social.instagram': string;
   'social.linkedin': string;
+  'contact.map_latitude': string;
+  'contact.map_longitude': string;
+  'contact.map_url': string;
 }
 
 /**
- * /admin/website/company — company contact details and social links (settings) and the company
+ * /admin/website/company — company contact details, map location and social links (settings) and the company
  * address and footer line (page texts). They appear in the header, footer and Contact page.
  */
 @Component({
@@ -98,6 +103,19 @@ interface Contacts {
               </div>
             }
           </div>
+          <h3>{{ 'admin.website.company.map' | translate }}</h3>
+          <p class="web-help">{{ 'admin.website.company.mapHelp' | translate }}</p>
+          <div class="web-pair">
+            @for (key of map; track key) {
+              <div class="web-field">
+                <label [for]="'web-c-' + key">{{ ('admin.website.company.' + key) | translate }}</label>
+                <input [id]="'web-c-' + key" dir="ltr" [attr.type]="key === 'contact.map_url' ? 'url' : 'text'" [attr.inputmode]="key === 'contact.map_url' ? null : 'decimal'"
+                  [attr.maxlength]="key === 'contact.map_url' ? 500 : 20" [attr.placeholder]="key === 'contact.map_url' ? 'https://' : null" [value]="contacts()[key]"
+                  [attr.aria-invalid]="!!errors()['settings.' + key]" (input)="setContact(key, $any($event.target).value)" />
+                @for (e of errors()['settings.' + key] ?? []; track $index) {<p class="web-error">{{ e }}</p>}
+              </div>
+            }
+          </div>
           <div class="web-actions">
             <button type="submit" class="adm-button" [disabled]="busy() || !contactsDirty()">{{ (busy() ? 'admin.website.saving' : 'admin.website.company.saveContact') | translate }}</button>
           </div>
@@ -151,6 +169,7 @@ export class AdminCompanyPage {
   private readonly router = inject(Router);
 
   protected readonly social = SOCIAL;
+  protected readonly map = MAP;
   protected readonly texts = COMPANY_TEXTS;
   protected readonly langs = ['en', 'ar'] as const;
 
@@ -161,7 +180,10 @@ export class AdminCompanyPage {
 
   /** The values as saved (also sent as "expected", so another admin's change is never overwritten). */
   private readonly savedSettings = signal<Record<CompanyInfoKey, unknown> | null>(null);
-  protected readonly contacts = signal<Contacts>({ phones: [], email: '', 'social.facebook': '', 'social.instagram': '', 'social.linkedin': '' });
+  protected readonly contacts = signal<Contacts>({
+    phones: [], email: '', 'social.facebook': '', 'social.instagram': '', 'social.linkedin': '',
+    'contact.map_latitude': '', 'contact.map_longitude': '', 'contact.map_url': '',
+  });
   private readonly savedContacts = signal<Contacts | null>(null);
   protected readonly contactsDirty = computed(() => JSON.stringify(this.contacts()) !== JSON.stringify(this.savedContacts()));
 
@@ -203,7 +225,7 @@ export class AdminCompanyPage {
     this.contacts.update((c) => ({ ...c, phones: c.phones.filter((_, i) => i !== index) }));
   }
 
-  protected setContact(key: 'email' | (typeof SOCIAL)[number], value: string): void {
+  protected setContact(key: 'email' | (typeof SOCIAL)[number] | (typeof MAP)[number], value: string): void {
     this.contacts.update((c) => ({ ...c, [key]: value }));
   }
 
@@ -227,6 +249,10 @@ export class AdminCompanyPage {
       'social.facebook': c['social.facebook'].trim() || null,
       'social.instagram': c['social.instagram'].trim() || null,
       'social.linkedin': c['social.linkedin'].trim() || null,
+      // Coordinates go as numbers; anything else is sent as typed so the server can explain it
+      'contact.map_latitude': coordinate(c['contact.map_latitude']),
+      'contact.map_longitude': coordinate(c['contact.map_longitude']),
+      'contact.map_url': c['contact.map_url'].trim() || null,
     };
     this.submit(this.api.saveCompanyInfo(settings, this.savedSettings() ?? {}), (info) => this.fillSettings(info as CompanyInfoSetting[]), 'admin.website.company.contactSaved');
   }
@@ -277,6 +303,9 @@ export class AdminCompanyPage {
       'social.facebook': (values['social.facebook'] as string | null) ?? '',
       'social.instagram': (values['social.instagram'] as string | null) ?? '',
       'social.linkedin': (values['social.linkedin'] as string | null) ?? '',
+      'contact.map_latitude': String(values['contact.map_latitude'] ?? ''),
+      'contact.map_longitude': String(values['contact.map_longitude'] ?? ''),
+      'contact.map_url': (values['contact.map_url'] as string | null) ?? '',
     };
     this.contacts.set(contacts);
     this.savedContacts.set({ ...contacts, phones: [...contacts.phones] });
@@ -309,4 +338,14 @@ export class AdminCompanyPage {
     }
     return false;
   }
+}
+
+/** "31.44325" → 31.44325; an empty field → null; other text is kept for the server's message. */
+function coordinate(value: string): number | string | null {
+  const text = value.trim().replace(',', '.');
+  if (text === '') {
+    return null;
+  }
+  const number = Number(text);
+  return Number.isFinite(number) ? number : text;
 }
