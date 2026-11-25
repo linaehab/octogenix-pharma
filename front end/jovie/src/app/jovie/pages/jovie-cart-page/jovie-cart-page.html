@@ -1,5 +1,5 @@
 <app-store-page-header [title]="'jovie.cart.title' | translate">
-  <a class="continue" routerLink="/jovie/shop">{{ 'jovie.cart.continue' | translate }}</a>
+  <a class="continue" routerLink="/jovieEgypt/shop">{{ 'jovie.cart.continue' | translate }}</a>
 </app-store-page-header>
 
 <section class="jv-container page" [attr.aria-busy]="cart.status() === 'loading'">
@@ -23,7 +23,7 @@
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 8h12l-1 12H7z" /><path d="M9 10V7a3 3 0 0 1 6 0v3" /></svg>
       <h2>{{ 'jovie.cart.emptyTitle' | translate }}</h2>
       <p>{{ 'jovie.cart.emptyText' | translate }}</p>
-      <a class="jv-button" routerLink="/jovie/shop">{{ 'jovie.cart.continue' | translate }}</a>
+      <a class="jv-button" routerLink="/jovieEgypt/shop">{{ 'jovie.cart.continue' | translate }}</a>
     </div>
   } @else {
     <div class="layout">
@@ -133,7 +133,7 @@
           <button class="jv-button checkout" type="button" disabled>{{ 'jovie.cart.checkout' | translate }}</button>
           <p class="blocked">{{ reason | translate }}</p>
         } @else {
-          <a class="jv-button checkout" routerLink="/jovie/checkout">{{ 'jovie.cart.checkout' | translate }}</a>
+          <a class="jv-button checkout" routerLink="/jovieEgypt/checkout">{{ 'jovie.cart.checkout' | translate }}</a>
         }
       </aside>
     </div>

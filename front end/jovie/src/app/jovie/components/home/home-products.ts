@@ -17,7 +17,7 @@ import { injectHomeContent } from './home-content';
       <div class="jv-container head">
         <h2 id="jovie-home-organic">{{ content().organic.title }}</h2>
         <p>{{ content().organic.text }}</p>
-        <a class="jv-button" routerLink="/jovie/products">{{ content().organic.button }}</a>
+        <a class="jv-button" routerLink="/jovieEgypt/products">{{ content().organic.button }}</a>
       </div>
       <ul class="tiles">
         @for (product of products; track product.slug) {

@@ -60,7 +60,7 @@ describe('WorldMap', () => {
     expect(tooltip?.querySelector('.tooltip-title')?.textContent).toContain('Egypt');
     expect(tooltip?.textContent).toContain('Octogenix Pharma');
     expect(tooltip?.querySelector('a[href^="tel:"]')).not.toBeNull();
-    expect(tooltip?.querySelector('a.link')?.getAttribute('href')).toBe('/jovie/contact');
+    expect(tooltip?.querySelector('a.link')?.getAttribute('href')).toBe('/jovieEgypt/contact');
     expect(element.querySelector('path[data-iso="EGY"]')?.classList).toContain('is-selected');
 
     element.querySelector<HTMLButtonElement>('.tooltip .close')!.click();

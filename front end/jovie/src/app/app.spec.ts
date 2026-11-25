@@ -118,8 +118,19 @@ describe('App', () => {
       return { fixture, compiled: fixture.nativeElement as HTMLElement };
     };
 
+    it('sends links to the former /jovie address to the same page under /jovieEgypt', async () => {
+      await open('/jovie');
+      expect(TestBed.inject(Router).url).toBe('/jovieEgypt');
+
+      await open('/jovie/feeding-guide?stage=2#chart');
+      expect(TestBed.inject(Router).url).toBe('/jovieEgypt/feeding-guide?stage=2#chart');
+
+      await open('/jovie/why/organic');
+      expect(TestBed.inject(Router).url).toBe('/jovieEgypt/why/organic');
+    });
+
     it('uses its own layout, starts the navigation with Shop and puts the Shop right after the hero', async () => {
-      const { compiled } = await open('/jovie');
+      const { compiled } = await open('/jovieEgypt');
 
       expect(compiled.querySelector('app-site-header')).toBeNull();
       expect(compiled.querySelector('app-jovie-header')).not.toBeNull();
@@ -131,12 +142,12 @@ describe('App', () => {
 
     it('gives every navigation item its own page, title and active link', async () => {
       for (const [path, heading, title] of [
-        ['/jovie/shop', 'Discover All Our Products', 'Shop | Jovie'],
-        ['/jovie/why', 'Why Jovie Goat', 'Why Jovie Goat | Jovie'],
-        ['/jovie/products', 'Discover All Our Products', 'Jovie Goat Products | Jovie'],
-        ['/jovie/feeding-guide', 'Feeding guide', 'Feeding guide | Jovie'],
-        ['/jovie/where-to-find', 'Where to find', 'Where to find | Jovie'],
-        ['/jovie/faq', 'Frequently Asked Questions', 'FAQ | Jovie'],
+        ['/jovieEgypt/shop', 'Discover All Our Products', 'Shop | Jovie'],
+        ['/jovieEgypt/why', 'Why Jovie Goat', 'Why Jovie Goat | Jovie'],
+        ['/jovieEgypt/products', 'Discover All Our Products', 'Jovie Goat Products | Jovie'],
+        ['/jovieEgypt/feeding-guide', 'Feeding guide', 'Feeding guide | Jovie'],
+        ['/jovieEgypt/where-to-find', 'Where to find', 'Where to find | Jovie'],
+        ['/jovieEgypt/faq', 'Frequently Asked Questions', 'FAQ | Jovie'],
       ]) {
         const { compiled } = await open(path);
 
@@ -149,7 +160,7 @@ describe('App', () => {
     });
 
     it('follows the official home: hero, the Shop, then the official sections with their links', async () => {
-      const { compiled } = await open('/jovie');
+      const { compiled } = await open('/jovieEgypt');
       const hrefs = (selector: string) =>
         Array.from(compiled.querySelectorAll(`${selector} a`)).map((a) => a.getAttribute('href'));
 
@@ -162,32 +173,32 @@ describe('App', () => {
         'app-home-products',
         'app-home-where',
       ]);
-      expect(hrefs('app-jovie-hero')).toEqual(['/jovie/why', '/jovie/shop']);
-      expect(hrefs('app-shop-section')).toContain('/jovie/shop');
-      expect(hrefs('app-home-solution')).toEqual(['/jovie/why', '/jovie/why', '/jovie/why']);
-      expect(hrefs('app-home-parents')).toEqual(['/jovie/why']);
+      expect(hrefs('app-jovie-hero')).toEqual(['/jovieEgypt/why', '/jovieEgypt/shop']);
+      expect(hrefs('app-shop-section')).toContain('/jovieEgypt/shop');
+      expect(hrefs('app-home-solution')).toEqual(['/jovieEgypt/why', '/jovieEgypt/why', '/jovieEgypt/why']);
+      expect(hrefs('app-home-parents')).toEqual(['/jovieEgypt/why']);
       expect(hrefs('app-home-products')).toEqual([
-        '/jovie/products',
-        '/jovie/products/infant-goat-milk',
-        '/jovie/products/follow-on-goat-milk',
-        '/jovie/products/toddler-goat-milk',
+        '/jovieEgypt/products',
+        '/jovieEgypt/products/infant-goat-milk',
+        '/jovieEgypt/products/follow-on-goat-milk',
+        '/jovieEgypt/products/toddler-goat-milk',
       ]);
       expect(compiled.querySelector('app-home-products .tile img')?.getAttribute('src')).toBe('/assets/images/jovie/products/eg-stage-1-front.webp');
-      expect(hrefs('app-home-where')).toEqual(['/jovie/where-to-find']);
+      expect(hrefs('app-home-where')).toEqual(['/jovieEgypt/where-to-find']);
       expect(compiled.querySelector('app-home-where')?.textContent).toContain('Octogenix Pharma');
       expect(compiled.querySelector('a[href="#"], a:not([href])')).toBeNull();
     });
 
     it('keeps the header in the colour of each page when it turns solid', async () => {
       for (const [path, tone] of [
-        ['/jovie', 'yellow'],
-        ['/jovie/shop', 'yellow'],
-        ['/jovie/where-to-find', 'navy'],
-        ['/jovie/faq', 'red'],
-        ['/jovie/products', 'yellow'],
-        ['/jovie/products/infant-goat-milk', 'yellow'],
-        ['/jovie/products/follow-on-goat-milk', 'pink'],
-        ['/jovie/products/toddler-goat-milk', 'blue'],
+        ['/jovieEgypt', 'yellow'],
+        ['/jovieEgypt/shop', 'yellow'],
+        ['/jovieEgypt/where-to-find', 'navy'],
+        ['/jovieEgypt/faq', 'red'],
+        ['/jovieEgypt/products', 'yellow'],
+        ['/jovieEgypt/products/infant-goat-milk', 'yellow'],
+        ['/jovieEgypt/products/follow-on-goat-milk', 'pink'],
+        ['/jovieEgypt/products/toddler-goat-milk', 'blue'],
       ]) {
         const { compiled } = await open(path);
         expect(compiled.querySelector('app-jovie-header .header')?.getAttribute('data-tone')).toBe(tone);
@@ -195,7 +206,7 @@ describe('App', () => {
     });
 
     it('lists the three products one below the other, with the Egyptian tins and links to their pages', async () => {
-      const { compiled } = await open('/jovie/products');
+      const { compiled } = await open('/jovieEgypt/products');
 
       const products = Array.from(compiled.querySelectorAll<HTMLElement>('.products .product'));
       expect(products.map((p) => p.querySelector('h2')?.textContent?.trim())).toEqual([
@@ -209,18 +220,18 @@ describe('App', () => {
         '/assets/images/jovie/products/eg-stage-3-front.webp',
       ]);
       expect(products.map((p) => p.querySelector('a.jv-button')?.getAttribute('href'))).toEqual([
-        '/jovie/products/infant-goat-milk',
-        '/jovie/products/follow-on-goat-milk',
-        '/jovie/products/toddler-goat-milk',
+        '/jovieEgypt/products/infant-goat-milk',
+        '/jovieEgypt/products/follow-on-goat-milk',
+        '/jovieEgypt/products/toddler-goat-milk',
       ]);
       expect(products[2].querySelector('.facts')?.textContent).toContain('Follow-on Formula for Toddlers');
       expect(Array.from(compiled.querySelectorAll('app-page-intro a')).map((a) => a.getAttribute('href'))).toEqual([
-        '/jovie/products/infant-goat-milk',
-        '/jovie/products/follow-on-goat-milk',
-        '/jovie/products/toddler-goat-milk',
+        '/jovieEgypt/products/infant-goat-milk',
+        '/jovieEgypt/products/follow-on-goat-milk',
+        '/jovieEgypt/products/toddler-goat-milk',
       ]);
-      expect(compiled.querySelector('.find a')?.getAttribute('href')).toBe('/jovie/where-to-find');
-      expect(compiled.querySelector('#jovie-navigation a.is-active')?.getAttribute('href')).toBe('/jovie/products');
+      expect(compiled.querySelector('.find a')?.getAttribute('href')).toBe('/jovieEgypt/where-to-find');
+      expect(compiled.querySelector('#jovie-navigation a.is-active')?.getAttribute('href')).toBe('/jovieEgypt/products');
     });
 
     it('opens each product page with its own sections, Egyptian label and neighbours', async () => {
@@ -229,14 +240,14 @@ describe('App', () => {
         ['follow-on-goat-milk', 2, 'Organic Follow-on Goat Milk', 'infant-goat-milk', 'toddler-goat-milk', 'follow-on-formula'],
         ['toddler-goat-milk', 3, 'Organic Toddler Goat Milk', 'follow-on-goat-milk', 'infant-goat-milk', 'toddler-formula'],
       ] as const) {
-        const { compiled } = await open(`/jovie/products/${slug}`);
+        const { compiled } = await open(`/jovieEgypt/products/${slug}`);
 
         const sections = Array.from(compiled.querySelectorAll('app-jovie-product-page > *')).map((el) => el.tagName.toLowerCase());
         expect(sections).toEqual(['app-product-header', 'app-product-about', 'app-product-cta', 'app-product-quotes']);
         expect(compiled.querySelector('h1')?.textContent?.trim()).toBe(name);
         expect(Array.from(compiled.querySelectorAll('.title-row a')).map((a) => a.getAttribute('href'))).toEqual([
-          `/jovie/products/${previous}`,
-          `/jovie/products/${next}`,
+          `/jovieEgypt/products/${previous}`,
+          `/jovieEgypt/products/${next}`,
         ]);
         expect(Array.from(compiled.querySelectorAll('.slide img')).map((img) => img.getAttribute('src'))).toEqual(
           ['front', 'table', 'ingredients', 'prepare'].map((view) => `/assets/images/jovie/products/eg-stage-${stage}-${view}.webp`),
@@ -245,15 +256,15 @@ describe('App', () => {
         expect(download?.getAttribute('href')).toBe(`/downloads/jovie/jovie-goat-${stage}-${label}-egypt-label.pdf`);
         expect(download?.hasAttribute('download')).toBeTrue();
         expect(compiled.querySelectorAll('app-product-about .usp').length).toBe(3);
-        expect(compiled.querySelector('app-product-about .usp a')?.getAttribute('href')).toBe('/jovie/why/makes-good-sense#digest');
+        expect(compiled.querySelector('app-product-about .usp a')?.getAttribute('href')).toBe('/jovieEgypt/why/makes-good-sense#digest');
         expect(compiled.querySelectorAll('app-product-quotes .item').length).toBe(3);
-        expect(compiled.querySelector('app-product-quotes .head a')?.getAttribute('href')).toBe('/jovie/contact');
-        expect(compiled.querySelector('#jovie-navigation a.is-active')?.getAttribute('href')).toBe('/jovie/products');
+        expect(compiled.querySelector('app-product-quotes .head a')?.getAttribute('href')).toBe('/jovieEgypt/contact');
+        expect(compiled.querySelector('#jovie-navigation a.is-active')?.getAttribute('href')).toBe('/jovieEgypt/products');
       }
     });
 
     it('turns the tin with the view buttons and zooms in on the selected view', async () => {
-      const { fixture, compiled } = await open('/jovie/products/follow-on-goat-milk');
+      const { fixture, compiled } = await open('/jovieEgypt/products/follow-on-goat-milk');
       const [previous, next] = Array.from(compiled.querySelectorAll<HTMLButtonElement>('.view-nav button'));
       const activeImage = () => compiled.querySelector('.slide[data-position="active"] img')?.getAttribute('src');
 
@@ -277,7 +288,7 @@ describe('App', () => {
     });
 
     it('shows the product pages in Arabic', async () => {
-      const { fixture, compiled } = await open('/jovie/products/toddler-goat-milk');
+      const { fixture, compiled } = await open('/jovieEgypt/products/toddler-goat-milk');
       const language = TestBed.inject(LanguageService);
 
       language.setLanguage('ar');
@@ -292,7 +303,7 @@ describe('App', () => {
     });
 
     it('shows the official Why Jovie Goat page and links its cards to the official detail pages', async () => {
-      const { compiled } = await open('/jovie/why');
+      const { compiled } = await open('/jovieEgypt/why');
 
       const sections = Array.from(compiled.querySelectorAll('app-jovie-why-page > *')).map((el) => el.tagName.toLowerCase());
       expect(sections).toEqual([
@@ -306,31 +317,31 @@ describe('App', () => {
       ]);
       expect(compiled.querySelector('app-page-intro app-pattern-overlay')).not.toBeNull();
       expect(compiled.querySelectorAll('app-why-benefits .card').length).toBe(6);
-      expect(compiled.querySelector('app-why-benefits .card')?.getAttribute('href')).toBe('/jovie/why/makes-good-sense#fat');
+      expect(compiled.querySelector('app-why-benefits .card')?.getAttribute('href')).toBe('/jovieEgypt/why/makes-good-sense#fat');
       expect(Array.from(compiled.querySelectorAll('app-why-different a')).map((a) => a.getAttribute('href'))).toEqual([
-        '/jovie/why/organic',
-        '/jovie/why/organic',
-        '/jovie/why/without-promise',
+        '/jovieEgypt/why/organic',
+        '/jovieEgypt/why/organic',
+        '/jovieEgypt/why/without-promise',
       ]);
       expect(compiled.querySelector('app-why-quote blockquote')?.textContent).toContain('We are caring parents');
     });
 
     it('opens the official detail pages under a green header', async () => {
       for (const [path, heading] of [
-        ['/jovie/why/makes-good-sense', 'Why Jovie Goat makes good sense'],
-        ['/jovie/why/organic', 'Organic Goat Milk'],
-        ['/jovie/why/without-promise', "Jovie's without promise"],
+        ['/jovieEgypt/why/makes-good-sense', 'Why Jovie Goat makes good sense'],
+        ['/jovieEgypt/why/organic', 'Organic Goat Milk'],
+        ['/jovieEgypt/why/without-promise', "Jovie's without promise"],
       ]) {
         const { compiled } = await open(path);
         expect(compiled.querySelector('h1')?.textContent?.trim()).toBe(heading);
         expect(compiled.querySelector('app-page-intro .intro')?.getAttribute('data-tone')).toBe('green');
         expect(compiled.querySelector('app-jovie-header .header')?.getAttribute('data-tone')).toBe('green');
-        expect(compiled.querySelector('#jovie-navigation a.is-active')?.getAttribute('href')).toBe('/jovie/why');
+        expect(compiled.querySelector('#jovie-navigation a.is-active')?.getAttribute('href')).toBe('/jovieEgypt/why');
       }
     });
 
     it('shows the detail pages in Arabic when Arabic is selected', async () => {
-      const { fixture, compiled } = await open('/jovie/why/makes-good-sense');
+      const { fixture, compiled } = await open('/jovieEgypt/why/makes-good-sense');
       const language = TestBed.inject(LanguageService);
 
       language.setLanguage('ar');
@@ -344,22 +355,29 @@ describe('App', () => {
       expect(compiled.querySelector('.article h2')?.textContent).toBe('Goat Milk is the Right Base');
     });
 
-    it('opens the feeding guide on the stage given in the link', async () => {
-      const { compiled } = await open('/jovie/feeding-guide?stage=2');
+    it('shows the feeding chart by weight only, whatever stage the link names', async () => {
+      const { compiled } = await open('/jovieEgypt/feeding-guide?stage=2');
 
-      const selected = compiled.querySelector('app-feeding-guide .tab.is-selected');
-      expect(selected?.textContent?.trim()).toBe('6–8 months');
-      expect(selected?.closest('.tab-group')?.getAttribute('data-stage')).toBe('2');
-      expect(compiled.querySelector('app-feeding-guide .card.is-selected')?.id).toBe('feeding-6-8m');
+      expect(compiled.querySelectorAll('app-feeding-guide .tab-group').length).toBe(1);
+      expect(compiled.querySelector('app-feeding-guide .tab.is-selected')?.textContent?.trim()).toBe('Newborn');
+      expect(compiled.querySelector('app-feeding-guide .card.is-selected')?.id).toBe('feeding-under-3kg');
     });
 
-    it('shows the feeding table of the Egyptian tins, with shop links and the chart PDF', async () => {
-      const { fixture, compiled } = await open('/jovie/feeding-guide');
+    it('shows the feeding table of the Egyptian tins by weight, with shop links and the chart PDF', async () => {
+      const { fixture, compiled } = await open('/jovieEgypt/feeding-guide');
       const cards = compiled.querySelectorAll('app-feeding-guide .card');
 
-      expect(compiled.querySelectorAll('app-feeding-guide .tab').length).toBe(9);
-      expect(cards.length).toBe(9);
-      expect(compiled.querySelector('app-feeding-guide .tab.is-selected')?.textContent?.trim()).toBe('Under 3 kg');
+      expect(compiled.querySelectorAll('app-feeding-guide .tab').length).toBe(5);
+      expect(cards.length).toBe(5);
+      expect(Array.from(compiled.querySelectorAll('app-feeding-guide .tab'), (tab) => tab.textContent?.trim())).toEqual([
+        'Newborn',
+        '3–3.5 kg',
+        '3.5–4 kg',
+        '4–5 kg',
+        'Over 5 kg',
+      ]);
+      expect(compiled.querySelector('app-feeding-guide .tab.is-selected')?.textContent?.trim()).toBe('Newborn');
+      expect(compiled.querySelector('app-feeding-guide .chart-head h2')?.textContent?.trim()).toBe("Select your baby's weight");
 
       // Stage 1, under 3 kg: 7 feeds of 60 ml water and 2 scoops of 4.3 g -> 60.2 g a day, 5 tins a month.
       const first = cards[0].querySelectorAll('dd');
@@ -368,28 +386,23 @@ describe('App', () => {
       expect(first[2].textContent).toContain('2');
       expect(first[3].textContent?.trim()).toBe('420 ml water · 14 scoops');
       expect(first[4].textContent).toContain('5 tins (400 g)');
-      // Stage 2, 10-12 months: 2-3 feeds of 210 ml and 7 scoops.
-      expect(cards[7].querySelectorAll('dd')[0].textContent?.trim()).toBe('2–3');
-      expect(cards[7].querySelectorAll('dd')[4].textContent).toContain('5–7 tins');
-      // Stage 3: 2 feeds of 150 ml and 5 scoops of 4.5 g -> 4 tins.
-      expect(cards[8].querySelectorAll('dd')[4].textContent).toContain('4 tins');
+      // Over 5 kg: 5 feeds of 180 ml and 6 scoops.
+      expect(cards[4].querySelectorAll('dd')[1].textContent?.trim()).toBe('180 ml');
 
       const shops = Array.from(compiled.querySelectorAll('app-feeding-guide .shop'), (a) => a.getAttribute('href'));
-      expect(shops.slice(0, 5).every((href) => href === '/jovie/products/infant-goat-milk')).toBeTrue();
-      expect(shops.slice(5, 8).every((href) => href === '/jovie/products/follow-on-goat-milk')).toBeTrue();
-      expect(shops[8]).toBe('/jovie/products/toddler-goat-milk');
+      expect(shops.every((href) => href === '/jovieEgypt/products/infant-goat-milk')).toBeTrue();
 
       const download = compiled.querySelector('app-feeding-guide .download a');
       expect(download?.getAttribute('href')).toBe('/downloads/jovie/jovie-goat-feeding-chart-egypt-en.pdf');
       expect(download?.hasAttribute('download')).toBeTrue();
 
-      (compiled.querySelectorAll('app-feeding-guide .tab')[8] as HTMLButtonElement).click();
+      (compiled.querySelectorAll('app-feeding-guide .tab')[4] as HTMLButtonElement).click();
       fixture.detectChanges();
-      expect(compiled.querySelector('app-feeding-guide .card.is-selected')?.id).toBe('feeding-12m-plus');
+      expect(compiled.querySelector('app-feeding-guide .card.is-selected')?.id).toBe('feeding-over-5kg');
 
       TestBed.inject(LanguageService).setLanguage('ar');
       fixture.detectChanges();
-      expect(compiled.querySelector('app-feeding-guide .tab.is-selected')?.textContent?.trim()).toBe('12 شهرًا فأكثر');
+      expect(compiled.querySelector('app-feeding-guide .tab.is-selected')?.textContent?.trim()).toBe('أكثر من 5 كجم');
       expect(compiled.querySelector('app-feeding-guide .download a')?.getAttribute('href')).toBe(
         '/downloads/jovie/jovie-goat-feeding-chart-egypt-ar.pdf',
       );
@@ -397,7 +410,7 @@ describe('App', () => {
     });
 
     it('shows the whole FAQ on its page', async () => {
-      const { compiled } = await open('/jovie/faq');
+      const { compiled } = await open('/jovieEgypt/faq');
 
       expect(compiled.querySelector('app-page-intro .intro')?.getAttribute('data-tone')).toBe('red');
       expect(compiled.querySelectorAll('app-faq-section .group').length).toBe(3);
@@ -405,7 +418,7 @@ describe('App', () => {
     });
 
     it('opens its own contact page instead of the Octogenix one', async () => {
-      const { compiled } = await open('/jovie/contact');
+      const { compiled } = await open('/jovieEgypt/contact');
 
       expect(compiled.querySelector('app-jovie-contact-form form')).not.toBeNull();
       expect(compiled.querySelector('app-contact-section')).toBeNull();
@@ -413,7 +426,7 @@ describe('App', () => {
     });
 
     it('switches to Arabic right-to-left and back to English', async () => {
-      const { fixture, compiled } = await open('/jovie');
+      const { fixture, compiled } = await open('/jovieEgypt');
       const toggle = compiled.querySelector<HTMLButtonElement>('app-jovie-header .language-toggle')!;
 
       toggle.click();

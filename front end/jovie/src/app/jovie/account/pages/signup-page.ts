@@ -14,7 +14,7 @@ import { emailAddress } from '../../../core/forms/email-address.validator';
 type Field = 'first_name' | 'last_name' | 'email' | 'phone' | 'password' | 'password_confirmation';
 
 /**
- * /jovie/signup — name, email, mobile number and password; nothing else (addresses are added later,
+ * /jovieEgypt/signup — name, email, mobile number and password; nothing else (addresses are added later,
  * in My Addresses or at checkout). The account is signed in straight away and a confirmation email
  * is sent; the browser cart is merged into the new account.
  */
@@ -84,7 +84,7 @@ type Field = 'first_name' | 'last_name' | 'email' | 'phone' | 'password' | 'pass
       </form>
       <p class="alt">
         {{ 'account.signup.haveAccount' | translate }}
-        <a class="jv-link" routerLink="/jovie/login" [queryParams]="returnParams()">{{ 'account.login.link' | translate }}</a>
+        <a class="jv-link" routerLink="/jovieEgypt/login" [queryParams]="returnParams()">{{ 'account.login.link' | translate }}</a>
       </p>
     </app-auth-shell>
   `,
@@ -132,7 +132,7 @@ export class SignupPage {
     this.auth.register(value).subscribe({
       next: () => {
         // The new account is signed in; the welcome page asks to confirm the email address.
-        this.router.navigate(['/jovie/account'], {
+        this.router.navigate(['/jovieEgypt/account'], {
           queryParams: { welcome: 1, ...(this.returnUrl ? { returnUrl: safeReturnUrl(this.returnUrl) } : {}) },
         });
       },

@@ -278,8 +278,32 @@ a.age:hover {
 }
 
 /* The chart title needs the room of the decoration on tablets and phones. */
+/* Feeding guide page: official graphic elements in the free corners beside the title and the button. */
+.page-decor {
+  position: absolute;
+}
+
+.page-decor--berry {
+  top: 3.5rem;
+  inset-inline-start: 6%;
+  width: 8.5rem;
+}
+
+.page-decor--ring {
+  top: 13rem;
+  inset-inline-start: 14%;
+  width: 3.5rem;
+}
+
+.page-decor--leaves {
+  bottom: 5rem;
+  inset-inline-end: 9%;
+  width: 7rem;
+}
+
 @media (max-width: 1023px) {
-  .burst {
+  .burst,
+  .page-decor {
     display: none;
   }
 }

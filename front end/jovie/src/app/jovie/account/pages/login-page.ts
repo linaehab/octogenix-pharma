@@ -11,7 +11,7 @@ import { CustomerAuthService } from '../customer-auth.service';
 import { PasswordToggle } from '../password-toggle';
 import { emailAddress } from '../../../core/forms/email-address.validator';
 
-/** /jovie/login — email and password on the customer guard; "remember me" keeps the session longer. */
+/** /jovieEgypt/login — email and password on the customer guard; "remember me" keeps the session longer. */
 @Component({
   selector: 'app-login-page',
   imports: [ReactiveFormsModule, RouterLink, TranslatePipe, AuthShell, PasswordToggle],
@@ -41,7 +41,7 @@ import { emailAddress } from '../../../core/forms/email-address.validator';
 
         <div class="between">
           <label class="check"><input type="checkbox" formControlName="remember" /> {{ 'account.login.remember' | translate }}</label>
-          <a class="jv-link" routerLink="/jovie/forgot-password">{{ 'account.login.forgot' | translate }}</a>
+          <a class="jv-link" routerLink="/jovieEgypt/forgot-password">{{ 'account.login.forgot' | translate }}</a>
         </div>
 
         <button class="jv-button submit" type="submit" [disabled]="submitting()" [attr.aria-busy]="submitting()">
@@ -54,7 +54,7 @@ import { emailAddress } from '../../../core/forms/email-address.validator';
       </form>
       <p class="alt">
         {{ 'account.login.noAccount' | translate }}
-        <a class="jv-link" routerLink="/jovie/signup" [queryParams]="returnParams()">{{ 'account.signup.link' | translate }}</a>
+        <a class="jv-link" routerLink="/jovieEgypt/signup" [queryParams]="returnParams()">{{ 'account.signup.link' | translate }}</a>
       </p>
     </app-auth-shell>
   `,
@@ -73,7 +73,7 @@ export class LoginPage {
   protected readonly submitting = signal(false);
   protected readonly submitted = signal(false);
   protected readonly error = signal<string | null>(null);
-  protected readonly fromCheckout = signal(this.returnUrl?.startsWith('/jovie/checkout') ?? false);
+  protected readonly fromCheckout = signal(this.returnUrl?.startsWith('/jovieEgypt/checkout') ?? false);
 
   protected returnParams(): Record<string, string> | null {
     return this.returnUrl ? { returnUrl: this.returnUrl } : null;

@@ -1,5 +1,5 @@
 <app-store-page-header [title]="'jovie.checkout.title' | translate">
-  <a class="back" routerLink="/jovie/cart">{{ 'jovie.checkout.backToCart' | translate }}</a>
+  <a class="back" routerLink="/jovieEgypt/cart">{{ 'jovie.checkout.backToCart' | translate }}</a>
 </app-store-page-header>
 
 <section class="jv-container page">
@@ -10,13 +10,13 @@
   } @else if (cart.isEmpty()) {
     <div class="state">
       <p>{{ 'jovie.cart.emptyTitle' | translate }}</p>
-      <a class="jv-button" routerLink="/jovie/shop">{{ 'jovie.cart.continue' | translate }}</a>
+      <a class="jv-button" routerLink="/jovieEgypt/shop">{{ 'jovie.cart.continue' | translate }}</a>
     </div>
   } @else {
     @if (blocked(); as reason) {
       <p class="banner" role="alert">{{ reason | translate }}
         @if (reason === 'jovie.cart.fixUnavailable') {
-          <a routerLink="/jovie/cart">{{ 'jovie.checkout.backToCart' | translate }}</a>
+          <a routerLink="/jovieEgypt/cart">{{ 'jovie.checkout.backToCart' | translate }}</a>
         }
       </p>
     }
@@ -36,7 +36,7 @@
             }
           } @else {
           <p class="hint">{{ 'jovie.checkout.guestNote' | translate }}
-            <a routerLink="/jovie/login" [queryParams]="{ returnUrl: '/jovie/checkout' }">{{ 'account.checkout.haveAccount' | translate }}</a>
+            <a routerLink="/jovieEgypt/login" [queryParams]="{ returnUrl: '/jovieEgypt/checkout' }">{{ 'account.checkout.haveAccount' | translate }}</a>
           </p>
           <div class="row two">
             <div class="field">

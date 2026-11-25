@@ -1,16 +1,19 @@
 <section id="shop" class="jv-section shop" [attr.aria-labelledby]="summary() ? 'jovie-shop-title' : null"
   [attr.aria-label]="summary() ? null : ('jovie.nav.shop' | translate)">
   <app-decor-shape class="decor-blob" shape="cloud-lightblue" />
-  <div class="jv-container">
+  <div class="jv-container" [class.wide]="!summary()">
     @if (summary()) {
       <div class="jv-center">
         <p class="jv-eyebrow">{{ 'jovie.shop.kicker' | translate }}</p>
         <h2 id="jovie-shop-title" class="jv-title">{{ 'jovie.shop.title' | translate }}</h2>
         <p class="jv-lead">{{ 'jovie.shop.description' | translate }}</p>
       </div>
+    } @else {
+      <div class="range-head">
+        <h2 class="range-title">{{ 'jovie.shop.rangeTitle' | translate }}</h2>
+        <p class="range-tagline">{{ 'jovie.shop.rangeTagline' | translate }}</p>
+      </div>
     }
-
-    <app-test-mode-notice class="test-notice" />
 
     <div aria-live="polite" [attr.aria-busy]="catalog.status() === 'loading'">
       @switch (catalog.status()) {
@@ -34,7 +37,7 @@
           @if (catalog.products().length) {
             <ul class="grid">
               @for (product of catalog.products(); track product.slug) {
-                <li><app-product-card [product]="product" [isPreview]="catalog.isPreview()" /></li>
+                <li><app-product-card [product]="product" [isPreview]="catalog.isPreview()" [look]="summary() ? 'default' : 'shop'" /></li>
               }
             </ul>
           } @else {
@@ -48,7 +51,7 @@
 
     @if (summary()) {
       <p class="jv-section-cta">
-        <a class="jv-button jv-button--night" routerLink="/jovie/shop">{{ 'jovie.shop.viewAll' | translate }}</a>
+        <a class="jv-button jv-button--night" routerLink="/jovieEgypt/shop">{{ 'jovie.shop.viewAll' | translate }}</a>
       </p>
     }
   </div>

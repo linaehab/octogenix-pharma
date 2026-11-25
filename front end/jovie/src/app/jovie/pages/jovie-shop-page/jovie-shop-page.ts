@@ -3,7 +3,7 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { PageIntro } from '../../components/page-intro/page-intro';
 import { ShopSection } from '../../components/shop-section/shop-section';
 
-/** /jovie/shop: every Jovie product. */
+/** /jovieEgypt/shop: every Jovie product. */
 @Component({
   selector: 'app-jovie-shop-page',
   imports: [TranslatePipe, PageIntro, ShopSection],

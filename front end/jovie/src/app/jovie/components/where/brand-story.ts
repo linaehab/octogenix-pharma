@@ -27,7 +27,7 @@ import { BRAND_STORY } from '../../data/brand-story';
         </p>
         <p class="text closing">{{ text().joy.closing }}</p>
         <p class="mobile">{{ text().joy.mobile }}</p>
-        <p class="buttons"><a class="pill" routerLink="/jovie/why">{{ text().joy.button }}</a></p>
+        <p class="buttons"><a class="pill" routerLink="/jovieEgypt/why">{{ text().joy.button }}</a></p>
       </div>
     </section>
 

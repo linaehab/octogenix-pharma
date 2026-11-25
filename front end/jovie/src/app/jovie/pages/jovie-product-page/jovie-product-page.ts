@@ -9,7 +9,7 @@ import { ProductQuotes } from '../../components/products/product-quotes';
 import { PRODUCTS, ProductSlug } from '../../data/products-content';
 
 /**
- * /jovie/products/infant-goat-milk, /follow-on-goat-milk and /toddler-goat-milk: the official
+ * /jovieEgypt/products/infant-goat-milk, /follow-on-goat-milk and /toddler-goat-milk: the official
  * product pages, section by section, with the Egyptian tins.
  */
 @Component({

@@ -8,7 +8,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 const BRAND_LOGOS: Record<string, string> = { jovie: '/assets/images/jovie/logo-official-white.png' };
 
 /** Brands with their own store on this site, by slug. */
-const BRAND_STORES: Record<string, string> = { jovie: '/jovie' };
+const BRAND_STORES: Record<string, string> = { jovie: '/jovieEgypt' };
 
 /**
  * Home, under the hero: the company's brands in a split card — the brands text and links on light

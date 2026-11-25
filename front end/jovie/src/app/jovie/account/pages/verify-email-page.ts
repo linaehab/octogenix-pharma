@@ -10,7 +10,7 @@ import { CustomerAuthService, VerificationLink } from '../customer-auth.service'
 type State = 'checking' | 'verified' | 'expired' | 'invalid' | 'error';
 
 /**
- * /jovie/verify-email?id=…&hash=…&expires=…&signature=… — the page the confirmation email links to.
+ * /jovieEgypt/verify-email?id=…&hash=…&expires=…&signature=… — the page the confirmation email links to.
  * The API checks the signature and expiry; an expired or broken link can be replaced by a new one.
  * Opening the link again after confirming simply shows the success state.
  */
@@ -25,7 +25,7 @@ type State = 'checking' | 'verified' | 'expired' | 'invalid' | 'error';
         }
         @case ('verified') {
           <div class="jv-notice is-success" role="status"><p>{{ 'account.verify.done' | translate }}</p></div>
-          <a class="jv-button submit" [routerLink]="auth.isSignedIn() ? '/jovie/account' : '/jovie/login'">
+          <a class="jv-button submit" [routerLink]="auth.isSignedIn() ? '/jovieEgypt/account' : '/jovieEgypt/login'">
             {{ (auth.isSignedIn() ? 'account.nav.account' : 'account.login.submit') | translate }}
           </a>
         }
@@ -44,7 +44,7 @@ type State = 'checking' | 'verified' | 'expired' | 'invalid' | 'error';
             }
           } @else {
             <p>{{ 'account.verify.signInToResend' | translate }}</p>
-            <a class="jv-button submit" routerLink="/jovie/login" [queryParams]="{ returnUrl: '/jovie/account' }">
+            <a class="jv-button submit" routerLink="/jovieEgypt/login" [queryParams]="{ returnUrl: '/jovieEgypt/account' }">
               {{ 'account.login.submit' | translate }}
             </a>
           }

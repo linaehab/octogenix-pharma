@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-/** Public catalog for the Jovie store (/jovie/...). Only active products of active brands. */
+/** Public catalog for the Jovie store (/jovieEgypt/...). Only active products of active brands. */
 class ProductController extends Controller
 {
     private const RELATIONS = ['brand', 'variants', 'images'];

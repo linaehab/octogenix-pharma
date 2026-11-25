@@ -70,7 +70,8 @@ class CheckoutTest extends TestCase
         $this->getJson("/api/v1/orders/{$order->order_number}?token={$token}")->assertOk()->assertJsonPath('data.status', 'pending_confirmation');
 
         Notification::assertSentTo(new AnonymousNotifiable, OrderPlacedNotification::class,
-            fn ($n, $channels, $notifiable) => $notifiable->routes['mail'] === 'mona@example.com' && str_contains($n->orderUrl(), "token={$token}"));
+            fn ($n, $channels, $notifiable) => $notifiable->routes['mail'] === 'mona@example.com'
+                && $n->orderUrl() === config('app.frontend_url')."/jovieEgypt/checkout/confirmation/{$order->order_number}?token={$token}");
         Notification::assertSentTo(new AnonymousNotifiable, OrderPlacedStaffNotification::class,
             fn ($n, $channels, $notifiable) => $notifiable->routes['mail'] === ['orders@example.com']);
     }
@@ -99,6 +100,10 @@ class CheckoutTest extends TestCase
 
         $this->getJson('/api/v1/customer/orders')->assertOk()->assertJsonCount(1, 'data');
         $this->getJson("/api/v1/customer/orders/{$order->order_number}")->assertOk();
+
+        // The customer's email links to the order in their account (no token).
+        Notification::assertSentTo(new AnonymousNotifiable, OrderPlacedNotification::class,
+            fn ($n) => $n->orderUrl() === config('app.frontend_url')."/jovieEgypt/account/orders/{$order->order_number}");
     }
 
     public function test_the_same_idempotency_key_never_creates_a_second_order(): void

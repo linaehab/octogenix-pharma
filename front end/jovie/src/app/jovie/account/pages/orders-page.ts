@@ -9,7 +9,7 @@ import { AccountApiService } from '../account-api.service';
 import { AccountShell } from '../account-shell';
 import { failureKey } from '../account-forms';
 
-/** /jovie/account/orders — the customer's orders, newest first, with the totals the server recorded. */
+/** /jovieEgypt/account/orders — the customer's orders, newest first, with the totals the server recorded. */
 @Component({
   selector: 'app-orders-page',
   imports: [RouterLink, TranslatePipe, AccountShell],
@@ -39,7 +39,7 @@ import { failureKey } from '../account-forms';
                     {{ 'account.orders.items' | translate: { count: count(o) } }} ·
                     <strong>{{ price(o) }}</strong>
                   </p>
-                  <a class="jv-link" [routerLink]="['/jovie/account/orders', o.order_number]">{{ 'account.orders.view' | translate }}</a>
+                  <a class="jv-link" [routerLink]="['/jovieEgypt/account/orders', o.order_number]">{{ 'account.orders.view' | translate }}</a>
                 </li>
               }
             </ul>
@@ -53,7 +53,7 @@ import { failureKey } from '../account-forms';
           } @else {
             <div class="account-empty">
               <p>{{ 'account.orders.empty' | translate }}</p>
-              <a class="jv-button" routerLink="/jovie/shop">{{ 'jovie.cart.continue' | translate }}</a>
+              <a class="jv-button" routerLink="/jovieEgypt/shop">{{ 'jovie.cart.continue' | translate }}</a>
             </div>
           }
         }

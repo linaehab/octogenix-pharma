@@ -39,7 +39,7 @@ import { BRAND_SECTIONS } from '../../data/brand-sections';
             </ul>
           </div>
         </div>
-        <p class="buttons"><a class="pill" routerLink="/jovie/why/without-promise">{{ text().button }}</a></p>
+        <p class="buttons"><a class="pill" routerLink="/jovieEgypt/why/without-promise">{{ text().button }}</a></p>
       </div>
     </section>
   `,

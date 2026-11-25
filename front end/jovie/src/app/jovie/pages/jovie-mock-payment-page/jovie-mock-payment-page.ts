@@ -11,7 +11,7 @@ import { Order } from '../../store/store.models';
 import { StorePageHeader } from '../../store/store-page-header';
 
 /**
- * /jovie/checkout/mock-payment?order=…&ref=… — TEST MODE ONLY. Stands in for a payment
+ * /jovieEgypt/checkout/mock-payment?order=…&ref=… — TEST MODE ONLY. Stands in for a payment
  * provider's hosted page while none is selected: it asks for no card details and only offers
  * "simulate success" / "simulate failure", which the server applies to the test attempt
  * (POST /orders/{number}/mock-payment). Outside TEST MODE the server refuses and this page says so.
@@ -48,7 +48,7 @@ import { StorePageHeader } from '../../store/store-page-header';
           </p>
         }
         <p class="small">{{ 'jovie.mock.noCard' | translate }}</p>
-        <a routerLink="/jovie/shop">{{ 'jovie.cart.continue' | translate }}</a>
+        <a routerLink="/jovieEgypt/shop">{{ 'jovie.cart.continue' | translate }}</a>
       </div>
     </section>
   `,
@@ -149,7 +149,7 @@ export class JovieMockPaymentPage {
     this.busy.set(true);
     this.failed.set(false);
     this.checkout.simulatePayment(this.orderNumber(), this.reference(), outcome).subscribe({
-      next: () => this.router.navigate(['/jovie/checkout/payment-result'], { queryParams: { order: this.orderNumber() }, replaceUrl: true }),
+      next: () => this.router.navigate(['/jovieEgypt/checkout/payment-result'], { queryParams: { order: this.orderNumber() }, replaceUrl: true }),
       error: () => {
         this.busy.set(false);
         this.failed.set(true);

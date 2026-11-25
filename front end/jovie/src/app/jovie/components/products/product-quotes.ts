@@ -16,7 +16,7 @@ import { injectProductsContent } from './products-content';
         <div class="head">
           <h2 id="jovie-product-quotes">{{ content().detail.quotesTitle }}</h2>
           <p>{{ content().detail.quotesText }}</p>
-          <a class="jv-button" routerLink="/jovie/contact">{{ content().detail.shareStory }}</a>
+          <a class="jv-button" routerLink="/jovieEgypt/contact">{{ content().detail.shareStory }}</a>
         </div>
         <ul class="list">
           @for (quote of content().detail.quotes; track quote.name) {

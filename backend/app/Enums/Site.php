@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-/** Public sites inside the Angular app (corporate at /, Jovie store at /jovie). */
+/** Public sites inside the Angular app (corporate at /, Jovie store at /jovieEgypt). */
 enum Site: string
 {
     case Corporate = 'corporate';

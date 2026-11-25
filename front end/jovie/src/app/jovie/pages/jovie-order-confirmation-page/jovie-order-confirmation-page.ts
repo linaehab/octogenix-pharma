@@ -1,5 +1,5 @@
 import { Component, PLATFORM_ID, inject, signal } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { Location, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { CheckoutService } from '../../store/checkout.service';
@@ -9,7 +9,11 @@ import { Order } from '../../store/store.models';
 import { StorePageHeader } from '../../store/store-page-header';
 import { TestModeNotice } from '../../store/test-mode-notice';
 
-/** /jovie/checkout/confirmation/:orderNumber — the placed order, as the server recorded it. */
+/**
+ * /jovieEgypt/checkout/confirmation/:orderNumber — the placed order, as the server recorded it.
+ * The order email links guests here with ?token=… (their private order token): the page keeps the
+ * token for the tab and removes it from the address bar.
+ */
 @Component({
   selector: 'app-jovie-order-confirmation-page',
   imports: [RouterLink, TranslatePipe, StorePageHeader, TestModeNotice, OrderDetails],
@@ -37,7 +41,7 @@ import { TestModeNotice } from '../../store/test-mode-notice';
           <p>{{ 'jovie.cart.loading' | translate }}</p>
         }
       }
-      <p><a class="jv-button jv-button--night" routerLink="/jovie/shop">{{ 'jovie.cart.continue' | translate }}</a></p>
+      <p><a class="jv-button jv-button--night" routerLink="/jovieEgypt/shop">{{ 'jovie.cart.continue' | translate }}</a></p>
     </section>
   `,
   styles: `
@@ -74,7 +78,15 @@ export class JovieOrderConfirmationPage {
     if (!isPlatformBrowser(inject(PLATFORM_ID))) {
       return;
     }
-    const number = inject(ActivatedRoute).snapshot.paramMap.get('orderNumber') ?? '';
+    const route = inject(ActivatedRoute).snapshot;
+    const number = route.paramMap.get('orderNumber') ?? '';
+    const linkToken = route.queryParamMap.get('token');
+    if (number && linkToken) {
+      this.checkout.acceptToken(number, linkToken);
+      // The token stays out of the address bar and the browser history.
+      const location = inject(Location);
+      location.replaceState(location.path().split('?')[0]);
+    }
     if (!number || !this.checkout.canOpen(number, this.auth.isSignedIn())) {
       this.state.set('noAccess');
       return;

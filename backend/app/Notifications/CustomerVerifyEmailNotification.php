@@ -10,7 +10,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\URL;
 
 /**
- * Email verification for store customers. The link opens the Angular page /jovie/verify-email,
+ * Email verification for store customers. The link opens the Angular page /jovieEgypt/verify-email,
  * which passes the parameters to the API's signed verification route. The signature is
  * relative (path + query only), so it stays valid behind the Angular proxy / reverse proxy.
  */
@@ -64,7 +64,7 @@ class CustomerVerifyEmailNotification extends Notification implements ShouldQueu
 
         parse_str((string) parse_url($signed, PHP_URL_QUERY), $query);
 
-        return rtrim((string) config('app.frontend_url'), '/').'/jovie/verify-email?'.http_build_query([
+        return rtrim((string) config('app.frontend_url'), '/').'/jovieEgypt/verify-email?'.http_build_query([
             'id' => $notifiable->getKey(),
             'hash' => sha1($notifiable->getEmailForVerification()),
             'expires' => $query['expires'],

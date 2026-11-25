@@ -4,7 +4,7 @@ import { BrandStory } from '../../components/where/brand-story';
 import { WorldMap } from '../../components/world-map/world-map';
 
 /**
- * /jovie/where-to-find: the official full-page map, with Egypt as the available market, followed by
+ * /jovieEgypt/where-to-find: the official full-page map, with Egypt as the available market, followed by
  * the brand story sections of the official "We are Jovie" page.
  */
 @Component({

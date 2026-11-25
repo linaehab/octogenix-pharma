@@ -49,7 +49,7 @@ const MAX_QUANTITY = 99;
 const span = ([a, b]: readonly [number, number]) => (a === b ? `${a}` : `${a}–${b}`);
 
 /**
- * /jovie/shop/:slug — the shop product page, in the order of the kabrita.com product page:
+ * /jovieEgypt/shop/:slug — the shop product page, in the order of the kabrita.com product page:
  * breadcrumb; gallery beside rating, name, price, key facts, size, quantity, Add to Cart and
  * availability; then information panels (important information, description, feeding guide,
  * ingredients, preparation & storage, nutrition), highlights, all products by age and the FAQ.
@@ -104,7 +104,7 @@ export class JovieShopProductPage {
   protected readonly download = computed(() => this.info()?.download ?? null);
   protected readonly officialLink = computed(() => {
     const info = this.info();
-    return info ? productLink(info.slug) : '/jovie/products';
+    return info ? productLink(info.slug) : '/jovieEgypt/products';
   });
   protected readonly usps = computed(() => this.official().detail.usps);
 

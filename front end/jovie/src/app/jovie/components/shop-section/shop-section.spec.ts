@@ -63,15 +63,15 @@ describe('ShopSection', () => {
     ]);
     expect(cards[2].querySelector('.chips li')?.textContent?.trim()).toBe('1–3 years');
     expect(cards.map((card) => card.querySelector('.main')?.getAttribute('src'))).toEqual(
-      [1, 2, 3].map((stage) => `/assets/images/jovie/products/eg-stage-${stage}-front.webp`),
+      [1, 2, 3].map((stage) => `/assets/images/jovie/shop/stage-${stage}-card-hover.webp`),
     );
     expect(cards.map((card) => card.querySelector('.duo')?.getAttribute('src'))).toEqual(
-      [1, 2, 3].map((stage) => `/assets/images/jovie/products/eg-stage-${stage}-duo.webp`),
+      [1, 2, 3].map((stage) => `/assets/images/jovie/shop/stage-${stage}-card.webp`),
     );
     expect(cards.map((card) => card.querySelector('a.shop-now')?.getAttribute('href'))).toEqual([
-      '/jovie/products/infant-goat-milk',
-      '/jovie/products/follow-on-goat-milk',
-      '/jovie/products/toddler-goat-milk',
+      '/jovieEgypt/products/infant-goat-milk',
+      '/jovieEgypt/products/follow-on-goat-milk',
+      '/jovieEgypt/products/toddler-goat-milk',
     ]);
     // Preview products have no real variant: Add to Cart stays off.
     const add = cards[0].querySelector<HTMLButtonElement>('button.add');
@@ -108,7 +108,7 @@ describe('ShopSection', () => {
     const card = element.querySelector<HTMLElement>('app-product-card')!;
     expect(card.querySelector('.price')?.textContent).toContain('500');
     // Two separate actions: Add to Cart stays here, Shop now opens the shop product page.
-    expect(card.querySelector('a.shop-now')?.getAttribute('href')).toBe(`/jovie/shop/${sellable(1).slug}`);
+    expect(card.querySelector('a.shop-now')?.getAttribute('href')).toBe(`/jovieEgypt/shop/${sellable(1).slug}`);
     const add = card.querySelector<HTMLButtonElement>('button.add')!;
     expect(add.disabled).toBeFalse();
     expect(add.textContent?.trim()).toBe('Add to cart');
@@ -125,7 +125,7 @@ describe('ShopSection', () => {
 
     expect(TestBed.inject(CartService).count()).toBe(1);
     expect(card.querySelector('.cart-status')?.textContent).toContain('Added to your cart.');
-    expect(card.querySelector('.cart-status a')?.getAttribute('href')).toBe('/jovie/cart');
+    expect(card.querySelector('.cart-status a')?.getAttribute('href')).toBe('/jovieEgypt/cart');
     localStorage.removeItem('jovie.cart');
   });
 
@@ -167,5 +167,41 @@ describe('ShopSection', () => {
     fixture.detectChanges();
 
     expect(element.textContent).toContain('Jovie products will be available here soon.');
+  });
+
+  it('on the shop page shows the range heading and the larger cards with the shop photographs', () => {
+    const { fixture, element } = render();
+    flush({ data: [] });
+    fixture.detectChanges();
+
+    expect(element.querySelector('.range-title')?.textContent?.trim()).toBe('Organic Goat Milk');
+    expect(element.querySelector('.range-tagline')?.textContent?.trim()).toBe('Base nutrition for every stage, from newborn to toddler.');
+    const cards = Array.from(element.querySelectorAll<HTMLElement>('app-product-card'));
+    expect(cards.every((card) => card.classList.contains('is-shop'))).toBeTrue();
+    expect(cards.map((card) => card.querySelector('.main')?.getAttribute('src'))).toEqual([1, 2, 3].map((n) => `/assets/images/jovie/shop/stage-${n}-card-hover.webp`));
+    expect(cards.map((card) => card.querySelector('.duo')?.getAttribute('src'))).toEqual([1, 2, 3].map((n) => `/assets/images/jovie/shop/stage-${n}-card.webp`));
+    expect(element.querySelector('app-test-mode-notice')).toBeNull();
+  });
+
+  it('on the home page keeps its heading and the cards keep their product photos', () => {
+    TestBed.configureTestingModule({
+      imports: [ShopSection],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([]), { provide: JOVIE_PREVIEW_PRODUCTS, useValue: PREVIEW_PRODUCTS }],
+    });
+    http = TestBed.inject(HttpTestingController);
+    const language = TestBed.inject(LanguageService);
+    language.addTranslations(jovieTranslations);
+    language.setLanguage('en');
+    const fixture = TestBed.createComponent(ShopSection);
+    fixture.componentRef.setInput('summary', true);
+    fixture.detectChanges();
+    flush({ data: [] });
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelector('.range-title')).toBeNull();
+    const cards = Array.from(element.querySelectorAll<HTMLElement>('app-product-card'));
+    expect(cards.some((card) => card.classList.contains('is-shop'))).toBeFalse();
+    expect(cards[0].querySelector('.duo')?.getAttribute('src')).toBe('/assets/images/jovie/products/eg-stage-1-duo.webp');
   });
 });

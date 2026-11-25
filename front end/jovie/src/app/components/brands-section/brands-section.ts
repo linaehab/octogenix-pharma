@@ -20,7 +20,7 @@ interface BrandCard {
 }
 
 /** Brand stores that exist in this Angular app (has_store only says the brand sells online). */
-const BRAND_STORE_ROUTES: Record<string, string> = { jovie: '/jovie' };
+const BRAND_STORE_ROUTES: Record<string, string> = { jovie: '/jovieEgypt' };
 
 /** The official Jovie logo: the bundled card shown until the dashboard brands load. */
 const JOVIE_LOGO = '/assets/images/jovie/logo-official-yellow.png';

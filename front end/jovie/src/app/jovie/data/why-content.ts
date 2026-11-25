@@ -29,11 +29,11 @@ export const WHY_IMAGES = {
 
 /** Pages behind the "More information" links. */
 export const WHY_LINKS = {
-  benefits: '/jovie/why/makes-good-sense',
+  benefits: '/jovieEgypt/why/makes-good-sense',
   different: {
-  "organic": "/jovie/why/organic",
-  "non-gmo": "/jovie/why/organic",
-  "without": "/jovie/why/without-promise"
+  "organic": "/jovieEgypt/why/organic",
+  "non-gmo": "/jovieEgypt/why/organic",
+  "without": "/jovieEgypt/why/without-promise"
 } as Record<string, string>,
 };
 

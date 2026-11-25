@@ -7,10 +7,10 @@ import type { Language } from '../../core/i18n/language.service';
  */
 export const storeTranslations: Record<Language, Record<string, string>> = {
   en: {
-    'title.jovie/cart': 'Cart | Jovie',
-    'title.jovie/checkout': 'Checkout | Jovie',
-    'title.jovie/checkout/mock-payment': 'Test payment | Jovie',
-    'title.jovie/checkout/payment-result': 'Payment | Jovie',
+    'title.jovieEgypt/cart': 'Cart | Jovie',
+    'title.jovieEgypt/checkout': 'Checkout | Jovie',
+    'title.jovieEgypt/checkout/mock-payment': 'Test payment | Jovie',
+    'title.jovieEgypt/checkout/payment-result': 'Payment | Jovie',
 
 
     'jovie.shop.previewRating': 'Preview rating for display only',
@@ -251,10 +251,10 @@ export const storeTranslations: Record<Language, Record<string, string>> = {
     'jovie.result.checkAgain': 'Check again',
   },
   ar: {
-    'title.jovie/cart': 'سلة التسوق | جوفي',
-    'title.jovie/checkout': 'إتمام الطلب | جوفي',
-    'title.jovie/checkout/mock-payment': 'دفع تجريبي | جوفي',
-    'title.jovie/checkout/payment-result': 'الدفع | جوفي',
+    'title.jovieEgypt/cart': 'سلة التسوق | جوفي',
+    'title.jovieEgypt/checkout': 'إتمام الطلب | جوفي',
+    'title.jovieEgypt/checkout/mock-payment': 'دفع تجريبي | جوفي',
+    'title.jovieEgypt/checkout/payment-result': 'الدفع | جوفي',
 
 
     'jovie.shop.previewRating': 'تقييم تجريبي للعرض فقط',

@@ -16,7 +16,7 @@ class EmailVerificationTest extends TestCase
     private function apiPathFromEmailLink(Customer $customer): string
     {
         $link = (new CustomerVerifyEmailNotification)->url($customer);
-        $this->assertStringStartsWith(config('app.frontend_url').'/jovie/verify-email?', $link);
+        $this->assertStringStartsWith(config('app.frontend_url').'/jovieEgypt/verify-email?', $link);
 
         parse_str((string) parse_url($link, PHP_URL_QUERY), $q);
 

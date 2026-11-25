@@ -9,7 +9,7 @@ import { CustomerAuthService } from '../customer-auth.service';
 import { emailAddress } from '../../../core/forms/email-address.validator';
 
 /**
- * /jovie/forgot-password — asks for a reset link. The answer is the same whether or not the email
+ * /jovieEgypt/forgot-password — asks for a reset link. The answer is the same whether or not the email
  * has an account, so the page cannot be used to find out who is registered.
  */
 @Component({
@@ -41,7 +41,7 @@ import { emailAddress } from '../../../core/forms/email-address.validator';
           </button>
         </form>
       }
-      <p class="alt"><a class="jv-link" routerLink="/jovie/login">{{ 'account.backToLogin' | translate }}</a></p>
+      <p class="alt"><a class="jv-link" routerLink="/jovieEgypt/login">{{ 'account.backToLogin' | translate }}</a></p>
     </app-auth-shell>
   `,
 })

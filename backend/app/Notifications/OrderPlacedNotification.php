@@ -76,11 +76,18 @@ class OrderPlacedNotification extends Notification implements ShouldBeEncrypted,
         return $mail->action($t('action'), $this->orderUrl());
     }
 
+    /**
+     * The order page in the store: guests open the order confirmation page with their private token
+     * (the page keeps it for the visit); customers open the order in their account (after signing in).
+     */
     public function orderUrl(): string
     {
-        $base = rtrim((string) config('app.frontend_url'), '/').'/jovie/orders/'.$this->order->order_number;
+        $store = rtrim((string) config('app.frontend_url'), '/').'/jovieEgypt';
+        $number = rawurlencode($this->order->order_number);
 
-        return $this->guestToken !== null ? $base.'?'.http_build_query(['token' => $this->guestToken]) : $base;
+        return $this->guestToken !== null
+            ? $store.'/checkout/confirmation/'.$number.'?'.http_build_query(['token' => $this->guestToken])
+            : $store.'/account/orders/'.$number;
     }
 
     public static function money(int $piastres): string

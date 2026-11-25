@@ -10,12 +10,12 @@ import { AccountMenu } from './account-menu';
 
 /** Jovie store pages, in navigation order (Shop first). */
 export const JOVIE_NAV = [
-  { path: '/jovie/shop', label: 'jovie.nav.shop' },
-  { path: '/jovie/why', label: 'jovie.nav.why' },
-  { path: '/jovie/products', label: 'jovie.nav.products' },
-  { path: '/jovie/feeding-guide', label: 'jovie.nav.feedingGuide' },
-  { path: '/jovie/where-to-find', label: 'jovie.nav.whereToFind' },
-  { path: '/jovie/faq', label: 'jovie.nav.faq' },
+  { path: '/jovieEgypt/shop', label: 'jovie.nav.shop' },
+  { path: '/jovieEgypt/why', label: 'jovie.nav.why' },
+  { path: '/jovieEgypt/products', label: 'jovie.nav.products' },
+  { path: '/jovieEgypt/feeding-guide', label: 'jovie.nav.feedingGuide' },
+  { path: '/jovieEgypt/where-to-find', label: 'jovie.nav.whereToFind' },
+  { path: '/jovieEgypt/faq', label: 'jovie.nav.faq' },
 ] as const;
 
 /** Colour of the solid header, from the route's `headerTone` data (default yellow). */

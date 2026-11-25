@@ -20,7 +20,7 @@ type Field =
 /** The server keeps at most this many addresses per customer (CustomerAddress::MAX_PER_CUSTOMER). */
 const MAX_ADDRESSES = 10;
 
-/** /jovie/account/addresses — saved delivery addresses: add, edit, delete and choose the default. */
+/** /jovieEgypt/account/addresses — saved delivery addresses: add, edit, delete and choose the default. */
 @Component({
   selector: 'app-addresses-page',
   imports: [ReactiveFormsModule, TranslatePipe, AccountShell],

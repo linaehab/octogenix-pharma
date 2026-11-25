@@ -2,7 +2,7 @@ import type { Language } from '../../core/i18n/language.service';
 
 /**
  * Two sections of the official "We are Jovie" page (jovieproducts.eu/en/pages/we-are-jovie), shown
- * on /jovie/where-to-find: the "Joie de vivre" band and "A Brand from Dutch origin". Official
+ * on /jovieEgypt/where-to-find: the "Joie de vivre" band and "A Brand from Dutch origin". Official
  * English wording, used with the brand owner's permission like the other official content of this
  * site, with the Arabic translation.
  *

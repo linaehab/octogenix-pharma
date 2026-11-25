@@ -14,7 +14,7 @@ import { StorePageHeader } from '../../store/store-page-header';
 import { TestModeNotice } from '../../store/test-mode-notice';
 
 /**
- * /jovie/cart, laid out like the kabrita.eu cart: a row per product (picture, name, size, unit
+ * /jovieEgypt/cart, laid out like the kabrita.eu cart: a row per product (picture, name, size, unit
  * price, quantity with remove, line total) and the subtotal with Check out. Every amount, stock
  * limit and availability comes from the server (CartService); nothing is priced in the browser.
  */

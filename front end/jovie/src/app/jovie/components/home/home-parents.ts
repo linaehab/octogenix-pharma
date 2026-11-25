@@ -15,7 +15,7 @@ import { injectHomeContent } from './home-content';
           @for (paragraph of content().parents.paragraphs; track $index) {
             <p>{{ paragraph }}</p>
           }
-          <a class="jv-button" routerLink="/jovie/why">{{ content().parents.button }}</a>
+          <a class="jv-button" routerLink="/jovieEgypt/why">{{ content().parents.button }}</a>
           <p class="arrow jv-handwritten" aria-hidden="true">{{ content().parents.more }}</p>
         </div>
         <div class="image">

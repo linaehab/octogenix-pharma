@@ -17,7 +17,7 @@ import { injectHomeContent } from './home-content';
         <ul class="cards">
           @for (card of content().solution.cards; track $index) {
             <li>
-              <a class="card" routerLink="/jovie/why">
+              <a class="card" routerLink="/jovieEgypt/why">
                 <img [src]="icons[$index]" alt="" loading="lazy" />
                 <span class="caption">
                   <span class="card-title">{{ card.title }}</span>

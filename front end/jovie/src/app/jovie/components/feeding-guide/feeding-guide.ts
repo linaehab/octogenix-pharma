@@ -6,14 +6,12 @@ import {
   effect,
   inject,
   input,
-  linkedSignal,
+  signal,
   untracked,
   viewChild,
   viewChildren,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { map } from 'rxjs';
+import { RouterLink } from '@angular/router';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import {
@@ -22,7 +20,6 @@ import {
   FEEDING_ROWS,
   FEEDING_STAGES,
   type FeedingRow,
-  type FeedingStage,
   dailyAmounts,
   tinsPerMonth,
 } from '../../data/feeding-chart';
@@ -31,9 +28,9 @@ import { DecorShape } from '../decor-shape/decor-shape';
 
 /** Stage by age, as confirmed by the client. */
 const STAGES = [1, 2, 3] as const;
-type Stage = (typeof STAGES)[number];
 
-const isStage = (value: number): value is Stage => (STAGES as readonly number[]).includes(value);
+/** The page chart shows the feeding table by the baby's weight only (Stage 1), as the client asked. */
+const CHART_ROWS = FEEDING_ROWS.filter((row) => row.stage === 1);
 
 const fill = (template: string, values: Record<string, string | number>): string =>
   template.replace(/\{(\w+)\}/g, (match, key: string) => (key in values ? String(values[key]) : match));
@@ -41,9 +38,9 @@ const fill = (template: string, values: Record<string, string | number>): string
 const span = ([min, max]: readonly [number, number]): string => (min === max ? `${min}` : `${min}–${max}`);
 
 /**
- * Home (summary): the age choices link to /jovie/feeding-guide?stage=N.
- * Page: the feeding chart of the Egyptian tins: one card per row of the label's feeding table in a
- * horizontal track, chosen with the weight/age tabs (?stage=N opens on that stage's first row).
+ * Home (summary): the age choices link to /jovieEgypt/feeding-guide?stage=N.
+ * Page: the feeding chart of the Egyptian tins by the baby's weight: one card per weight row of the
+ * label's feeding table in a horizontal track, chosen with the weight tabs.
  */
 @Component({
   selector: 'app-feeding-guide',
@@ -60,15 +57,12 @@ export class FeedingGuide {
   protected readonly text = computed(() => FEEDING_CHART_TEXT[this.language.currentLanguage()]);
   protected readonly pdf = computed(() => FEEDING_CHART_PDF[this.language.currentLanguage()]);
 
-  protected readonly groups = STAGES.map((stage) => ({
-    stage,
-    rows: FEEDING_ROWS.filter((row) => row.stage === stage),
-  }));
+  protected readonly groups = [{ stage: 1 as const, rows: CHART_ROWS }];
 
   /** Every card, with its values written out in the current language. */
   protected readonly cards = computed(() => {
     const text = this.text();
-    return FEEDING_ROWS.map((row) => {
+    return CHART_ROWS.map((row) => {
       const daily = dailyAmounts(row);
       const { scoopGrams, slug } = FEEDING_STAGES[row.stage];
       return {
@@ -89,21 +83,8 @@ export class FeedingGuide {
     });
   });
 
-  private readonly stageInUrl = toSignal(
-    inject(ActivatedRoute).queryParamMap.pipe(
-      map((params) => Number(params.get('stage'))),
-      map((stage): Stage => (isStage(stage) ? stage : 1)),
-    ),
-    { initialValue: 1 as Stage },
-  );
-
-  /** The chosen row: the first row of the stage in the URL until a tab is chosen or the cards are swiped. */
-  protected readonly selected = linkedSignal<string>(
-    () => FEEDING_ROWS.find((row) => row.stage === this.stageInUrl())!.id,
-  );
-  protected readonly selectedStage = computed<FeedingStage>(
-    () => FEEDING_ROWS.find((row) => row.id === this.selected())!.stage,
-  );
+  /** The chosen row: the first weight row until a tab is chosen or the cards are swiped. */
+  protected readonly selected = signal<string>(CHART_ROWS[0].id);
 
   private readonly track = viewChild<ElementRef<HTMLElement>>('track');
   private readonly cardElements = viewChildren<ElementRef<HTMLElement>>('card');

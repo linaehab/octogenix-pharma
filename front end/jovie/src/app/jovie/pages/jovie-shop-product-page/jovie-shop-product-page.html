@@ -1,8 +1,8 @@
 <div class="band">
   <nav class="jv-container crumbs" [attr.aria-label]="'jovie.pdp.breadcrumb' | translate">
     <ol>
-      <li><a routerLink="/jovie">{{ 'jovie.pdp.home' | translate }}</a></li>
-      <li><a routerLink="/jovie/shop">{{ 'jovie.nav.shop' | translate }}</a></li>
+      <li><a routerLink="/jovieEgypt">{{ 'jovie.pdp.home' | translate }}</a></li>
+      <li><a routerLink="/jovieEgypt/shop">{{ 'jovie.nav.shop' | translate }}</a></li>
       @if (name()) {
         <li aria-current="page">{{ name() }}</li>
       }
@@ -15,7 +15,7 @@
     <section class="jv-container state">
       <h1>{{ 'jovie.pdp.notFoundTitle' | translate }}</h1>
       <p>{{ 'jovie.pdp.notFoundText' | translate }}</p>
-      <a class="jv-button jv-button--night" routerLink="/jovie/shop">{{ 'jovie.cart.continue' | translate }}</a>
+      <a class="jv-button jv-button--night" routerLink="/jovieEgypt/shop">{{ 'jovie.cart.continue' | translate }}</a>
     </section>
   }
   @case ('error') {
@@ -96,7 +96,7 @@
         <p class="status" id="pdp-status" role="status" aria-live="polite">
           @if (feedback(); as f) {
             <span [class.ok]="f.ok" [class.warn]="!f.ok">{{ f.key | translate: f.params }}</span>
-            <a routerLink="/jovie/cart">{{ 'jovie.cart.view' | translate }}</a>
+            <a routerLink="/jovieEgypt/cart">{{ 'jovie.cart.view' | translate }}</a>
           }
         </p>
 
@@ -145,7 +145,7 @@
             </div>
             <p class="note">{{ 'jovie.pdp.feedingNote' | translate }}</p>
             <p class="links">
-              <a routerLink="/jovie/feeding-guide" [queryParams]="{ stage: stage() }">{{ 'jovie.pdp.fullGuide' | translate }}</a>
+              <a routerLink="/jovieEgypt/feeding-guide" [queryParams]="{ stage: stage() }">{{ 'jovie.pdp.fullGuide' | translate }}</a>
               <a [href]="feedingPdf()" download>{{ feedingText().download }}</a>
             </p>
           </details>

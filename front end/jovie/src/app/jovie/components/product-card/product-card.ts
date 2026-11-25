@@ -29,7 +29,7 @@ interface CartFeedback {
   imports: [RouterLink, TranslatePipe],
   templateUrl: './product-card.html',
   styleUrl: './product-card.css',
-  host: { '[attr.data-stage]': 'product().stage' },
+  host: { '[attr.data-stage]': 'product().stage', '[class.is-shop]': "look() === 'shop'" },
 })
 export class ProductCard {
   private readonly content = inject(SiteContentService);
@@ -39,6 +39,12 @@ export class ProductCard {
 
   readonly product = input.required<ApiProduct>();
   readonly isPreview = input(false);
+  /**
+   * 'shop': the larger /jovieEgypt/shop card with the shop photographs (src/assets/jovie assets/jovie
+   * shop: the stage's illustrated photo, and its tin on its colour on hover). Elsewhere (home,
+   * related products) the card keeps the product image and the two-tin photo.
+   */
+  readonly look = input<'default' | 'shop'>('default');
 
   constructor() {
     inject(DestroyRef).onDestroy(() => clearTimeout(this.feedbackTimer));
@@ -95,19 +101,30 @@ export class ProductCard {
 
   private readonly stageProduct = computed(() => PRODUCTS.find((p) => p.stage === this.product().stage) ?? null);
 
-  /** The stage's two-tin photo (bundled, the listing API sends one image per product). */
+  /** The shop photograph of the stage (its illustrated photo), on the shop page only. */
+  protected readonly shopImage = computed(() => {
+    const stage = this.stageProduct()?.stage;
+    return this.look() === 'shop' && stage ? `/assets/images/jovie/shop/stage-${stage}-card-hover.webp` : null;
+  });
+
+  /** The hover photo: the stage's tin on its colour on the shop page, else its two-tin photo. */
   protected readonly duoImage = computed(() => {
     const stage = this.stageProduct()?.stage;
-    return stage ? `/assets/images/jovie/products/eg-stage-${stage}-duo.webp` : null;
+    if (!stage) {
+      return null;
+    }
+    return this.look() === 'shop'
+      ? `/assets/images/jovie/shop/stage-${stage}-card.webp`
+      : `/assets/images/jovie/products/eg-stage-${stage}-duo.webp`;
   });
 
   /** Shop now: the shop product page of an API product; preview cards keep the official page. */
   protected readonly link = computed(() => {
     if (!this.isPreview() && (this.variant()?.id ?? 0) > 0) {
-      return `/jovie/shop/${this.product().slug}`;
+      return `/jovieEgypt/shop/${this.product().slug}`;
     }
     const product = this.stageProduct();
-    return product ? productLink(product.slug) : '/jovie/products';
+    return product ? productLink(product.slug) : '/jovieEgypt/products';
   });
 
   protected readonly adding = signal(false);

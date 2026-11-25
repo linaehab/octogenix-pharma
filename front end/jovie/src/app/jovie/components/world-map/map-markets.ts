@@ -35,6 +35,6 @@ export const MAP_MARKETS: MarketInfo[] = [
   {
     region: 'egypt',
     usesDistributorContacts: true,
-    link: { href: '/jovie/contact', label: 'jovie.where.contactUs', external: false },
+    link: { href: '/jovieEgypt/contact', label: 'jovie.where.contactUs', external: false },
   },
 ];

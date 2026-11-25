@@ -259,3 +259,52 @@ h3 {
   font-weight: 400;
   opacity: 0.6;
 }
+
+/* /jovie/shop: the larger card. The shop photograph fills the top of the card edge to edge; its
+   illustrated photo fades in on hover. */
+:host(.is-shop) .card {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 22px;
+  box-shadow: 0 1px 0 rgba(32, 53, 100, 0.04);
+  transition: box-shadow 0.35s ease, transform 0.35s ease;
+}
+
+:host(.is-shop) .card:hover {
+  box-shadow: 0 18px 40px rgba(32, 53, 100, 0.14);
+}
+
+:host(.is-shop) .media {
+  border-radius: 0;
+}
+
+:host(.is-shop) .main.photo {
+  height: 100%;
+  object-fit: cover;
+  filter: none;
+}
+
+:host(.is-shop) .body {
+  padding: 1.4rem clamp(1.1rem, 2vw, 1.75rem) 1.5rem;
+}
+
+:host(.is-shop) h3 {
+  font-size: clamp(1.35rem, 1.9vw, 1.65rem);
+}
+
+:host(.is-shop) .price {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+@media (hover: hover) {
+  :host(.is-shop) .card:hover .has-duo .main {
+    transform: scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host(.is-shop) .card {
+    transition: none;
+  }
+}

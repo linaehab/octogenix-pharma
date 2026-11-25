@@ -40,13 +40,13 @@ return [
     | Where the gateway sends the customer back after paying. This page only shows progress and
     | polls the order: a payment counts only once verified server-side (webhook / status check).
     */
-    'return_url' => env('PAYMENT_RETURN_URL', rtrim((string) env('FRONTEND_APP_URL', 'http://localhost:4200'), '/').'/jovie/checkout/payment-result'),
+    'return_url' => env('PAYMENT_RETURN_URL', rtrim((string) env('FRONTEND_APP_URL', 'http://localhost:4200'), '/').'/jovieEgypt/checkout/payment-result'),
 
     /*
     | The TEST MODE payment page of the Angular store (MockCardGateway sends customers there).
     */
     'mock' => [
-        'page_url' => rtrim((string) env('FRONTEND_APP_URL', 'http://localhost:4200'), '/').'/jovie/checkout/mock-payment',
+        'page_url' => rtrim((string) env('FRONTEND_APP_URL', 'http://localhost:4200'), '/').'/jovieEgypt/checkout/mock-payment',
     ],
 
     'fake' => [

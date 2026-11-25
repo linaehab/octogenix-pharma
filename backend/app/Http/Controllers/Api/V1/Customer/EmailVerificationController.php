@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class EmailVerificationController extends Controller
 {
     /**
-     * Called by the Angular page /jovie/verify-email with the parameters from the email link.
+     * Called by the Angular page /jovieEgypt/verify-email with the parameters from the email link.
      * Protected by the `signed:relative` middleware (expiry + signature), so no sign-in is needed.
      */
     public function verify(int $id, string $hash): JsonResponse

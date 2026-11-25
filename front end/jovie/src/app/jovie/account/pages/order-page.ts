@@ -12,7 +12,7 @@ import { AccountShell } from '../account-shell';
 import { failureKey } from '../account-forms';
 
 /**
- * /jovie/account/orders/:orderNumber — one of the customer's orders as the server recorded it, with
+ * /jovieEgypt/account/orders/:orderNumber — one of the customer's orders as the server recorded it, with
  * cancelling (while the server allows it) and paying an unpaid card order.
  */
 @Component({
@@ -20,7 +20,7 @@ import { failureKey } from '../account-forms';
   imports: [RouterLink, TranslatePipe, AccountShell, OrderDetails],
   template: `
     <app-account-shell [title]="'account.nav.orders' | translate">
-      <p><a class="jv-link" routerLink="/jovie/account/orders">{{ 'account.orders.back' | translate }}</a></p>
+      <p><a class="jv-link" routerLink="/jovieEgypt/account/orders">{{ 'account.orders.back' | translate }}</a></p>
       @switch (state()) {
         @case ('loading') {
           <p role="status">{{ 'jovie.cart.loading' | translate }}</p>

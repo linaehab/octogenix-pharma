@@ -43,7 +43,7 @@ describe('BrandsSection', () => {
     expect(compiled.querySelectorAll('.brand-feature').length).toBe(1);
     expect(compiled.querySelector('.brand-name')?.textContent).toContain('Jovie');
     expect(compiled.querySelector('.brand-panel .text-link')?.getAttribute('href')).toBe('/contact');
-    expect(compiled.querySelector('.brand-panel .store-button')?.getAttribute('href')).toBe('/jovie');
+    expect(compiled.querySelector('.brand-panel .store-button')?.getAttribute('href')).toBe('/jovieEgypt');
     expect(compiled.querySelector('.brand-logo')?.getAttribute('src')).toBe('/assets/images/jovie/logo-official-yellow.png');
     // Only the approved texts: no label, description or summary.
     expect(compiled.querySelector('.brand-label')).toBeNull();
@@ -76,7 +76,7 @@ describe('BrandsSection', () => {
 
     const cards = compiled.querySelectorAll('.brand-feature');
     const store = cards[0].querySelector('.store-button');
-    expect(store?.getAttribute('href')).toBe('/jovie');
+    expect(store?.getAttribute('href')).toBe('/jovieEgypt');
     expect(store?.textContent).toContain('Visit Jovie Egypt website');
     expect(cards[1].querySelector('.store-button')).toBeNull();
     expect(cards[2].querySelector('.store-button')).toBeNull();

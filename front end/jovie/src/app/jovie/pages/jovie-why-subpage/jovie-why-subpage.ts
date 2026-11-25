@@ -12,7 +12,7 @@ import { WHY_SUBPAGES, WhyBlock, WhySubpageKey } from '../../data/why-subpages';
 type Group = { kind: 'list'; items: WhyBlock[] } | WhyBlock;
 
 /**
- * /jovie/why/makes-good-sense, /organic and /without-promise: the official "More information" pages
+ * /jovieEgypt/why/makes-good-sense, /organic and /without-promise: the official "More information" pages
  * (green content header, then the article), in the selected language.
  */
 @Component({

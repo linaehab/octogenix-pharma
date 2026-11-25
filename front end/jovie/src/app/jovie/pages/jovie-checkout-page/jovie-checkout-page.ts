@@ -36,7 +36,7 @@ export function egyptianMobile(control: AbstractControl<string>): ValidationErro
 const piastres = (money: Money | null | undefined) => money?.amount_piastres ?? 0;
 
 /**
- * /jovie/checkout on POST /api/v1/checkout, for guests and signed-in customers.
+ * /jovieEgypt/checkout on POST /api/v1/checkout, for guests and signed-in customers.
  *
  * Guest: the form sends what to buy (the cart's variant IDs and quantities), the contact details,
  * where to deliver and how to pay. Signed in: the server takes the items from the account cart and
@@ -330,7 +330,7 @@ export class JovieCheckoutPage {
           if (order.payment_method === 'card') {
             this.startPayment(order.order_number);
           } else {
-            this.router.navigate(['/jovie/checkout/confirmation', order.order_number]);
+            this.router.navigate(['/jovieEgypt/checkout/confirmation', order.order_number]);
           }
         },
         error: (error: unknown) => this.failed(error),
@@ -371,14 +371,14 @@ export class JovieCheckoutPage {
   private startPayment(orderNumber: string): void {
     this.checkout.startCardPayment(orderNumber).subscribe({
       next: ({ redirect_url }) => this.go(redirect_url),
-      error: () => this.router.navigate(['/jovie/checkout/payment-result'], { queryParams: { order: orderNumber } }),
+      error: () => this.router.navigate(['/jovieEgypt/checkout/payment-result'], { queryParams: { order: orderNumber } }),
     });
   }
 
   /** The provider's payment page; in TEST MODE the store's own mock page (opened in the app). */
   private go(url: string): void {
     const target = new URL(url, window.location.origin);
-    if (target.pathname === '/jovie/checkout/mock-payment') {
+    if (target.pathname === '/jovieEgypt/checkout/mock-payment') {
       this.router.navigateByUrl(target.pathname + target.search);
     } else {
       window.location.assign(target.href);

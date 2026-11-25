@@ -13,7 +13,7 @@ import { TestModeNotice } from '../../store/test-mode-notice';
 type Outcome = 'checking' | 'paid' | 'unpaid' | 'closed' | 'noAccess' | 'error';
 
 /**
- * /jovie/checkout/payment-result?order=… — where the payment page sends the customer back
+ * /jovieEgypt/checkout/payment-result?order=… — where the payment page sends the customer back
  * (config payments.return_url). It never trusts the redirect: it asks the server, which checks
  * the attempt with the provider (POST /orders/{number}/payment-status), and shows that result.
  */
@@ -41,7 +41,7 @@ type Outcome = 'checking' | 'paid' | 'unpaid' | 'closed' | 'noAccess' | 'error';
               <button class="jv-button" type="button" (click)="check()">{{ 'jovie.result.checkAgain' | translate }}</button>
             }
           }
-          <a class="jv-button jv-button--night" routerLink="/jovie/shop">{{ 'jovie.cart.continue' | translate }}</a>
+          <a class="jv-button jv-button--night" routerLink="/jovieEgypt/shop">{{ 'jovie.cart.continue' | translate }}</a>
         </div>
       </div>
 
@@ -139,7 +139,7 @@ export class JoviePaymentResultPage {
     this.checkout.startCardPayment(this.orderNumber()).subscribe({
       next: ({ redirect_url }) => {
         const target = new URL(redirect_url, window.location.origin);
-        if (target.pathname === '/jovie/checkout/mock-payment') {
+        if (target.pathname === '/jovieEgypt/checkout/mock-payment') {
           this.router.navigateByUrl(target.pathname + target.search);
         } else {
           window.location.assign(target.href);

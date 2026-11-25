@@ -1,0 +1,174 @@
+:host {
+  position: relative;
+  display: block;
+}
+
+/*
+ * The photograph fills the banner; the official Jovie curve (#jv-pageHeader, the clip of every
+ * Jovie page header) shapes its bottom edge. Desktop height follows the reference's proportions.
+ */
+.banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: clamp(32rem, 41vw, 46rem);
+  padding-block: calc(var(--jv-header-height) + 1rem) 4.5rem;
+  overflow: hidden;
+  background: #7cb5f8;
+  color: var(--jv-night);
+  clip-path: url(#jv-pageHeader);
+}
+
+.photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 70% 40%;
+}
+
+/* A soft shade under the floating site header keeps its white links readable over the photo. */
+.banner::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 1;
+  height: calc(var(--jv-header-height) + 3rem);
+  background: linear-gradient(180deg, rgba(32, 53, 100, 0.38) 0%, rgba(32, 53, 100, 0) 100%);
+  pointer-events: none;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+}
+
+/* The copy sits over the open sky on the left in both languages; the people are on the right. */
+.copy {
+  width: min(31rem, 42%);
+  margin-right: auto;
+  margin-left: 0;
+}
+
+h1 {
+  margin: 0 0 1rem;
+  font-size: clamp(3rem, 5.6vw, 5.75rem);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+}
+
+/* Arabic letters must join: no letter spacing. */
+:host-context([dir='rtl']) h1 {
+  letter-spacing: normal;
+}
+
+p {
+  margin: 0 0 1.75rem;
+  font-size: var(--jv-p);
+  font-weight: 500;
+  line-height: var(--jv-p-lh);
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0.65rem 1.6rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--jv-night);
+  color: var(--jv-white);
+  font-family: var(--jv-font);
+  font-size: var(--jv-btn);
+  font-weight: 700;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(32, 53, 100, 0.25);
+}
+
+.cta:focus-visible {
+  outline: 3px solid var(--jv-white);
+  outline-offset: 3px;
+}
+
+.cta svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Small laptops and large tablets: more sky on the left, so the copy keeps clear of the baby. */
+@media (max-width: 1199px) {
+  .photo {
+    object-position: 55% 40%;
+  }
+
+  .copy {
+    width: min(26rem, 40%);
+  }
+}
+
+/* Tablets and phones: the copy on the sky, the photograph (cropped to the family) below it. */
+@media (max-width: 899px) {
+  .banner {
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 0;
+    padding-block: calc(var(--jv-header-height) + 0.5rem) 0;
+    background: linear-gradient(180deg, #84b9f9 0%, #62a4ee 100%);
+  }
+
+  .copy {
+    width: auto;
+    max-width: 34rem;
+  }
+
+  h1 {
+    font-size: clamp(2.75rem, 9vw, 4rem);
+    margin-bottom: 0.75rem;
+  }
+
+  p {
+    margin-bottom: 1.25rem;
+  }
+
+  .photo {
+    position: relative;
+    inset: auto;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    margin-top: -1.5rem;
+    object-position: 88% 30%;
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 22%);
+    mask-image: linear-gradient(180deg, transparent 0%, #000 22%);
+    order: 1;
+  }
+}
+
+@media (max-width: 599px) {
+  .photo {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta {
+    transition: none;
+  }
+
+  .cta:hover {
+    transform: none;
+  }
+}

@@ -84,7 +84,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::post('/orders/{orderNumber}/mock-payment', MockPaymentController::class)->middleware('throttle:10,1,orders-mock-payment')->name('orders.mock-payment');
     Route::post('/payments/webhooks/{provider}', PaymentWebhookController::class)->middleware('throttle:300,1')->name('payments.webhook');
 
-    // Jovie store customer API (Angular /jovie/...). Protected routes name the customer guard explicitly.
+    // Jovie store customer API (Angular /jovieEgypt/...). Protected routes name the customer guard explicitly.
     Route::prefix('customer')->name('customer.')->group(function () {
         Route::post('/auth/register', [CustomerAuthController::class, 'register'])
             ->middleware('throttle:customer-register')->name('auth.register');

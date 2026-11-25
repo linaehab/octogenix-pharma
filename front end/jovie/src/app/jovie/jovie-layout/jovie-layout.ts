@@ -10,7 +10,7 @@ import { JovieMasks } from '../components/jovie-masks/jovie-masks';
 import { jovieTranslations } from '../jovie-translations';
 
 /**
- * Shell of the Jovie store (/jovie/...), loaded lazily. Registers the Jovie texts, and its
+ * Shell of the Jovie store (/jovieEgypt/...), loaded lazily. Registers the Jovie texts, and its
  * stylesheet is not encapsulated: it defines the Jovie brand tokens and the shared primitives
  * (container, section headings, buttons), all scoped to app-jovie-layout so the Octogenix pages
  * are unaffected.

@@ -1,5 +1,5 @@
 import { EnvironmentInjector, inject, runInInjectionContext } from '@angular/core';
-import { CanActivateFn, Routes } from '@angular/router';
+import { CanActivateFn, RedirectFunction, Router, Routes } from '@angular/router';
 import { firstValueFrom, isObservable } from 'rxjs';
 import { CorporateLayout } from './layouts/corporate-layout/corporate-layout';
 import { AboutPage } from './pages/about-page/about-page';
@@ -26,10 +26,20 @@ const customerOnly = lazyGuard('customerOnly');
 const guestOnly = lazyGuard('guestOnly');
 const sessionKnown = lazyGuard('sessionKnown');
 
+/**
+ * The store's former address (/jovie/...): sends links made before the move to /jovieEgypt
+ * (emails already sent, bookmarks, shared links) to the same page, keeping its query and fragment.
+ */
+const toJovieEgypt: RedirectFunction = ({ url, queryParams, fragment }) =>
+  inject(Router).createUrlTree(['/jovieEgypt', ...url.map((segment) => segment.path)], {
+    queryParams,
+    fragment: fragment ?? undefined,
+  });
+
 export const routes: Routes = [
-  // Jovie store: loaded on demand, so the corporate pages do not download it.
+  // Jovie store (/jovieEgypt): loaded on demand, so the corporate pages do not download it.
   {
-    path: 'jovie',
+    path: 'jovieEgypt',
     loadComponent: () => import('./jovie/jovie-layout/jovie-layout').then((m) => m.JovieLayout),
     children: [
       {
@@ -213,9 +223,11 @@ export const routes: Routes = [
     path: 'admin',
     loadChildren: () => import('./admin/admin.routes').then((m) => m.adminRoutes),
   },
+  // The store's former address: every /jovie/... link opens the same page under /jovieEgypt.
+  { path: 'jovie', children: [{ path: '**', redirectTo: toJovieEgypt }] },
   // Short addresses for the store's sign-in pages.
-  { path: 'login', redirectTo: '/jovie/login' },
-  { path: 'signup', redirectTo: '/jovie/signup' },
+  { path: 'login', redirectTo: '/jovieEgypt/login' },
+  { path: 'signup', redirectTo: '/jovieEgypt/signup' },
   // Opening page at the site address (outside the corporate layout), shown once per visit; the
   // website starts at /home.
   { path: '', pathMatch: 'full', component: WelcomePage, canActivate: [introOnce], title: 'Octogenix Pharma' },

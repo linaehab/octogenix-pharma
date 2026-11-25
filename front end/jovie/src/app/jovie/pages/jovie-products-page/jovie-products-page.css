@@ -6,15 +6,17 @@
   display: contents;
 }
 
-/* The three products stacked, image and text alternating sides (no sideways scrolling). */
+/* The three products stacked, image and text alternating sides (no sideways scrolling). The band
+   is full width so the graphics can reach the page edges; it clips them. */
 .products {
-  width: min(72rem, 100% - 2rem);
-  margin: 0 auto;
   padding-block: clamp(3.5rem, 8vw, 6rem) 1rem;
+  padding-inline: max(1rem, (100% - 72rem) / 2);
+  overflow: hidden;
 }
 
 .product {
   --tone: var(--jv-sunshine);
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: center;
@@ -32,6 +34,64 @@
 
 .product:nth-child(2n) .tile {
   order: 2;
+}
+
+/* The Jovie graphics behind each product (decorative): faint pattern shapes in the product's
+   colour and two coloured elements, in the white space around the tile and the text. */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.product:nth-child(2n) .backdrop {
+  transform: scaleX(-1);
+}
+
+.tile,
+.info {
+  position: relative;
+  z-index: 1;
+}
+
+.pattern {
+  position: absolute;
+  aspect-ratio: 1;
+  background: var(--tone);
+  opacity: 0.4;
+  -webkit-mask: var(--pattern) center / contain no-repeat;
+  mask: var(--pattern) center / contain no-repeat;
+}
+
+.pattern--a {
+  top: 0;
+  inset-inline-end: -7rem;
+  width: clamp(9rem, 16vw, 15rem);
+  transform: rotate(14deg);
+}
+
+.pattern--b {
+  bottom: -1rem;
+  inset-inline-start: -9rem;
+  width: clamp(8rem, 14vw, 13rem);
+  transform: rotate(-18deg);
+}
+
+.shape {
+  position: absolute;
+}
+
+.shape--a {
+  top: 10%;
+  inset-inline-start: 44%;
+  width: clamp(3rem, 5vw, 4.75rem);
+}
+
+.shape--b {
+  bottom: 8%;
+  inset-inline-end: 3%;
+  width: clamp(3rem, 5vw, 4.5rem);
 }
 
 /* Official product tile: the product's colour in the official blob, the tin inside it. */
@@ -134,5 +194,25 @@ h2 {
 
   .text {
     margin-inline: auto;
+  }
+
+  /* Phones: only the faint pattern beside the tile and one element at the tile's edge. */
+  .pattern--a,
+  .shape--b {
+    display: none;
+  }
+
+  .pattern--b {
+    top: 0;
+    bottom: auto;
+    inset-inline-start: -4rem;
+    width: 9rem;
+  }
+
+  .shape--a {
+    top: 1rem;
+    inset-inline-start: auto;
+    inset-inline-end: 6%;
+    width: 3rem;
   }
 }

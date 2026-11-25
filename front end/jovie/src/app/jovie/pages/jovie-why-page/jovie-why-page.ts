@@ -9,7 +9,7 @@ import { WhyOrganic } from '../../components/why/why-organic';
 import { WhyQuote } from '../../components/why/why-quote';
 import { WhySpirit } from '../../components/why/why-spirit';
 
-/** /jovie/why: the official "Why Jovie Goat" page, section by section. */
+/** /jovieEgypt/why: the official "Why Jovie Goat" page, section by section. */
 @Component({
   selector: 'app-jovie-why-page',
   imports: [PageIntro, WhySpirit, WhyQuote, WhyBenefits, WhyOrganic, WhyDifferent, HowItsMade],

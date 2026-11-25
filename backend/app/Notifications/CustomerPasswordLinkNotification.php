@@ -53,7 +53,7 @@ class CustomerPasswordLinkNotification extends Notification implements ShouldQue
 
     public function url(Customer $notifiable): string
     {
-        return rtrim((string) config('app.frontend_url'), '/').'/jovie/reset-password?'.http_build_query([
+        return rtrim((string) config('app.frontend_url'), '/').'/jovieEgypt/reset-password?'.http_build_query([
             'token' => $this->token,
             'email' => $notifiable->getEmailForPasswordReset(),
         ]);

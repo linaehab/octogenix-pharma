@@ -21,7 +21,7 @@ import { injectHomeContent } from './home-content';
           <p class="kicker">{{ content().where.kicker }}</p>
           <h2 id="jovie-home-where">{{ content().where.title }}</h2>
           <p class="text">{{ 'jovie.where.description' | translate }}</p>
-          <a class="jv-button" routerLink="/jovie/where-to-find">{{ 'jovie.where.findCta' | translate }}</a>
+          <a class="jv-button" routerLink="/jovieEgypt/where-to-find">{{ 'jovie.where.findCta' | translate }}</a>
         </div>
       </div>
     </section>

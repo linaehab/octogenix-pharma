@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
  *
  * - Registered only when STORE_TEST_MODE=true outside production (config/payments.php), and
  *   GatewayManager refuses it in production even if it is listed.
- * - The "payment page" is the Angular TEST MODE page /jovie/checkout/mock-payment, which only
+ * - The "payment page" is the Angular TEST MODE page /jovieEgypt/checkout/mock-payment, which only
  *   offers "simulate success" / "simulate failure". No card details are asked for or stored.
  * - The simulated result is applied by MockPaymentController through PaymentService::applyResult(),
  *   the same code that applies real verified results, and the attempt is stored with is_test = true.

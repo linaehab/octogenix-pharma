@@ -61,6 +61,6 @@ describe('FaqSection', () => {
     const { element } = render(true);
 
     expect(element.querySelectorAll('details').length).toBe(3);
-    expect(element.querySelector('.jv-section-cta a')?.getAttribute('href')).toBe('/jovie/faq');
+    expect(element.querySelector('.jv-section-cta a')?.getAttribute('href')).toBe('/jovieEgypt/faq');
   });
 });

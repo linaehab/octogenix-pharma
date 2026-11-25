@@ -4,7 +4,8 @@ import { LanguageService } from '../../../core/i18n/language.service';
 import { BRAND_SECTIONS } from '../../data/brand-sections';
 
 /**
- * "We are Jovie", after section-jovie-about of jovieproducts.eu: the team photo, the paragraph and
+ * "We are Jovie", after section-jovie-about of jovieproducts.eu (without its heading and team photo,
+ * removed at the client's request): the paragraph and
  * the three illustrated points (bottle, the Netherlands, goat) on tablets and wider, the short
  * "goat milk makes good sense" line on phones, and the "More about us" button.
  */
@@ -12,10 +13,9 @@ import { BRAND_SECTIONS } from '../../data/brand-sections';
   selector: 'app-products-about',
   imports: [RouterLink],
   template: `
-    <section class="about" aria-labelledby="products-about-title">
+    <!-- The "We are Jovie" heading and the team photo were removed at the client's request. -->
+    <section class="about" [attr.aria-label]="text().title">
       <div class="container">
-        <h2 id="products-about-title"><strong>{{ text().title }}</strong></h2>
-        <img class="team" src="/assets/images/jovie/brand/jovie-team.webp" alt="" width="1519" height="663" loading="lazy" />
         <p class="text">{{ text().text }}</p>
         <p class="mobile-text">{{ text().mobileText }}</p>
         <ul class="usps">
@@ -26,7 +26,7 @@ import { BRAND_SECTIONS } from '../../data/brand-sections';
             </li>
           }
         </ul>
-        <p class="buttons"><a class="pill" routerLink="/jovie/why">{{ text().button }}</a></p>
+        <p class="buttons"><a class="pill" routerLink="/jovieEgypt/why">{{ text().button }}</a></p>
       </div>
     </section>
   `,

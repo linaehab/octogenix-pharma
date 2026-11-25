@@ -9,7 +9,7 @@ import { CustomerAuthService } from '../customer-auth.service';
 import { PasswordToggle } from '../password-toggle';
 
 /**
- * /jovie/reset-password?token=…&email=… — the page the reset email links to (CustomerPasswordLinkNotification).
+ * /jovieEgypt/reset-password?token=…&email=… — the page the reset email links to (CustomerPasswordLinkNotification).
  * A used, expired or wrong link is refused by the server; the page then offers a new link.
  */
 @Component({
@@ -19,10 +19,10 @@ import { PasswordToggle } from '../password-toggle';
     <app-auth-shell [title]="'account.reset.title' | translate" [lead]="done() || invalidLink() ? '' : ('account.reset.lead' | translate)">
       @if (done()) {
         <div class="jv-notice is-success" role="status"><p>{{ 'account.reset.done' | translate }}</p></div>
-        <a class="jv-button submit" routerLink="/jovie/login">{{ 'account.login.submit' | translate }}</a>
+        <a class="jv-button submit" routerLink="/jovieEgypt/login">{{ 'account.login.submit' | translate }}</a>
       } @else if (invalidLink()) {
         <div class="jv-notice is-error" role="alert"><p>{{ 'account.reset.invalid' | translate }}</p></div>
-        <a class="jv-button submit" routerLink="/jovie/forgot-password">{{ 'account.reset.newLink' | translate }}</a>
+        <a class="jv-button submit" routerLink="/jovieEgypt/forgot-password">{{ 'account.reset.newLink' | translate }}</a>
       } @else {
         <form class="jv-form" [formGroup]="form" (ngSubmit)="submit()" novalidate aria-labelledby="auth-title">
           <p class="jv-notice is-error" role="alert" [hidden]="!error()">{{ error() ?? '' | translate }}</p>

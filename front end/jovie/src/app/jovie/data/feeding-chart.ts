@@ -2,7 +2,7 @@ import type { Language } from '../../core/i18n/language.service';
 import type { ProductSlug } from './products-content';
 
 /*
- * The feeding chart of /jovie/feeding-guide. Every number is the "FEEDING GUIDE" table printed on
+ * The feeding chart of /jovieEgypt/feeding-guide (the page shows the Stage 1 rows, by weight). Every number is the "FEEDING GUIDE" table printed on
  * the Egyptian tins ("260923 JOVIE 1/2/3 400g EG 2304x A LITHO.pdf", copies in
  * public/downloads/jovie/): Stage 1 by the baby's weight, Stages 2 and 3 by age, all 400 g tins.
  * The labels give no combination-feeding amounts, so the chart shows none. "Tins per month" is
@@ -85,12 +85,12 @@ export interface FeedingChartText {
 
 export const FEEDING_CHART_TEXT: Record<Language, FeedingChartText> = {
   en: {
-    title: "Select your baby's weight or age",
-    subtitle: 'The feeding guide of the Egyptian Jovie Goat tins (birth to 3 years)',
+    title: "Select your baby's weight",
+    subtitle: 'The feeding guide of the Egyptian Jovie Goat 1 tin (0–6 months)',
     tabsLabel: 'Choose a feeding table row',
     stageGroup: { 1: "Stage 1 · baby's weight", 2: 'Stage 2 · age', 3: 'Stage 3 · age' },
     rows: {
-      'under-3kg': 'Under 3 kg',
+      'under-3kg': 'Newborn',
       '3-3.5kg': '3–3.5 kg',
       '3.5-4kg': '3.5–4 kg',
       '4-5kg': '4–5 kg',
@@ -129,12 +129,12 @@ export const FEEDING_CHART_TEXT: Record<Language, FeedingChartText> = {
     cardsLabel: 'Feeding table',
   },
   ar: {
-    title: 'اختر وزن طفلك أو عمره',
-    subtitle: 'دليل التغذية المطبوع على علب جوفي جوت في مصر (من الولادة حتى 3 سنوات)',
+    title: 'اختر وزن طفلك',
+    subtitle: 'دليل التغذية المطبوع على علبة جوفي جوت 1 في مصر (من 0 إلى 6 أشهر)',
     tabsLabel: 'اختر صفًا من جدول التغذية',
     stageGroup: { 1: 'المرحلة 1 · وزن الطفل', 2: 'المرحلة 2 · العمر', 3: 'المرحلة 3 · العمر' },
     rows: {
-      'under-3kg': 'أقل من 3 كجم',
+      'under-3kg': 'حديث الولادة',
       '3-3.5kg': '3–3.5 كجم',
       '3.5-4kg': '3.5–4 كجم',
       '4-5kg': '4–5 كجم',

@@ -195,6 +195,15 @@ export class CheckoutService {
     return request.pipe(timeout(CheckoutService.TIMEOUT_MS), map((response) => response.data));
   }
 
+  /**
+   * A guest token from the order email's link (?token=…): opens the order in this browser too,
+   * kept for the tab like the token from checkout (in memory when storage is unavailable).
+   */
+  acceptToken(orderNumber: string, token: string): void {
+    this.linkTokens[orderNumber] = token;
+    this.rememberToken(orderNumber, token);
+  }
+
   hasToken(orderNumber: string): boolean {
     return this.token(orderNumber) !== null;
   }
@@ -232,8 +241,11 @@ export class CheckoutService {
     );
   }
 
+  /** Tokens from email links, for when sessionStorage is unavailable. */
+  private readonly linkTokens: Record<string, string> = {};
+
   private token(orderNumber: string): string | null {
-    return this.tokens()[orderNumber] ?? null;
+    return this.tokens()[orderNumber] ?? this.linkTokens[orderNumber] ?? null;
   }
 
   private rememberToken(orderNumber: string, token: string): void {

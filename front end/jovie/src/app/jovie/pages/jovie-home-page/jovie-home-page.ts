@@ -7,7 +7,7 @@ import { JovieHero } from '../../components/jovie-hero/jovie-hero';
 import { ShopSection } from '../../components/shop-section/shop-section';
 
 /**
- * Jovie store home (/jovie): the sections of the official jovieproducts.com home in their order,
+ * Jovie store home (/jovieEgypt): the sections of the official jovieproducts.com home in their order,
  * with one addition, the Shop cards, straight after the hero.
  */
 @Component({

@@ -42,22 +42,22 @@ export class AccountShell {
   protected readonly loggingOut = signal(false);
 
   protected readonly tabs = [
-    { path: '/jovie/account', label: 'account.nav.account', exact: true },
-    { path: '/jovie/account/orders', label: 'account.nav.orders', exact: false },
-    { path: '/jovie/account/addresses', label: 'account.nav.addresses', exact: true },
+    { path: '/jovieEgypt/account', label: 'account.nav.account', exact: true },
+    { path: '/jovieEgypt/account/orders', label: 'account.nav.orders', exact: false },
+    { path: '/jovieEgypt/account/addresses', label: 'account.nav.addresses', exact: true },
   ];
 
   constructor() {
     // The session ended while an account page was open (expired, or signed out in another tab).
     effect(() => {
       if (this.auth.expired()) {
-        this.router.navigate(['/jovie/login'], { queryParams: { returnUrl: this.router.url } });
+        this.router.navigate(['/jovieEgypt/login'], { queryParams: { returnUrl: this.router.url } });
       }
     });
   }
 
   protected logout(): void {
     this.loggingOut.set(true);
-    this.auth.logout().subscribe({ complete: () => this.router.navigateByUrl('/jovie') });
+    this.auth.logout().subscribe({ complete: () => this.router.navigateByUrl('/jovieEgypt') });
   }
 }

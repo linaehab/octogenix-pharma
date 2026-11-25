@@ -32,15 +32,15 @@ import { CustomerAuthService } from '../../account/customer-auth.service';
           <span dir="ltr">{{ c.email }}</span>
         </p>
         <ul>
-          <li><a routerLink="/jovie/account" (click)="close()">{{ 'account.nav.account' | translate }}</a></li>
-          <li><a routerLink="/jovie/account/orders" (click)="close()">{{ 'account.nav.orders' | translate }}</a></li>
-          <li><a routerLink="/jovie/account/addresses" (click)="close()">{{ 'account.nav.addresses' | translate }}</a></li>
+          <li><a routerLink="/jovieEgypt/account" (click)="close()">{{ 'account.nav.account' | translate }}</a></li>
+          <li><a routerLink="/jovieEgypt/account/orders" (click)="close()">{{ 'account.nav.orders' | translate }}</a></li>
+          <li><a routerLink="/jovieEgypt/account/addresses" (click)="close()">{{ 'account.nav.addresses' | translate }}</a></li>
           <li><button type="button" [disabled]="loggingOut()" (click)="logout()">{{ 'account.nav.logout' | translate }}</button></li>
         </ul>
       } @else {
         <ul>
-          <li><a routerLink="/jovie/login" [queryParams]="returnParams()" (click)="close()">{{ 'account.login.link' | translate }}</a></li>
-          <li><a routerLink="/jovie/signup" [queryParams]="returnParams()" (click)="close()">{{ 'account.signup.link' | translate }}</a></li>
+          <li><a routerLink="/jovieEgypt/login" [queryParams]="returnParams()" (click)="close()">{{ 'account.login.link' | translate }}</a></li>
+          <li><a routerLink="/jovieEgypt/signup" [queryParams]="returnParams()" (click)="close()">{{ 'account.signup.link' | translate }}</a></li>
         </ul>
       }
     </div>
@@ -179,7 +179,7 @@ export class AccountMenu {
   /** Coming back here after logging in: the current page (except the sign-in pages themselves). */
   protected returnParams(): Record<string, string> | null {
     const url = this.router.url;
-    return url.startsWith('/jovie') && !/^\/jovie\/(login|signup|forgot-password|reset-password)/.test(url)
+    return url.startsWith('/jovieEgypt') && !/^\/jovieEgypt\/(login|signup|forgot-password|reset-password)/.test(url)
       ? { returnUrl: url }
       : null;
   }
@@ -211,7 +211,7 @@ export class AccountMenu {
       complete: () => {
         this.loggingOut.set(false);
         this.open.set(false);
-        this.router.navigateByUrl('/jovie');
+        this.router.navigateByUrl('/jovieEgypt');
       },
     });
   }

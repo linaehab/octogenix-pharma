@@ -53,10 +53,10 @@ export const PRODUCTS: readonly ProductInfo[] = [
 export const productImage = (stage: number, view: ProductView, zoom = false): string =>
   `${IMG}eg-stage-${stage}-${view}${zoom ? '-zoom' : ''}.webp`;
 
-export const productLink = (slug: ProductSlug): string => `/jovie/products/${slug}`;
+export const productLink = (slug: ProductSlug): string => `/jovieEgypt/products/${slug}`;
 
 /** The "More information" links of the official benefits point to the matching part of our Why page. */
-export const USP_LINKS = ['/jovie/why/makes-good-sense', '/jovie/why/makes-good-sense', '/jovie/why/makes-good-sense'];
+export const USP_LINKS = ['/jovieEgypt/why/makes-good-sense', '/jovieEgypt/why/makes-good-sense', '/jovieEgypt/why/makes-good-sense'];
 export const USP_FRAGMENTS = ['digest', 'fat', 'fat'];
 
 export interface ProductText {

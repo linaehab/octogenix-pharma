@@ -11,7 +11,7 @@ import { AccountShell } from '../account-shell';
 import { CustomerAuthService } from '../customer-auth.service';
 import { PasswordToggle } from '../password-toggle';
 
-/** /jovie/account — the customer's details, email confirmation, profile and password. */
+/** /jovieEgypt/account — the customer's details, email confirmation, profile and password. */
 @Component({
   selector: 'app-account-page',
   imports: [ReactiveFormsModule, RouterLink, TranslatePipe, AccountShell, PasswordToggle],

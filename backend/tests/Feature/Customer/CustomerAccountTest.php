@@ -154,7 +154,7 @@ class CustomerAccountTest extends TestCase
         $this->postJson('/api/v1/customer/auth/forgot-password', ['email' => 'nobody@example.com'])->assertOk();
 
         Notification::assertSentTo($customer, CustomerPasswordLinkNotification::class, function ($n) use ($customer) {
-            return str_starts_with($n->url($customer), config('app.frontend_url').'/jovie/reset-password?token=')
+            return str_starts_with($n->url($customer), config('app.frontend_url').'/jovieEgypt/reset-password?token=')
                 && $n->toMail($customer)->subject === 'إعادة تعيين كلمة مرور حسابك في جوفي';
         });
         Notification::assertCount(1);

@@ -10,6 +10,13 @@
   @for (product of products; track product.slug) {
     @let text = content().products[product.slug];
     <article class="product" [attr.data-tone]="product.tone" [attr.aria-labelledby]="'jovie-product-' + product.slug">
+      @let d = decor[product.tone];
+      <div class="backdrop" aria-hidden="true">
+        <span class="pattern pattern--a" [style.--pattern]="patternUrl(d.patterns[0])"></span>
+        <span class="pattern pattern--b" [style.--pattern]="patternUrl(d.patterns[1])"></span>
+        <app-decor-shape class="shape shape--a" [shape]="d.shapes[0]" />
+        <app-decor-shape class="shape shape--b" [shape]="d.shapes[1]" />
+      </div>
       <div class="tile">
         <img [src]="image(product.stage, 'front')" [alt]="text.name + ' — ' + text.labelName" width="640" height="867"
           [attr.loading]="$first ? null : 'lazy'" />
@@ -39,6 +46,6 @@
   <div class="jv-container">
     <h2 id="jovie-products-find">{{ content().listing.findTitle }}</h2>
     <p>{{ content().listing.findText }}</p>
-    <a class="jv-button" routerLink="/jovie/where-to-find">{{ content().listing.findButton }}</a>
+    <a class="jv-button" routerLink="/jovieEgypt/where-to-find">{{ content().listing.findButton }}</a>
   </div>
 </section>

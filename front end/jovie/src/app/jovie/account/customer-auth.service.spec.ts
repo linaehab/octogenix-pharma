@@ -164,13 +164,13 @@ describe('CustomerAuthService and the account cart', () => {
 
 describe('account helpers', () => {
   it('only returns to pages of the store after signing in', () => {
-    expect(safeReturnUrl('/jovie/checkout')).toBe('/jovie/checkout');
-    expect(safeReturnUrl('/jovie/shop/x?y=1')).toBe('/jovie/shop/x?y=1');
-    expect(safeReturnUrl('https://evil.example')).toBe('/jovie/account');
-    expect(safeReturnUrl('//evil.example/jovie')).toBe('/jovie/account');
-    expect(safeReturnUrl('/admin')).toBe('/jovie/account');
-    expect(safeReturnUrl('/jovie/login?returnUrl=/x')).toBe('/jovie/account');
-    expect(safeReturnUrl(null)).toBe('/jovie/account');
+    expect(safeReturnUrl('/jovieEgypt/checkout')).toBe('/jovieEgypt/checkout');
+    expect(safeReturnUrl('/jovieEgypt/shop/x?y=1')).toBe('/jovieEgypt/shop/x?y=1');
+    expect(safeReturnUrl('https://evil.example')).toBe('/jovieEgypt/account');
+    expect(safeReturnUrl('//evil.example/jovie')).toBe('/jovieEgypt/account');
+    expect(safeReturnUrl('/admin')).toBe('/jovieEgypt/account');
+    expect(safeReturnUrl('/jovieEgypt/login?returnUrl=/x')).toBe('/jovieEgypt/account');
+    expect(safeReturnUrl(null)).toBe('/jovieEgypt/account');
   });
 
   it('checks the customer and admin password policies of the API', () => {

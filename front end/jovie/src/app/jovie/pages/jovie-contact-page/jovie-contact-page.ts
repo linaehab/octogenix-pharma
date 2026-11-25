@@ -4,7 +4,7 @@ import { BlobImage } from '../../components/blob-image/blob-image';
 import { DecorShape } from '../../components/decor-shape/decor-shape';
 import { JovieContactForm } from '../../components/jovie-contact-form/jovie-contact-form';
 
-/** /jovie/contact: the Octogenix contact page pattern (intro, then details + form) in Jovie's identity. */
+/** /jovieEgypt/contact: the Octogenix contact page pattern (intro, then details + form) in Jovie's identity. */
 @Component({
   selector: 'app-jovie-contact-page',
   imports: [TranslatePipe, BlobImage, DecorShape, JovieContactForm],

@@ -1,7 +1,9 @@
 <article class="card" [attr.aria-labelledby]="'product-' + product().slug">
   <!-- The picture repeats the "Shop now" link for pointer users only. -->
   <a class="media" [class.has-duo]="!!duoImage()" [routerLink]="link()" tabindex="-1" aria-hidden="true">
-    @if (product().image; as image) {
+    @if (shopImage(); as photo) {
+      <img class="main photo" [src]="photo" [alt]="imageAlt()" width="1100" height="1100" loading="lazy" />
+    } @else if (product().image; as image) {
       <img class="main" [src]="image.url" [alt]="imageAlt()" width="640" height="867" loading="lazy" />
     } @else {
       <img class="main placeholder" src="/assets/images/jovie/logo-official-yellow.png" alt="" width="120" height="120" />
@@ -79,11 +81,11 @@
       @switch (feedback()?.kind) {
         @case ('added') {
           <span class="ok">{{ 'jovie.cart.added' | translate }}</span>
-          <a routerLink="/jovie/cart">{{ 'jovie.cart.view' | translate }}</a>
+          <a routerLink="/jovieEgypt/cart">{{ 'jovie.cart.view' | translate }}</a>
         }
         @case ('adjusted') {
           <span class="warn">{{ 'jovie.cart.limited' | translate: { count: feedback()?.allowed ?? 0 } }}</span>
-          <a routerLink="/jovie/cart">{{ 'jovie.cart.view' | translate }}</a>
+          <a routerLink="/jovieEgypt/cart">{{ 'jovie.cart.view' | translate }}</a>
         }
         @case ('error') {
           <span class="warn">{{ feedback()?.key ?? '' | translate }}</span>

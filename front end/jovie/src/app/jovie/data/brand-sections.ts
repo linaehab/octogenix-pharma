@@ -1,7 +1,7 @@
 import type { Language } from '../../core/i18n/language.service';
 
 /**
- * Two sections of the official Jovie home page (jovieproducts.eu/en), shown on /jovie/products:
+ * Two sections of the official Jovie home page (jovieproducts.eu/en), shown on /jovieEgypt/products:
  * "Jovie Goat Organic baby formula — Naturally good, enriched with love" (section-jovie-pros) and
  * "We are Jovie" (section-jovie-about). Official English wording, used with the brand owner's
  * permission like the other official content of this site, with the Arabic translation.

@@ -1,10 +1,10 @@
 <header class="header" [class.is-solid]="isScrolled() && !isMenuOpen()" [class.is-menu-open]="isMenuOpen()" [attr.data-tone]="tone()">
   <div class="bar jv-container">
-    <a class="logo" routerLink="/jovie" (click)="closeMenu()" [attr.aria-label]="'jovie.header.homeLabel' | translate">
+    <a class="logo" routerLink="/jovieEgypt" (click)="closeMenu()" [attr.aria-label]="'jovie.header.homeLabel' | translate">
       <img src="/assets/images/jovie/logo-official-white.png" alt="" width="72" height="72" />
     </a>
 
-    <a class="cart-link" routerLink="/jovie/cart" routerLinkActive="is-active" ariaCurrentWhenActive="page"
+    <a class="cart-link" routerLink="/jovieEgypt/cart" routerLinkActive="is-active" ariaCurrentWhenActive="page"
       (click)="closeMenu()" [attr.aria-label]="'jovie.cart.headerLabel' | translate: { count: cart.count() }">
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 8h12l-1 12H7z" /><path d="M9 10V7a3 3 0 0 1 6 0v3" /></svg>
       @if (cart.count() > 0) {
@@ -35,7 +35,7 @@
         }
       </ul>
       <div class="actions">
-        <a class="jv-button jv-button--light hello" routerLink="/jovie/contact" routerLinkActive="is-active"
+        <a class="jv-button jv-button--light hello" routerLink="/jovieEgypt/contact" routerLinkActive="is-active"
           ariaCurrentWhenActive="page" (click)="closeMenu()">{{ 'jovie.nav.sayHello' | translate }}</a>
         <button class="language-toggle" type="button" (click)="toggleLanguage()"
           [attr.lang]="language.currentLanguage() === 'en' ? 'ar' : 'en'">
