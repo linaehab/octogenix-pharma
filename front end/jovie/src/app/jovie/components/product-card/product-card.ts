@@ -40,9 +40,10 @@ export class ProductCard {
   readonly product = input.required<ApiProduct>();
   readonly isPreview = input(false);
   /**
-   * 'shop': the larger /jovieEgypt/shop card with the shop photographs (src/assets/jovie assets/jovie
-   * shop: the stage's illustrated photo, and its tin on its colour on hover). Elsewhere (home,
-   * related products) the card keeps the product image and the two-tin photo.
+   * 'shop': the larger shop card of the Shop page and the home Shop section, with the shop
+   * photographs (src/assets/jovie assets/jovie shop: the stage's illustrated photo, and its tin on
+   * its colour on hover). Elsewhere (related products) the card keeps the product image and the
+   * two-tin photo.
    */
   readonly look = input<'default' | 'shop'>('default');
 

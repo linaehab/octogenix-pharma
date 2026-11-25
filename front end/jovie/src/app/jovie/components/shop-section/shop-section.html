@@ -37,7 +37,7 @@
           @if (catalog.products().length) {
             <ul class="grid">
               @for (product of catalog.products(); track product.slug) {
-                <li><app-product-card [product]="product" [isPreview]="catalog.isPreview()" [look]="summary() ? 'default' : 'shop'" /></li>
+                <li><app-product-card [product]="product" [isPreview]="catalog.isPreview()" look="shop" /></li>
               }
             </ul>
           } @else {

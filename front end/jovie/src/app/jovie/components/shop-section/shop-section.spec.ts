@@ -183,7 +183,7 @@ describe('ShopSection', () => {
     expect(element.querySelector('app-test-mode-notice')).toBeNull();
   });
 
-  it('on the home page keeps its heading and the cards keep their product photos', () => {
+  it('on the home page keeps its own heading, with the same shop cards as the Shop page', () => {
     TestBed.configureTestingModule({
       imports: [ShopSection],
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([]), { provide: JOVIE_PREVIEW_PRODUCTS, useValue: PREVIEW_PRODUCTS }],
@@ -201,7 +201,9 @@ describe('ShopSection', () => {
 
     expect(element.querySelector('.range-title')).toBeNull();
     const cards = Array.from(element.querySelectorAll<HTMLElement>('app-product-card'));
-    expect(cards.some((card) => card.classList.contains('is-shop'))).toBeFalse();
-    expect(cards[0].querySelector('.duo')?.getAttribute('src')).toBe('/assets/images/jovie/products/eg-stage-1-duo.webp');
+    expect(element.querySelector('#jovie-shop-title')).not.toBeNull();
+    expect(cards.every((card) => card.classList.contains('is-shop'))).toBeTrue();
+    expect(cards.map((card) => card.querySelector('.main')?.getAttribute('src'))).toEqual([1, 2, 3].map((n) => `/assets/images/jovie/shop/stage-${n}-card-hover.webp`));
+    expect(cards.map((card) => card.querySelector('.duo')?.getAttribute('src'))).toEqual([1, 2, 3].map((n) => `/assets/images/jovie/shop/stage-${n}-card.webp`));
   });
 });
