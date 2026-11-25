@@ -98,8 +98,9 @@
   }
 }
 
-/* /jovie/shop: a wider grid with larger cards, under the range heading and tagline. */
-.shop:has(.wide) {
+/* The Shop page and the home Shop section: a wider grid with larger cards. On the Shop page the
+   range heading sits close under the page intro. */
+.shop.is-page {
   padding-block: clamp(2rem, 4vw, 3rem) clamp(3.5rem, 7vw, 5.5rem);
 }
 

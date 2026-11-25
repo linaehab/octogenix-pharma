@@ -1,7 +1,7 @@
-<section id="shop" class="jv-section shop" [attr.aria-labelledby]="summary() ? 'jovie-shop-title' : null"
+<section id="shop" class="jv-section shop" [class.is-page]="!summary()" [attr.aria-labelledby]="summary() ? 'jovie-shop-title' : null"
   [attr.aria-label]="summary() ? null : ('jovie.nav.shop' | translate)">
   <app-decor-shape class="decor-blob" shape="cloud-lightblue" />
-  <div class="jv-container" [class.wide]="!summary()">
+  <div class="jv-container wide">
     @if (summary()) {
       <div class="jv-center">
         <p class="jv-eyebrow">{{ 'jovie.shop.kicker' | translate }}</p>
