@@ -258,3 +258,39 @@
   background: #fdecf1;
   color: #8f0f35;
 }
+
+/* The message's site next to its status: a small brand tag (Octogenix green, Jovie yellow). */
+.msd-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.msd-site {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  background: #eef6e6;
+  color: #2f4d14;
+  font-weight: 700;
+}
+
+.msd-site::before {
+  content: '';
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: #7ab648;
+}
+
+.msd-site[data-site='jovie'] {
+  background: #fff4d6;
+  color: #6b4b00;
+}
+
+.msd-site[data-site='jovie']::before {
+  background: #fdc32d;
+}

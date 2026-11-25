@@ -1,4 +1,11 @@
-<p class="msd-back"><a routerLink="/admin/contact-messages">{{ 'admin.messages.back' | translate }}</a></p>
+<!-- Back to the inbox of the message's site. -->
+<p class="msd-back">
+  @if (message(); as m) {
+    <a routerLink="/admin/contact-messages" [queryParams]="{ site: m.site }">{{ 'admin.messages.backTo.' + m.site | translate }}</a>
+  } @else {
+    <a routerLink="/admin/contact-messages">{{ 'admin.messages.back' | translate }}</a>
+  }
+</p>
 
 @switch (state()) {
   @case ('loading') {
@@ -17,7 +24,10 @@
           <h1>{{ subject(m.subject) }}</h1>
           <p><bdi>{{ name(m) }}</bdi> · {{ date(m.created_at) }}</p>
         </div>
-        <span [class]="'msd-badge is-' + m.status">{{ 'admin.messages.state.' + m.status | translate }}</span>
+        <div class="msd-tags">
+          <span class="msd-site" [attr.data-site]="m.site">{{ 'admin.messages.brand.' + m.site | translate }}</span>
+          <span [class]="'msd-badge is-' + m.status">{{ 'admin.messages.state.' + m.status | translate }}</span>
+        </div>
       </div>
 
       @if (notice(); as n) {

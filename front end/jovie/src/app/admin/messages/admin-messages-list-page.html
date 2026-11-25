@@ -5,6 +5,33 @@
   </div>
 </div>
 
+<!-- The two inboxes: one per site, each with its totals. -->
+<nav class="msg-brands" [attr.aria-label]="'admin.messages.inboxes' | translate">
+  @for (s of sites; track s) {
+    <a class="msg-brand" [attr.data-site]="s" [class.is-active]="site() === s" [attr.aria-current]="site() === s ? 'page' : null"
+      [routerLink]="[]" [queryParams]="{ site: s }">
+      <span class="msg-brand-mark" aria-hidden="true">
+        <img [src]="s === 'jovie' ? '/assets/images/jovie/logo-official-yellow.png' : '/assets/images/brand/octogenix-logo.png'" alt="" />
+      </span>
+      <span class="msg-brand-text">
+        <strong>{{ 'admin.messages.brand.' + s | translate }}</strong>
+        <small>
+          @if (counts()[s]; as c) {
+            {{ 'admin.messages.brandTotal' | translate: { count: count(c.total) } }}
+          } @else {
+            {{ 'admin.messages.inbox.' + s | translate }}
+          }
+        </small>
+      </span>
+      @if (counts()[s]; as c) {
+        @if (c.unread > 0) {
+          <span class="msg-brand-new">{{ 'admin.messages.brandNew' | translate: { count: count(c.unread) } }}</span>
+        }
+      }
+    </a>
+  }
+</nav>
+
 <form #filters class="adm-panel msg-filters" role="search" (submit)="$event.preventDefault(); apply(filters)">
   <div class="msg-field msg-search">
     <label for="msg-search">{{ 'admin.messages.search' | translate }}</label>
@@ -42,14 +69,17 @@
   </div>
 </form>
 
-<section class="adm-panel msg-panel" aria-labelledby="msg-results" [attr.aria-busy]="loading()">
-  <h2 id="msg-results" class="msg-results">{{ 'admin.messages.results' | translate: { count: count(meta()?.total ?? 0) } }}</h2>
+<section class="adm-panel msg-panel" [attr.data-site]="site()" aria-labelledby="msg-results" [attr.aria-busy]="loading()">
+  <h2 id="msg-results" class="msg-results">
+    <span class="msg-inbox">{{ 'admin.messages.inbox.' + site() | translate }}</span>&ngsp;
+    <span class="msg-total">{{ 'admin.messages.results' | translate: { count: count(meta()?.total ?? 0) } }}</span>
+  </h2>
   @if (loading() && !rows().length) {
     <app-admin-state kind="loading" />
   } @else if (error()) {
     <app-admin-state kind="error" (retry)="load()" />
   } @else if (!rows().length) {
-    <app-admin-state kind="empty" [message]="filtered() ? 'admin.messages.noMatch' : 'admin.messages.none'" />
+    <app-admin-state kind="empty" [message]="(filtered() ? 'admin.messages.noMatchIn.' : 'admin.messages.noneIn.') + site()" />
   } @else {
     <table class="msg-table">
       <thead>

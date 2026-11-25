@@ -77,6 +77,15 @@ describe('Admin contact messages', () => {
   }
 
   const is = (method: string, url: string) => (r: TestRequest['request']) => r.method === method && r.url === url;
+  // The page asks for one inbox's list (20 a page) and for each inbox's totals (1 a page).
+  const isList = (r: TestRequest['request']) => is('GET', MESSAGES)(r) && r.params.get('per_page') === '20';
+  const isCount = (r: TestRequest['request']) => is('GET', MESSAGES)(r) && r.params.get('per_page') === '1';
+  const totals = (r: TestRequest) => {
+    const site = r.request.params.get('site');
+    const unread = r.request.params.get('status') === 'new';
+    const total = site === 'jovie' ? (unread ? 2 : 5) : unread ? 0 : 12;
+    r.flush({ data: [], meta: { current_page: 1, last_page: total, total } });
+  };
   const csrf = () => answer(is('GET', '/sanctum/csrf-cookie'), (r) => r.flush(null));
 
   async function open(url: string, who: AdminUser): Promise<void> {
@@ -99,7 +108,9 @@ describe('Admin contact messages', () => {
       await open('/admin/messages', support);
       expect(router.url).toBe('/admin/contact-messages');
       expect(el().querySelector('app-admin-state [role="status"]')).not.toBeNull();
-      await answer(is('GET', MESSAGES), (r) => r.flush(page([row(2), row(1, { status: 'replied', first_name: 'Omar', last_name: null, subject: null })])));
+      const list = await answer(isList, (r) => r.flush(page([row(2), row(1, { status: 'replied', first_name: 'Omar', last_name: null, subject: null })])));
+      expect(list.request.params.get('site')).toBe('corporate');
+      await answer(isCount, totals);
 
       const rows = el().querySelectorAll('.msg-table tbody tr');
       expect(rows.length).toBe(2);
@@ -113,7 +124,7 @@ describe('Admin contact messages', () => {
       expect(rows[1].textContent).toContain('No subject');
       expect(rows[1].textContent).toContain('Replied');
       expect(rows[0].querySelector('a')?.getAttribute('href')).toBe('/admin/contact-messages/2');
-      expect(text('#msg-results')).toBe('Messages: 2');
+      expect(text('#msg-results')).toBe('Octogenix messages Messages: 2');
       const side = el().querySelector('.adm-side a[href="/admin/contact-messages"]');
       expect(side?.classList).toContain('is-active');
       expect(side?.querySelector('.adm-soon')).toBeNull();
@@ -121,7 +132,8 @@ describe('Admin contact messages', () => {
 
     it('sends search, status, dates and order to the API, pages, and clears', async () => {
       await open('/admin/contact-messages', support);
-      const first = await answer(is('GET', MESSAGES), (r) => r.flush(page([row(1)], 1, 3)));
+      const first = await answer(isList, (r) => r.flush(page([row(1)], 1, 3)));
+      await answer(isCount, totals);
       expect(first.request.params.get('sort')).toBe('newest');
       const set = (selector: string, value: string) => ((el().querySelector(selector) as HTMLInputElement | HTMLSelectElement).value = value);
       set('#msg-search', 'mona');
@@ -130,22 +142,77 @@ describe('Admin contact messages', () => {
       set('#msg-to', '2026-11-08');
       set('#msg-sort', 'oldest');
       (el().querySelector('form.msg-filters') as HTMLFormElement).dispatchEvent(new Event('submit'));
-      const filtered = await answer(is('GET', MESSAGES), (r) => r.flush(page([])));
+      const filtered = await answer(isList, (r) => r.flush(page([])));
       const p = filtered.request.params;
-      expect(['search', 'status', 'from', 'to', 'sort', 'page'].map((k) => p.get(k))).toEqual(['mona', 'replied', '2026-11-01', '2026-11-08', 'oldest', '1']);
-      expect(text('app-admin-state')).toBe('No message matches these filters.');
+      expect(['site', 'search', 'status', 'from', 'to', 'sort', 'page'].map((k) => p.get(k))).toEqual(['corporate', 'mona', 'replied', '2026-11-01', '2026-11-08', 'oldest', '1']);
+      expect(text('app-admin-state')).toBe('No Octogenix message matches these filters.');
 
       await click('.msg-buttons .adm-link');
-      const cleared = await answer(is('GET', MESSAGES), (r) => r.flush(page([row(1)], 1, 3)));
-      expect(cleared.request.params.keys().sort()).toEqual(['page', 'per_page', 'sort']);
+      const cleared = await answer(isList, (r) => r.flush(page([row(1)], 1, 3)));
+      expect(cleared.request.params.keys().sort()).toEqual(['page', 'per_page', 'site', 'sort']);
 
       await click('.msg-pages button:last-child');
-      const second = await answer(is('GET', MESSAGES), (r) => r.flush({}, { status: 500, statusText: 'Server Error' }));
+      const second = await answer(isList, (r) => r.flush({}, { status: 500, statusText: 'Server Error' }));
       expect(second.request.params.get('page')).toBe('2');
       expect(el().querySelector('app-admin-state [role="alert"]')).not.toBeNull();
       await click('app-admin-state button');
-      await answer(is('GET', MESSAGES), (r) => r.flush(page([], 1, 1)));
-      expect(text('app-admin-state')).toBe('No contact messages yet.');
+      await answer(isList, (r) => r.flush(page([], 1, 1)));
+      expect(text('app-admin-state')).toBe('No messages from the Octogenix website yet.');
+    });
+
+    it('separates the Octogenix and Jovie inboxes with brand tabs, their totals and new counts', async () => {
+      await open('/admin/contact-messages', support);
+      await answer(isList, (r) => r.flush(page([row(1)])));
+      const seen: string[] = [];
+      await answer(isCount, (r) => {
+        seen.push(`${r.request.params.get('site')}:${r.request.params.get('status') ?? 'all'}`);
+        totals(r);
+      });
+      expect(seen.sort()).toEqual(['corporate:all', 'corporate:new', 'jovie:all', 'jovie:new']);
+
+      expect(texts('.msg-brand strong')).toEqual(['Octogenix', 'Jovie']);
+      expect(texts('.msg-brand small')).toEqual(['12 messages', '5 messages']);
+      expect(el().querySelector('.msg-brand[data-site="corporate"] .msg-brand-new')).toBeNull();
+      expect(text('.msg-brand[data-site="jovie"] .msg-brand-new')).toBe('2 new');
+      expect(el().querySelector('.msg-brand.is-active')?.getAttribute('data-site')).toBe('corporate');
+      expect(el().querySelector('.msg-brand.is-active')?.getAttribute('aria-current')).toBe('page');
+
+      // Filters chosen in one inbox stay when switching; the other inbox starts at its first page.
+      (el().querySelector('#msg-search') as HTMLInputElement).value = 'mona';
+      (el().querySelector('form.msg-filters') as HTMLFormElement).dispatchEvent(new Event('submit'));
+      await answer(isList, (r) => r.flush(page([row(1)], 1, 2)));
+      await click('.msg-pages button:last-child');
+      await answer(isList, (r) => r.flush(page([row(3)], 2, 2)));
+
+      await click('.msg-brand[data-site="jovie"]');
+      expect(router.url).toBe('/admin/contact-messages?site=jovie');
+      const jovie = await answer(isList, (r) => r.flush(page([row(7, { site: 'jovie', first_name: 'Sara' })])));
+      expect(['site', 'search', 'page'].map((k) => jovie.request.params.get(k))).toEqual(['jovie', 'mona', '1']);
+      expect(el().querySelector('.msg-brand.is-active')?.getAttribute('data-site')).toBe('jovie');
+      expect(text('.msg-inbox')).toBe('Jovie messages');
+      expect(el().querySelector('.msg-panel')?.getAttribute('data-site')).toBe('jovie');
+      expect(texts('.msg-table tbody tr .msg-name a')).toEqual(['Sara Hassan']);
+
+      await click('.msg-buttons .adm-link');
+      await answer(isList, (r) => r.flush(page([])));
+      expect(text('app-admin-state')).toBe('No messages from the Jovie store yet.');
+
+      // Going back to the Octogenix address shows the Octogenix inbox again.
+      await harness.navigateByUrl('/admin/contact-messages?site=corporate');
+      await settle();
+      const back = await answer(isList, (r) => r.flush(page([row(1)])));
+      expect(back.request.params.get('site')).toBe('corporate');
+    });
+
+    it('opens straight on the Jovie inbox from its address, in Arabic too', async () => {
+      language.setLanguage('ar');
+      await open('/admin/contact-messages?site=jovie', support);
+      const list = await answer(isList, (r) => r.flush(page([])));
+      await answer(isCount, totals);
+      expect(list.request.params.get('site')).toBe('jovie');
+      expect(texts('.msg-brand strong')).toEqual(['أوكتوجينكس', 'جوفي']);
+      expect(text('.msg-inbox')).toBe('رسائل جوفي');
+      expect(text('app-admin-state')).toBe('لا توجد رسائل من متجر جوفي بعد.');
     });
 
     it('is closed to admins without messages.view', async () => {
@@ -167,6 +234,11 @@ describe('Admin contact messages', () => {
       expect(text('.msd-dl')).toContain('+201012345678');
       expect(text('.msd-dl')).toContain('Jovie site');
       expect(text('.msd-dl')).toContain('Arabic');
+      // The brand of the message beside its status, and the way back to its brand's inbox.
+      expect(text('.msd-site')).toBe('Jovie');
+      expect(el().querySelector('.msd-site')?.getAttribute('data-site')).toBe('jovie');
+      expect(text('.msd-back a')).toBe('← Jovie messages');
+      expect(el().querySelector('.msd-back a')?.getAttribute('href')).toBe('/admin/contact-messages?site=jovie');
       const reply = el().querySelector('.msd-actions a') as HTMLAnchorElement;
       expect(reply.getAttribute('href')).toBe('mailto:mona%40example.com?subject=Re%3A%20Partnership');
       expect(text('.msd-note')).toContain('does not send email');

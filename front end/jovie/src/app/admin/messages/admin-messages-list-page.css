@@ -200,3 +200,193 @@
   background: #fdecf1;
   color: #8f0f35;
 }
+
+/*
+ * The two inboxes as brand tabs: each with its mark, name, totals and a "new" count. The brand
+ * colour shows only as a fine accent (the active tab's underline, the new count, the inbox name):
+ * Octogenix green and charcoal, Jovie sunshine yellow and navy.
+ */
+.msg-brands {
+  --brand-corporate: #7ab648;
+  --brand-corporate-soft: #eef6e6;
+  --brand-corporate-ink: #2f4d14;
+  --brand-jovie: #fdc32d;
+  --brand-jovie-soft: #fff4d6;
+  --brand-jovie-ink: #6b4b00;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.msg-brand {
+  --accent: var(--brand-corporate);
+  --soft: var(--brand-corporate-soft);
+  --ink: var(--brand-corporate-ink);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-height: 4.5rem;
+  padding: 0.85rem 1rem;
+  overflow: hidden;
+  border: 1px solid rgba(32, 51, 102, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--adm-muted);
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.msg-brand[data-site='jovie'] {
+  --accent: var(--brand-jovie);
+  --soft: var(--brand-jovie-soft);
+  --ink: var(--brand-jovie-ink);
+}
+
+.msg-brand::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 3px;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.msg-brand:hover {
+  border-color: rgba(32, 51, 102, 0.25);
+  background: #fff;
+}
+
+.msg-brand:focus-visible {
+  outline: 3px solid var(--adm-navy);
+  outline-offset: 2px;
+}
+
+.msg-brand.is-active {
+  border-color: rgba(32, 51, 102, 0.18);
+  background: #fff;
+  color: var(--adm-text);
+  box-shadow: 0 6px 18px rgba(32, 51, 102, 0.08);
+}
+
+.msg-brand.is-active::after {
+  opacity: 1;
+}
+
+/* The brand mark in a small rounded tile (Octogenix: the emblem of its logo). */
+.msg-brand-mark {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--soft);
+}
+
+.msg-brand-mark img {
+  width: 2rem;
+  height: 2rem;
+  object-fit: cover;
+  object-position: left center;
+}
+
+.msg-brand[data-site='jovie'] .msg-brand-mark img {
+  object-fit: contain;
+  object-position: center;
+}
+
+.msg-brand:not(.is-active) .msg-brand-mark img {
+  filter: grayscale(0.35);
+  opacity: 0.85;
+}
+
+.msg-brand-text {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 0.1rem;
+}
+
+.msg-brand-text strong {
+  color: var(--adm-navy);
+  font-size: 1.05rem;
+}
+
+.msg-brand-text small {
+  font-size: 0.85rem;
+}
+
+.msg-brand-new {
+  flex: none;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* The results heading names the inbox, with the brand accent. */
+.msg-results {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.75rem;
+}
+
+.msg-inbox {
+  padding-inline-start: 0.6rem;
+  border-inline-start: 3px solid #7ab648;
+}
+
+.msg-panel[data-site='jovie'] .msg-inbox {
+  border-inline-start-color: #fdc32d;
+}
+
+.msg-total {
+  color: var(--adm-muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+@media (max-width: 559px) {
+  .msg-brands {
+    gap: 0.5rem;
+  }
+
+  /* Narrow tabs: the mark, then the name and totals, with the new count below them. */
+  .msg-brand {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 0.35rem 0.6rem;
+    padding: 0.7rem 0.75rem;
+  }
+
+  .msg-brand-new {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .msg-brand-mark {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .msg-brand-mark img {
+    width: 1.65rem;
+    height: 1.65rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .msg-brand,
+  .msg-brand::after {
+    transition: none;
+  }
+}
