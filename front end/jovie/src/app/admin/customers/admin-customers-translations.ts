@@ -64,7 +64,7 @@ export const adminCustomersTranslations: Record<Language, Record<string, string>
     'admin.customers.orderFor': 'Open order {number}',
   },
   ar: {
-    'title.admin/customers/:id': 'عميل | إدارة أوكتوجينكس',
+    'title.admin/customers/:id': 'عميل | إدارة أوكتوجينيكس',
     'admin.customers.lead': 'حسابات العملاء، الأحدث أولًا. افتح العميل لعرض عناوينه وطلباته. هذا القسم للعرض فقط.',
     'admin.customers.search': 'البحث',
     'admin.customers.searchHint': 'الاسم أو البريد أو الهاتف',

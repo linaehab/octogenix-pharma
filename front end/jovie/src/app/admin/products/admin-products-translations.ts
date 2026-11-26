@@ -154,8 +154,8 @@ export const adminProductsTranslations: Record<Language, Record<string, string>>
     'admin.products.errAgeRange': 'The upper age must not be below the lower age.',
   },
   ar: {
-    'title.admin/products/new': 'منتج جديد | إدارة أوكتوجينكس',
-    'title.admin/products/:id': 'تعديل منتج | إدارة أوكتوجينكس',
+    'title.admin/products/new': 'منتج جديد | إدارة أوكتوجينيكس',
+    'title.admin/products/:id': 'تعديل منتج | إدارة أوكتوجينيكس',
     'admin.products.lead': 'منتجات متجر جوفي. لكل منتج حجم واحد برمز SKU وسعر ومخزون خاص به.',
     'admin.products.add': 'إضافة منتج',
     'admin.products.search': 'بحث',

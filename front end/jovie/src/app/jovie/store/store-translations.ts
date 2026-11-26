@@ -271,7 +271,7 @@ export const storeTranslations: Record<Language, Record<string, string>> = {
     'jovie.pdp.inStock': 'متوفر',
     'jovie.pdp.shippingAtCheckout': 'تظهر رسوم الشحن لمحافظتك عند إتمام الطلب.',
     'jovie.pdp.cardSafe': 'تُدخل بيانات البطاقة على صفحة مزوّد الدفع فقط، ولا نحفظها أبدًا.',
-    'jovie.pdp.important': 'معلومات هامة',
+    'jovie.pdp.important': 'معلومات مهمة',
     'jovie.pdp.description': 'الوصف',
     'jovie.pdp.moreAbout': 'المزيد عن هذا المنتج',
     'jovie.pdp.feedingGuide': 'دليل التغذية',

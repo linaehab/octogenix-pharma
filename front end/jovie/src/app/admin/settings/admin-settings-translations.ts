@@ -119,8 +119,8 @@ export const adminSettingsTranslations: Record<Language, Record<string, string>>
     'admin.store.saved': '“{name}” was saved.',
   },
   ar: {
-    'title.admin/settings/shipping': 'رسوم الشحن | إدارة أوكتوجينكس',
-    'title.admin/settings/store': 'إعدادات المتجر | إدارة أوكتوجينكس',
+    'title.admin/settings/shipping': 'رسوم الشحن | إدارة أوكتوجينيكس',
+    'title.admin/settings/store': 'إعدادات المتجر | إدارة أوكتوجينيكس',
 
     'admin.settings.crumbs': 'أنت هنا',
     'admin.settings.tabs': 'صفحات الإعدادات',

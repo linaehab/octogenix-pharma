@@ -4,10 +4,11 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { DecorShape } from '../decor-shape/decor-shape';
 
 /**
- * Feeding guide page, between the feeding chart and "How To Prepare Formula": a clip of the Jovie
- * brand film (src/assets/jovie assets/BrandMovie 1minuut.mp4, 0:30.5–0:48.5; H.264 1280 × 720 with
- * its sound, ~2.7 MB; the poster is its first frame) in a rounded frame over a pale Jovie band,
- * with the official graphic elements around it.
+ * Feeding guide page, between the feeding chart and "How To Prepare Formula": the Jovie process
+ * animation (src/assets/jovie assets/jovie shop/Jovie process animation FINAL.mp4, 1:11, encoded
+ * H.264 1920 × 1080 with its sound, ~18 MB; the poster is its "The process behind Jovie" title) in
+ * a wide rounded frame, almost the screen's width, over a pale Jovie band, with the official
+ * graphic elements at its corners.
  * It plays muted and looped while on screen (not when the visitor prefers reduced motion), with
  * buttons to pause/play and to turn the sound on/off.
  */
@@ -25,10 +26,10 @@ import { DecorShape } from '../decor-shape/decor-shape';
         <div class="frame">
           <!-- [muted] is a property binding: the attribute alone does not mute a video created by script. -->
           <video #video [muted]="muted()" loop playsinline preload="metadata"
-            poster="/assets/images/jovie/feeding-guide-film-poster.jpg"
+            poster="/assets/images/jovie/feeding-guide-process-poster.jpg"
             [attr.aria-label]="'jovie.film.label' | translate"
             (play)="playing.set(true)" (pause)="playing.set(false)">
-            <source src="/assets/images/jovie/feeding-guide-film.mp4" type="video/mp4" />
+            <source src="/assets/images/jovie/feeding-guide-process.mp4" type="video/mp4" />
           </video>
 
           <div class="controls">
@@ -60,6 +61,7 @@ import { DecorShape } from '../decor-shape/decor-shape';
 })
 export class FeedingFilm {
   private readonly document = inject(DOCUMENT);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly video = viewChild.required<ElementRef<HTMLVideoElement>>('video');
 
   protected readonly playing = signal(false);
@@ -71,13 +73,15 @@ export class FeedingFilm {
     const destroyRef = inject(DestroyRef);
     afterNextRender(() => {
       const view = this.document.defaultView;
-      const video = this.video().nativeElement;
       const reduceMotion = view?.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
       if (reduceMotion || typeof view?.IntersectionObserver !== 'function') {
         return;
       }
+      // Watches the section itself and plays the video element of the moment (robust if the view
+      // re-renders its contents).
       const observer = new view.IntersectionObserver(
         ([entry]) => {
+          const video = this.video().nativeElement;
           if (entry.isIntersecting && !this.pausedByVisitor) {
             video.play().catch(() => this.playing.set(false));
           } else if (!entry.isIntersecting) {
@@ -86,7 +90,7 @@ export class FeedingFilm {
         },
         { threshold: 0.35 },
       );
-      observer.observe(video);
+      observer.observe(this.host.nativeElement);
       destroyRef.onDestroy(() => observer.disconnect());
     });
   }

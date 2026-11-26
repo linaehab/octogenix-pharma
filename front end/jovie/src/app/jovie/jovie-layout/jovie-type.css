@@ -1,8 +1,9 @@
 /* Typography of the official jovieproducts.com site (resources/website/css/app.css), reproduced as is:
    - English: Foco Regular (400) and Foco Bold (used as 700); AlwaysInMyMilk for the handwritten
      lettering. The same files as the official site (byte for byte) and as the brand's font package.
-   - Arabic (official /ae): Tajawal Regular and Bold for text, Baloo Bhaijaan for h1–h6 headings
-     (SIL Open Font License, the files the official site serves).
+   - Arabic: Tajawal Regular and Bold (SIL Open Font License, the files the official /ae site serves),
+     for text and headings alike. The official /ae headings use Baloo Bhaijaan, whose rounded display
+     forms (the final taa marbuta, ئ, ف) read as wrong at heading sizes, so the store uses Tajawal Bold.
    - Sizes: the official type scale. From 1200px wide the official root size is 1.40625vw, so every
      size grows with the window (--jv-u is that unit; 18px at 1280px). */
 
@@ -42,14 +43,6 @@
   font-family: "Tajawal";
   src: url("/fonts/jovie/tajawal-bold.woff2") format("woff2");
   font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "BalooBhaijaan";
-  src: url("/fonts/jovie/baloo-bhaijaan-regular.woff2") format("woff2");
-  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
@@ -150,10 +143,10 @@ app-jovie-layout {
   }
 }
 
-/* Official Arabic: Tajawal for text and form fields, Baloo Bhaijaan for headings. */
+/* Arabic: Tajawal for text, form fields and headings (Bold), with clear, conventional letterforms. */
 [dir='rtl'] app-jovie-layout {
   --jv-font: "Tajawal", sans-serif;
-  --jv-font-heading: "BalooBhaijaan", cursive;
+  --jv-font-heading: "Tajawal", sans-serif;
 }
 
 app-jovie-layout :is(h1, h2, h3, h4, h5, h6) {

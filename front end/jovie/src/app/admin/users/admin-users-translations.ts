@@ -84,7 +84,7 @@ export const adminUsersTranslations: Record<Language, Record<string, string>> = 
     'admin.users.sections.support': 'contact messages, viewing orders and customers',
   },
   ar: {
-    'title.admin/users': 'المستخدمون المسؤولون | إدارة أوكتوجينكس',
+    'title.admin/users': 'المستخدمون المسؤولون | إدارة أوكتوجينيكس',
     'admin.users.lead': 'حسابات لوحة التحكم وأدوارها. المدير العام فقط يدير الحسابات، والدور يحدد الأقسام المتاحة للمسؤول.',
     'admin.users.add': 'إضافة مسؤول',
     'admin.users.search': 'بحث',

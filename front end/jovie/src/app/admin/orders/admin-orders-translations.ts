@@ -178,7 +178,7 @@ export const adminOrdersTranslations: Record<Language, Record<string, string>> =
     'admin.orders.changedMeanwhileRow': 'Order {number} changed meanwhile (for example by another admin or the payment provider), so nothing was done. The list now shows its current state.',
   },
   ar: {
-    'title.admin/orders/:number': 'طلب | إدارة أوكتوجينكس',
+    'title.admin/orders/:number': 'طلب | إدارة أوكتوجينيكس',
     'admin.orders.lead': 'طلبات العملاء، الأحدث أولًا. افتح الطلب لعرض تفاصيله واتخاذ إجراء.',
     'admin.orders.searchHint': 'رقم الطلب أو اسم العميل أو الهاتف',
     'admin.orders.status': 'حالة الطلب',

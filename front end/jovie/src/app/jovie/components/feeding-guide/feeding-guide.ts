@@ -6,12 +6,14 @@ import {
   effect,
   inject,
   input,
-  signal,
+  linkedSignal,
   untracked,
   viewChild,
   viewChildren,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { map } from 'rxjs';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import {
@@ -28,9 +30,9 @@ import { DecorShape } from '../decor-shape/decor-shape';
 
 /** Stage by age, as confirmed by the client. */
 const STAGES = [1, 2, 3] as const;
+type Stage = (typeof STAGES)[number];
 
-/** The page chart shows the feeding table by the baby's weight only (Stage 1), as the client asked. */
-const CHART_ROWS = FEEDING_ROWS.filter((row) => row.stage === 1);
+const isStage = (value: number): value is Stage => (STAGES as readonly number[]).includes(value);
 
 const fill = (template: string, values: Record<string, string | number>): string =>
   template.replace(/\{(\w+)\}/g, (match, key: string) => (key in values ? String(values[key]) : match));
@@ -39,8 +41,9 @@ const span = ([min, max]: readonly [number, number]): string => (min === max ? `
 
 /**
  * Home (summary): the age choices link to /jovieEgypt/feeding-guide?stage=N.
- * Page: the feeding chart of the Egyptian tins by the baby's weight: one card per weight row of the
- * label's feeding table in a horizontal track, chosen with the weight tabs.
+ * Page: the feeding chart of the Egyptian tins: one card per row of the labels' feeding tables in a
+ * horizontal track, chosen in one strip of tabs that runs on from Stage 1 (by the baby's weight) to
+ * Stage 2 and Stage 3 (by age), as the client asked; ?stage=N opens on that stage's first row.
  */
 @Component({
   selector: 'app-feeding-guide',
@@ -57,12 +60,13 @@ export class FeedingGuide {
   protected readonly text = computed(() => FEEDING_CHART_TEXT[this.language.currentLanguage()]);
   protected readonly pdf = computed(() => FEEDING_CHART_PDF[this.language.currentLanguage()]);
 
-  protected readonly groups = [{ stage: 1 as const, rows: CHART_ROWS }];
+  /** The tabs in one strip, grouped by stage (a fine divider between the stages). */
+  protected readonly groups = STAGES.map((stage) => ({ stage, rows: FEEDING_ROWS.filter((row) => row.stage === stage) }));
 
   /** Every card, with its values written out in the current language. */
   protected readonly cards = computed(() => {
     const text = this.text();
-    return CHART_ROWS.map((row) => {
+    return FEEDING_ROWS.map((row) => {
       const daily = dailyAmounts(row);
       const { scoopGrams, slug } = FEEDING_STAGES[row.stage];
       return {
@@ -83,8 +87,20 @@ export class FeedingGuide {
     });
   });
 
-  /** The chosen row: the first weight row until a tab is chosen or the cards are swiped. */
-  protected readonly selected = signal<string>(CHART_ROWS[0].id);
+  private readonly stageInUrl = toSignal(
+    inject(ActivatedRoute).queryParamMap.pipe(
+      map((params) => Number(params.get('stage'))),
+      map((stage): Stage => (isStage(stage) ? stage : 1)),
+    ),
+    { initialValue: 1 as Stage },
+  );
+
+  /** The chosen row: the first row of the stage in the URL until a tab is chosen or the cards are swiped. */
+  protected readonly selected = linkedSignal<string>(
+    () => FEEDING_ROWS.find((row) => row.stage === this.stageInUrl())!.id,
+  );
+
+  private readonly tabStrip = viewChild<ElementRef<HTMLElement>>('tabStrip');
 
   private readonly track = viewChild<ElementRef<HTMLElement>>('track');
   private readonly cardElements = viewChildren<ElementRef<HTMLElement>>('card');
@@ -107,6 +123,11 @@ export class FeedingGuide {
       }
       untracked(() => this.scrollTo(card));
     });
+    // Keep the chosen tab in view in the strip (it scrolls sideways on narrow screens).
+    effect(() => {
+      const id = this.selected();
+      untracked(() => this.revealTab(id));
+    });
     inject(DestroyRef).onDestroy(() => clearTimeout(this.settleTimer));
   }
 
@@ -128,11 +149,38 @@ export class FeedingGuide {
     const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     const behavior: ScrollBehavior = this.firstScroll || reduce ? 'instant' : 'smooth';
     this.firstScroll = false;
-    const trackBox = track.getBoundingClientRect();
+    const view = this.contentBox(track);
     const cardBox = card.getBoundingClientRect();
-    const rtl = getComputedStyle(track).direction === 'rtl';
-    const offset = rtl ? cardBox.right - trackBox.right : cardBox.left - trackBox.left;
+    const offset = view.rtl ? cardBox.right - view.right : cardBox.left - view.left;
     track.scrollBy({ left: offset, behavior });
+  }
+
+  /** Scrolls the tab strip sideways (never the page) so the chosen tab is fully visible. */
+  private revealTab(id: string): void {
+    const strip = this.tabStrip()?.nativeElement;
+    const tab = strip?.querySelector<HTMLElement>(`[data-row="${id}"]`);
+    if (!strip || !tab || typeof strip.scrollBy !== 'function') {
+      return;
+    }
+    const box = strip.getBoundingClientRect();
+    const tabBox = tab.getBoundingClientRect();
+    const margin = 8;
+    if (tabBox.left < box.left + margin) {
+      strip.scrollBy({ left: tabBox.left - box.left - margin });
+    } else if (tabBox.right > box.right - margin) {
+      strip.scrollBy({ left: tabBox.right - box.right + margin });
+    }
+  }
+
+  /** The track's visible area inside its side padding (the gutter before the first card). */
+  private contentBox(track: HTMLElement): { left: number; right: number; rtl: boolean } {
+    const box = track.getBoundingClientRect();
+    const style = getComputedStyle(track);
+    return {
+      left: box.left + parseFloat(style.paddingLeft || '0'),
+      right: box.right - parseFloat(style.paddingRight || '0'),
+      rtl: style.direction === 'rtl',
+    };
   }
 
   private followScroll(): void {
@@ -141,6 +189,7 @@ export class FeedingGuide {
     if (!track || !cards.length) {
       return;
     }
+    const view = this.contentBox(track);
     const trackBox = track.getBoundingClientRect();
     const visible = (card: HTMLElement) => {
       const box = card.getBoundingClientRect();
@@ -152,10 +201,9 @@ export class FeedingGuide {
     if (atEnd && current && visible(current)) {
       return;
     }
-    const rtl = getComputedStyle(track).direction === 'rtl';
     const distance = (card: HTMLElement) => {
       const box = card.getBoundingClientRect();
-      return Math.abs(rtl ? box.right - trackBox.right : box.left - trackBox.left);
+      return Math.abs(view.rtl ? box.right - view.right : box.left - view.left);
     };
     const nearest = cards.reduce((best, card) => (distance(card) < distance(best) ? card : best));
     const id = nearest.getAttribute('data-row');

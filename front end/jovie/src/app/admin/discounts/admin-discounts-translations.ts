@@ -127,8 +127,8 @@ export const adminDiscountsTranslations: Record<Language, Record<string, string>
     'admin.promo.errPerCustomer': 'The per-customer limit cannot be higher than the total.',
   },
   ar: {
-    'title.admin/discounts/products': 'خصومات المنتجات | إدارة أوكتوجينكس',
-    'title.admin/discounts/promo-codes': 'أكواد الخصم | إدارة أوكتوجينكس',
+    'title.admin/discounts/products': 'خصومات المنتجات | إدارة أوكتوجينيكس',
+    'title.admin/discounts/promo-codes': 'أكواد الخصم | إدارة أوكتوجينيكس',
 
     'admin.discounts.crumbs': 'أنت هنا',
     'admin.discounts.tabs': 'صفحات الخصومات',

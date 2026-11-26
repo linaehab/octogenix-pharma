@@ -145,7 +145,7 @@ describe('App', () => {
         ['/jovieEgypt/shop', 'Discover All Our Products', 'Shop | Jovie'],
         ['/jovieEgypt/why', 'Why Jovie Goat', 'Why Jovie Goat | Jovie'],
         ['/jovieEgypt/products', 'Discover All Our Products', 'Jovie Goat Products | Jovie'],
-        ['/jovieEgypt/feeding-guide', 'Feeding guide', 'Feeding guide | Jovie'],
+        ['/jovieEgypt/feeding-guide', 'How much formula should I feed my baby?', 'Feeding guide | Jovie'],
         ['/jovieEgypt/where-to-find', 'Where to find', 'Where to find | Jovie'],
         ['/jovieEgypt/faq', 'Frequently Asked Questions', 'FAQ | Jovie'],
       ]) {
@@ -355,29 +355,38 @@ describe('App', () => {
       expect(compiled.querySelector('.article h2')?.textContent).toBe('Goat Milk is the Right Base');
     });
 
-    it('shows the feeding chart by weight only, whatever stage the link names', async () => {
+    it('opens the feeding guide on the stage given in the link', async () => {
       const { compiled } = await open('/jovieEgypt/feeding-guide?stage=2');
 
-      expect(compiled.querySelectorAll('app-feeding-guide .tab-group').length).toBe(1);
-      expect(compiled.querySelector('app-feeding-guide .tab.is-selected')?.textContent?.trim()).toBe('Newborn');
-      expect(compiled.querySelector('app-feeding-guide .card.is-selected')?.id).toBe('feeding-under-3kg');
+      const selected = compiled.querySelector('app-feeding-guide .tab.is-selected');
+      expect(selected?.textContent?.trim()).toBe('6–8 months');
+      expect(selected?.getAttribute('data-stage')).toBe('2');
+      expect(selected?.getAttribute('aria-label')).toBe('Stage 2 · age: 6–8 months');
+      expect(compiled.querySelector('app-feeding-guide .card.is-selected')?.id).toBe('feeding-6-8m');
     });
 
-    it('shows the feeding table of the Egyptian tins by weight, with shop links and the chart PDF', async () => {
+    it('shows the feeding table of the Egyptian tins in one strip (weight, then age), with shop links and the chart PDF', async () => {
       const { fixture, compiled } = await open('/jovieEgypt/feeding-guide');
       const cards = compiled.querySelectorAll('app-feeding-guide .card');
 
-      expect(compiled.querySelectorAll('app-feeding-guide .tab').length).toBe(5);
-      expect(cards.length).toBe(5);
+      // One strip: Stage 1 by weight, then Stage 2 (three ages) and Stage 3 (one), a divider between stages.
+      expect(compiled.querySelectorAll('app-feeding-guide .tab-strip').length).toBe(1);
+      expect(compiled.querySelectorAll('app-feeding-guide .tab-strip .tab-divider').length).toBe(2);
+      expect(cards.length).toBe(9);
       expect(Array.from(compiled.querySelectorAll('app-feeding-guide .tab'), (tab) => tab.textContent?.trim())).toEqual([
         'Newborn',
         '3–3.5 kg',
         '3.5–4 kg',
         '4–5 kg',
         'Over 5 kg',
+        '6–8 months',
+        '8–10 months',
+        '10–12 months',
+        '12 months+',
       ]);
+      expect(Array.from(compiled.querySelectorAll('app-feeding-guide .tab'), (tab) => tab.getAttribute('data-stage')).join('')).toBe('111112223');
       expect(compiled.querySelector('app-feeding-guide .tab.is-selected')?.textContent?.trim()).toBe('Newborn');
-      expect(compiled.querySelector('app-feeding-guide .chart-head h2')?.textContent?.trim()).toBe("Select your baby's weight");
+      expect(compiled.querySelector('app-feeding-guide .chart-head h2')?.textContent?.trim()).toBe("Select your baby's weight or age");
 
       // Stage 1, under 3 kg: 7 feeds of 60 ml water and 2 scoops of 4.3 g -> 60.2 g a day, 5 tins a month.
       const first = cards[0].querySelectorAll('dd');
@@ -388,21 +397,29 @@ describe('App', () => {
       expect(first[4].textContent).toContain('5 tins (400 g)');
       // Over 5 kg: 5 feeds of 180 ml and 6 scoops.
       expect(cards[4].querySelectorAll('dd')[1].textContent?.trim()).toBe('180 ml');
+      // Stage 2, 10-12 months: 2-3 feeds of 210 ml and 7 scoops (the Egyptian Stage 2 tin).
+      expect(cards[7].querySelectorAll('dd')[0].textContent?.trim()).toBe('2–3');
+      expect(cards[7].querySelectorAll('dd')[1].textContent?.trim()).toBe('210 ml');
+      expect(cards[7].querySelectorAll('dd')[4].textContent).toContain('5–7 tins');
+      // Stage 3, 12 months+: 2 feeds of 150 ml and 5 scoops of 4.5 g -> 4 tins.
+      expect(cards[8].querySelectorAll('dd')[4].textContent).toContain('4 tins');
 
       const shops = Array.from(compiled.querySelectorAll('app-feeding-guide .shop'), (a) => a.getAttribute('href'));
-      expect(shops.every((href) => href === '/jovieEgypt/products/infant-goat-milk')).toBeTrue();
+      expect(shops.slice(0, 5).every((href) => href === '/jovieEgypt/products/infant-goat-milk')).toBeTrue();
+      expect(shops.slice(5, 8).every((href) => href === '/jovieEgypt/products/follow-on-goat-milk')).toBeTrue();
+      expect(shops[8]).toBe('/jovieEgypt/products/toddler-goat-milk');
 
       const download = compiled.querySelector('app-feeding-guide .download a');
       expect(download?.getAttribute('href')).toBe('/downloads/jovie/jovie-goat-feeding-chart-egypt-en.pdf');
       expect(download?.hasAttribute('download')).toBeTrue();
 
-      (compiled.querySelectorAll('app-feeding-guide .tab')[4] as HTMLButtonElement).click();
+      (compiled.querySelectorAll('app-feeding-guide .tab')[8] as HTMLButtonElement).click();
       fixture.detectChanges();
-      expect(compiled.querySelector('app-feeding-guide .card.is-selected')?.id).toBe('feeding-over-5kg');
+      expect(compiled.querySelector('app-feeding-guide .card.is-selected')?.id).toBe('feeding-12m-plus');
 
       TestBed.inject(LanguageService).setLanguage('ar');
       fixture.detectChanges();
-      expect(compiled.querySelector('app-feeding-guide .tab.is-selected')?.textContent?.trim()).toBe('أكثر من 5 كجم');
+      expect(compiled.querySelector('app-feeding-guide .tab.is-selected')?.textContent?.trim()).toBe('12 شهرًا فأكثر');
       expect(compiled.querySelector('app-feeding-guide .download a')?.getAttribute('href')).toBe(
         '/downloads/jovie/jovie-goat-feeding-chart-egypt-ar.pdf',
       );

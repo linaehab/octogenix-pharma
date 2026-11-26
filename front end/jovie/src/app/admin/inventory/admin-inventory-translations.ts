@@ -103,7 +103,7 @@ export const adminInventoryTranslations: Record<Language, Record<string, string>
     'admin.inventory.reasonName.return_restock': 'Returned to stock',
   },
   ar: {
-    'title.admin/inventory/movements': 'سجل المخزون | إدارة أوكتوجينكس',
+    'title.admin/inventory/movements': 'سجل المخزون | إدارة أوكتوجينيكس',
     'admin.inventory.lead': 'مخزون كل منتج (حجم واحد لكل منتج). يُسجَّل كل تغيير في سجل المخزون.',
     'admin.inventory.historyLink': 'سجل المخزون',
     'admin.inventory.summary': 'ملخص المخزون',

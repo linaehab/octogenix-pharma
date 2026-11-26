@@ -28,19 +28,22 @@
         <p class="chart-sub">{{ text().subtitle }}</p>
       </div>
 
-      <div class="tabs" role="group" [attr.aria-label]="text().tabsLabel">
-        @for (group of groups; track group.stage) {
-          <div class="tab-group" [attr.data-stage]="group.stage">
-            <p class="tab-group-label">{{ text().stageGroup[group.stage] }}</p>
-            <div class="tab-row">
-              @for (row of group.rows; track row.id) {
-                <button type="button" class="tab" [class.is-selected]="selected() === row.id"
-                  [attr.aria-pressed]="selected() === row.id" [attr.aria-controls]="'feeding-' + row.id"
-                  (click)="select(row)">{{ text().rows[row.id] }}</button>
-              }
-            </div>
-          </div>
-        }
+      <!-- One strip: Stage 1 by weight, then Stages 2 and 3 by age, a fine divider between stages. -->
+      <div class="tabs">
+        <div #tabStrip class="tab-strip" role="group" [attr.aria-label]="text().tabsLabel">
+          @for (group of groups; track group.stage; let first = $first) {
+            @if (!first) {
+              <span class="tab-divider" aria-hidden="true"></span>
+            }
+            @for (row of group.rows; track row.id) {
+              <button type="button" class="tab" [attr.data-row]="row.id" [attr.data-stage]="row.stage"
+                [class.is-selected]="selected() === row.id" [attr.aria-pressed]="selected() === row.id"
+                [attr.aria-controls]="'feeding-' + row.id"
+                [attr.aria-label]="text().stageGroup[row.stage] + ': ' + text().rows[row.id]"
+                (click)="select(row)">{{ text().rows[row.id] }}</button>
+            }
+          }
+        </div>
       </div>
 
       <div #track class="track" role="region" tabindex="0" [attr.aria-label]="text().cardsLabel" (scroll)="onScroll()">

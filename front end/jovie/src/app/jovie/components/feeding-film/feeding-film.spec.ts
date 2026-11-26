@@ -8,11 +8,11 @@ describe('FeedingFilm', () => {
     return fixture;
   };
 
-  it('shows the brand film clip muted, looped and inline, with its poster', () => {
+  it('shows the Jovie process animation muted, looped and inline, with its poster', () => {
     const el = render().nativeElement as HTMLElement;
     const video = el.querySelector('video')!;
-    expect(video.querySelector('source')!.getAttribute('src')).toBe('/assets/images/jovie/feeding-guide-film.mp4');
-    expect(video.getAttribute('poster')).toBe('/assets/images/jovie/feeding-guide-film-poster.jpg');
+    expect(video.querySelector('source')!.getAttribute('src')).toBe('/assets/images/jovie/feeding-guide-process.mp4');
+    expect(video.getAttribute('poster')).toBe('/assets/images/jovie/feeding-guide-process-poster.jpg');
     expect(video.muted).toBeTrue();
     expect(video.loop).toBeTrue();
     expect(video.hasAttribute('playsinline')).toBeTrue();

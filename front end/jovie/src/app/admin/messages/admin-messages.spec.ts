@@ -210,7 +210,7 @@ describe('Admin contact messages', () => {
       const list = await answer(isList, (r) => r.flush(page([])));
       await answer(isCount, totals);
       expect(list.request.params.get('site')).toBe('jovie');
-      expect(texts('.msg-brand strong')).toEqual(['أوكتوجينكس', 'جوفي']);
+      expect(texts('.msg-brand strong')).toEqual(['أوكتوجينيكس', 'جوفي']);
       expect(text('.msg-inbox')).toBe('رسائل جوفي');
       expect(text('app-admin-state')).toBe('لا توجد رسائل من متجر جوفي بعد.');
     });

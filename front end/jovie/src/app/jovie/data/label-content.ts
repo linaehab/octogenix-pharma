@@ -32,7 +32,7 @@ const INGREDIENTS: Record<FeedingStage, string> = {
 };
 
 const EN_NOTICE = 'The product should be used only after consulting a specialist doctor, when needed and in the appropriate manner for use. Always follow the preparation and storage instructions on the tin. Incorrect preparation and feeding can cause risks to your baby’s health.';
-const AR_NOTICE = 'يجب أن يستخدم المنتج فقط بعد استشارة الطبيب المختص وعند الحاجة وبالطريقة المناسبة للاستعمال. اتبعي دائمًا تعليمات التحضير والتخزين الموضحة على العلبة. قد يسبب التحضير والتغذية غير الصحيحة مخاطر صحية لطفلك.';
+const AR_NOTICE = 'يجب أن يستخدم المنتج فقط بعد استشارة الطبيب المختص وعند الحاجة وبالطريقة المناسبة للاستعمال. اتبعي دائمًا تعليمات التحضير والتخزين الموضحة على العلبة. قد يسبب التحضير والتغذية غير الصحيحين مخاطر صحية لطفلك.';
 
 const EN_FOLLOW_ON_NOTICE = `${EN_NOTICE} The product should not be given to infants under 6 months of age. Infants at this age should be given other complementary foods.`;
 const AR_FOLLOW_ON_NOTICE = `${AR_NOTICE} يجب ألا يُعطى للرضع ممن هم أقل من 6 أشهر، ويجب أن يُعطى الرضع في هذا العمر أغذية تكميلية أخرى.`;
@@ -41,7 +41,7 @@ const EN_FOLLOW_ON_ADVICE = 'When preparing GOAT follow-on formula, first measur
 const AR_FOLLOW_ON_ADVICE = 'عند تحضير تركيبة المتابعة من حليب الماعز، قيسي أولًا الكمية الصحيحة من الماء قبل إضافة العدد المطلوب من المكاييل إلى الزجاجة. تأكدي من تنظيف أسنان طفلك بعد آخر رضعة.';
 
 const EN_FOLLOW_ON_STORAGE = 'Store Goat follow-on milk formula in a cool and dry place (not in the refrigerator). Store in the closed container, away from direct sunlight. Use within 3 weeks after opening.';
-const AR_FOLLOW_ON_STORAGE = 'يُخزَّن حليب الماعز للمتابعة في مكان بارد وجاف (ليس في الثلاجة)، في العلبة مغلقة وبعيدًا عن أشعة الشمس المباشرة. يُستخدم في غضون ثلاثة أسابيع بعد الفتح.';
+const AR_FOLLOW_ON_STORAGE = 'يُخزَّن حليب الماعز للمتابعة في مكان بارد وجاف (ليس في الثلاجة)، والعلبة مغلقة، بعيدًا عن أشعة الشمس المباشرة. يُستخدم في غضون ثلاثة أسابيع بعد الفتح.';
 
 export const LABEL_CONTENT: Record<Language, LabelText> = {
   en: {
@@ -85,7 +85,7 @@ export const LABEL_CONTENT: Record<Language, LabelText> = {
         ingredients: INGREDIENTS[1],
         allergens: 'الحليب، السمك',
         friendlyAdvice: 'عند تحضير تركيبة الرضع من حليب الماعز، قيسي أولًا الكمية الصحيحة من الماء قبل إضافة العدد المطلوب من المكاييل إلى الزجاجة.',
-        storage: 'يُخزَّن حليب الماعز للرضع في مكان بارد وجاف (ليس في الثلاجة)، في العلبة مغلقة وبعيدًا عن أشعة الشمس المباشرة. يُستخدم في غضون ثلاثة أسابيع بعد الفتح.',
+        storage: 'يُخزَّن حليب الماعز للرضع في مكان بارد وجاف (ليس في الثلاجة)، والعلبة مغلقة، بعيدًا عن أشعة الشمس المباشرة. يُستخدم في غضون ثلاثة أسابيع بعد الفتح.',
         scoopGrams: 4.3,
       },
       2: { importantNotice: AR_FOLLOW_ON_NOTICE, ingredients: INGREDIENTS[2], allergens: 'الحليب، السمك', friendlyAdvice: AR_FOLLOW_ON_ADVICE, storage: AR_FOLLOW_ON_STORAGE, scoopGrams: 4.3 },

@@ -425,7 +425,7 @@ const translations: Record<Language, Record<string, string>> = {
       'تقديم خدمات التمثيل التجاري والوكالة للمصنعين والموردين.',
     'services.supplierMarketingTitle': 'خدمات التسويق',
     'services.supplierMarketingDescription':
-      'وضع الاستراتيجيات التسويقية والترويجية للمنتجات الدوائية لزيادة مبيعاتها وصولاً للعملاء.',
+      'وضع الاستراتيجيات التسويقية والترويجية للمنتجات الدوائية لزيادة مبيعاتها والوصول إلى العملاء.',
     'services.supplierImportTitle': 'الاستيراد',
     'services.supplierImportDescription':
       'إدارة عمليات التخليص واستيراد الأدوية والمستلزمات من الخارج.',
@@ -476,7 +476,7 @@ const translations: Record<Language, Record<string, string>> = {
     'approach.commercialText': 'دعم الحضور في السوق من خلال مبيعات وتسويق مركّزين ومراجعة مستمرة للأداء.',
     'quality.kicker': 'التزامنا بالجودة',
     'quality.title': 'معيار واضح لممارسات التخزين والتوزيع.',
-    'quality.standard': 'ممارسات التخزين والتوزيع الجيد (GSDP)',
+    'quality.standard': 'ممارسات التخزين والتوزيع الجيدة (GSDP)',
     'leadership.kicker': 'القيادة',
     'leadership.title': 'فريق القيادة',
     'leadership.description': 'الأشخاص الذين يقودون أوكتوجينيكس فارما.',
@@ -532,7 +532,7 @@ const translations: Record<Language, Record<string, string>> = {
     'contact.submit': 'إرسال الرسالة',
     'footer.tagline': 'حلول صيدلانية موثوقة لرعاية صحية أفضل.',
     'footer.navigation': 'روابط التذييل',
-    'footer.social': 'أوكتوجينكس على التواصل الاجتماعي',
+    'footer.social': 'أوكتوجينيكس على التواصل الاجتماعي',
     'footer.social.facebook': 'فيسبوك (يفتح في تبويب جديد)',
     'footer.social.instagram': 'إنستجرام (يفتح في تبويب جديد)',
     'footer.social.linkedin': 'لينكدإن (يفتح في تبويب جديد)',

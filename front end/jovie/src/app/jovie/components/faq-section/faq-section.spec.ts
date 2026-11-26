@@ -35,7 +35,7 @@ describe('FaqSection', () => {
 
     language.setLanguage('ar');
     fixture.detectChanges();
-    expect(element.querySelector('.group-title')?.textContent?.trim()).toBe('كيفية الاستخدام؟');
+    expect(element.querySelector('.group-title')?.textContent?.trim()).toBe('طريقة الاستخدام');
     expect(element.querySelectorAll('details').length).toBe(17);
     expect(element.textContent).toContain('أين يمكنني شراء منتجات «جوفي»؟');
   });

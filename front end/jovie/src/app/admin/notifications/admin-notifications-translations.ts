@@ -159,8 +159,8 @@ export const adminNotificationsTranslations: Record<Language, Record<string, str
     'admin.audit.actionName.admin_users.updated': 'Admin account updated',
   },
   ar: {
-    'title.admin/notifications': 'الإشعارات | إدارة أوكتوجينكس',
-    'title.admin/audit-log': 'سجل النشاط | إدارة أوكتوجينكس',
+    'title.admin/notifications': 'الإشعارات | إدارة أوكتوجينيكس',
+    'title.admin/audit-log': 'سجل النشاط | إدارة أوكتوجينيكس',
 
     'admin.notifications.bell': 'الإشعارات',
     'admin.notifications.bellUnread': 'الإشعارات، {count} غير مقروء',

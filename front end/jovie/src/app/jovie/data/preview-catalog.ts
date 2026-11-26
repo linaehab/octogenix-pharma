@@ -70,7 +70,7 @@ export const PREVIEW_PRODUCTS: ApiProduct[] = [
     { en: 'Stage 1 · 0–6 months', ar: 'المرحلة 1 · من الولادة حتى 6 أشهر' },
     {
       en: 'Formula based on whole organic goat milk. Made in Denmark.',
-      ar: 'تركيبة أساسها حليب ماعز عضوي كامل، صنع في الدنمارك.',
+      ar: 'تركيبة أساسها حليب ماعز عضوي كامل الدسم، صُنعت في الدنمارك.',
     },
     [0, 6],
     1200,
@@ -80,10 +80,10 @@ export const PREVIEW_PRODUCTS: ApiProduct[] = [
     2,
     'jovie-organic-follow-on-milk-stage-2',
     { en: 'Jovie Organic Follow-on Milk - Stage 2', ar: 'تركيبة حليب جوفي العضوي للمتابعة' },
-    { en: 'Stage 2 · 6–12 months', ar: 'المرحلة 2 · من 6 إلى 12 شهراً' },
+    { en: 'Stage 2 · 6–12 months', ar: 'المرحلة 2 · من 6 إلى 12 شهرًا' },
     {
       en: 'Follow-on formula made from organic goat milk. Made in Denmark.',
-      ar: 'تركيبة متابعة من حليب الماعز العضوي، صنع في الدنمارك.',
+      ar: 'تركيبة متابعة من حليب الماعز العضوي، صُنعت في الدنمارك.',
     },
     [6, 12],
     1150,
@@ -99,7 +99,7 @@ export const PREVIEW_PRODUCTS: ApiProduct[] = [
     { en: 'Stage 3 · 1–3 years', ar: 'المرحلة 3 · من 1 إلى 3 سنوات' },
     {
       en: 'Advanced follow-on formula for toddlers, made from organic goat milk. Made in Denmark.',
-      ar: 'تركيبة متابعة متقدمة للأطفال الصغار من حليب الماعز العضوي، صنع في الدنمارك.',
+      ar: 'تركيبة متابعة متقدمة للأطفال الصغار من حليب الماعز العضوي، صُنعت في الدنمارك.',
     },
     [12, 36],
     1050,

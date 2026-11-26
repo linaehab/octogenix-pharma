@@ -213,7 +213,7 @@ export const adminWebsiteTranslations: Record<Language, Record<string, string>> 
     'admin.website.content.list.about.leadership': 'Leadership',
   },
   ar: {
-    'title.admin/website/brands': 'علاماتنا التجارية | إدارة أوكتوجينكس',
+    'title.admin/website/brands': 'علاماتنا التجارية | إدارة أوكتوجينيكس',
     'admin.website.crumbs': 'أنت هنا',
     'admin.website.tabs': 'صفحات موقع الشركة',
     'admin.website.tab.brands': 'علاماتنا التجارية',
@@ -255,7 +255,7 @@ export const adminWebsiteTranslations: Record<Language, Record<string, string>> 
     'admin.website.uploadFailed': 'تعذّر رفع الصورة. حاول مرة أخرى.',
 
     'admin.website.brands.title': 'علاماتنا التجارية',
-    'admin.website.brands.lead': 'العلامات التجارية الظاهرة في قسم «علاماتنا التجارية» في موقع أوكتوجينكس، بهذا الترتيب. تظهر العلامات المنشورة فقط.',
+    'admin.website.brands.lead': 'العلامات التجارية الظاهرة في قسم «علاماتنا التجارية» في موقع أوكتوجينيكس، بهذا الترتيب. تظهر العلامات المنشورة فقط.',
     'admin.website.brands.add': 'إضافة علامة تجارية',
     'admin.website.brands.searchHint': 'الاسم أو العنوان',
     'admin.website.brands.count': '{shown} من {total} علامة · {published} منشورة',
@@ -306,7 +306,7 @@ export const adminWebsiteTranslations: Record<Language, Record<string, string>> 
     'admin.website.brands.created': 'تم إنشاء {name}.',
 
     'admin.website.services.title': 'الخدمات',
-    'admin.website.services.lead': 'الخدمات في تبويبي قسم الخدمات في موقع أوكتوجينكس، بهذا الترتيب. تظهر الخدمات المنشورة فقط.',
+    'admin.website.services.lead': 'الخدمات في تبويبي قسم الخدمات في موقع أوكتوجينيكس، بهذا الترتيب. تظهر الخدمات المنشورة فقط.',
     'admin.website.services.add': 'إضافة خدمة',
     'admin.website.services.categories': 'تبويب الخدمات',
     'admin.website.services.category.customers': 'العملاء',
@@ -335,7 +335,7 @@ export const adminWebsiteTranslations: Record<Language, Record<string, string>> 
     'admin.website.services.saved': 'تم حفظ {name} ويظهر التغيير على الموقع.',
 
     'admin.website.company.title': 'بيانات الشركة',
-    'admin.website.company.lead': 'بيانات التواصل وموقع الخريطة وروابط التواصل الاجتماعي والعنوان الظاهرة في تذييل موقع أوكتوجينكس وصفحة التواصل.',
+    'admin.website.company.lead': 'بيانات التواصل وموقع الخريطة وروابط التواصل الاجتماعي والعنوان الظاهرة في تذييل موقع أوكتوجينيكس وصفحة التواصل.',
     'admin.website.company.secContact': 'بيانات التواصل والخريطة والروابط الاجتماعية',
     'admin.website.company.phones': 'أرقام الهاتف',
     'admin.website.company.phoneN': 'رقم الهاتف {n}',
@@ -362,7 +362,7 @@ export const adminWebsiteTranslations: Record<Language, Record<string, string>> 
     'admin.website.company.textsSaved': 'تم حفظ العنوان وسطر التذييل ويظهران على الموقع.',
 
     'admin.website.content.title': 'محتوى الصفحات',
-    'admin.website.content.lead': 'نصوص وصور وقوائم صفحات موقع أوكتوجينكس المتفق على أنها قابلة للتعديل. لا يتغير تصميم الصفحات.',
+    'admin.website.content.lead': 'نصوص وصور وقوائم صفحات موقع أوكتوجينيكس المتفق على أنها قابلة للتعديل. لا يتغير تصميم الصفحات.',
     'admin.website.content.section': 'قسم الصفحة',
     'admin.website.content.sectionHelp': 'اختر قسمًا لعرض نصوصه وصوره وقوائمه.',
     'admin.website.content.texts': 'النصوص والصور: {section}',

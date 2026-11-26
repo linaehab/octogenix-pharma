@@ -387,7 +387,7 @@ return [
             'group' => 'about.quality',
             'type' => 'text',
             'en' => 'GSDP — Good Storage and Distribution Practices',
-            'ar' => 'ممارسات التخزين والتوزيع الجيد (GSDP)',
+            'ar' => 'ممارسات التخزين والتوزيع الجيدة (GSDP)',
         ],
         'values.kicker' => [
             'group' => 'values',

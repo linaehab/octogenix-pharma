@@ -436,3 +436,11 @@ app-corporate-layout .route-content > router-outlet + * {
     animation: none !important;
   }
 }
+
+/*
+ * Arabic letters are joined: letter spacing (used for English labels, buttons and headings) would
+ * pull them apart, so it never applies when the site is in Arabic.
+ */
+[dir='rtl'] body * {
+  letter-spacing: normal !important;
+}
