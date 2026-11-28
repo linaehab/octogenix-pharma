@@ -1,5 +1,5 @@
 <div class="band">
-  <nav class="jv-container crumbs" [attr.aria-label]="'jovie.pdp.breadcrumb' | translate">
+  <nav class="wide crumbs" [attr.aria-label]="'jovie.pdp.breadcrumb' | translate">
     <ol>
       <li><a routerLink="/jovieEgypt">{{ 'jovie.pdp.home' | translate }}</a></li>
       <li><a routerLink="/jovieEgypt/shop">{{ 'jovie.nav.shop' | translate }}</a></li>
@@ -29,7 +29,7 @@
   }
   @default {
     @let p = product()!;
-    <section class="jv-container main" [attr.data-tone]="tone()" aria-labelledby="pdp-title">
+    <section class="wide main" [attr.data-tone]="tone()" aria-labelledby="pdp-title">
       <app-shop-gallery class="gallery" [images]="images()" [zoomLabel]="'jovie.pdp.zoom' | translate" />
 
       <div class="buy">
@@ -188,6 +188,9 @@
         </div>
       </div>
     </section>
+
+    <!-- Brand story (client's reference), before "Why Jovie Goat". -->
+    <app-shop-story />
 
     <app-shop-highlights [title]="'jovie.pdp.highlights' | translate" [items]="usps()" />
 

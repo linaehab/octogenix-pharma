@@ -1,18 +1,17 @@
 import { Component, computed, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { BRAND_SECTIONS } from '../../data/brand-sections';
 
 /**
  * "Jovie Goat Organic baby formula — Naturally good, enriched with love", after section-jovie-pros
  * of jovieproducts.eu: the tin with the official decoration (cloud, snowflake, rings), the heart
- * and check lists, the Jovie logo on wide screens and the "Jovie's Promise" button. The official
+ * and check lists and the Jovie logo on wide screens (the "Jovie's Promise" button was removed at the
+ * client's request). The official
  * picture shows the Dutch 800 g tin, which is not sold in Egypt, so the Egyptian Stage 2 tin is
  * used inside the same decoration.
  */
 @Component({
   selector: 'app-products-pros',
-  imports: [RouterLink],
   template: `
     <section class="pros" aria-labelledby="products-pros-title">
       <div class="container">
@@ -39,7 +38,6 @@ import { BRAND_SECTIONS } from '../../data/brand-sections';
             </ul>
           </div>
         </div>
-        <p class="buttons"><a class="pill" routerLink="/jovieEgypt/why/without-promise">{{ text().button }}</a></p>
       </div>
     </section>
   `,

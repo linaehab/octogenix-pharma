@@ -126,36 +126,6 @@ li::before {
   background-image: url('/assets/images/jovie/brand/checkmark.svg');
 }
 
-.buttons {
-  margin: -2rem 0 0;
-  text-align: center;
-}
-
-.pill {
-  display: inline-flex;
-  line-height: 1.2;
-  align-items: center;
-  justify-content: center;
-  min-height: 48px;
-  padding: 0.5rem 1rem;
-  border-radius: 25px;
-  background: var(--pros-blue);
-  color: #fff;
-  font-size: 1.25rem;
-  font-weight: 700;
-  text-decoration: none;
-  text-transform: uppercase;
-}
-
-.pill:hover {
-  background: #0d3f86;
-}
-
-.pill:focus-visible {
-  outline: 3px solid var(--pros-blue);
-  outline-offset: 3px;
-}
-
 @media (min-width: 768px) {
   .pros {
     padding: 4rem 0 2rem;
@@ -193,12 +163,6 @@ li::before {
   li::before {
     width: 2.5rem;
     height: 2.5rem;
-  }
-
-  .pill {
-    padding: 0.7rem 2rem;
-    font-size: 1.5rem;
-    letter-spacing: 0.1rem;
   }
 }
 

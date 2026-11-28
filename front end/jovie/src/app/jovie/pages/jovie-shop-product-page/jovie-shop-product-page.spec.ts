@@ -68,7 +68,34 @@ describe('JovieShopProductPage', () => {
     expect(element.querySelector('h1')?.textContent?.trim()).toBe('Jovie Organic Infant Milk - Stage 1');
     expect(element.querySelector('.price')?.textContent).toContain('500');
     expect(element.querySelector('.rating small')?.textContent).toContain('Preview rating');
-    expect(element.querySelectorAll('app-shop-gallery .thumbs button').length).toBe(5);
+    // Stage 1's own photos once each, in the kabrita.eu grid: a large square beside two small ones.
+    const tiles = Array.from(element.querySelectorAll('app-shop-gallery .tile'));
+    expect(tiles.map((tile) => tile.querySelector('img')?.getAttribute('src'))).toEqual([
+      '/assets/images/jovie/shop/product/stage-1-decorative.webp',
+      '/assets/images/jovie/shop/product/stage-1-tin.webp',
+      '/assets/images/jovie/shop/product/stage-1-scoop.webp',
+    ]);
+    expect(tiles.map((tile) => tile.className)).toEqual(['tile tile--big', 'tile tile--small', 'tile tile--small']);
+    expect(tiles[0].querySelector('a')?.getAttribute('href')).toBe('/assets/images/jovie/shop/product/stage-1-decorative-zoom.webp');
+
+    // The brand story comes right before "Why Jovie Goat".
+    const story = element.querySelector('app-shop-story')!;
+    expect(story.nextElementSibling?.tagName).toBe('APP-SHOP-HIGHLIGHTS');
+    expect(story.querySelector('.page-title')?.textContent?.trim()).toBe("Jovie's Promise");
+    expect(story.querySelector('.band--promise')?.textContent).toContain('the best choices');
+    expect(story.querySelector('.goats img')?.getAttribute('src')).toBe('/assets/images/jovie/shop/product/goats-path.webp');
+    expect(story.querySelector('.band--choices')?.textContent).toContain('palm oil, maltodextrin and soy');
+    expect(story.querySelector('.band--choices .pattern')?.getAttribute('src')).toContain('/official/patterns/');
+    expect(Array.from(story.querySelectorAll('.benefit h3'), (h) => h.textContent?.trim())).toEqual(['Full fat milk goodness', 'Organic', 'Pure & Natural']);
+    expect(Array.from(story.querySelectorAll('.benefit:last-child .checks li'), (li) => li.textContent?.trim())).toEqual([
+      'Without palm oil',
+      'Without soy',
+      'Without maltodextrin',
+    ]);
+    // The three illustrated points and "More about us" were removed at the client's request.
+    expect(story.querySelector('.usps, .pill')).toBeNull();
+    // Stops at Pure & Natural: nothing after it from the original page.
+    expect(story.textContent).not.toContain('Jovie offers more');
     expect(Array.from(element.querySelectorAll('.panels details summary'), (s) => s.textContent?.trim())).toEqual([
       'Important information',
       'Description',

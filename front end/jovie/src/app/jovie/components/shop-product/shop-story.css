@@ -1,0 +1,374 @@
+/*
+ * After the stylesheets of jovieproducts.eu/en/pages/jovies-promise: theme blue #002e6d, grey
+ * #f5f5f5, container 768 / 976 / 1280 px with 1.5rem padding, rich-text headings and text,
+ * illustrations.css for the hearts and the pale decoration, section-jovie-image for the goats.
+ */
+:host {
+  --story-blue: #002e6d;
+  --story-grey: #f5f5f5;
+  display: block;
+  overflow: hidden;
+  color: var(--story-blue);
+}
+
+.story {
+  position: relative;
+}
+
+/* "Jovie's Promise" (main-page-title). */
+.page-title {
+  margin: 2rem 0 1.5rem;
+  padding-inline: 1.5rem;
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 2.5rem;
+  text-align: center;
+}
+
+/* Grey rich-text bands, centred (the promise; Say YES / Say NO). */
+.band {
+  position: relative;
+  isolation: isolate;
+  background: var(--story-grey);
+}
+
+.statement {
+  position: relative;
+  max-width: 50rem;
+  margin: 0 auto;
+  padding: 1.25rem 1.5rem;
+  font-size: 2rem;
+  line-height: 2rem;
+  text-align: center;
+}
+
+.statement strong {
+  font-weight: 700;
+}
+
+.band--choices .statement {
+  padding-block: 1.5rem;
+}
+
+/* The hearts: the official heart shape in the original colours. */
+.heart {
+  position: absolute;
+  z-index: -1;
+  display: block;
+  aspect-ratio: 358 / 400;
+  -webkit-mask: url('/assets/images/jovie/shapes/heart-red.png') center / contain no-repeat;
+  mask: url('/assets/images/jovie/shapes/heart-red.png') center / contain no-repeat;
+}
+
+.heart--yellow {
+  background: #ffb711;
+}
+
+.heart--pink {
+  background: #e076a1;
+}
+
+.heart--green {
+  background: #00aba6;
+}
+
+/* heart-yellow-right: over the band's lower edge on phones, beside the text from tablets. */
+.heart--promise {
+  z-index: 1;
+  right: 3rem;
+  bottom: -1rem;
+  width: 2.5rem;
+}
+
+/* The goats across the page (section-jovie-image: cover, at most 75 % of the screen height). */
+.goats {
+  margin: 0;
+}
+
+.goats img {
+  display: block;
+  width: 100%;
+  height: max(350px, min(69vw, 75vh));
+  object-fit: cover;
+}
+
+/* The pale decoration of the Say YES band: the official Jovie pattern toned to light grey (#ebebeb). */
+.pattern {
+  position: absolute;
+  z-index: -1;
+  display: none;
+  height: auto;
+  pointer-events: none;
+  filter: brightness(0);
+  opacity: 0.2;
+}
+
+.pattern--cloud {
+  top: -2rem;
+  right: 4rem;
+  width: 10rem;
+}
+
+.pattern--flower {
+  bottom: 0;
+  left: 0;
+  width: 10rem;
+}
+
+/* The white rich-text sections, each with its heart beside the heading. */
+.benefits {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+  background: #fff;
+}
+
+.benefit {
+  position: relative;
+  padding-block: 2.25rem 1.125rem;
+  text-align: start;
+}
+
+.benefit + .benefit {
+  padding-top: 1.125rem;
+}
+
+.benefit[data-heart='yellow'] {
+  padding-block: 3.125rem 2.875rem;
+}
+
+.benefit .heart {
+  top: 1rem;
+  inset-inline-start: 0.5rem;
+  width: 2rem;
+}
+
+.benefit[data-heart='yellow'] .heart {
+  top: 2rem;
+}
+
+.benefit h3 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.text {
+  margin-top: 1rem;
+  font-size: 1.15rem;
+  line-height: 1.75rem;
+}
+
+.text p,
+.statement {
+  letter-spacing: normal;
+}
+
+/* The Jovie type sets every paragraph's size: here the text keeps the original rich-text size. */
+.text p {
+  margin: 0 0 1rem;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.text p:last-child {
+  margin-bottom: 0;
+}
+
+.text strong {
+  font-weight: 700;
+}
+
+/* "Without ..." with the official red check mark in front. */
+.checks {
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.checks li {
+  position: relative;
+  padding-block: 0.25rem;
+  padding-inline-start: 2.5rem;
+  font-size: 1.1rem;
+}
+
+.checks li::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  inset-inline-start: 0;
+  width: 1.8rem;
+  height: 1.8rem;
+  background: url('/assets/images/jovie/brand/checkmark.svg') center / contain no-repeat;
+  transform: translateY(-50%);
+}
+
+@media (min-width: 768px) {
+  .page-title {
+    margin-top: 1rem;
+    padding-block: 1.5rem;
+    margin-bottom: 1rem;
+    line-height: 1;
+  }
+
+  .statement {
+    font-size: 2.5rem;
+    line-height: 2.75rem;
+  }
+
+  .band--choices .statement {
+    padding-block: 2rem;
+  }
+
+  .heart--promise {
+    z-index: -1;
+    top: 1rem;
+    right: 0;
+    bottom: auto;
+    width: 7rem;
+  }
+
+  .pattern {
+    display: block;
+  }
+
+  /* The column leaves room for the hearts beside it (the original lets them run off narrow screens). */
+  .benefits {
+    max-width: min(768px, 100% - 7rem);
+  }
+
+  .band--promise .statement {
+    padding-inline: 7.5rem;
+  }
+
+  .benefit {
+    padding-block: 5rem 2.5rem;
+  }
+
+  .benefit + .benefit {
+    padding-top: 2.5rem;
+  }
+
+  .benefit[data-heart='yellow'] {
+    padding-block: 7rem 6.5rem;
+  }
+
+  .benefit--end {
+    text-align: end;
+  }
+
+  .benefit .heart {
+    inset-inline-start: -3rem;
+    width: 5rem;
+  }
+
+  .benefit--end .heart {
+    inset-inline-start: auto;
+    inset-inline-end: -3rem;
+    width: 6rem;
+  }
+
+  .benefit[data-heart='pink'] .heart {
+    top: 2rem;
+  }
+
+  .benefit[data-heart='green'] .heart {
+    top: 1rem;
+  }
+
+  .benefit[data-heart='yellow'] .heart {
+    top: 4rem;
+  }
+
+  .benefit h3 {
+    font-size: 3rem;
+  }
+
+  .text {
+    margin-top: 2rem;
+    font-size: 1.35rem;
+    line-height: 2.25rem;
+  }
+
+  .checks li {
+    padding-inline-start: 3.5rem;
+    font-size: 1.6rem;
+  }
+
+  .checks li::before {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+
+@media (min-width: 976px) {
+  .page-title {
+    font-size: 4rem;
+  }
+
+  .heart--promise {
+    right: 5rem;
+  }
+
+  .benefits {
+    max-width: min(976px, 100% - 7rem);
+  }
+}
+
+/* Wide screens: hearts 8rem beside the text (left/right -9rem); the column leaves room for them. */
+@media (min-width: 1280px) {
+  .heart--promise {
+    right: 7rem;
+  }
+
+  .benefits {
+    max-width: min(1280px, 100% - 20rem);
+  }
+
+  .benefit .heart {
+    inset-inline-start: -9rem;
+    width: 8rem;
+  }
+
+  .benefit--end .heart {
+    inset-inline-start: auto;
+    inset-inline-end: -9rem;
+    width: 8rem;
+  }
+
+  /* The pattern, very light, in the wide white margins, away from the hearts. */
+  .pattern--white-a {
+    top: 3rem;
+    inset-inline-end: -10rem;
+    width: 8rem;
+    transform: rotate(14deg);
+  }
+
+  .pattern--white-b {
+    top: 48%;
+    inset-inline-start: -10rem;
+    width: 8rem;
+  }
+}
+
+@media (max-width: 1279px) {
+  .pattern--white-a,
+  .pattern--white-b {
+    display: none;
+  }
+}
+
+/* RTL: the decoration does not mirror, the hearts follow the text (logical properties above). */
+:host-context([dir='rtl']) .pattern--cloud {
+  right: auto;
+  left: 4rem;
+}
+
+:host-context([dir='rtl']) .pattern--flower {
+  left: auto;
+  right: 0;
+}

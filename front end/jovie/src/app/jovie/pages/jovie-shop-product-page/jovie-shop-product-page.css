@@ -35,12 +35,18 @@
   text-align: center;
 }
 
-/* Gallery beside the buy box (kabrita.com product page). */
+/* kabrita.eu widths: photo grid 794 px, buy box 407 px. */
+.wide {
+  width: min(80rem, 100% - 4rem);
+  margin-inline: auto;
+}
+
+/* Photo grid beside the buy box (kabrita.eu product page). */
 .main {
   --tone-soft: #fff3cf;
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  gap: clamp(1.5rem, 4vw, 3.5rem);
+  grid-template-columns: minmax(0, 794fr) minmax(0, 407fr);
+  gap: clamp(2rem, 5.5vw, 5rem);
   align-items: start;
   padding-block: 2rem clamp(3rem, 7vw, 5rem);
 }
@@ -51,11 +57,6 @@
 
 .main[data-tone='blue'] {
   --tone-soft: #e2f3f4;
-}
-
-.gallery {
-  position: sticky;
-  top: calc(var(--jv-header-height) + 1rem);
 }
 
 .rating,
@@ -330,13 +331,13 @@ td {
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
-  .gallery {
-    position: static;
-  }
 }
 
 @media (max-width: 599px) {
+  .wide {
+    width: min(80rem, 100% - 2rem);
+  }
+
   .grid {
     grid-template-columns: 1fr;
   }

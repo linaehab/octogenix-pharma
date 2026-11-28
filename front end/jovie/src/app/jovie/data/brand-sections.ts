@@ -17,7 +17,6 @@ export interface BrandSectionsText {
     titleStrong: string;
     hearts: string[];
     checks: string[];
-    button: string;
     logo: string;
   };
   about: {
@@ -37,7 +36,6 @@ export const BRAND_SECTIONS: Record<Language, BrandSectionsText> = {
       titleStrong: 'Naturally good, enriched with love',
       hearts: ['whole goat milk as the main ingredient', 'naturally organic', 'Dutch brand, made in Denmark'],
       checks: ['without palm oil', 'without soy', 'without maltodextrin'],
-      button: "Jovie's Promise",
       logo: 'Jovie',
     },
     about: {
@@ -59,7 +57,6 @@ export const BRAND_SECTIONS: Record<Language, BrandSectionsText> = {
       titleStrong: 'جيدة بطبيعتها، مُعدّة بكل حب',
       hearts: ['حليب الماعز الكامل هو المكوّن الرئيسي', 'عضوية بطبيعتها', 'علامة هولندية، مصنوعة في الدنمارك'],
       checks: ['بدون زيت النخيل', 'بدون صويا', 'بدون مالتوديكسترين'],
-      button: 'وعد جوفي',
       logo: 'جوفي',
     },
     about: {

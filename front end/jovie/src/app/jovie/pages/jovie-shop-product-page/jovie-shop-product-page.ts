@@ -27,6 +27,7 @@ import { FamilyReviews } from '../../components/shop-product/family-reviews';
 import { SHOW_FAMILY_REVIEWS } from '../../data/family-reviews';
 import { ShopReviews } from '../../components/shop-product/shop-reviews';
 import { ShopHighlights } from '../../components/shop-product/shop-highlights';
+import { ShopStory } from '../../components/shop-product/shop-story';
 import { ShopStickyBar } from '../../components/shop-product/shop-sticky-bar';
 import {
   FEEDING_CHART_PDF,
@@ -41,18 +42,34 @@ import { JovieCatalogService } from '../../data/jovie-catalog.service';
 import { ApiProduct, ApiProductVariant, Money } from '../../data/jovie-product.models';
 import { LABEL_CONTENT } from '../../data/label-content';
 import { PREVIEW_PRODUCTS } from '../../data/preview-catalog';
-import { PRODUCTS, PRODUCT_VIEWS, productImage, productLink } from '../../data/products-content';
+import { PRODUCT_PHOTO_ALT } from '../../data/product-story';
+import { PRODUCTS, productLink } from '../../data/products-content';
 import { CartService } from '../../store/cart.service';
 import { TestModeNotice } from '../../store/test-mode-notice';
 
 const MAX_QUANTITY = 99;
+
+/**
+ * Each stage's own photos, every one once, all on the stage's background colour as on kabrita.eu
+ * (yellow, pink, blue; assets/jovie assets/jovie shop, square web copies in images/jovie/shop/product).
+ * Photos on another colour (scoop on yellow for Stages 2 and 3) or with several stages (duo, triple
+ * stack) are left out. A last single photo is shown wide, from its 2 : 1 copy (-wide).
+ */
+const STAGE_PHOTOS: Record<1 | 2 | 3, readonly ('decorative' | 'tin' | 'goat' | 'scoop')[]> = {
+  1: ['decorative', 'tin', 'scoop'],
+  2: ['decorative', 'tin', 'goat', 'scoop'],
+  3: ['decorative', 'tin', 'goat', 'scoop'],
+};
+const WIDE_PHOTOS: readonly string[] = ['scoop'];
 const span = ([a, b]: readonly [number, number]) => (a === b ? `${a}` : `${a}–${b}`);
 
 /**
  * /jovieEgypt/shop/:slug — the shop product page, in the order of the kabrita.com product page:
  * breadcrumb; gallery beside rating, name, price, key facts, size, quantity, Add to Cart and
  * availability; then information panels (important information, description, feeding guide,
- * ingredients, preparation & storage, nutrition), highlights, all products by age and the FAQ.
+ * ingredients, preparation & storage, nutrition), the brand story (client's reference: promise, goats,
+ * Say YES / Say NO, full fat milk, organic), highlights, all products by age and the FAQ.
+ * The gallery shows the product's own photos (STAGE_PHOTOS).
  *
  * Name, price, sizes and availability come from the API; every text is the Egyptian label
  * (data/label-content.ts), the label's feeding table (data/feeding-chart.ts) or the official
@@ -60,7 +77,7 @@ const span = ([a, b]: readonly [number, number]) => (a === b ? `${a}` : `${a}–
  */
 @Component({
   selector: 'app-jovie-shop-product-page',
-  imports: [RouterLink, TranslatePipe, ShopGallery, ShopRating, ShopReviews, QuantityStepper, ShopHighlights, ShopStickyBar, ProductCard, FaqSection, TestModeNotice, FamilyReviews],
+  imports: [RouterLink, TranslatePipe, ShopGallery, ShopRating, ShopReviews, QuantityStepper, ShopStory, ShopHighlights, ShopStickyBar, ProductCard, FaqSection, TestModeNotice, FamilyReviews],
   templateUrl: './jovie-shop-product-page.html',
   styleUrl: './jovie-shop-product-page.css',
 })
@@ -108,21 +125,22 @@ export class JovieShopProductPage {
   });
   protected readonly usps = computed(() => this.official().detail.usps);
 
-  /** Tin views of the Egyptian packaging, then the two-tin photo (official assets). */
+  /** The product's own photos in the kabrita.eu grid (the tin with its decoration first, as on the shop card). */
   protected readonly images = computed<GalleryImage[]>(() => {
     const stage = this.stage();
-    const official = this.official().detail;
     if (!stage) {
       return [];
     }
-    return [
-      ...PRODUCT_VIEWS.map((view) => ({
-        src: productImage(stage, view),
-        zoom: productImage(stage, view, true),
-        alt: `${this.name()} – ${official.views[view]}`,
-      })),
-      { src: `/assets/images/jovie/products/eg-stage-${stage}-duo.webp`, alt: this.name() },
-    ];
+    const alt = PRODUCT_PHOTO_ALT[this.language.currentLanguage()];
+    const file = (name: string) => `/assets/images/jovie/shop/product/stage-${stage}-${name}.webp`;
+    const photos = STAGE_PHOTOS[stage];
+    return photos.map((photo) => ({
+      src: file(photo),
+      zoom: file(`${photo}-zoom`),
+      alt: `${this.name()} – ${alt[photo]}`,
+      // Only a last photo after full rows of three can be shown wide (Stages 2 and 3).
+      wide: WIDE_PHOTOS.includes(photo) && photos.length % 3 === 1 ? { src: file(`${photo}-wide`), zoom: file(`${photo}-wide-zoom`) } : undefined,
+    }));
   });
 
   /** Placeholder rating of the stage (preview catalogue), labelled "preview" on the page. */
